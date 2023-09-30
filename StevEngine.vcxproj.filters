@@ -27,4 +27,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Libraries\SDL2\lib\x64\SDL2.dll" />
+  </ItemGroup>
 </Project>
