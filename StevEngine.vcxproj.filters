@@ -28,6 +28,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Libraries\SDL2\lib\x64\SDL2.dll" />
+    <None Include="SDL2.dll" />
+    <None Include="glew32.dll" />
   </ItemGroup>
 </Project>
