@@ -3,6 +3,6 @@ using namespace StevEngine;
 
 
 int main(int argc, char** args) {
-	StartEngine();
+	StartEngine("StevEngine", false);
 	return 0;
 }
