@@ -6,7 +6,7 @@
 void DrawCube() {
 	// White side - BACK
 	glPushMatrix();
-	glTranslatef(0, -2, -10);
+	glTranslatef(0, 0, 0);
 	glBegin(GL_POLYGON);
 	glColor3f(1.0, 1.0, 1.0);
 	glVertex3f(0.5, -0.5, 0.5);

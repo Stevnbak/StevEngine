@@ -1,3 +1,5 @@
+#include "Engine.h"
+#include "Camera.h"
 #include <iostream>
 #include <windows.h>
 #include <stdio.h>
@@ -24,31 +26,24 @@ namespace StevEngine {
 		cout << "Tick with deltaTime: " << deltaTime << endl;
 	}
 
+	Camera ActiveCamera (std::vector<double>{0, 0, -10}, std::vector<double>{0, 0, 0}, false, 1, 16/9);
+
 	void Draw() {
 		cout << "Drawing frame" << endl;
+
+		glPushMatrix();
 		// Clear the colorbuffer 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//Set view:
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		if (true)
-		{
-			//Set the perspective with the appropriate aspect ratio
-			glFrustum(-1.0, 1.0, -1.0, 1.0, 5, 100);
-		}
-		else
-		{
-			//Set up an orthographic projection with the same near clip plane
-			glOrtho(-1.0, 1.0, -1.0, 1.0, 5, 100);
-		}
-		glMatrixMode(GL_MODELVIEW);
+		//Set view based on camera:
+		ActiveCamera.UpdateView();
 
 		//Draw test
 		glColor3f(1, 0, 0);
 		DrawCube();
-		DrawBox(0, -1.75, -10, (double)100 / WIDTH, (double)100 / HEIGHT);
+		DrawBox(0, -1, 0, 1, 1);
 
+		glPopMatrix();
 		//Draw OpenGL
 		SDL_GL_SwapWindow(window);
 	}
@@ -78,8 +73,9 @@ namespace StevEngine {
 			return;
 		}
 
-		// Define the OpenGL viewport dimensions 
-		glViewport(0, 0, WIDTH, HEIGHT);
+		// Define the OpenGL viewport dimensions
+		GLint size = max(WIDTH, HEIGHT);
+		glViewport(0, 0, size, size);
 		glClearColor(1, 0.9, 1, 1);
 		glEnable(GL_DEPTH_TEST);
 
@@ -104,9 +100,9 @@ namespace StevEngine {
 							cout << "MESSAGE:Resizing window..." << endl;
 							WIDTH = ev.window.data1;
 							HEIGHT = ev.window.data2;
-
-							SDL_SetWindowSize(window, ev.window.data1, ev.window.data2);
-							glViewport(0, 0, ev.window.data1, ev.window.data2);
+							SDL_SetWindowSize(window, WIDTH, HEIGHT);
+							GLint size = max(WIDTH, HEIGHT);
+							glViewport(0, 0, size, size);
 							Draw();
 						}
 						break;
