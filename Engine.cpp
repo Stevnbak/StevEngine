@@ -14,6 +14,7 @@ using namespace std;
 using namespace StevEngine::Utilities;
 using namespace StevEngine::InputSystem;
 
+
 namespace StevEngine {
 	int targetFPS = 60;
 	bool running = true;
@@ -26,13 +27,14 @@ namespace StevEngine {
 
 	extern GLint WIDTH = 1080, HEIGHT = 720;
 
+	
 	void Tick(double deltaTime) {
-		cout << "Tick with deltaTime: " << deltaTime << endl;
+		///cout << "Tick with deltaTime: " << deltaTime << endl;
 	}
 	Camera ActiveCamera (Vector3d(4,5,10), Vector3d(-20, 40, 0), false, 1, 16 / 9);
 
 	void Draw() {
-		cout << "Drawing frame" << endl;
+		///cout << "Drawing frame" << endl;
 		// Clear the colorbuffer 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		

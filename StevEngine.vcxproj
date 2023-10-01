@@ -136,6 +136,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="InputSystem.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
@@ -143,6 +144,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="InputSystem.h" />
     <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <ItemGroup>

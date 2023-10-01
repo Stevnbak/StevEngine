@@ -18,7 +18,7 @@ Camera::Camera(Vector3d pos, Vector3d rot, bool orthographic, double zoomValue, 
 }
 
 void Camera::UpdateView() {
-	std::cout << "Updating camera " << position.Z << std::endl;
+	///std::cout << "Updating camera " << position.Z << std::endl;
 
 	//Rotate everything else based on camera rotation
 	glRotated(-rotation.X, 1, 0, 0);
