@@ -8,9 +8,11 @@
 #include <SDL_opengl.h>  
 #include "Debug.h"
 #include "Utilities.h"
+#include "InputSystem.h"
 
 using namespace std;
 using namespace StevEngine::Utilities;
+using namespace StevEngine::InputSystem;
 
 namespace StevEngine {
 	int targetFPS = 60;
@@ -103,6 +105,13 @@ namespace StevEngine {
 							glViewport(0, 0, size, size);
 							Draw();
 						}
+						break;
+					//Input system
+					case SDL_KEYDOWN:
+						KeyDown(ev.key.keysym.sym);
+						break;
+					case SDL_KEYUP:
+						KeyUp(ev.key.keysym.sym);
 						break;
 
 				}
