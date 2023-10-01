@@ -1,11 +1,15 @@
 #include "Camera.h"
 #include "Engine.h"
-#include <vector>
+#include "Utilities.h"
+#include <GL/glew.h> 
 #include <SDL_opengl.h>
 #include <iostream>
+#include <math.h>
 using namespace StevEngine;
+using namespace StevEngine::Utilities;
 
-Camera::Camera(std::vector<double> pos, std::vector<double> rot, bool orthographic, double zoomValue, double aspectRatio) {
+
+Camera::Camera(Vector3d pos, Vector3d rot, bool orthographic, double zoomValue, double aspectRatio) {
 	position = pos;
 	rotation = rot;
 	isOrthographic = orthographic;
@@ -14,16 +18,20 @@ Camera::Camera(std::vector<double> pos, std::vector<double> rot, bool orthograph
 }
 
 void Camera::UpdateView() {
-	std::cout << "Updating camera" << std::endl;
+	std::cout << "Updating camera " << position.Z << std::endl;
 
-	glTranslated(-position[0], position[1], position[2]);
-
+	//Rotate everything else based on camera rotation
+	glRotated(rotation.X, 1, 0, 0);
+	glRotated(rotation.Y, 0, 1, 0);
+	glRotated(rotation.Z, 0, 0, 1);
+	//Move everything else based on camera position
+	glTranslated(-position.X, position.Y, position.Z);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	if (isOrthographic)
 	{
-		double width = (1 / aspect) / (zoom / position[2]);
-		double height = (1 * aspect) / (zoom / position[2]);
+		double width = (1 / aspect) / (zoom / position.Z);
+		double height = (1 * aspect) / (zoom / position.Z);
 		//Set up an orthographic projection with the same near clip plane
 		glOrtho(-width, width, -height, height, nearClip, farClip);
 	}

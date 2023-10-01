@@ -7,8 +7,10 @@
 #include <GL/glew.h> 
 #include <SDL_opengl.h>  
 #include "Debug.h"
+#include "Utilities.h"
 
 using namespace std;
+using namespace StevEngine::Utilities;
 
 namespace StevEngine {
 	int targetFPS = 60;
@@ -25,24 +27,20 @@ namespace StevEngine {
 	void Tick(double deltaTime) {
 		cout << "Tick with deltaTime: " << deltaTime << endl;
 	}
-
-	Camera ActiveCamera (std::vector<double>{0, 0, -10}, std::vector<double>{0, 0, 0}, false, 1, 16/9);
+	Camera ActiveCamera (Vector3d(4,-5,-10), Vector3d(20, -40, 0), false, 1, 16 / 9);
 
 	void Draw() {
 		cout << "Drawing frame" << endl;
-
-		glPushMatrix();
 		// Clear the colorbuffer 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		
+		glPushMatrix();
 		//Set view based on camera:
 		ActiveCamera.UpdateView();
-
-		//Draw test
+		//Draw objects
 		glColor3f(1, 0, 0);
 		DrawCube();
-		DrawBox(0, -1, 0, 1, 1);
-
+		DrawBox(0, 0, 0, 1, 1);
 		glPopMatrix();
 		//Draw OpenGL
 		SDL_GL_SwapWindow(window);
