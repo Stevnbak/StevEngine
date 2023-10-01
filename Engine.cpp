@@ -27,7 +27,7 @@ namespace StevEngine {
 	void Tick(double deltaTime) {
 		cout << "Tick with deltaTime: " << deltaTime << endl;
 	}
-	Camera ActiveCamera (Vector3d(4,-5,-10), Vector3d(20, -40, 0), false, 1, 16 / 9);
+	Camera ActiveCamera (Vector3d(4,5,10), Vector3d(-20, 40, 0), false, 1, 16 / 9);
 
 	void Draw() {
 		cout << "Drawing frame" << endl;
@@ -40,7 +40,7 @@ namespace StevEngine {
 		//Draw objects
 		glColor3f(1, 0, 0);
 		DrawCube();
-		DrawBox(0, 0, 0, 1, 1);
+		DrawBox(0, 1, 0, 1, 1);
 		glPopMatrix();
 		//Draw OpenGL
 		SDL_GL_SwapWindow(window);

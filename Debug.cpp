@@ -57,10 +57,10 @@ void DrawBox(double x, double y, double z, double w, double h) {
 	glPushMatrix();
 	glTranslatef(x, y, z);
 	glBegin(GL_QUADS);
-	glVertex3f(0, h , 0); // top left
-	glVertex3f(w , h, 0); // top right 
-	glVertex3f(w, 0, 0); // bottom right
-	glVertex3f(0, 0, 0); // bottom left
+	glVertex3f(-w / 2, h / 2, 0); // top left
+	glVertex3f(w / 2, h / 2, 0); // top right 
+	glVertex3f(w / 2, -h / 2, 0); // bottom right
+	glVertex3f(-w / 2, -h / 2, 0); // bottom left
 	/*
 	glVertex2f(0, (h / HEIGHT)); // top left
 	glVertex2f((w / WIDTH), (h / HEIGHT)); // top right 

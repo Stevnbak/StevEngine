@@ -21,11 +21,11 @@ void Camera::UpdateView() {
 	std::cout << "Updating camera " << position.Z << std::endl;
 
 	//Rotate everything else based on camera rotation
-	glRotated(rotation.X, 1, 0, 0);
-	glRotated(rotation.Y, 0, 1, 0);
-	glRotated(rotation.Z, 0, 0, 1);
+	glRotated(-rotation.X, 1, 0, 0);
+	glRotated(-rotation.Y, 0, 1, 0);
+	glRotated(-rotation.Z, 0, 0, 1);
 	//Move everything else based on camera position
-	glTranslated(-position.X, position.Y, position.Z);
+	glTranslated(-position.X, -position.Y, -position.Z);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	if (isOrthographic)
