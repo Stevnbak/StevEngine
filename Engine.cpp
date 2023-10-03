@@ -118,8 +118,10 @@ namespace StevEngine {
 						KeyUp(ev.key.keysym.sym);
 						break;
 					case SDL_MOUSEMOTION:
-						mousePosition = Vector2d(ev.motion.x, ev.motion.y);
-						MouseMotion();
+						MouseMotion(ev.motion.x, ev.motion.y);
+						break;
+					case SDL_MOUSEWHEEL:
+						MouseWheel(ev.wheel.preciseY);
 						break;
 					case SDL_MOUSEBUTTONDOWN:
 						KeyDown(ev.button.button);

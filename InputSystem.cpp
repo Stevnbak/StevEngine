@@ -21,28 +21,34 @@ namespace StevEngine::InputSystem {
 	}
 
 	void KeyDown(SDL_Keycode key) {
-		std::cout << "Recieved input event for key down: " << SDL_GetKeyName(key) << std::endl;
+		std::cout << "Recieved input event (" << key << ") for key down: " << SDL_GetKeyName(key) << std::endl;
 		inputMap[key] = true;
 	}
 
 	void KeyUp(SDL_Keycode key) {
-		std::cout << "Recieved input event for key up: " << SDL_GetKeyName(key) << std::endl;
+		std::cout << "Recieved input event (" << key << ") for key up: " << SDL_GetKeyName(key) << std::endl;
 		inputMap[key] = false;
 	}
 
 	Utilities::Vector2d mousePosition = Utilities::Vector2d();
 	Utilities::Vector2d mouseDelta = Utilities::Vector2d();
 	Utilities::Vector2d previousMousePosition = Utilities::Vector2d();
-	void MouseMotion() {
+	double mouseWheelDelta = 0;
+	void MouseMotion(double X, double Y) {
+		mousePosition = Utilities::Vector2d(X, Y);
 		std::cout << "Recieved mouse movement. X: " << mousePosition.X << ". Y: " << mousePosition.Y << std::endl;
 		//Calculate delta movements
 		mouseDelta = mousePosition - previousMousePosition;
 		previousMousePosition = mousePosition;
 		std::cout << "Mouse delta X: " << mouseDelta.X << ". Mouse delta Y: " << mouseDelta.Y << std::endl;
 	}
+	void MouseWheel(double value) {
+		mouseWheelDelta = value;
+		std::cout << "Mouse wheel: " << mouseWheelDelta << std::endl;
+	}
 	void ResetMouseDelta() {
 		mouseDelta = Utilities::Vector2d();
-		std::cout << "Mouse delta X: " << mouseDelta.X << ". Mouse delta Y: " << mouseDelta.Y << std::endl;
+		///std::cout << "Mouse delta X: " << mouseDelta.X << ". Mouse delta Y: " << mouseDelta.Y << std::endl;
 	}
 }
 
