@@ -29,5 +29,20 @@ namespace StevEngine::InputSystem {
 		std::cout << "Recieved input event for key up: " << SDL_GetKeyName(key) << std::endl;
 		inputMap[key] = false;
 	}
+
+	Utilities::Vector2d mousePosition = Utilities::Vector2d();
+	Utilities::Vector2d mouseDelta = Utilities::Vector2d();
+	Utilities::Vector2d previousMousePosition = Utilities::Vector2d();
+	void MouseMotion() {
+		std::cout << "Recieved mouse movement. X: " << mousePosition.X << ". Y: " << mousePosition.Y << std::endl;
+		//Calculate delta movements
+		mouseDelta = mousePosition - previousMousePosition;
+		previousMousePosition = mousePosition;
+		std::cout << "Mouse delta X: " << mouseDelta.X << ". Mouse delta Y: " << mouseDelta.Y << std::endl;
+	}
+	void ResetMouseDelta() {
+		mouseDelta = Utilities::Vector2d();
+		std::cout << "Mouse delta X: " << mouseDelta.X << ". Mouse delta Y: " << mouseDelta.Y << std::endl;
+	}
 }
 

@@ -87,6 +87,8 @@ namespace StevEngine {
 		//Main loop
 		lastUpdateTime = clock();
 		while (running) {
+			//Reset mouse delta
+			ResetMouseDelta();
 			//Event loop
 			while (SDL_PollEvent(&ev) != 0) {
 				// check event type
@@ -114,6 +116,16 @@ namespace StevEngine {
 						break;
 					case SDL_KEYUP:
 						KeyUp(ev.key.keysym.sym);
+						break;
+					case SDL_MOUSEMOTION:
+						mousePosition = Vector2d(ev.motion.x, ev.motion.y);
+						MouseMotion();
+						break;
+					case SDL_MOUSEBUTTONDOWN:
+						KeyDown(ev.button.button);
+						break;
+					case SDL_MOUSEBUTTONUP:
+						KeyUp(ev.button.button);
 						break;
 
 				}
