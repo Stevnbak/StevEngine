@@ -61,7 +61,7 @@ namespace StevEngine {
 		SDL_GL_SwapWindow(window);
 	}
 
-	void StartEngine(const char * title, bool fullScreen) {
+	void StartEngine(const char* title, bool fullScreen, void (*mainUpdate)(double deltaTime), void (*mainStart)()) {
 		cout << "Started StevEngine!" << endl;
 		//Initialize SDL window
 		if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
@@ -92,9 +92,10 @@ namespace StevEngine {
 		glClearColor(1, 0.9, 1, 1);
 		glEnable(GL_DEPTH_TEST);
 
+		//Main start function
+		mainStart();
 		//Draw first frame
 		Draw();
-
 		//Main loop
 		lastUpdateTime = clock();
 		while (running) {
@@ -153,6 +154,8 @@ namespace StevEngine {
 				float deltaTime = min(frameTime, 1000 / targetFPS);
 				//Call tick
 				Tick(deltaTime / 1000);
+				//Main update callback
+				mainUpdate(deltaTime);
 				frameTime -= deltaTime;
 				t += deltaTime;
 			}
