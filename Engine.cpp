@@ -32,7 +32,8 @@ namespace StevEngine {
 	
 	void Tick(double deltaTime) {
 		///cout << "Tick with deltaTime: " << deltaTime << endl;
-		for (std::pair<int, GameObject*> object : GameObject::GetMapOfObjects()) {
+		std::map<long, GameObject*> gameObjects = GameObject::GetMapOfObjects();
+		for (std::pair<long, GameObject*> object : gameObjects) {
 			object.second->Update(deltaTime);
 		}
 	}

@@ -3,18 +3,21 @@
 #include <map>
 
 namespace StevEngine {
-	int GameObject::curID = 0;
-	std::map<int, GameObject*> GameObject::objects = std::map<int, GameObject*>();
+	long GameObject::curID = 0;
+	std::map<long, GameObject*> GameObject::objects = std::map<long, GameObject*>();
+	void GameObject::Start() {
+
+	}
 	void GameObject::Update(double deltaTime) {
-		std::cout << "Update - " << id << std::endl;
+		std::cout << "Object update - " << id << std::endl;
 	}
 	void GameObject::Draw() {
 
 	}
-
 	GameObject::GameObject() {
 		id = GameObject::curID++;
 		GameObject::objects[id] = this;
+		Start();
 	}
 	GameObject::GameObject(const GameObject& object) {
 		id = GameObject::curID++;
@@ -22,8 +25,8 @@ namespace StevEngine {
 		position = object.position;
 		rotation = object.rotation;
 		scale = object.scale;
+		Start();
 	}
-	//Destructor
 	void GameObject::Destroy() {
 		GameObject::objects.erase(id);
 	}
