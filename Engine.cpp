@@ -6,9 +6,11 @@
 #include <SDL.h> 
 #include <GL/glew.h> 
 #include <SDL_opengl.h>  
+#include <map>
 #include "Debug.h"
 #include "Utilities.h"
 #include "InputSystem.h"
+#include "GameObject.h"
 
 using namespace std;
 using namespace StevEngine::Utilities;
@@ -30,6 +32,9 @@ namespace StevEngine {
 	
 	void Tick(double deltaTime) {
 		///cout << "Tick with deltaTime: " << deltaTime << endl;
+		for (std::pair<int, GameObject*> object : GameObject::GetMapOfObjects()) {
+			object.second->Update(deltaTime);
+		}
 	}
 	Camera ActiveCamera (Vector3d(4,5,10), Vector3d(-20, 40, 0), false, 1, 16 / 9);
 
@@ -39,12 +44,18 @@ namespace StevEngine {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		glPushMatrix();
+
 		//Set view based on camera:
 		ActiveCamera.UpdateView();
+
 		//Draw objects
 		glColor3f(1, 0, 0);
 		DrawCube();
 		DrawBox(0, 1, 0, 1, 1);
+		for (std::pair<int, GameObject*> object : GameObject::GetMapOfObjects()) {
+			object.second->Draw();
+		}
+
 		glPopMatrix();
 		//Draw OpenGL
 		SDL_GL_SwapWindow(window);
