@@ -72,6 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(ProjectDir)Libraries\GLEW\include;$(ProjectDir)Libraries\SDL2\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)Builds\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>Builds\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
