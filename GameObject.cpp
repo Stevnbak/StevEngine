@@ -55,4 +55,9 @@ namespace StevEngine {
 			}
 		}
 	}
+
+	//Component
+	void Component::SetObject(GameObject* object) {
+		gameObject = object;
+	}
 }

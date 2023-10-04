@@ -8,13 +8,7 @@
 
 
 namespace StevEngine {
-
-	class Component {
-	public:
-		virtual void Update(double deltaTime) = 0;
-		virtual void Draw() = 0;
-	};
-
+	class Component;
 	class GameObject {
 		public:
 			//Basic properties
@@ -34,7 +28,9 @@ namespace StevEngine {
 				}
 				//Add to list
 				std::cout << "Adding component" << std::endl;
-				components.push_back(ComponentType());
+				ComponentType component = ComponentType();
+				component.SetObject(this);
+				components.push_back(component);
 			}
 			template <class ComponentType> ComponentType* GetComponent() {
 				//Check if component type is a Component
@@ -74,5 +70,14 @@ namespace StevEngine {
 			std::vector<std::any> components;
 			static std::vector<GameObject> gameObjects;
 			static int currentID;
+	};
+
+	class Component {
+		public:
+			virtual void Update(double deltaTime) = 0;
+			virtual void Draw() = 0;
+			void SetObject(GameObject* object);
+		private:
+			GameObject* gameObject;
 	};
 }
