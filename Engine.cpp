@@ -28,13 +28,11 @@ namespace StevEngine {
 	SDL_Event ev;
 
 	extern GLint WIDTH = 1080, HEIGHT = 720;
-
 	
 	void Tick(double deltaTime) {
 		///cout << "Tick with deltaTime: " << deltaTime << endl;
-		std::map<long, GameObject*> gameObjects = GameObject::GetMapOfObjects();
-		for (std::pair<long, GameObject*> object : gameObjects) {
-			object.second->Update(deltaTime);
+		for (GameObject* object : GameObject::GetGameObjects()) {
+			object->Update(deltaTime);
 		}
 	}
 	Camera ActiveCamera (Vector3d(4,5,10), Vector3d(-20, 40, 0), false, 1, 16 / 9);
@@ -53,8 +51,8 @@ namespace StevEngine {
 		glColor3f(1, 0, 0);
 		DrawCube();
 		DrawBox(0, 1, 0, 1, 1);
-		for (std::pair<int, GameObject*> object : GameObject::GetMapOfObjects()) {
-			object.second->Draw();
+		for (GameObject* object : GameObject::GetGameObjects()) {
+			object->Draw();
 		}
 
 		glPopMatrix();
@@ -97,6 +95,7 @@ namespace StevEngine {
 		mainStart();
 		//Draw first frame
 		Draw();
+
 		//Main loop
 		lastUpdateTime = clock();
 		while (running) {
@@ -180,3 +179,4 @@ namespace StevEngine {
 		SDL_Quit();
 	}
 }
+
