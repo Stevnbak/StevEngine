@@ -1,5 +1,6 @@
-#include <iostream>
+#include "Log.hpp"
 #include "GameObject.hpp"
+#include <format>
 #include <map>
 #include <list>
 #include <stdexcept>
@@ -12,17 +13,11 @@ namespace StevEngine {
 
 	//Main functions
 	void GameObject::Start() {
-		//std::cout << "ID: " << id << std::endl;
+		
 	}
 	void GameObject::Update(double deltaTime) {
-		//If object is no longer in memory, destroy it
-		if (id < 0) {
-			std::cout << "GameObject no longer accessible in memory, being destroyed!" << std::endl;
-			Destroy();
-			return;
-		}
 		//Components
-		std::cout << "Object update - " << id << " | Components: " << components.size() << std::endl;
+		Log::Normal(std::format("Object ({}) update. Component amount: {}", id, components.size()));
 		for (int i = 0; i < components.size(); i++) {
 			Component* component = (Component*)(&components[i]);
 			component->Update(deltaTime);
@@ -38,7 +33,7 @@ namespace StevEngine {
 	//Constructors
 	GameObject::GameObject() {
 		id = GameObject::currentID++;
-		std::cout << "Creating game object with new id " << id << std::endl;
+		Log::Normal("Creating game object with new id " + id);
 	}
 	GameObject* GameObject::Create() {
 		GameObject object = GameObject();

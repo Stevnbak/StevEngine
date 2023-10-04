@@ -1,6 +1,6 @@
 #pragma once
 #include "Utilities.hpp"
-#include <iostream>
+#include "Log.hpp"
 #include <map>
 #include <vector>
 #include <any>
@@ -23,11 +23,11 @@ namespace StevEngine {
 			template <class ComponentType> void AddComponent() {
 				//Check if component type is a Component
 				if (!std::is_base_of_v<Component, ComponentType>) {
-					std::cout << "[ERROR] - ComponentType must be derived from abstract class Component" << std::endl;
+					Log::Error("ComponentType must be derived from abstract class Component");
 					return;
 				}
 				//Add to list
-				std::cout << "Adding component" << std::endl;
+				Log::Normal("Adding component");
 				ComponentType component = ComponentType();
 				component.SetObject(this);
 				components.push_back(component);
@@ -35,7 +35,7 @@ namespace StevEngine {
 			template <class ComponentType> ComponentType* GetComponent() {
 				//Check if component type is a Component
 				if (!std::is_base_of_v<Component, ComponentType>) {
-					std::cout << "[ERROR] - ComponentType must be derived from abstract class Component" << std::endl;
+					Log::Error("ComponentType must be derived from abstract class Component");
 					return NULL;
 				}
 				//Find component

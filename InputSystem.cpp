@@ -1,4 +1,5 @@
-#include <iostream>
+#include "Log.hpp"
+#include <format>
 #include "InputSystem.hpp"
 #include <SDL.h> 
 #include <map>
@@ -11,22 +12,23 @@ namespace StevEngine::InputSystem {
 		if (inputMap.contains(key)) {
 			pressed = inputMap[key];
 		}
-		std::cout << "Key (" << SDL_GetKeyName(key) << ") has pressed value of " << pressed << std::endl;
+
+		Log::Normal(std::format("Key ({}) has pressed value of {}", SDL_GetKeyName(key), pressed));
 		return pressed;
 	}
 
 	void ForcePressKey(SDL_Keycode key, bool value) {
-		std::cout << "Chganged pressed status of key (" << SDL_GetKeyName(key) << ") to " << value << std::endl;
+		Log::Normal(std::format("anged pressed status of key ({}) to {}", SDL_GetKeyName(key), value));
 		inputMap[key] = value;
 	}
 
 	void KeyDown(SDL_Keycode key) {
-		std::cout << "Recieved input event (" << key << ") for key down: " << SDL_GetKeyName(key) << std::endl;
+		Log::Normal(std::format("Recieved input event ({}) for key down: {}", key, SDL_GetKeyName(key)));
 		inputMap[key] = true;
 	}
 
 	void KeyUp(SDL_Keycode key) {
-		std::cout << "Recieved input event (" << key << ") for key up: " << SDL_GetKeyName(key) << std::endl;
+		Log::Normal(std::format("Recieved input event ({}) for key up: {}", key, SDL_GetKeyName(key)));
 		inputMap[key] = false;
 	}
 
@@ -36,19 +38,19 @@ namespace StevEngine::InputSystem {
 	double mouseWheelDelta = 0;
 	void MouseMotion(double X, double Y) {
 		mousePosition = Utilities::Vector2d(X, Y);
-		std::cout << "Recieved mouse movement. X: " << mousePosition.X << ". Y: " << mousePosition.Y << std::endl;
+		Log::Normal(std::format("Recieved mouse movement. X: {} Y: {}", mousePosition.X, mousePosition.Y));
 		//Calculate delta movements
 		mouseDelta = mousePosition - previousMousePosition;
 		previousMousePosition = mousePosition;
-		std::cout << "Mouse delta X: " << mouseDelta.X << ". Mouse delta Y: " << mouseDelta.Y << std::endl;
+		Log::Normal(std::format("Mouse delta X: {} Mouse delta Y: {}", mouseDelta.X, mouseDelta.Y));
 	}
 	void MouseWheel(double value) {
 		mouseWheelDelta = value;
-		std::cout << "Mouse wheel: " << mouseWheelDelta << std::endl;
+		Log::Normal(std::format("Mouse wheel: {}", mouseWheelDelta));
 	}
 	void ResetMouseDelta() {
 		mouseDelta = Utilities::Vector2d();
-		///std::cout << "Mouse delta X: " << mouseDelta.X << ". Mouse delta Y: " << mouseDelta.Y << std::endl;
+		///Log::Normal(std::format("Mouse delta X: {} Mouse delta Y: {}", mouseDelta.X, mouseDelta.Y));
 	}
 }
 

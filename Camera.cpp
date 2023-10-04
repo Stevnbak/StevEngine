@@ -3,7 +3,7 @@
 #include "Utilities.hpp"
 #include <GL/glew.h> 
 #include <SDL_opengl.h>
-#include <iostream>
+#include "Log.hpp"
 #include <math.h>
 using namespace StevEngine;
 using namespace StevEngine::Utilities;
@@ -18,8 +18,7 @@ Camera::Camera(Vector3d pos, Vector3d rot, bool orthographic, double zoomValue, 
 }
 
 void Camera::UpdateView() {
-	///std::cout << "Updating camera " << position.Z << std::endl;
-
+	//Log::Normal("Updating camera view");
 	//Rotate everything else based on camera rotation
 	glRotated(-rotation.X, 1, 0, 0);
 	glRotated(-rotation.Y, 0, 1, 0);

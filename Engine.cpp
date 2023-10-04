@@ -1,8 +1,8 @@
 #include "Engine.hpp"
 #include "Camera.hpp"
-#include <iostream>
 #include <windows.h>
 #include <stdio.h>
+#include <iostream>
 #include <SDL.h> 
 #include <GL/glew.h> 
 #include <SDL_opengl.h>  
@@ -11,6 +11,7 @@
 #include "Utilities.hpp"
 #include "InputSystem.hpp"
 #include "GameObject.hpp"
+#include "Log.hpp"
 
 using namespace std;
 using namespace StevEngine::Utilities;
@@ -30,7 +31,6 @@ namespace StevEngine {
 	extern GLint WIDTH = 1080, HEIGHT = 720;
 	
 	void Tick(double deltaTime) {
-		///cout << "Tick with deltaTime: " << deltaTime << endl;
 		for (GameObject* object : GameObject::GetGameObjects()) {
 			object->Update(deltaTime);
 		}
@@ -38,7 +38,6 @@ namespace StevEngine {
 	Camera ActiveCamera (Vector3d(4,5,10), Vector3d(-20, 40, 0), false, 1, 16 / 9);
 
 	void Draw() {
-		///cout << "Drawing frame" << endl;
 		// Clear the colorbuffer 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
@@ -61,16 +60,16 @@ namespace StevEngine {
 	}
 
 	void StartEngine(const char* title, bool fullScreen, void (*mainUpdate)(double deltaTime), void (*mainStart)()) {
-		cout << "Started StevEngine!" << endl;
+		Log::Normal("Started StevEngine");
 		//Initialize SDL window
 		if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-			cout << "Error initializing SDL: " << SDL_GetError() << endl;
+			Log::Error("Failed initializing SDL: " + char(SDL_GetError()));
 			return;
 		}
 		//Create SDL window
 		window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | ( fullScreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE ));
 		if (!window) {
-			cout << "Error creating window: " << SDL_GetError() << endl;
+			Log::Error("Failed to create window: " + char(SDL_GetError()));
 			return;
 		}
 		//SDL & OpenGL properties
@@ -81,7 +80,7 @@ namespace StevEngine {
 		// Initialize GLEW to setup the OpenGL Function pointers 
 		if (glewInit() != GLEW_OK)
 		{
-			cout << "Failed to initialize GLEW"  << endl;
+			Log::Error("Failed to initialize GLEW ");
 			return;
 		}
 
@@ -113,7 +112,7 @@ namespace StevEngine {
 
 						if (ev.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
 							//Resized window
-							cout << "MESSAGE:Resizing window..." << endl;
+							Log::Normal("Resizing window");
 							WIDTH = ev.window.data1;
 							HEIGHT = ev.window.data2;
 							SDL_SetWindowSize(window, WIDTH, HEIGHT);
