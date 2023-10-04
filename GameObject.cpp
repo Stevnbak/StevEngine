@@ -1,5 +1,5 @@
 #include <iostream>
-#include "GameObject.h"
+#include "GameObject.hpp"
 #include <map>
 #include <list>
 #include <stdexcept>

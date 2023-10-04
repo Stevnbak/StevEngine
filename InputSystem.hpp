@@ -1,6 +1,6 @@
 #pragma once
 #include <SDL.h> 
-#include "Utilities.h"
+#include "Utilities.hpp"
 
 namespace StevEngine::InputSystem {
 	bool IsKeyPressed(SDL_Keycode key);

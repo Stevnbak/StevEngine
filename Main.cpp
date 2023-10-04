@@ -1,5 +1,5 @@
-#include "Engine.h"
-#include "Camera.h"
+#include "Engine.hpp"
+#include "Camera.hpp"
 using namespace StevEngine;
 
 

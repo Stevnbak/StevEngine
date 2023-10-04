@@ -1,5 +1,5 @@
 #pragma once
-#include "Camera.h"
+#include "Camera.hpp"
 
 namespace StevEngine {
 	extern int targetFPS;

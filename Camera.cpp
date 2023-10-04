@@ -1,6 +1,6 @@
-#include "Camera.h"
-#include "Engine.h"
-#include "Utilities.h"
+#include "Camera.hpp"
+#include "Engine.hpp"
+#include "Utilities.hpp"
 #include <GL/glew.h> 
 #include <SDL_opengl.h>
 #include <iostream>

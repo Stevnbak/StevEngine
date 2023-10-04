@@ -159,12 +159,12 @@
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Debug.h" />
-    <ClInclude Include="Engine.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="InputSystem.h" />
-    <ClInclude Include="Utilities.h" />
+    <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="Debug.hpp" />
+    <ClInclude Include="Engine.hpp" />
+    <ClInclude Include="GameObject.hpp" />
+    <ClInclude Include="InputSystem.hpp" />
+    <ClInclude Include="Utilities.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="glew32.dll" />

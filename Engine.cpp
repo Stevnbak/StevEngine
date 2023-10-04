@@ -1,5 +1,5 @@
-#include "Engine.h"
-#include "Camera.h"
+#include "Engine.hpp"
+#include "Camera.hpp"
 #include <iostream>
 #include <windows.h>
 #include <stdio.h>
@@ -7,10 +7,10 @@
 #include <GL/glew.h> 
 #include <SDL_opengl.h>  
 #include <map>
-#include "Debug.h"
-#include "Utilities.h"
-#include "InputSystem.h"
-#include "GameObject.h"
+#include "Debug.hpp"
+#include "Utilities.hpp"
+#include "InputSystem.hpp"
+#include "GameObject.hpp"
 
 using namespace std;
 using namespace StevEngine::Utilities;

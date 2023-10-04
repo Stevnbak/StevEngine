@@ -1,5 +1,5 @@
-#include "Debug.h"
-#include "Engine.h"
+#include "Debug.hpp"
+#include "Engine.hpp"
 #include <SDL_opengl.h>
 #include <iostream>
 

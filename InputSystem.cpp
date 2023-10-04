@@ -1,5 +1,5 @@
 #include <iostream>
-#include "InputSystem.h"
+#include "InputSystem.hpp"
 #include <SDL.h> 
 #include <map>
 
