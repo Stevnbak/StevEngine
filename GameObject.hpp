@@ -5,6 +5,7 @@
 #include <vector>
 #include <any>
 #include <type_traits>
+#include "InputSystem.hpp"
 
 
 namespace StevEngine {
@@ -35,20 +36,19 @@ namespace StevEngine {
 			template <class ComponentType> ComponentType* GetComponent() {
 				//Check if component type is a Component
 				if (!std::is_base_of_v<Component, ComponentType>) {
-					Log::Error("ComponentType must be derived from abstract class Component");
+					Log::Error("Component must be derived from abstract class Component");
 					return NULL;
 				}
 				//Find component
 				for (int i = 0; i < components.size(); i++) {
-					try {
+					Log::Normal(std::string(typeid((Component*) &components[i]).raw_name()) + " - " + std::string(typeid(ComponentType*).raw_name()));
+					if (std::any_cast<ComponentType>(&components[i])) {
 						ComponentType* component = (ComponentType*)&components[i];
 						return component;
 					}
-					catch (std::exception e) {
-
-					}
 				}
 				//Return null
+				Log::Error("No component of specified type found on object");
 				return NULL;
 			}
 			//Creat GameObject

@@ -1,8 +1,8 @@
 #include "Camera.hpp"
 #include "Engine.hpp"
 #include "Utilities.hpp"
-#include <GL/glew.h> 
-#include <SDL_opengl.h>
+#include <GLEW/include/GL/glew.h> 
+#include <SDL2/include/SDL_opengl.h>
 #include "Log.hpp"
 #include <math.h>
 using namespace StevEngine;

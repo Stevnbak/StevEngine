@@ -1,6 +1,6 @@
 #include "Debug.hpp"
 #include "Engine.hpp"
-#include <SDL_opengl.h>
+#include <SDL2/include/SDL_opengl.h>
 #include <iostream>
 
 void DrawCube() {

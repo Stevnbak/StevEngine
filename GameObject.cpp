@@ -17,7 +17,7 @@ namespace StevEngine {
 	}
 	void GameObject::Update(double deltaTime) {
 		//Components
-		Log::Normal(std::format("Object ({}) update. Component amount: {}", id, components.size()));
+		///Log::Normal(std::format("Object ({}) update. Component amount: {}", id, components.size()));
 		for (int i = 0; i < components.size(); i++) {
 			Component* component = (Component*)(&components[i]);
 			component->Update(deltaTime);

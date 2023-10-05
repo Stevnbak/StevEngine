@@ -1,11 +1,13 @@
+#pragma comment(lib, "SDL2")
+#pragma comment(lib, "SDL2main")
 #include "Engine.hpp"
 #include "Camera.hpp"
 #include <windows.h>
 #include <stdio.h>
 #include <iostream>
-#include <SDL.h> 
-#include <GL/glew.h> 
-#include <SDL_opengl.h>  
+#include <SDL2/include/SDL.h>
+#include <GLEW/include/GL/glew.h>
+#include <SDL2/include/SDL_opengl.h>
 #include <map>
 #include "Debug.hpp"
 #include "Utilities.hpp"

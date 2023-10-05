@@ -1,7 +1,8 @@
 #include "Log.hpp"
 #include <format>
 #include "InputSystem.hpp"
-#include <SDL.h> 
+#include "GameObject.hpp"
+#include <SDL2/include/SDL.h> 
 #include <map>
 
 namespace StevEngine::InputSystem {

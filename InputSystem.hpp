@@ -1,5 +1,5 @@
 #pragma once
-#include <SDL.h> 
+#include <SDL2/include/SDL.h>
 #include "Utilities.hpp"
 
 namespace StevEngine::InputSystem {
