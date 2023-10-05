@@ -62,16 +62,16 @@ namespace StevEngine {
 	}
 
 	void StartEngine(const char* title, bool fullScreen, void (*mainUpdate)(double deltaTime), void (*mainStart)()) {
-		Log::Normal("Started StevEngine");
+		Log::Normal("Started StevEngine", true);
 		//Initialize SDL window
 		if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-			Log::Error("Failed initializing SDL: " + char(SDL_GetError()));
+			Log::Error("Failed initializing SDL: " + char(SDL_GetError()), true);
 			return;
 		}
 		//Create SDL window
 		window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | ( fullScreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE ));
 		if (!window) {
-			Log::Error("Failed to create window: " + char(SDL_GetError()));
+			Log::Error("Failed to create window: " + char(SDL_GetError()), true);
 			return;
 		}
 		//SDL & OpenGL properties
@@ -82,7 +82,7 @@ namespace StevEngine {
 		// Initialize GLEW to setup the OpenGL Function pointers 
 		if (glewInit() != GLEW_OK)
 		{
-			Log::Error("Failed to initialize GLEW ");
+			Log::Error("Failed to initialize GLEW ", true);
 			return;
 		}
 
@@ -114,7 +114,7 @@ namespace StevEngine {
 
 						if (ev.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
 							//Resized window
-							Log::Normal("Resizing window");
+							Log::Normal("Resizing window", true);
 							WIDTH = ev.window.data1;
 							HEIGHT = ev.window.data2;
 							SDL_SetWindowSize(window, WIDTH, HEIGHT);

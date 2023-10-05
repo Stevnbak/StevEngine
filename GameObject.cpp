@@ -17,7 +17,7 @@ namespace StevEngine {
 	}
 	void GameObject::Update(double deltaTime) {
 		//Components
-		///Log::Normal(std::format("Object ({}) update. Component amount: {}", id, components.size()));
+		///Log::Normal(std::format("Object ({}) update. Component amount: {}", id, components.size()), true);
 		for (int i = 0; i < components.size(); i++) {
 			Component* component = (Component*)(&components[i]);
 			component->Update(deltaTime);
@@ -33,7 +33,7 @@ namespace StevEngine {
 	//Constructors
 	GameObject::GameObject() {
 		id = GameObject::currentID++;
-		Log::Normal("Creating game object with new id " + id);
+		Log::Normal("Creating game object with new id " + id, true);
 	}
 	GameObject* GameObject::Create() {
 		GameObject object = GameObject();

@@ -18,7 +18,7 @@ Camera::Camera(Vector3d pos, Vector3d rot, bool orthographic, double zoomValue, 
 }
 
 void Camera::UpdateView() {
-	//Log::Normal("Updating camera view");
+	//Log::Normal("Updating camera view", true);
 	//Rotate everything else based on camera rotation
 	glRotated(-rotation.X, 1, 0, 0);
 	glRotated(-rotation.Y, 0, 1, 0);

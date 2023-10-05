@@ -24,11 +24,11 @@ namespace StevEngine {
 			template <class ComponentType> void AddComponent() {
 				//Check if component type is a Component
 				if (!std::is_base_of_v<Component, ComponentType>) {
-					Log::Error("ComponentType must be derived from abstract class Component");
+					Log::Error("ComponentType must be derived from abstract class Component", true);
 					return;
 				}
 				//Add to list
-				Log::Normal("Adding component");
+				Log::Normal("Adding component", true);
 				ComponentType component = ComponentType();
 				component.SetObject(this);
 				components.push_back(component);
@@ -36,7 +36,7 @@ namespace StevEngine {
 			template <class ComponentType> void RemoveComponent() {
 				//Check if component type is a Component
 				if (!std::is_base_of_v<Component, ComponentType>) {
-					Log::Error("Component must be derived from abstract class Component");
+					Log::Error("Component must be derived from abstract class Component", true);
 					return;
 				}
 				//Find component
@@ -46,12 +46,12 @@ namespace StevEngine {
 						return;
 					}
 				}
-				Log::Error("No component of specified type found on object");
+				Log::Error("No component of specified type found on object", true);
 			}
 			template <class ComponentType> ComponentType* GetComponent() {
 				//Check if component type is a Component
 				if (!std::is_base_of_v<Component, ComponentType>) {
-					Log::Error("Component must be derived from abstract class Component");
+					Log::Error("Component must be derived from abstract class Component", true);
 					return NULL;
 				}
 				//Find component
@@ -62,7 +62,7 @@ namespace StevEngine {
 					}
 				}
 				//Return null
-				Log::Error("No component of specified type found on object");
+				Log::Error("No component of specified type found on object", true);
 				return NULL;
 			}
 			//Creat GameObject
