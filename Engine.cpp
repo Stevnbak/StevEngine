@@ -1,15 +1,11 @@
-#pragma comment(lib, "SDL2")
-#pragma comment(lib, "SDL2main")
 #include "Engine.hpp"
 #include "Camera.hpp"
-#include <windows.h>
-#include <stdio.h>
 #include <iostream>
+#include <map>
+#include <algorithm> 
 #include <SDL2/include/SDL.h>
 #include <GLEW/include/GL/glew.h>
 #include <SDL2/include/SDL_opengl.h>
-#include <map>
-#include "Debug.hpp"
 #include "Utilities.hpp"
 #include "InputSystem.hpp"
 #include "GameObject.hpp"
@@ -49,9 +45,6 @@ namespace StevEngine {
 		ActiveCamera.UpdateView();
 
 		//Draw objects
-		glColor3f(1, 0, 0);
-		DrawCube();
-		DrawBox(0, 1, 0, 1, 1);
 		for (GameObject* object : GameObject::GetGameObjects()) {
 			object->Draw();
 		}
@@ -152,7 +145,7 @@ namespace StevEngine {
 			currentTime = newTime;
 			while (frameTime > 0.0)
 			{
-				float deltaTime = min(frameTime, 1000 / targetFPS);
+				float deltaTime = std::fmin(frameTime, 1000 / targetFPS);
 				//Call tick
 				Tick(deltaTime / 1000);
 				//Main update callback
