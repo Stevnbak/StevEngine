@@ -4,10 +4,25 @@
 #include "GameObject.hpp"
 #include <SDL2/include/SDL.h> 
 #include <map>
+#include <vector>
 
 namespace StevEngine::InputSystem {
-	std::map<SDL_Keycode, bool> inputMap;
+	//Input events
+	std::vector<std::function<void(SDL_Keycode)>> KeyDownEvents;
+	std::vector<std::function<void(SDL_Keycode)>> KeyUpEvents;
+	std::vector<std::function<void(double)>> MouseWheelEvents;
+	void AddKeyDownEvent(std::function<void(SDL_Keycode)> method) {
+		KeyDownEvents.push_back(method);
+	}
+	void AddKeyUpEvent(std::function<void(SDL_Keycode)> method) {
+		KeyUpEvents.push_back(method);
+	}
+	void AddMouseWheelEvent(std::function<void(double)> method) {
+		MouseWheelEvents.push_back(method);
+	}
 
+	//Key Inputs:
+	std::map<SDL_Keycode, bool> inputMap;
 	bool IsKeyPressed(SDL_Keycode key) {
 		bool pressed = false;
 		if (inputMap.contains(key)) {
@@ -17,22 +32,27 @@ namespace StevEngine::InputSystem {
 		Log::Normal(std::format("Key ({}) has pressed value of {}", SDL_GetKeyName(key), pressed));
 		return pressed;
 	}
-
 	void ForcePressKey(SDL_Keycode key, bool value) {
 		Log::Normal(std::format("anged pressed status of key ({}) to {}", SDL_GetKeyName(key), value));
 		inputMap[key] = value;
 	}
-
 	void KeyDown(SDL_Keycode key) {
 		Log::Normal(std::format("Recieved input event ({}) for key down: {}", key, SDL_GetKeyName(key)));
 		inputMap[key] = true;
+		//Call input event functions
+		for (std::function<void(SDL_Keycode)> method : KeyDownEvents) {
+			method(key);
+		}
 	}
-
 	void KeyUp(SDL_Keycode key) {
 		Log::Normal(std::format("Recieved input event ({}) for key up: {}", key, SDL_GetKeyName(key)));
 		inputMap[key] = false;
+		//Call input event functions
+		for (std::function<void(SDL_Keycode)> method : KeyUpEvents) {
+			method(key);
+		}
 	}
-
+	//Mouse inputs:
 	Utilities::Vector2d mousePosition = Utilities::Vector2d();
 	Utilities::Vector2d mouseDelta = Utilities::Vector2d();
 	Utilities::Vector2d previousMousePosition = Utilities::Vector2d();
@@ -48,6 +68,10 @@ namespace StevEngine::InputSystem {
 	void MouseWheel(double value) {
 		mouseWheelDelta = value;
 		Log::Normal(std::format("Mouse wheel: {}", mouseWheelDelta));
+		//Call input event functions
+		for (std::function<void(double)> method : MouseWheelEvents) {
+			method(value);
+		}
 	}
 	void ResetMouseDelta() {
 		mouseDelta = Utilities::Vector2d();
