@@ -33,6 +33,21 @@ namespace StevEngine {
 				component.SetObject(this);
 				components.push_back(component);
 			}
+			template <class ComponentType> void RemoveComponent() {
+				//Check if component type is a Component
+				if (!std::is_base_of_v<Component, ComponentType>) {
+					Log::Error("Component must be derived from abstract class Component");
+					return;
+				}
+				//Find component
+				for (int i = 0; i < components.size(); i++) {
+					if (std::any_cast<ComponentType>(&components[i])) {
+						components.erase(components.begin() + i);
+						return;
+					}
+				}
+				Log::Error("No component of specified type found on object");
+			}
 			template <class ComponentType> ComponentType* GetComponent() {
 				//Check if component type is a Component
 				if (!std::is_base_of_v<Component, ComponentType>) {
@@ -41,7 +56,6 @@ namespace StevEngine {
 				}
 				//Find component
 				for (int i = 0; i < components.size(); i++) {
-					Log::Normal(std::string(typeid((Component*) &components[i]).raw_name()) + " - " + std::string(typeid(ComponentType*).raw_name()));
 					if (std::any_cast<ComponentType>(&components[i])) {
 						ComponentType* component = (ComponentType*)&components[i];
 						return component;
