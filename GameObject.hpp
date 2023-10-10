@@ -21,17 +21,18 @@ namespace StevEngine {
 			void Update(double deltaTime);
 			void Draw();
 			//Components
-			template <class ComponentType> void AddComponent() {
+			template <class ComponentType> ComponentType* AddComponent() {
 				//Check if component type is a Component
 				if (!std::is_base_of_v<Component, ComponentType>) {
 					Log::Error("ComponentType must be derived from abstract class Component", true);
-					return;
+					return NULL;
 				}
 				//Add to list
 				Log::Normal("Adding component", true);
-				ComponentType component = ComponentType();
-				component.SetObject(this);
+				ComponentType* component = new ComponentType();
+				component->SetObject(this);
 				components.push_back(component);
+				return component;
 			}
 			template <class ComponentType> void RemoveComponent() {
 				//Check if component type is a Component
@@ -41,29 +42,32 @@ namespace StevEngine {
 				}
 				//Find component
 				for (int i = 0; i < components.size(); i++) {
-					if (std::any_cast<ComponentType>(&components[i])) {
+					if (dynamic_cast<ComponentType*>(components[i])) {
+						//Remove form list
 						components.erase(components.begin() + i);
+						//Delete component from memory
+						delete components[i];
 						return;
 					}
 				}
-				Log::Error("No component of specified type found on object", true);
+				Log::Error(std::format("No component of type \"{}\" found on object {}", typeid(ComponentType).name(), id), true);
 			}
 			template <class ComponentType> ComponentType* GetComponent() {
 				//Check if component type is a Component
 				if (!std::is_base_of_v<Component, ComponentType>) {
 					Log::Error("Component must be derived from abstract class Component", true);
-					return NULL;
+					return nullptr;
 				}
 				//Find component
 				for (int i = 0; i < components.size(); i++) {
-					if (std::any_cast<ComponentType>(&components[i])) {
-						ComponentType* component = (ComponentType*)&components[i];
+					if (dynamic_cast<ComponentType*>(components[i])) {
+						ComponentType* component = (ComponentType *) components[i];
 						return component;
 					}
 				}
 				//Return null
-				Log::Error("No component of specified type found on object", true);
-				return NULL;
+				Log::Error(std::format("No component of type \"{}\" found on object {}", typeid(ComponentType).name(), id), true);
+				return nullptr;
 			}
 			//Creat GameObject
 			static GameObject* Create();
@@ -71,18 +75,14 @@ namespace StevEngine {
 			void Destroy();
 			//Get objects
 			static std::vector<GameObject*> GetGameObjects() {
-				std::vector<GameObject*> objects;
-				for (int i = 0; i < gameObjects.size(); i++) {
-					objects.push_back(&gameObjects[i]);
-				}
-				return objects;
+				return gameObjects;
 			}
 			//Default Constructor
 			GameObject();
 		private: 
 			int id;
-			std::vector<std::any> components;
-			static std::vector<GameObject> gameObjects;
+			std::vector<Component*> components;
+			static std::vector<GameObject*> gameObjects;
 			static int currentID;
 	};
 

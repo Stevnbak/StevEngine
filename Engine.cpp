@@ -164,6 +164,11 @@ namespace StevEngine {
 			lastUpdateTime = clock();
 		}
 
+		//Destroy all game objects
+		for (GameObject* object : GameObject::GetGameObjects()) {
+			object->Destroy();
+		}
+
 		// Destroy the window. This will also destroy the surface
 		SDL_GL_DeleteContext(context);
 		SDL_DestroyWindow(window);

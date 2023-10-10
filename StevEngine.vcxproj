@@ -164,6 +164,7 @@
     <ClInclude Include="GameObject.hpp" />
     <ClInclude Include="InputSystem.hpp" />
     <ClInclude Include="Log.hpp" />
+    <ClInclude Include="StevEngine.hpp" />
     <ClInclude Include="Utilities.hpp" />
   </ItemGroup>
   <ItemGroup>
