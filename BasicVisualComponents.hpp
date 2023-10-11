@@ -5,11 +5,12 @@
 namespace StevEngine {
 	enum PrimitiveType {
 		None,
-		Box,
+		Quad,
 		Cube,
 		Circle,
 		Sphere,
-		Cylinder
+		Cylinder,
+		Capsule
 	};
 	class Primitive : public Component {
 		public:
