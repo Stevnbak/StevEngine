@@ -2,6 +2,7 @@
 #include "Camera.hpp"
 #include <iostream>
 #include <map>
+#include <chrono>
 #include <algorithm> 
 #include <SDL2/include/SDL.h>
 #include <GLEW/include/GL/glew.h>
@@ -17,11 +18,13 @@ using namespace StevEngine::InputSystem;
 
 
 namespace StevEngine {
-	int targetFPS = 60;
+	int targetFPS = 100;
+	double currentFPS;
+	std::vector<long> frameTimes;
 	bool running = true;
-	double lastUpdateTime = 0;
+	long lastUpdateTime = clock();
 	double t = 0.0;
-	double currentTime = clock();
+	long currentTime = clock();
 
 	SDL_Window* window = NULL;
 	SDL_Event ev;
@@ -51,7 +54,20 @@ namespace StevEngine {
 
 		glPopMatrix();
 		//Draw OpenGL
+		SDL_GL_SetSwapInterval(0);
 		SDL_GL_SwapWindow(window);
+
+		//Calculate current FPS
+		long newTime = clock();
+		frameTimes.push_back(newTime);
+		if (frameTimes.size() > 50) {
+			frameTimes.erase(frameTimes.begin());
+		}
+		double frameDuration = newTime - frameTimes[0];
+		if (frameDuration != 0) currentFPS = 1000 / (frameDuration / (double)frameTimes.size());
+		else currentFPS = INFINITY;
+		Log::Normal(std::format("Current FPS: {}; frameTime: {}; Clock: {}", std::round(currentFPS), (newTime - lastUpdateTime), clock()), true);
+		lastUpdateTime = newTime;
 	}
 
 	void StartEngine(const char* title, bool fullScreen, void (*mainUpdate)(double deltaTime), void (*mainStart)()) {
@@ -140,12 +156,12 @@ namespace StevEngine {
 			}
 
 			//Calculate delta time
-			double newTime = clock();
-			double frameTime = newTime - currentTime;
+			long newTime = clock();
+			long frameTime = newTime - currentTime;
 			currentTime = newTime;
 			while (frameTime > 0.0)
 			{
-				float deltaTime = std::fmin(frameTime, 1000 / targetFPS);
+				double deltaTime = std::fmin(frameTime, targetFPS == -1 ? INFINITY : 1000 / targetFPS);
 				//Call tick
 				Tick(deltaTime / 1000);
 				//Main update callback
@@ -157,11 +173,9 @@ namespace StevEngine {
 			Draw();
 
 			//Wait for next frame
-			double sleepDuration = (1000 / targetFPS) - (clock() - lastUpdateTime);
+			double sleepDuration = ((double)1000 / (targetFPS)) - (frameTime);
 			if (sleepDuration < 0) sleepDuration = 0;
-			SDL_Delay(sleepDuration);
-			///Sleep(sleepDuration);
-			lastUpdateTime = clock();
+			if (targetFPS != -1) SDL_Delay(sleepDuration);
 		}
 
 		//Destroy all game objects
