@@ -45,7 +45,7 @@ namespace StevEngine {
 	//Constructors
 	GameObject::GameObject() {
 		id = GameObject::currentID++;
-		Log::Normal("Creating game object with new id " + id, true);
+		Log::Normal(std::format("Creating game object with new id {}", id), true);
 	}
 	GameObject* GameObject::Create() {
 		GameObject* object = new GameObject();
@@ -55,7 +55,7 @@ namespace StevEngine {
 	}
 	//Destroy
 	void GameObject::Destroy() {
-		Log::Normal("Destroying object with id " + id);
+		Log::Normal(std::format("Destroying object with id {}", id));
 		//Remove from gameobject list
 		for (int i = 0; i < GameObject::gameObjects.size(); i++) {
 			if (GameObject::gameObjects[i]->id == id) {

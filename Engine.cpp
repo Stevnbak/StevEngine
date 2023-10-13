@@ -71,6 +71,7 @@ namespace StevEngine {
 	}
 
 	void StartEngine(const char* title, bool fullScreen, void (*mainUpdate)(double deltaTime), void (*mainStart)()) {
+		Log::StartLogging(title);
 		Log::Normal("Started StevEngine", true);
 		//Initialize SDL window
 		if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
@@ -182,6 +183,7 @@ namespace StevEngine {
 		for (GameObject* object : GameObject::GetGameObjects()) {
 			object->Destroy();
 		}
+		Log::CloseLogging();
 
 		// Destroy the window. This will also destroy the surface
 		SDL_GL_DeleteContext(context);

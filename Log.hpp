@@ -6,4 +6,6 @@ namespace Log {
 	void Error(std::string msg, bool fromEngine = false);
 	void Warning(std::string msg, bool fromEngine = false);
 	extern bool engineLogEnabled;
+	void StartLogging(std::string gameTitle);
+	void CloseLogging();
 }
