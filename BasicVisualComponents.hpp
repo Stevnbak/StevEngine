@@ -22,5 +22,6 @@ namespace StevEngine {
 			Utilities::Vector3d scale = Utilities::Vector3d(1, 1, 1);
 			PrimitiveType type = (PrimitiveType)0;
 			SDL_Color colour = SDL_Color(1,1,1,1);
+			bool unique = false;
 	};
 }
