@@ -54,7 +54,6 @@ namespace StevEngine {
 					}
 				}
 				//Return null
-				Log::Error(std::format("No component of type \"{}\" found on object {}", typeid(ComponentType).name(), id), true);
 				return foundComponents;
 			}
 			template <class ComponentType> ComponentType* AddComponent() {
@@ -84,12 +83,16 @@ namespace StevEngine {
 					return;
 				}
 				//Find component
-				for (int i = 0; i < components.size(); i++) {
-					if (dynamic_cast<ComponentType*>(components[i])) {
-						//Remove from list
-						components.erase(components.begin() + i);
+				std::vector<Component*>::iterator i = components.begin();
+				while (i != components.end()) {
+					if (dynamic_cast<ComponentType*>(*i)) {
 						//Delete component from memory
-						delete components[i];
+						delete *i;
+						//Remove from list
+						i = components.erase(i);
+					}
+					else {
+						++i;
 					}
 				}
 			}
