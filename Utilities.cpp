@@ -97,5 +97,31 @@ namespace StevEngine {
 		Vector3d Vector2d::To3D() {
 			return Vector3d(X, Y, 0);
 		}
+		//Range3d
+		Range3d::Range3d() {
+			Low = Vector3d(0, 0, 0);
+			High = Vector3d(0, 0, 0);
+		}
+		Range3d::Range3d(double lowX, double highX, double lowY, double highY, double lowZ, double highZ) {
+			Low = Vector3d(lowX, lowY, lowZ);
+			High = Vector3d(highX, highY, highZ);
+		}
+		Range3d::Range3d(Vector3d low, Vector3d high) {
+			Low = low;
+			High = high;
+		}
+		Vector3d Range3d::Center() {
+			return Vector3d(Low.X + ((High.X - Low.X) / 2), Low.Y + ((High.Y - Low.Y) / 2), Low.Z + ((High.Z - Low.Z) / 2));
+		}
+		bool Range3d::IsIntersecting(Range3d other) {
+			if ((High.X >= other.Low.X && High.X <= other.High.X) || (Low.X >= other.Low.X && Low.X <= other.High.X)) {
+				if ((High.Y >= other.Low.Y && High.Y <= other.High.Y) || (Low.Y >= other.Low.Y && Low.Y <= other.High.Y)) {
+					if ((High.Z >= other.Low.Z && High.Z <= other.High.Z) || (Low.Z >= other.Low.Z && Low.Z <= other.High.Z)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
 	}
 }
