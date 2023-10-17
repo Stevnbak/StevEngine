@@ -152,6 +152,7 @@
   <ItemGroup>
     <ClCompile Include="BasicVisualComponents.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Colliders.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="InputSystem.cpp" />
@@ -162,10 +163,12 @@
   <ItemGroup>
     <ClInclude Include="BasicVisualComponents.hpp" />
     <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="Colliders.hpp" />
     <ClInclude Include="Engine.hpp" />
     <ClInclude Include="GameObject.hpp" />
     <ClInclude Include="InputSystem.hpp" />
     <ClInclude Include="Log.hpp" />
+    <ClInclude Include="Physics.hpp" />
     <ClInclude Include="StevEngine.hpp" />
     <ClInclude Include="Utilities.hpp" />
   </ItemGroup>

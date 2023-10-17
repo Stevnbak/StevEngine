@@ -137,7 +137,6 @@ namespace StevEngine {
 			virtual void Draw() = 0;
 			void SetObject(GameObject* object);
 			bool unique = true;
-		private:
 			GameObject* gameObject;
 	};
 }
