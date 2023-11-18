@@ -1,6 +1,7 @@
 #include "Physics.hpp"
 #include <math.h>
 #include <iostream>
+#include "Log.hpp"
 
 namespace StevEngine::Physics {
 	//Basic functions
@@ -18,6 +19,8 @@ namespace StevEngine::Physics {
 		//Collisions
 		UpdateCollisions();
 		//Move & Rotate object
+		///Log::Normal(std::format("Acceleration: ({};{};{})", acceleration.X, acceleration.Y, acceleration.Z));
+		///Log::Normal(std::format("Velocity: ({};{};{})", velocity.X, velocity.Y, velocity.Z));
 		gameObject->position += acceleration * 0.5 * pow(deltaTime, 2) + velocity * deltaTime; // s = 1/2*a*t^2 + v_0*t + s_0
 		velocity += acceleration * deltaTime; // v = a * t + v_0
 		gameObject->rotation += angularAcceleration * 0.5 * pow(deltaTime, 2) + angularVelocity * deltaTime; // s = 1/2*a*t^2 + v_0*t + s_0
@@ -63,6 +66,7 @@ namespace StevEngine::Physics {
 			Utilities::Vector3d gravityForce = gravityDirection.Get();
 			gravityForce.Mult(gravityAcceleration);
 			gravityForce.Mult(mass);
+			///Log::Normal(std::format("Gravity force: ({};{};{})", gravityForce.X, gravityForce.Y, gravityForce.Z));
 			AddForce(gravityForce);
 		}
 	}
@@ -70,13 +74,14 @@ namespace StevEngine::Physics {
 		// Formula: F_d = 0.5 * FluidDensity * (Velocity ^ 2) * Coefficient * Area
 		Utilities::Vector3d dragForce = velocity.Get().Mult(-1); // Opposite direction to velocity
 		dragForce.Normalize();
-		dragForce.Mult(0.5); // 0.5
-		dragForce.Mult(1); // Fluid Density
-		dragForce.Mult(pow(velocity.Magnitude(), 2)); //(Velocity ^ 2)
-		dragForce.Mult(dragConstant); // Coefficient
 		// Area
 		double area = 1;
 		dragForce.Mult(area);
+		dragForce.Mult(0.5); // 0.5
+		dragForce.Mult(1.293); // Fluid Density
+		dragForce.Mult(pow(velocity.Magnitude(), 2)); //(Velocity ^ 2)
+		dragForce.Mult(dragConstant); // Coefficient
+		///Log::Normal(std::format("Drag force: ({};{};{})", dragForce.X, dragForce.Y, dragForce.Z));
 		//Apply
 		AddForce(dragForce);
 	}

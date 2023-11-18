@@ -126,7 +126,7 @@ namespace StevEngine {
 			int GetIndexFromName(std::string name);
 			//Static & Basic functions
 			static GameObject* Create();
-			static GameObject* Create(std::string name = nullptr, Utilities::Vector3d position = Utilities::Vector3d(), Utilities::Vector3d rotation = Utilities::Vector3d(), Utilities::Vector3d scale = Utilities::Vector3d(1, 1, 1));
+			static GameObject* Create(std::string name, Utilities::Vector3d position = Utilities::Vector3d(), Utilities::Vector3d rotation = Utilities::Vector3d(), Utilities::Vector3d scale = Utilities::Vector3d(1, 1, 1));
 			static std::vector<GameObject*> GetGameObjects() {
 				return gameObjects;
 			}

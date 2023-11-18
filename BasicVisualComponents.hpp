@@ -16,6 +16,7 @@ namespace StevEngine {
 		public:
 			void Update(double deltaTime) {}
 			void Draw();
+			void Start() {}
 			//Basic properties
 			Utilities::Vector3d position = Utilities::Vector3d();
 			Utilities::Vector3d rotation = Utilities::Vector3d();

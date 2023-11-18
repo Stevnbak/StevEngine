@@ -43,12 +43,12 @@ namespace StevEngine {
 		if (parent != nullptr) {
 			parent->TransformView();
 		}
+		//Position
+		glTranslated(position.X, position.Y, position.Z);
 		//Rotation
 		glRotated(rotation.X, 1, 0, 0);
 		glRotated(rotation.Y, 0, 1, 0);
 		glRotated(rotation.Z, 0, 0, 1);
-		//Position
-		glTranslated(position.X, position.Y, position.Z);
 		//Scale
 		glScaled(scale.X, scale.Y, scale.Z);
 	}

@@ -63,7 +63,7 @@ namespace StevEngine {
 		}
 		void Vector3d::Normalize() {
 			double mag = Magnitude();
-			Divide(mag);
+			if (mag != 0) Divide(mag);
 		}
 		Vector3d Vector3d::Cross(const Vector3d & other) const {
 			return Vector3d(Y * other.Z - Z * other.Y, -(X * other.Z - Z * other.X), X * other.Y - Y * other.X);
@@ -113,8 +113,8 @@ namespace StevEngine {
 		}
 		void Vector2d::Normalize() {
 			double mag = Magnitude();
-			Divide(mag);
-		}
+			if (mag != 0) Divide(mag);
+		} 
 		Vector3d Vector2d::To3D() {
 			return Vector3d(X, Y, 0);
 		}

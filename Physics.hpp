@@ -17,7 +17,7 @@ namespace StevEngine::Physics {
 			void FreezeRotation();
 	};
 	//Physics component
-	class Physics : Component {
+	class Physics : public Component {
 		//Information
 		public:
 			//Basic values
@@ -28,7 +28,7 @@ namespace StevEngine::Physics {
 			//Gravity values
 			bool isAffectedByGravity = true;
 			double gravityAcceleration = 9.82;
-			Utilities::Vector3d gravityDirection = Utilities::Vector3d(0, 0, -1);
+			Utilities::Vector3d gravityDirection = Utilities::Vector3d(0, -1, 0);
 			//Surface values
 			double frictionConstant = 1;
 			double bounceConstant = 1;

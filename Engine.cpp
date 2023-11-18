@@ -32,6 +32,7 @@ namespace StevEngine {
 	extern GLint WIDTH = 1080, HEIGHT = 720;
 	
 	void Tick(double deltaTime) {
+		///Log::Normal(std::format("DeltaTime: {}", deltaTime), true);
 		for (GameObject* object : GameObject::GetGameObjects()) {
 			object->Update(deltaTime);
 		}
@@ -66,7 +67,7 @@ namespace StevEngine {
 		double frameDuration = newTime - frameTimes[0];
 		if (frameDuration != 0) currentFPS = 1000 / (frameDuration / (double)frameTimes.size());
 		else currentFPS = INFINITY;
-		Log::Normal(std::format("Current FPS: {}; frameTime: {}; Clock: {}", std::round(currentFPS), (newTime - lastUpdateTime), clock()), true);
+		///Log::Normal(std::format("Current FPS: {}; frameTime: {}; Clock: {}", std::round(currentFPS), (newTime - lastUpdateTime), clock()), true);
 		lastUpdateTime = newTime;
 	}
 
