@@ -10,6 +10,9 @@ namespace StevEngine::Physics {
 			virtual bool IsPointInCollider(Utilities::Vector3d point) = 0;
 			virtual bool IsOverlapping(Collider* other) = 0;
 			virtual Utilities::Vector3d CollisionPoint(Collider* other) = 0;
+			void Draw() {};
+			void Update(double deltaTime) {};
+			void Start();
 			//Basic properties
 			Utilities::Vector3d position = Utilities::Vector3d();
 			Utilities::Vector3d rotation = Utilities::Vector3d();
@@ -22,10 +25,7 @@ namespace StevEngine::Physics {
 	//Cube collider
 	class CubeCollider : public Collider {
 		public:
-			//Function
-			void Draw() {};
-			void Start() {};
-			void Update(double deltaTime) {};
+			//Functions
 			bool IsPointInCollider(Utilities::Vector3d point);
 			bool IsOverlapping(Collider* other);
 			Utilities::Vector3d CollisionPoint(Collider* other);

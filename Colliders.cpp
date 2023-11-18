@@ -22,6 +22,9 @@ namespace StevEngine::Physics {
 		return ownRange.IsIntersecting(otherRange);
 	}
 
+	void Collider::Start() {
+		
+	}
 
 	//Cube collider
 	bool CubeCollider::IsPointInCollider(Vector3d point) {
