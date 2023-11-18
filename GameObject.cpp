@@ -90,6 +90,9 @@ namespace StevEngine {
 	GameObject* GameObject::GetChild(int index) {
 		return children[index];
 	}
+	int GameObject::GetChildCount() {
+		return children.size();
+	}
 	int GameObject::GetIndexFromName(std::string name) {
 		for (int i = 0; i < children.size(); i++) {
 			if (children[i]->name == name) return i;

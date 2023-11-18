@@ -76,6 +76,7 @@ namespace StevEngine {
 				}
 				//Add to list
 				component->SetObject(this);
+				component->Start();
 				components.push_back(component);
 				return component;
 			}
@@ -121,6 +122,7 @@ namespace StevEngine {
 			int AddChild(GameObject* gameObject);
 			void RemoveChild(int index);
 			GameObject* GetChild(int index);
+			int GetChildCount();
 			int GetIndexFromName(std::string name);
 			//Static & Basic functions
 			static GameObject* Create();
