@@ -13,14 +13,16 @@ namespace StevEngine {
 	class GameObject {
 		public:
 			//Basic properties
+			std::string name;
 			Utilities::Vector3d position = Utilities::Vector3d();
 			Utilities::Vector3d rotation = Utilities::Vector3d();
 			Utilities::Vector3d scale = Utilities::Vector3d(1,1,1);
+			GameObject* parent = nullptr;
 			//Main functions
 			void Start();
 			void Update(double deltaTime);
 			void Draw();
-			//Components
+			//Component functions
 			template <class ComponentType> ComponentType* GetComponent(bool log = true) {
 				//Check if component type is a Component
 				if (!std::is_base_of_v<Component, ComponentType>) {
@@ -114,25 +116,30 @@ namespace StevEngine {
 				}
 				Log::Error(std::format("No component of type \"{}\" found on object {}", typeid(ComponentType).name(), id), true);
 			}
-			//Creat GameObject
+			//Children functions
+			int AddChild(GameObject* gameObject);
+			void RemoveChild(int index);
+			GameObject* GetChild(int index);
+			int GetIndexFromName(std::string name);
+			//Static & Basic functions
 			static GameObject* Create();
-			//Destroy
-			void Destroy();
-			//Get objects
+			static GameObject* Create(std::string name = nullptr, Utilities::Vector3d position = Utilities::Vector3d(), Utilities::Vector3d rotation = Utilities::Vector3d(), Utilities::Vector3d scale = Utilities::Vector3d(1, 1, 1));
 			static std::vector<GameObject*> GetGameObjects() {
 				return gameObjects;
 			}
-			//Default Constructor
+			void Destroy();
 			GameObject();
 		private: 
 			int id;
 			std::vector<Component*> components;
+			std::vector<GameObject*> children;
 			static std::vector<GameObject*> gameObjects;
 			static int currentID;
 	};
 
 	class Component {
 		public:
+			virtual void Start() = 0;
 			virtual void Update(double deltaTime) = 0;
 			virtual void Draw() = 0;
 			void SetObject(GameObject* object);

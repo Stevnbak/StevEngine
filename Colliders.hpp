@@ -24,6 +24,7 @@ namespace StevEngine::Physics {
 		public:
 			//Function
 			void Draw() {};
+			void Start() {};
 			void Update(double deltaTime) {};
 			bool IsPointInCollider(Utilities::Vector3d point);
 			bool IsOverlapping(Collider* other);

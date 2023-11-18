@@ -3,6 +3,5 @@
 #include "Utilities.hpp"
 
 namespace StevEngine::Physics {
-
 	
 }

@@ -15,13 +15,16 @@ namespace StevEngine {
 
 	//Main functions
 	void GameObject::Start() {
-		
+		for (int i = 0; i < components.size(); i++) {
+			Component* component = components[i];
+			component->Start();
+		}
 	}
 	void GameObject::Update(double deltaTime) {
 		//Components
 		///Log::Normal(std::format("Object ({}) update. Component amount: {}", id, components.size()), true);
 		for (int i = 0; i < components.size(); i++) {
-			Component* component = components[i]; //(Component&)(components[i]);
+			Component* component = components[i];
 			component->Update(deltaTime);
 		}
 	}
@@ -37,14 +40,16 @@ namespace StevEngine {
 		glScaled(scale.X, scale.Y, scale.Z);
 		//Components
 		for (int i = 0; i < components.size(); i++) {
-			Component* component = components[i]; //(Component*)(&components[i]);
+			Component* component = components[i];
 			component->Draw();
 		}
 		glPopMatrix();
 	}
+
 	//Constructors
 	GameObject::GameObject() {
 		id = GameObject::currentID++;
+		name = "GameObject_" + id;
 		Log::Normal(std::format("Creating game object with new id {}", id), true);
 	}
 	GameObject* GameObject::Create() {
@@ -53,6 +58,38 @@ namespace StevEngine {
 		object->Start();
 		return object;
 	}
+	GameObject* GameObject::Create(std::string name, Utilities::Vector3d position, Utilities::Vector3d rotation, Utilities::Vector3d scale) {
+		GameObject* object = new GameObject();
+		GameObject::gameObjects.push_back(object);
+		object->name = name;
+		object->position = position;
+		object->rotation = rotation;
+		object->scale = scale;
+		object->Start();
+		return object;
+	}
+	
+	//Children functions
+	int GameObject::AddChild(GameObject* gameObject) {
+		children.push_back(gameObject);
+		gameObject->parent = this;
+		return children.size() - 1;
+	}
+	void GameObject::RemoveChild(int index) {
+		GameObject* child = GetChild(index);
+		child->parent = nullptr;
+		children.erase(children.begin() + index);
+	}
+	GameObject* GameObject::GetChild(int index) {
+		return children[index];
+	}
+	int GameObject::GetIndexFromName(std::string name) {
+		for (int i = 0; i < children.size(); i++) {
+			if (children[i]->name == name) return i;
+		}
+		return -1;
+	}
+
 	//Destroy
 	void GameObject::Destroy() {
 		Log::Normal(std::format("Destroying object with id {}", id));
