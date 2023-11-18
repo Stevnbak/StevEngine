@@ -30,6 +30,19 @@ namespace StevEngine {
 	}
 	void GameObject::Draw() {
 		glPushMatrix();
+		TransformView();
+		//Components
+		for (int i = 0; i < components.size(); i++) {
+			Component* component = components[i];
+			component->Draw();
+		}
+		glPopMatrix();
+	}
+	void GameObject::TransformView() {
+		//Parent transform
+		if (parent != nullptr) {
+			parent->TransformView();
+		}
 		//Rotation
 		glRotated(rotation.X, 1, 0, 0);
 		glRotated(rotation.Y, 0, 1, 0);
@@ -38,12 +51,6 @@ namespace StevEngine {
 		glTranslated(position.X, position.Y, position.Z);
 		//Scale
 		glScaled(scale.X, scale.Y, scale.Z);
-		//Components
-		for (int i = 0; i < components.size(); i++) {
-			Component* component = components[i];
-			component->Draw();
-		}
-		glPopMatrix();
 	}
 
 	//Constructors

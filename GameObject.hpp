@@ -22,6 +22,7 @@ namespace StevEngine {
 			void Start();
 			void Update(double deltaTime);
 			void Draw();
+			void TransformView();
 			//Component functions
 			template <class ComponentType> ComponentType* GetComponent(bool log = true) {
 				//Check if component type is a Component
