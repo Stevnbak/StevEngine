@@ -19,10 +19,26 @@ namespace StevEngine::Physics {
 		//Collisions
 		UpdateCollisions();
 		//Move & Rotate object
+		if (maxAcceleration >= 0 && acceleration.Magnitude() > maxAcceleration) {
+			acceleration.Normalize();
+			acceleration.Mult(maxAcceleration);
+		}
+		if (maxVelocity >= 0 && velocity.Magnitude() > maxVelocity) {
+			velocity.Normalize();
+			velocity.Mult(maxVelocity);
+		}
 		///Log::Normal(std::format("Acceleration: ({};{};{})", acceleration.X, acceleration.Y, acceleration.Z));
 		///Log::Normal(std::format("Velocity: ({};{};{})", velocity.X, velocity.Y, velocity.Z));
 		gameObject->position += acceleration * 0.5 * pow(deltaTime, 2) + velocity * deltaTime; // s = 1/2*a*t^2 + v_0*t + s_0
 		velocity += acceleration * deltaTime; // v = a * t + v_0
+		if (maxAngularAcceleration >= 0 && angularAcceleration.Magnitude() > maxAngularAcceleration) {
+			angularAcceleration.Normalize();
+			angularAcceleration.Mult(maxAngularAcceleration);
+		}
+		if (maxAngularVelocity >= 0 && angularVelocity.Magnitude() > maxAngularVelocity) {
+			angularVelocity.Normalize();
+			angularVelocity.Mult(maxAngularVelocity);
+		}
 		gameObject->rotation += angularAcceleration * 0.5 * pow(deltaTime, 2) + angularVelocity * deltaTime; // s = 1/2*a*t^2 + v_0*t + s_0
 		angularVelocity += angularAcceleration * deltaTime; // v = a * t + v_0
 		//Reset acceleration
