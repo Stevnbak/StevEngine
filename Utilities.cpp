@@ -25,12 +25,24 @@ namespace StevEngine {
 		Vector3d Vector3d::operator-(const Vector3d & other) const {
 			return Vector3d(X - other.X, Y - other.Y, Z - other.Z);
 		}
-		Vector3d Vector3d::operator*(const Vector3d & other) const {
+		Vector3d& Vector3d::operator+=(const Vector3d& other) {
+			this->X += other.X;
+			this->Y += other.Y;
+			this->Z += other.Z;
+			return *this;
+		}
+		Vector3d& Vector3d::operator-=(const Vector3d& other) {
+			this->X -= other.X;
+			this->Y -= other.Y;
+			this->Z -= other.Z;
+			return *this;
+		}
+		/*Vector3d Vector3d::operator*(const Vector3d& other) const {
 			return Vector3d(X * other.X, Y * other.Y, Z * other.Z);
 		}
 		Vector3d Vector3d::operator/(const Vector3d & other) const {
 			return Vector3d(X / other.X, Y / other.Y, Z / other.Z);
-		}
+		}*/
 		Vector3d Vector3d::Mult(double value) {
 			X *= value;
 			Y *= value;
@@ -49,6 +61,9 @@ namespace StevEngine {
 		}
 		Vector3d Vector3d::Cross(const Vector3d & other) const {
 			return Vector3d(Y * other.Z - Z * other.Y, -(X * other.Z - Z * other.X), X * other.Y - Y * other.X);
+		}
+		Vector3d Vector3d::Get() {
+			return Vector3d(X, Y, Z);
 		}
 		Vector2d Vector3d::To2D() {
 			return Vector2d(X, Y);
@@ -74,12 +89,12 @@ namespace StevEngine {
 		Vector2d Vector2d::operator-(const Vector2d& other) const {
 			return Vector2d(X - other.X, Y - other.Y);
 		}
-		Vector2d Vector2d::operator*(const Vector2d& other) const {
+		/*Vector2d Vector2d::operator*(const Vector2d& other) const {
 			return Vector2d(X * other.X, Y * other.Y);
 		}
 		Vector2d Vector2d::operator/(const Vector2d& other) const {
 			return Vector2d(X / other.X, Y / other.Y);
-		}
+		}*/
 		Vector2d Vector2d::Mult(double value) {
 			X *= value;
 			Y *= value;

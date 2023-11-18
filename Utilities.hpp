@@ -8,17 +8,20 @@ namespace StevEngine {
 			public:
 				double X = 0, Y = 0, Z = 0;
 				Vector3d(double x, double y, double z);
-				Vector3d();
+				Vector3d(void);
 				double Magnitude();
 				double Distance(Vector3d target);
 				Vector3d operator+(const Vector3d& other) const;
 				Vector3d operator-(const Vector3d& other) const;
-				Vector3d operator*(const Vector3d& other) const;
-				Vector3d operator/(const Vector3d& other) const;
+				Vector3d& operator+=(const Vector3d& other);
+				Vector3d& operator-=(const Vector3d& other);
+				/*Vector3d operator*(const Vector3d& other) const;
+				Vector3d operator/(const Vector3d& other) const;*/
 				Vector3d Mult(double value);
 				Vector3d Divide(double value);
 				Vector3d Cross(const Vector3d& other) const;
 				void Normalize();
+				Vector3d Get();
 				Vector2d To2D();
 		};
 
@@ -31,8 +34,8 @@ namespace StevEngine {
 				double Distance(Vector2d target);
 				Vector2d operator+(const Vector2d& other) const;
 				Vector2d operator-(const Vector2d& other) const;
-				Vector2d operator*(const Vector2d& other) const;
-				Vector2d operator/(const Vector2d& other) const;
+				/*Vector2d operator*(const Vector2d& other) const;
+				Vector2d operator/(const Vector2d& other) const;*/
 				Vector2d Mult(double value);
 				Vector2d Divide(double value);
 				void Normalize();
