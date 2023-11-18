@@ -37,6 +37,12 @@ namespace StevEngine {
 			this->Z -= other.Z;
 			return *this;
 		}
+		Vector3d Vector3d::operator*(const double& other) const {
+			return Vector3d(X * other, Y * other, Z * other);
+		}
+		Vector3d Vector3d::operator/(const double& other) const {
+			return Vector3d(X / other, Y / other, Z / other);
+		}
 		/*Vector3d Vector3d::operator*(const Vector3d& other) const {
 			return Vector3d(X * other.X, Y * other.Y, Z * other.Z);
 		}

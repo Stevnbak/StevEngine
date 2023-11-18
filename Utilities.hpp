@@ -15,6 +15,8 @@ namespace StevEngine {
 				Vector3d operator-(const Vector3d& other) const;
 				Vector3d& operator+=(const Vector3d& other);
 				Vector3d& operator-=(const Vector3d& other);
+				Vector3d operator*(const double& other) const;
+				Vector3d operator/(const double& other) const;
 				/*Vector3d operator*(const Vector3d& other) const;
 				Vector3d operator/(const Vector3d& other) const;*/
 				Vector3d Mult(double value);
