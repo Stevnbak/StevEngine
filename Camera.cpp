@@ -17,12 +17,14 @@ void Camera::SetOptions(bool orthographic, double zoomValue, double aspectRatio)
 
 void Camera::UpdateView() {
 	//Log::Normal("Updating camera view", true);
-	//Rotate everything else based on camera rotation
-	glRotated(gameObject->rotation.roll, 0, 0, -1);
-	glRotated(gameObject->rotation.yaw, 0, -1, 0);
-	glRotated(gameObject->rotation.pitch, -1, 0, 0);
 	//Move everything else based on camera position
 	glTranslated(-gameObject->position.X, -gameObject->position.Y, -gameObject->position.Z);
+	//Rotate everything else based on camera rotation
+	glRotated(-gameObject->rotation.yaw,  0, 1, 0);
+	Vector3d right(cos(DegreesToRadians(gameObject->rotation.yaw)), 0, -sin(DegreesToRadians(gameObject->rotation.yaw)));
+	glRotated(-gameObject->rotation.pitch, right.X, right.Y, right.Z);
+	glRotated(-gameObject->rotation.roll, 0, 0, 1);
+	//Set projection
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	if (isOrthographic)
