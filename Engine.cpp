@@ -109,7 +109,7 @@ namespace StevEngine {
 		glEnable(GL_DEPTH_TEST);
 
 		//Create main camera
-		ActiveCamera = GameObject::Create("Main Camera", Vector3d(0, 0, 0), Quaternion(0, 0, 0))->AddComponent<Camera>();
+		ActiveCamera = GameObject::Create("Main Camera", Vector3d(0, 0, 0), Rotation3d(0, 0, 0))->AddComponent<Camera>();
 		ActiveCamera->SetOptions(false, 1, 16 / 9);
 		//Main start function
 		mainStart();

@@ -132,24 +132,24 @@ namespace StevEngine {
 			return Vector3d(X, Y, 0);
 		}
 #pragma endregion
-		//Quaternion
-#pragma region Quaternion
-		Quaternion::Quaternion() {
+		//Rotation3d
+#pragma region Rotation3d
+		Rotation3d::Rotation3d() {
 			yaw = 0;
 			pitch = 0;
 			roll = 0;
 		}
-		Quaternion::Quaternion(double pitchDegrees, double yawDegrees, double rollDegrees) {
+		Rotation3d::Rotation3d(double pitchDegrees, double yawDegrees, double rollDegrees) {
 			yaw = yawDegrees;
 			pitch = pitchDegrees;
 			roll = rollDegrees;
 		}
-		void Quaternion::OpenGLRotate() {
+		void Rotation3d::OpenGLRotate() {
 			glRotated(yaw, 0, 1, 0);
 			glRotated(pitch, 1, 0, 0);
 			glRotated(roll, 0, 0, 1);
 		}
-		Vector3d Quaternion::forward() {
+		Vector3d Rotation3d::forward() {
 			Vector3d direction (
 				sin(DegreesToRadians(yaw)),
 				-sin(DegreesToRadians(pitch)),
@@ -157,7 +157,7 @@ namespace StevEngine {
 			);
 			return direction;
 		}
-		Vector3d Quaternion::right() {
+		Vector3d Rotation3d::right() {
 			Vector3d direction(
 				cos(DegreesToRadians(roll)) * cos(DegreesToRadians(yaw)),
 				sin(DegreesToRadians(roll)),
@@ -165,7 +165,7 @@ namespace StevEngine {
 			);
 			return direction;
 		}
-		Vector3d Quaternion::up() {
+		Vector3d Rotation3d::up() {
 			Vector3d direction(
 				-sin(DegreesToRadians(roll)),
 				cos(DegreesToRadians(roll)) * cos(DegreesToRadians(pitch)),

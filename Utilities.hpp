@@ -5,7 +5,7 @@ namespace StevEngine {
 		//Classes
 		class Vector2d;
 		class Vector3d;
-		class Quaternion;
+		class Rotation3d;
 		class Range3d;
 
 		//Vector3d definition
@@ -51,14 +51,14 @@ namespace StevEngine {
 				Vector3d ConvertTo3D();
 		};
 
-		//Quaternion definition
-		class Quaternion {
+		//Rotation3d definition
+		class Rotation3d {
 			public:
 				double yaw = 0;
 				double pitch = 0;
 				double roll = 0;
-				Quaternion();
-				Quaternion(double yaw, double pitch, double roll);
+				Rotation3d();
+				Rotation3d(double yaw, double pitch, double roll);
 				void OpenGLRotate();
 				Vector3d forward();
 				Vector3d right();

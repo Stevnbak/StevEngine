@@ -63,7 +63,7 @@ namespace StevEngine {
 		object->Start();
 		return object;
 	}
-	GameObject* GameObject::Create(std::string name, Utilities::Vector3d position, Utilities::Quaternion rotation, Utilities::Vector3d scale) {
+	GameObject* GameObject::Create(std::string name, Utilities::Vector3d position, Utilities::Rotation3d rotation, Utilities::Vector3d scale) {
 		GameObject* object = new GameObject();
 		GameObject::gameObjects.push_back(object);
 		object->name = name;

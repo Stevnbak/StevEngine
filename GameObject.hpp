@@ -15,7 +15,7 @@ namespace StevEngine {
 			//Basic properties
 			std::string name;
 			Utilities::Vector3d position = Utilities::Vector3d();
-			Utilities::Quaternion rotation = Utilities::Quaternion();
+			Utilities::Rotation3d rotation = Utilities::Rotation3d();
 			Utilities::Vector3d scale = Utilities::Vector3d(1,1,1);
 			GameObject* parent = nullptr;
 			//Main functions
@@ -126,7 +126,7 @@ namespace StevEngine {
 			int GetIndexFromName(std::string name);
 			//Static & Basic functions
 			static GameObject* Create();
-			static GameObject* Create(std::string name, Utilities::Vector3d position = Utilities::Vector3d(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3d scale = Utilities::Vector3d(1, 1, 1));
+			static GameObject* Create(std::string name, Utilities::Vector3d position = Utilities::Vector3d(), Utilities::Rotation3d rotation = Utilities::Rotation3d(), Utilities::Vector3d scale = Utilities::Vector3d(1, 1, 1));
 			static std::vector<GameObject*> GetGameObjects() {
 				return gameObjects;
 			}

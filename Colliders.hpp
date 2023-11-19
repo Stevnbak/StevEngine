@@ -15,7 +15,7 @@ namespace StevEngine::Physics {
 			void Start();
 			//Basic properties
 			Utilities::Vector3d position = Utilities::Vector3d();
-			Utilities::Quaternion rotation = Utilities::Quaternion();
+			Utilities::Rotation3d rotation = Utilities::Rotation3d();
 			Utilities::Vector3d scale = Utilities::Vector3d(1, 1, 1);
 			bool unique = false;
 		protected:
