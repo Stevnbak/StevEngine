@@ -2,14 +2,21 @@
 
 namespace StevEngine {
 	namespace Utilities {
+		//Classes
 		class Vector2d;
 		class Vector3d;
+		class Quaternion;
+		class Range3d;
+
+		//Vector3d definition
 		class Vector3d {
 			public:
 				double X = 0, Y = 0, Z = 0;
 				Vector3d(double x, double y, double z);
-				Vector3d(void);
+				Vector3d();
+				Vector3d Get();
 				double Magnitude();
+				void Normalize();
 				double Distance(Vector3d target);
 				Vector3d operator+(const Vector3d& other) const;
 				Vector3d operator-(const Vector3d& other) const;
@@ -17,33 +24,50 @@ namespace StevEngine {
 				Vector3d& operator-=(const Vector3d& other);
 				Vector3d operator*(const double& other) const;
 				Vector3d operator/(const double& other) const;
-				/*Vector3d operator*(const Vector3d& other) const;
-				Vector3d operator/(const Vector3d& other) const;*/
 				Vector3d Mult(double value);
 				Vector3d Divide(double value);
 				Vector3d Cross(const Vector3d& other) const;
-				void Normalize();
-				Vector3d Get();
-				Vector2d To2D();
+				Vector2d ConvertTo2D();
 		};
 
+		//Vector2d definition
 		class Vector2d {
 			public:
 				double X = 0, Y = 0;
 				Vector2d(double x, double y);
 				Vector2d();
+				Vector2d Get();
 				double Magnitude();
+				void Normalize();
 				double Distance(Vector2d target);
 				Vector2d operator+(const Vector2d& other) const;
 				Vector2d operator-(const Vector2d& other) const;
-				/*Vector2d operator*(const Vector2d& other) const;
-				Vector2d operator/(const Vector2d& other) const;*/
+				Vector2d& operator+=(const Vector2d& other);
+				Vector2d& operator-=(const Vector2d& other);
+				Vector2d operator*(const double& other) const;
+				Vector2d operator/(const double& other) const;
 				Vector2d Mult(double value);
 				Vector2d Divide(double value);
-				void Normalize();
-				Vector3d To3D();
+				Vector3d ConvertTo3D();
 		};
 
+		//Quaternion definition
+		class Quaternion {
+			public:
+				double yaw = 0;
+				double pitch = 0;
+				double roll = 0;
+				Quaternion();
+				Quaternion(double yaw, double pitch, double roll);
+				void OpenGLRotate();
+				Vector3d forward();
+				Vector3d right();
+				Vector3d up();
+		};
+
+		double DegreesToRadians(double degrees);
+
+		//Range3d definition
 		class Range3d {
 			public:
 				Vector3d Low;

@@ -3,6 +3,6 @@
 
 namespace StevEngine {
 	extern int targetFPS;
-	extern Camera ActiveCamera;
+	extern Camera* ActiveCamera;
 	void StartEngine(const char * title, bool fullScreen, void (*mainUpdate)(double deltaTime) = {}, void (*mainStart)() = {});
 }

@@ -46,9 +46,7 @@ namespace StevEngine {
 		//Position
 		glTranslated(position.X, position.Y, position.Z);
 		//Rotation
-		glRotated(rotation.X, 1, 0, 0);
-		glRotated(rotation.Y, 0, 1, 0);
-		glRotated(rotation.Z, 0, 0, 1);
+		rotation.OpenGLRotate();
 		//Scale
 		glScaled(scale.X, scale.Y, scale.Z);
 	}
@@ -65,7 +63,7 @@ namespace StevEngine {
 		object->Start();
 		return object;
 	}
-	GameObject* GameObject::Create(std::string name, Utilities::Vector3d position, Utilities::Vector3d rotation, Utilities::Vector3d scale) {
+	GameObject* GameObject::Create(std::string name, Utilities::Vector3d position, Utilities::Quaternion rotation, Utilities::Vector3d scale) {
 		GameObject* object = new GameObject();
 		GameObject::gameObjects.push_back(object);
 		object->name = name;

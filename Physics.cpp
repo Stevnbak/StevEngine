@@ -39,7 +39,10 @@ namespace StevEngine::Physics {
 			angularVelocity.Normalize();
 			angularVelocity.Mult(maxAngularVelocity);
 		}
-		gameObject->rotation += angularAcceleration * 0.5 * pow(deltaTime, 2) + angularVelocity * deltaTime; // s = 1/2*a*t^2 + v_0*t + s_0
+		Utilities::Vector3d angularChange = angularAcceleration * 0.5 * pow(deltaTime, 2) + angularVelocity * deltaTime; // s = 1/2*a*t^2 + v_0*t + s_0
+		gameObject->rotation.pitch += angularChange.X;
+		gameObject->rotation.yaw += angularChange.Y;
+		gameObject->rotation.roll += angularChange.Z;
 		angularVelocity += angularAcceleration * deltaTime; // v = a * t + v_0
 		//Reset acceleration
 		ResetAcceleration();

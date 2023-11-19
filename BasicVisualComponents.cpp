@@ -215,9 +215,7 @@ void Primitive::Draw() {
 	//Push Matrix
 	glPushMatrix();
 	//Rotation
-	glRotated(rotation.X, 1, 0, 0);
-	glRotated(rotation.Y, 0, 1, 0);
-	glRotated(rotation.Z, 0, 0, 1);
+	rotation.OpenGLRotate();
 	//Position
 	glTranslated(position.X, position.Y, position.Z);
 	//Scale

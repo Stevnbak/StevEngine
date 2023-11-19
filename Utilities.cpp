@@ -1,8 +1,12 @@
 #include "Utilities.hpp"
+#include "Log.hpp"
+#define _USE_MATH_DEFINES
 #include <math.h>
+#include <SDL2/include/SDL_opengl.h>
 namespace StevEngine {
 	namespace Utilities {
 		//Vector3d
+#pragma region Vector3d
 		Vector3d::Vector3d(double x, double y, double z) {
 			X = x;
 			Y = y;
@@ -13,8 +17,15 @@ namespace StevEngine {
 			Y = 0;
 			Z = 0;
 		}
+		Vector3d Vector3d::Get() {
+			return Vector3d(X, Y, Z);
+		}
 		double Vector3d::Magnitude() {
 			return sqrt(pow(X, 2) + pow(Y, 2) + pow(Z, 2));
+		}
+		void Vector3d::Normalize() {
+			double mag = Magnitude();
+			if (mag != 0) Divide(mag);
 		}
 		double Vector3d::Distance(Vector3d target) {
 			return sqrt(pow(X - target.X, 2) + pow(Y - target.Y, 2) + pow(Z - target.Z, 2));
@@ -43,12 +54,6 @@ namespace StevEngine {
 		Vector3d Vector3d::operator/(const double& other) const {
 			return Vector3d(X / other, Y / other, Z / other);
 		}
-		/*Vector3d Vector3d::operator*(const Vector3d& other) const {
-			return Vector3d(X * other.X, Y * other.Y, Z * other.Z);
-		}
-		Vector3d Vector3d::operator/(const Vector3d & other) const {
-			return Vector3d(X / other.X, Y / other.Y, Z / other.Z);
-		}*/
 		Vector3d Vector3d::Mult(double value) {
 			X *= value;
 			Y *= value;
@@ -61,20 +66,15 @@ namespace StevEngine {
 			Z /= value;
 			return Vector3d(X, Y, Z);
 		}
-		void Vector3d::Normalize() {
-			double mag = Magnitude();
-			if (mag != 0) Divide(mag);
-		}
 		Vector3d Vector3d::Cross(const Vector3d & other) const {
 			return Vector3d(Y * other.Z - Z * other.Y, -(X * other.Z - Z * other.X), X * other.Y - Y * other.X);
 		}
-		Vector3d Vector3d::Get() {
-			return Vector3d(X, Y, Z);
-		}
-		Vector2d Vector3d::To2D() {
+		Vector2d Vector3d::ConvertTo2D() {
 			return Vector2d(X, Y);
 		}
+#pragma endregion
 		//Vector2d
+#pragma region Vector2d
 		Vector2d::Vector2d(double x, double y) {
 			X = x;
 			Y = y;
@@ -82,6 +82,9 @@ namespace StevEngine {
 		Vector2d::Vector2d() {
 			X = 0;
 			Y = 0;
+		}
+		Vector2d Vector2d::Get() {
+			return Vector2d(X, Y);
 		}
 		double Vector2d::Magnitude() {
 			return sqrt(pow(X, 2) + pow(Y, 2));
@@ -95,12 +98,22 @@ namespace StevEngine {
 		Vector2d Vector2d::operator-(const Vector2d& other) const {
 			return Vector2d(X - other.X, Y - other.Y);
 		}
-		/*Vector2d Vector2d::operator*(const Vector2d& other) const {
-			return Vector2d(X * other.X, Y * other.Y);
+		Vector2d& Vector2d::operator+=(const Vector2d& other) {
+			this->X += other.X;
+			this->Y += other.Y;
+			return *this;
 		}
-		Vector2d Vector2d::operator/(const Vector2d& other) const {
-			return Vector2d(X / other.X, Y / other.Y);
-		}*/
+		Vector2d& Vector2d::operator-=(const Vector2d& other) {
+			this->X -= other.X;
+			this->Y -= other.Y;
+			return *this;
+		}
+		Vector2d Vector2d::operator*(const double& other) const {
+			return Vector2d(X * other, Y * other);
+		}
+		Vector2d Vector2d::operator/(const double& other) const {
+			return Vector2d(X / other, Y / other);
+		}
 		Vector2d Vector2d::Mult(double value) {
 			X *= value;
 			Y *= value;
@@ -115,10 +128,57 @@ namespace StevEngine {
 			double mag = Magnitude();
 			if (mag != 0) Divide(mag);
 		} 
-		Vector3d Vector2d::To3D() {
+		Vector3d Vector2d::ConvertTo3D() {
 			return Vector3d(X, Y, 0);
 		}
+#pragma endregion
+		//Quaternion
+#pragma region Quaternion
+		Quaternion::Quaternion() {
+			yaw = 0;
+			pitch = 0;
+			roll = 0;
+		}
+		Quaternion::Quaternion(double pitchDegrees, double yawDegrees, double rollDegrees) {
+			yaw = yawDegrees;
+			pitch = pitchDegrees;
+			roll = rollDegrees;
+		}
+		void Quaternion::OpenGLRotate() {
+			glRotated(roll, 0, 0, 1);
+			glRotated(yaw, 0, 1, 0);
+			glRotated(pitch, 1, 0, 0);
+		}
+		Vector3d Quaternion::forward() {
+			Vector3d direction (
+				sin(DegreesToRadians(yaw)),
+				-sin(DegreesToRadians(pitch)),
+				cos(DegreesToRadians(pitch)) * cos(DegreesToRadians(yaw))
+			);
+			return direction;
+		}
+		Vector3d Quaternion::right() {
+			Vector3d direction(
+				cos(DegreesToRadians(roll)) * cos(DegreesToRadians(yaw)),
+				sin(DegreesToRadians(roll)),
+				-sin(DegreesToRadians(yaw))
+			);
+			return direction;
+		}
+		Vector3d Quaternion::up() {
+			Vector3d direction(
+				-sin(DegreesToRadians(roll)),
+				cos(DegreesToRadians(roll)) * cos(DegreesToRadians(pitch)),
+				sin(DegreesToRadians(pitch))
+			);
+			return direction;
+		}
+		double DegreesToRadians(double degrees) {
+			return degrees * (M_PI / 180);
+		}
+#pragma endregion
 		//Range3d
+#pragma region Range3d
 		Range3d::Range3d() {
 			Low = Vector3d(0, 0, 0);
 			High = Vector3d(0, 0, 0);
@@ -144,5 +204,6 @@ namespace StevEngine {
 			}
 			return false;
 		}
+#pragma endregion
 	}
 }

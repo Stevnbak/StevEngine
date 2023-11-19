@@ -33,7 +33,7 @@ namespace StevEngine::InputSystem {
 		return pressed;
 	}
 	void ForcePressKey(SDL_Keycode key, bool value) {
-		Log::Normal(std::format("anged pressed status of key ({}) to {}", SDL_GetKeyName(key), value), true);
+		Log::Normal(std::format("Changed pressed status of key ({}) to {}", SDL_GetKeyName(key), value), true);
 		inputMap[key] = value;
 	}
 	void KeyDown(SDL_Keycode key) {

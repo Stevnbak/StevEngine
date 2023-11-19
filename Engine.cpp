@@ -37,24 +37,28 @@ namespace StevEngine {
 			object->Update(deltaTime);
 		}
 	}
-	Camera ActiveCamera (Vector3d(4,5,10), Vector3d(-20, 40, 0), false, 1, 16 / 9);
+
+	Camera* ActiveCamera = nullptr;
 
 	void Draw() {
 		// Clear the colorbuffer 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		glPushMatrix();
-
-		//Set view based on camera:
-		ActiveCamera.UpdateView();
-
-		//Draw objects
-		for (GameObject* object : GameObject::GetGameObjects()) {
-			object->Draw();
+		//Drawing
+		if (ActiveCamera != nullptr) {
+			//Start cam matrix
+			glPushMatrix();
+			//Set view based on camera:
+			ActiveCamera->UpdateView();
+			//Draw objects
+			for (GameObject* object : GameObject::GetGameObjects()) {
+				object->Draw();
+			}
+			//Reset cam matrix
+			glPopMatrix();
 		}
 
-		glPopMatrix();
-		//Draw OpenGL
+		//Refresh OpenGL window
 		SDL_GL_SetSwapInterval(0);
 		SDL_GL_SwapWindow(window);
 
@@ -103,6 +107,9 @@ namespace StevEngine {
 		glClearColor(1, 0.9, 1, 1);
 		glEnable(GL_DEPTH_TEST);
 
+		//Create main camera
+		ActiveCamera = GameObject::Create("Main Camera", Vector3d(0, 0, 0), Quaternion(0, 0, 0))->AddComponent<Camera>();
+		ActiveCamera->SetOptions(false, 1, 16 / 9);
 		//Main start function
 		mainStart();
 		//Draw first frame

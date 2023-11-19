@@ -1,15 +1,18 @@
 #pragma once
 #include "Utilities.hpp"
+#include "GameObject.hpp"
 using namespace StevEngine::Utilities;
 
 namespace StevEngine {
-	class Camera {
+	class Camera : public Component {
 		public:
-			Vector3d position;
-			Vector3d rotation;
 			bool isOrthographic;
 			double zoom, aspect, nearClip = 1, farClip = 100;
-			Camera(Vector3d pos, Vector3d rot, bool orthographic, double zoomValue, double aspectRatio);
+			void SetOptions(bool orthographic, double zoomValue, double aspectRatio);
 			void UpdateView();
+			//Component functions
+			void Start() {};
+			void Update(double deltaTime) {};
+			void Draw() {};
 	};
 }
