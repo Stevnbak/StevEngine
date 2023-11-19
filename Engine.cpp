@@ -36,6 +36,7 @@ namespace StevEngine {
 		for (GameObject* object : GameObject::GetGameObjects()) {
 			object->Update(deltaTime);
 		}
+		InputSystem::Update(deltaTime);
 	}
 
 	Camera* ActiveCamera = nullptr;
@@ -129,16 +130,22 @@ namespace StevEngine {
 						running = false;
 						break;
 					case SDL_WINDOWEVENT:
-
-						if (ev.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-							//Resized window
-							Log::Normal("Resizing window", true);
-							WIDTH = ev.window.data1;
-							HEIGHT = ev.window.data2;
-							SDL_SetWindowSize(window, WIDTH, HEIGHT);
-							GLint size = max(WIDTH, HEIGHT);
-							glViewport(0, 0, size, size);
-							Draw();
+						switch (ev.window.event) {
+							case SDL_WINDOWEVENT_SIZE_CHANGED:
+								//Resized window
+								Log::Normal("Resizing window", true);
+								WIDTH = ev.window.data1;
+								HEIGHT = ev.window.data2;
+								SDL_SetWindowSize(window, WIDTH, HEIGHT);
+								glViewport(0, 0, max(WIDTH, HEIGHT), max(WIDTH, HEIGHT));
+								Draw();
+								break;
+							case SDL_WINDOWEVENT_ENTER:
+								Log::Normal(std::format("Mouse entered our window! Motion: {},{}", ev.motion.x, ev.motion.y));
+								break;
+							case SDL_WINDOWEVENT_LEAVE:
+								Log::Normal(std::format("Mouse left our window! Motion: {},{}", ev.motion.x, ev.motion.y));
+								break;
 						}
 						break;
 					//Input system
@@ -149,7 +156,7 @@ namespace StevEngine {
 						KeyUp(ev.key.keysym.sym);
 						break;
 					case SDL_MOUSEMOTION:
-						MouseMotion(ev.motion.x, ev.motion.y);
+						MouseMotion(ev.motion.x, ev.motion.y, ev.motion.xrel, ev.motion.yrel);
 						break;
 					case SDL_MOUSEWHEEL:
 						MouseWheel(ev.wheel.preciseY);
@@ -160,7 +167,9 @@ namespace StevEngine {
 					case SDL_MOUSEBUTTONUP:
 						KeyUp(ev.button.button);
 						break;
-
+					case SDL_WINDOW_MOUSE_CAPTURE:
+						Log::Normal(std::format("Mouse capture: {}, {}", ev.motion.x, ev.motion.y));
+						break;
 				}
 			}
 

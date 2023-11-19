@@ -145,9 +145,9 @@ namespace StevEngine {
 			roll = rollDegrees;
 		}
 		void Quaternion::OpenGLRotate() {
-			glRotated(roll, 0, 0, 1);
 			glRotated(yaw, 0, 1, 0);
 			glRotated(pitch, 1, 0, 0);
+			glRotated(roll, 0, 0, 1);
 		}
 		Vector3d Quaternion::forward() {
 			Vector3d direction (
