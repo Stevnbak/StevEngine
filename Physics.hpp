@@ -57,11 +57,14 @@ namespace StevEngine::Physics {
 			Physics();
 			//Force functions
 			void AddForce(Utilities::Vector3d force);
+			void AddImpulseForce(Utilities::Vector3d force, double time = 1);
 			void AddForceAtPoint(Utilities::Vector3d force, Utilities::Vector3d point);
 			//Other functions
 			void UpdateColliders();
-	private:
+		private:
+			std::vector<std::pair<Utilities::Vector3d, double>> activeImpulseForces;
 			void UpdateCollisions();
+			void UpdateImpulseForces(double deltaTime);
 			void Gravity();
 			void Drag();
 			void ResetAcceleration();

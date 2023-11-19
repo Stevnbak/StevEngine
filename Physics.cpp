@@ -16,6 +16,7 @@ namespace StevEngine::Physics {
 		//Constant forces
 		Gravity();
 		Drag();
+		UpdateImpulseForces(deltaTime);
 		//Collisions
 		UpdateCollisions();
 		//Move & Rotate object
@@ -56,6 +57,9 @@ namespace StevEngine::Physics {
 		force.Divide(mass);
 		acceleration += force;
 	}
+	void Physics::AddImpulseForce(Utilities::Vector3d force, double time) {
+		activeImpulseForces.push_back(std::pair<Utilities::Vector3d, double>(force, time));
+	}
 	void Physics::AddForceAtPoint(Utilities::Vector3d force, Utilities::Vector3d point) {
 
 	}
@@ -64,6 +68,17 @@ namespace StevEngine::Physics {
 		angularAcceleration = Utilities::Vector3d(0, 0, 0);
 	}
 	//Other functions
+	void Physics::UpdateImpulseForces(double deltaTime) {
+		for (int i = 0; i < activeImpulseForces.size(); i++) {
+			std::pair<Utilities::Vector3d, double>* value = &activeImpulseForces[i];
+			value->second -= deltaTime;
+			if (value->second <= 0) {
+				value->first = value->first * ((deltaTime + value->second) / deltaTime);
+				activeImpulseForces.erase(activeImpulseForces.begin() + i);
+			}
+			AddForce(value->first);
+		}
+	}
 	void Physics::UpdateColliders() {
 		colliders.clear();
 		std::vector<Collider*> c = gameObject->GetAllComponents<Collider>();
