@@ -60,6 +60,24 @@ namespace StevEngine {
 			outputFile.write(newMetaDataText.c_str(), newMetaDataText.size());
 		}
 
+		const Resource* GetResource(short id) {
+			if (resources.find(id) == resources.end()) {
+				Log::Error(std::format("Resource with id: \"{}\" not found.", id), true);
+				return nullptr;
+			}
+			else {
+				return &resources[id];
+			}
+		}
+		const Resource* GetResource(std::string path) {
+			for (std::pair<short, const Resource> resourcePair : resources) {
+				if (resourcePair.second.fullPath.find(path) == std::string::npos) continue;
+				return &resourcePair.second;
+			}
+			Log::Error("Resource with relative path: \"" + path + "\" not found.", true);
+			return nullptr;
+		}
+
 		short Resource::currentId = 0;
 		short Resource::GetNewId() {
 			short id = -1;
@@ -69,6 +87,9 @@ namespace StevEngine {
 				}
 			};
 			return id;
+		}
+		Resource::Resource() : id(-1) {
+			fullPath = "";
 		}
 		Resource::Resource(std::string path) : id(GetNewId()) {
 			fullPath = path;
