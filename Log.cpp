@@ -22,7 +22,7 @@ namespace Log {
 		std::tm* now = std::localtime(&t);
 		std::string logFilePath = std::format("{}\\logs\\{}.log", localPath, std::format("{}.{}.{}-{}.{}.{}", now->tm_year + 1900, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec));
 		logFile.open(logFilePath);
-		Normal("Creted log file at path: " + logFilePath);
+		Normal("Created log file at path: " + logFilePath);
 	}
 
 	void CloseLogging() {

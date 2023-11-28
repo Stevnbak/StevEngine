@@ -11,6 +11,7 @@
 #include "InputSystem.hpp"
 #include "GameObject.hpp"
 #include "Log.hpp"
+#include "ResourceManager.hpp"
 
 using namespace std;
 using namespace StevEngine::Utilities;
@@ -79,6 +80,8 @@ namespace StevEngine {
 	void StartEngine(const char* title, bool fullScreen, void (*mainUpdate)(double deltaTime), void (*mainStart)()) {
 		Log::StartLogging(title);
 		Log::Normal("Started StevEngine", true);
+		//Load resources
+		ResourceManager::RefreshMetadata();
 		//Initialize SDL window
 		if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
 			Log::Error("Failed initializing SDL: " + char(SDL_GetError()), true);
