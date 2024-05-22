@@ -1,134 +1,76 @@
 #include "Physics.hpp"
-#include <math.h>
-#include <iostream>
 #include "Log.hpp"
 
+#include <math.h>
+#include <iostream>
+#include <cstdarg>
+
+#include <Jolt/Core/Memory.h>
+#include <Jolt/RegisterTypes.h>
+#include <Jolt/Core/Factory.h>
+#include <Jolt/Core/TempAllocator.h>
+#include <Jolt/Core/JobSystemThreadPool.h>
+#include <Jolt/Physics/PhysicsSettings.h>
+#include <Jolt/Physics/PhysicsSystem.h>
+#include <Jolt/Physics/Body/BodyCreationSettings.h>
+#include <Jolt/Physics/Body/BodyActivationListener.h>
+
+// Callback for traces
+static void TraceImpl(const char *inFMT, ...)
+{
+	// Format the message
+	va_list list;
+	va_start(list, inFMT);
+	char buffer[1024];
+	vsnprintf(buffer, sizeof(buffer), inFMT, list);
+	va_end(list);
+	// Print to the TTY
+	Log::Warning(buffer);
+}
+// Callback for asserts
+#ifdef JPH_ENABLE_ASSERTS
+	static bool AssertFailedImpl(const char *inExpression, const char *inMessage, const char *inFile, uint inLine)
+	{
+		// Print to the TTY
+		Log::Warning(std::format("{}:{}: ({}) {}", inFile, inLine, inExpression, (inMessage != nullptr? inMessage : "")));
+		return true;
+	};
+#endif
+
 namespace StevEngine::Physics {
-	//Basic functions
-	void Physics::Start() {
-		UpdateColliders();
-	}
-	void Physics::Update(double deltaTime) {
-		//Update colliders
-		if (lastColliderUpdate + 1000 > clock()) UpdateColliders();
-		//Static object doesn't move
-		if (isStatic) return;
-		//Constant forces
-		Gravity();
-		Drag();
-		UpdateImpulseForces(deltaTime);
-		//Collisions
-		UpdateCollisions();
-		//Move & Rotate object
-		if (maxAcceleration >= 0 && acceleration.Magnitude() > maxAcceleration) {
-			acceleration.Normalize();
-			acceleration.Mult(maxAcceleration);
-		}
-		if (maxVelocity >= 0 && velocity.Magnitude() > maxVelocity) {
-			velocity.Normalize();
-			velocity.Mult(maxVelocity);
-		}
-		///Log::Normal(std::format("Acceleration: ({};{};{})", acceleration.X, acceleration.Y, acceleration.Z));
-		///Log::Normal(std::format("Velocity: ({};{};{})", velocity.X, velocity.Y, velocity.Z));
-		gameObject->position += acceleration * 0.5 * pow(deltaTime, 2) + velocity * deltaTime; // s = 1/2*a*t^2 + v_0*t + s_0
-		velocity += acceleration * deltaTime; // v = a * t + v_0
-		if (maxAngularAcceleration >= 0 && angularAcceleration.Magnitude() > maxAngularAcceleration) {
-			angularAcceleration.Normalize();
-			angularAcceleration.Mult(maxAngularAcceleration);
-		}
-		if (maxAngularVelocity >= 0 && angularVelocity.Magnitude() > maxAngularVelocity) {
-			angularVelocity.Normalize();
-			angularVelocity.Mult(maxAngularVelocity);
-		}
-		Utilities::Vector3d angularChange = angularAcceleration * 0.5 * pow(deltaTime, 2) + angularVelocity * deltaTime; // s = 1/2*a*t^2 + v_0*t + s_0
-		gameObject->rotation.pitch += angularChange.X;
-		gameObject->rotation.yaw += angularChange.Y;
-		gameObject->rotation.roll += angularChange.Z;
-		angularVelocity += angularAcceleration * deltaTime; // v = a * t + v_0
-		//Reset acceleration
-		ResetAcceleration();
-	}
-	//Constructor
-	Physics::Physics() {
+	using namespace JPH;
+	using namespace std;
 
-	}
-	//Force functions
-	void Physics::AddForce(Utilities::Vector3d force) {
-		force.Divide(mass);
-		acceleration += force;
-	}
-	void Physics::AddImpulseForce(Utilities::Vector3d force, double time) {
-		activeImpulseForces.push_back(std::pair<Utilities::Vector3d, double>(force, time));
-	}
-	void Physics::AddForceAtPoint(Utilities::Vector3d force, Utilities::Vector3d point) {
-
-	}
-	void Physics::ResetAcceleration() {
-		acceleration = Utilities::Vector3d(0, 0, 0);
-		angularAcceleration = Utilities::Vector3d(0, 0, 0);
-	}
-	//Other functions
-	void Physics::UpdateImpulseForces(double deltaTime) {
-		for (int i = 0; i < activeImpulseForces.size(); i++) {
-			std::pair<Utilities::Vector3d, double>* value = &activeImpulseForces[i];
-			value->second -= deltaTime;
-			if (value->second <= 0) {
-				value->first = value->first * ((deltaTime + value->second) / deltaTime);
-				activeImpulseForces.erase(activeImpulseForces.begin() + i);
-			}
-			AddForce(value->first);
-		}
-	}
-	void Physics::UpdateColliders() {
-		colliders.clear();
-		std::vector<Collider*> c = gameObject->GetAllComponents<Collider>();
-		colliders.insert(colliders.end(), c.begin(), c.end());
-		//Go through children's colliders
-		for (int i = 0; i < gameObject->GetChildCount(); i++) {
-			GameObject* child = gameObject->GetChild(i);
-			std::vector<Collider*> cc = child->GetAllComponents<Collider>();
-			colliders.insert(colliders.end(), cc.begin(), cc.end());
-		}
-		lastColliderUpdate = clock();
-	}
-	void Physics::UpdateCollisions() {
-
-	}
-	void Physics::Gravity() {
-		// Formula: F_t = m * g
-		if (isAffectedByGravity) {
-			Utilities::Vector3d gravityForce = gravityDirection.Get();
-			gravityForce.Mult(gravityAcceleration);
-			gravityForce.Mult(mass);
-			///Log::Normal(std::format("Gravity force: ({};{};{})", gravityForce.X, gravityForce.Y, gravityForce.Z));
-			AddForce(gravityForce);
-		}
-	}
-	void Physics::Drag() {
-		// Formula: F_d = 0.5 * FluidDensity * (Velocity ^ 2) * Coefficient * Area
-		Utilities::Vector3d dragForce = velocity.Get().Mult(-1); // Opposite direction to velocity
-		dragForce.Normalize();
-		// Area
-		double area = 1;
-		dragForce.Mult(area);
-		dragForce.Mult(0.5); // 0.5
-		dragForce.Mult(1.293); // Fluid Density
-		dragForce.Mult(pow(velocity.Magnitude(), 2)); //(Velocity ^ 2)
-		dragForce.Mult(dragConstant); // Coefficient
-		///Log::Normal(std::format("Drag force: ({};{};{})", dragForce.X, dragForce.Y, dragForce.Z));
-		//Apply
-		AddForce(dragForce);
+	//Tick
+	void System::Update(double deltaTime) {
+		joltSystem.Update(deltaTime / 1000, 1, &tempAllocator, &jobSystem);
 	}
 
-	//Constraints
-	void Constraints::FreezePosition() {
-		bool FreezePositionX = true;
-		bool FreezePositionY = true;
-		bool FreezePositionZ = true;
-	}
-	void Constraints::FreezeRotation() {
-		bool FreezeRotationX = true;
-		bool FreezeRotationY = true;
-		bool FreezeRotationZ = true;
+	//Start
+	System::System(JPH::PhysicsSettings settings) {
+		// Register allocation hook.
+		RegisterDefaultAllocator();
+		// Install trace and assert callbacks
+		Trace = TraceImpl;
+		JPH_IF_ENABLE_ASSERTS(AssertFailed = AssertFailedImpl;)
+		// Create a factory and register Jolt Physics Types
+		Factory::sInstance = new Factory();
+		RegisterTypes();
+		// This is the max amount of rigid bodies that you can add to the physics system. If you try to add more you'll get an error.
+		const uint cMaxBodies = 65536;
+		// This determines how many mutexes to allocate to protect rigid bodies from concurrent access. Set it to 0 for the default settings.
+		const uint cNumBodyMutexes = 0;
+		// This is the max amount of body pairs that can be queued at any time
+		const uint cMaxBodyPairs = 65536;
+		// This is the maximum size of the contact constraint buffer. If more contacts (collisions between bodies) are detected than this number then these contacts will be ignored and bodies will start interpenetrating / fall through the world.
+		const uint cMaxContactConstraints = 10240;
+		//Initialize job system
+		jobSystem.Init(1024);
+		// Create the actual physics system.
+		joltSystem.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, broad_phase_layer_interface, object_vs_broadphase_layer_filter, object_vs_object_layer_filter);
+		// Set system settings
+		joltSystem.SetPhysicsSettings(settings);
+		//Get The body interface
+		bodyInterface = &joltSystem.GetBodyInterface();
 	}
 }

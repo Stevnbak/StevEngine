@@ -1,4 +1,5 @@
 #pragma once
+#include <Jolt/Jolt.h>
 
 namespace StevEngine {
 	namespace Utilities {
@@ -18,16 +19,21 @@ namespace StevEngine {
 				double Magnitude();
 				void Normalize();
 				double Distance(Vector3d target);
+				Vector3d Mult(double value);
+				Vector3d Divide(double value);
+				Vector3d Cross(const Vector3d& other) const;
+				Vector2d ConvertTo2D();
+				//Conversions
+				operator Vector2d();
+				operator JPH::Vec3();
+				Vector3d& operator= (const JPH::Vec3& other);
+				//Operators
 				Vector3d operator+(const Vector3d& other) const;
 				Vector3d operator-(const Vector3d& other) const;
 				Vector3d& operator+=(const Vector3d& other);
 				Vector3d& operator-=(const Vector3d& other);
 				Vector3d operator*(const double& other) const;
 				Vector3d operator/(const double& other) const;
-				Vector3d Mult(double value);
-				Vector3d Divide(double value);
-				Vector3d Cross(const Vector3d& other) const;
-				Vector2d ConvertTo2D();
 		};
 
 		//Vector2d definition
@@ -40,15 +46,17 @@ namespace StevEngine {
 				double Magnitude();
 				void Normalize();
 				double Distance(Vector2d target);
+				Vector2d Mult(double value);
+				Vector2d Divide(double value);
+				//Operators
 				Vector2d operator+(const Vector2d& other) const;
 				Vector2d operator-(const Vector2d& other) const;
 				Vector2d& operator+=(const Vector2d& other);
 				Vector2d& operator-=(const Vector2d& other);
 				Vector2d operator*(const double& other) const;
 				Vector2d operator/(const double& other) const;
-				Vector2d Mult(double value);
-				Vector2d Divide(double value);
-				Vector3d ConvertTo3D();
+				//Conversions
+				operator Vector3d();
 		};
 
 		//Rotation3d definition
@@ -63,6 +71,14 @@ namespace StevEngine {
 				Vector3d forward();
 				Vector3d right();
 				Vector3d up();
+				//Operators
+				Rotation3d operator+(const Rotation3d& other) const;
+				Rotation3d operator-(const Rotation3d& other) const;
+				Rotation3d& operator+=(const Rotation3d& other);
+				Rotation3d& operator-=(const Rotation3d& other);
+				//Conversions
+				operator JPH::Quat();
+				///Rotation3d& operator= (const JPH::Quat& other);
 		};
 
 		double DegreesToRadians(double degrees);

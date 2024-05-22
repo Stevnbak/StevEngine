@@ -51,6 +51,29 @@ namespace StevEngine {
 		glScaled(scale.X, scale.Y, scale.Z);
 	}
 
+	//Absolute properties
+	Utilities::Vector3d GameObject::absPosition() {
+		if(parent != nullptr) {
+			return parent->absPosition() + position;
+		} else {
+			return position;
+		}
+	}
+	Utilities::Rotation3d GameObject::absRotation() {
+		if(parent != nullptr) {
+			return parent->absRotation() + rotation;
+		} else {
+			return rotation;
+		}
+	}
+	Utilities::Vector3d GameObject::absScale() {
+		if(parent != nullptr) {
+			return parent->absScale() + scale;
+		} else {
+			return scale;
+		}
+	}
+
 	//Constructors
 	GameObject::GameObject() {
 		id = GameObject::currentID++;
@@ -111,7 +134,7 @@ namespace StevEngine {
 		//Clear component memory
 		for (int i = 0; i < components.size(); i++)
 		{
-			delete components[i];
+			components[i]->Destroy();
 		}
 		//Clear memory
 		delete this;
@@ -120,5 +143,8 @@ namespace StevEngine {
 	//Component
 	void Component::SetObject(GameObject* object) {
 		gameObject = object;
+	}
+	void Component::Destroy() {
+		delete this;
 	}
 }

@@ -3,6 +3,8 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <SDL2/SDL_opengl.h>
+
+
 namespace StevEngine {
 	namespace Utilities {
 		//Vector3d
@@ -69,9 +71,19 @@ namespace StevEngine {
 		Vector3d Vector3d::Cross(const Vector3d & other) const {
 			return Vector3d(Y * other.Z - Z * other.Y, -(X * other.Z - Z * other.X), X * other.Y - Y * other.X);
 		}
-		Vector2d Vector3d::ConvertTo2D() {
+		Vector3d::operator Vector2d() {
 			return Vector2d(X, Y);
 		}
+		Vector3d::operator JPH::Vec3() {
+			return JPH::Vec3(X, Y, Z);
+		}
+		Vector3d& Vector3d::operator= (const JPH::Vec3& other) {
+			X = other.GetX();
+			Y = other.GetY();
+			Z = other.GetZ();
+			return *this;
+		}
+
 #pragma endregion
 		//Vector2d
 #pragma region Vector2d
@@ -127,8 +139,8 @@ namespace StevEngine {
 		void Vector2d::Normalize() {
 			double mag = Magnitude();
 			if (mag != 0) Divide(mag);
-		} 
-		Vector3d Vector2d::ConvertTo3D() {
+		}
+		Vector2d::operator Vector3d() {
 			return Vector3d(X, Y, 0);
 		}
 #pragma endregion
@@ -175,6 +187,41 @@ namespace StevEngine {
 		}
 		double DegreesToRadians(double degrees) {
 			return degrees * (M_PI / 180);
+		}
+		Rotation3d::operator JPH::Quat() {
+			float c1 = (float)std::cos(-roll / 2.0);
+			float c2 = (float)std::cos(-yaw / 2.0);
+			float c3 = (float)std::cos( pitch / 2.0);
+			float c1c2 = c1 * c2;
+			float s1 = (float)std::sin(-roll / 2.0);
+			float s2 = (float)std::sin(-yaw / 2.0);
+			float s3 = (float)std::sin( pitch / 2.0);
+			float s1s2 = s1 * s2;
+
+			return JPH::Quat(
+				c1 * s2 * c3 - s1 * c2 * s3,
+				c1c2 * s3 + s1s2 * c3,
+				s1 * c2 * c3 + c1 * s2 * s3,
+				c1c2 * c3 - s1s2 * s3
+			);
+		}
+		Rotation3d Rotation3d::operator+(const Rotation3d & other) const {
+			return Rotation3d(pitch + other.pitch, yaw + other.yaw, roll + other.roll);
+		}
+		Rotation3d Rotation3d::operator-(const Rotation3d & other) const {
+			return Rotation3d(pitch - other.pitch, yaw - other.yaw, roll - other.roll);
+		}
+		Rotation3d& Rotation3d::operator+=(const Rotation3d& other) {
+			this->pitch += other.pitch;
+			this->yaw += other.yaw;
+			this->roll += other.roll;
+			return *this;
+		}
+		Rotation3d& Rotation3d::operator-=(const Rotation3d& other) {
+			this->pitch -= other.pitch;
+			this->yaw -= other.yaw;
+			this->roll -= other.roll;
+			return *this;
 		}
 #pragma endregion
 		//Range3d

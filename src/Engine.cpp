@@ -1,24 +1,28 @@
 #include "Engine.hpp"
-#include "Camera.hpp"
+//STD
 #include <iostream>
 #include <map>
 #include <chrono>
 #include <algorithm> 
+//Libraries
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
+#include <Jolt/Jolt.h>
+//Engine
 #include "Utilities.hpp"
 #include "InputSystem.hpp"
 #include "GameObject.hpp"
 #include "Log.hpp"
 #include "ResourceManager.hpp"
+#include "Camera.hpp"
 
 using namespace std;
 using namespace StevEngine::Utilities;
 using namespace StevEngine::InputSystem;
 
 namespace StevEngine {
-	int targetFPS = 100;
+	int targetFPS = 60;
 	double currentFPS;
 	std::vector<long> frameTimes;
 	bool running = true;
@@ -28,15 +32,21 @@ namespace StevEngine {
 
 	SDL_Window* window = NULL;
 	SDL_Event ev;
+	Physics::System* physics;
 
 	extern GLint WIDTH = 1080, HEIGHT = 720;
 	
 	void Tick(double deltaTime) {
-		///Log::Normal(std::format("DeltaTime: {}", deltaTime), true);
+		//FPS
+		///Log::Normal(std::format("DeltaTime: {} | FPS: {}", deltaTime, currentFPS), true);
+		//Run Jolt Physics step
+		physics->Update(deltaTime);
+		//Input?
+		InputSystem::Update(deltaTime);
+		//Update GameObjects
 		for (GameObject* object : GameObject::GetGameObjects()) {
 			object->Update(deltaTime);
 		}
-		InputSystem::Update(deltaTime);
 	}
 
 	Camera* ActiveCamera = nullptr;
@@ -76,21 +86,21 @@ namespace StevEngine {
 		lastUpdateTime = newTime;
 	}
 
-	void StartEngine(const char* title, bool fullScreen, void (*mainUpdate)(double deltaTime), void (*mainStart)()) {
+	int StartEngine(const char* title, bool fullScreen, void (*mainUpdate)(double deltaTime), void (*mainStart)()) {
 		Log::StartLogging(title);
 		Log::Normal("Started StevEngine", true);
 		//Load resources
 		///ResourceManager::RefreshMetadata();
 		//Initialize SDL window
 		if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-			Log::Error("Failed initializing SDL: " + char(SDL_GetError()), true);
-			return;
+			Log::Error("Failed initializing SDL: " + string(SDL_GetError()), true);
+			return 1;
 		}
 		//Create SDL window
 		window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | ( fullScreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE ));
 		if (!window) {
-			Log::Error("Failed to create window: " + char(SDL_GetError()), true);
-			return;
+			Log::Error("Failed to create window: " + string(SDL_GetError()), true);
+			return 1;
 		}
 		//SDL & OpenGL properties
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -101,8 +111,11 @@ namespace StevEngine {
 		if (glewInit() != GLEW_OK)
 		{
 			Log::Error("Failed to initialize GLEW ", true);
-			return;
+			return 1;
 		}
+
+		//Create physics system
+		physics = new Physics::System();
 
 		// Define the OpenGL viewport dimensions
 		GLint size = max(WIDTH, HEIGHT);
@@ -111,7 +124,7 @@ namespace StevEngine {
 		glEnable(GL_DEPTH_TEST);
 
 		//Create main camera
-		ActiveCamera = GameObject::Create("Main Camera", Vector3d(0, 0, 0), Rotation3d(0, 0, 0))->AddComponent<Camera>();
+		ActiveCamera = GameObject::Create("Main Camera", Vector3d(0, 0, 0), Rotation3d(0, 0, 0))->AddComponent(new Camera());
 		ActiveCamera->SetOptions(false, 1, 16 / 9);
 		//Main start function
 		if (mainStart) mainStart();
@@ -209,8 +222,13 @@ namespace StevEngine {
 		SDL_DestroyWindow(window);
 		window = NULL;
 
+		delete physics;
+
 		// Quit SDL
 		SDL_Quit();
+
+		//Return int
+		return 0;
 	}
 }
 

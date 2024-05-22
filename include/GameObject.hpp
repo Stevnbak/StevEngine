@@ -17,7 +17,10 @@ namespace StevEngine {
 			Utilities::Vector3d position = Utilities::Vector3d();
 			Utilities::Rotation3d rotation = Utilities::Rotation3d();
 			Utilities::Vector3d scale = Utilities::Vector3d(1,1,1);
-			GameObject* parent = nullptr;
+			//Absolute properties
+			Utilities::Vector3d absPosition();
+			Utilities::Rotation3d absRotation();
+			Utilities::Vector3d absScale();
 			//Main functions
 			void Start();
 			void Update(double deltaTime);
@@ -59,14 +62,12 @@ namespace StevEngine {
 				//Return null
 				return foundComponents;
 			}
-			template <class ComponentType> ComponentType* AddComponent() {
+			template <class ComponentType> ComponentType* AddComponent(ComponentType* component) {
 				//Check if component type is a Component
 				if (!std::is_base_of_v<Component, ComponentType>) {
 					Log::Error("ComponentType must be derived from abstract class Component", true);
 					return nullptr;
 				}
-				//Create object
-				ComponentType* component = new ComponentType();
 				//If unique check uniqueness
 				if (component->unique) {
 					if (GetComponent<ComponentType>(false) != nullptr) {
@@ -119,6 +120,7 @@ namespace StevEngine {
 				Log::Error(std::format("No component of type \"{}\" found on object {}", typeid(ComponentType).name(), id), true);
 			}
 			//Children functions
+			GameObject* parent = nullptr;
 			int AddChild(GameObject* gameObject);
 			void RemoveChild(int index);
 			GameObject* GetChild(int index);
@@ -145,6 +147,7 @@ namespace StevEngine {
 			virtual void Start() = 0;
 			virtual void Update(double deltaTime) = 0;
 			virtual void Draw() = 0;
+			void Destroy();
 			void SetObject(GameObject* object);
 			bool unique = true;
 			GameObject* gameObject;

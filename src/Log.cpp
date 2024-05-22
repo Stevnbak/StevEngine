@@ -15,12 +15,12 @@ namespace Log {
 	std::ofstream logFile;
 	void StartLogging(std::string gameTitle) {
 		std::replace(gameTitle.begin(), gameTitle.end(), ' ', '-');
-		std::string localPath = std::format("{}\\{}", "~.dev", gameTitle);
+		std::string localPath = std::format("{}/{}", "appdata", gameTitle);
 		std::cout << "Path: " << localPath << std::endl;
-		std::filesystem::create_directories(localPath + "\\logs");
+		std::filesystem::create_directories(localPath + "/logs");
 		std::time_t t = std::time(0);
 		std::tm* now = std::localtime(&t);
-		std::string logFilePath = std::format("{}\\logs\\{}.log", localPath, std::format("{}.{}.{}-{}.{}.{}", now->tm_year + 1900, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec));
+		std::string logFilePath = std::format("{}/logs/{}.log", localPath, std::format("{}.{}.{}-{}.{}.{}", now->tm_year + 1900, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec));
 		logFile.open(logFilePath);
 		Normal("Created log file at path: " + logFilePath);
 	}

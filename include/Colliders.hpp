@@ -1,33 +1,38 @@
 #pragma once
 #include "GameObject.hpp"
 #include "Utilities.hpp"
+//Jolt:
+#include <Jolt/Jolt.h>
+#include <Jolt/Physics/Collision/Shape/Shape.h>
+
 namespace StevEngine::Physics {
 
 	//Base collider
 	class Collider : public Component {
 		public:
-			Utilities::Range3d CalculateRange();
-			virtual bool IsPointInCollider(Utilities::Vector3d point) = 0;
-			virtual bool IsOverlapping(Collider* other) = 0;
-			virtual Utilities::Vector3d CollisionPoint(Collider* other) = 0;
+			Collider(JPH::Ref<JPH::Shape> shape, Utilities::Vector3d position = Utilities::Vector3d(0,0,0), Utilities::Rotation3d rotation = Utilities::Rotation3d(0,0,0), Utilities::Vector3d scale = Utilities::Vector3d(1,1,1));
+
 			void Draw() {};
 			void Update(double deltaTime) {};
 			void Start();
-			//Basic properties
+			void Destroy();
+
+			bool unique = false;
+
+			JPH::Ref<JPH::Shape> shape;
+
+			Utilities::Vector3d getScale()  { return scale; }
+			Utilities::Rotation3d getRotation()  { return rotation; }
+			Utilities::Vector3d getPosition() { return position; }
+		protected:
+			Utilities::Vector3d scale = Utilities::Vector3d(1, 1, 1);
 			Utilities::Vector3d position = Utilities::Vector3d();
 			Utilities::Rotation3d rotation = Utilities::Rotation3d();
-			Utilities::Vector3d scale = Utilities::Vector3d(1, 1, 1);
-			bool unique = false;
-		protected:
-			bool IsInRange(Collider* other);
 	};
 
 	//Cube collider
 	class CubeCollider : public Collider {
 		public:
-			//Functions
-			bool IsPointInCollider(Utilities::Vector3d point);
-			bool IsOverlapping(Collider* other);
-			Utilities::Vector3d CollisionPoint(Collider* other);
+			CubeCollider(Utilities::Vector3d position = Utilities::Vector3d(0,0,0), Utilities::Rotation3d rotation = Utilities::Rotation3d(0,0,0));
 	};
 }
