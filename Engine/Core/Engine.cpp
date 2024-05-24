@@ -191,7 +191,7 @@ namespace StevEngine {
 			//Calculate FPS:
 			if (frameTime != 0) currentFPS = 1000 / frameTime;
 			else currentFPS = INFINITY;
-			Log::Normal(std::format("Current FPS: {}; frameTime: {}; Clock: {}", std::round(currentFPS), frameTime, newTime), true);
+			///Log::Normal(std::format("Current FPS: {}; frameTime: {}; Clock: {}", std::round(currentFPS), frameTime, newTime), true);
 
 			//Wait for next frame
 			if (targetFPS != -1) {

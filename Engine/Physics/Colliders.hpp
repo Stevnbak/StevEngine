@@ -33,6 +33,6 @@ namespace StevEngine::Physics {
 	//Cube collider
 	class CubeCollider : public Collider {
 		public:
-			CubeCollider(Utilities::Vector3d position = Utilities::Vector3d(0,0,0), Utilities::Rotation3d rotation = Utilities::Rotation3d(0,0,0));
+			CubeCollider(Utilities::Vector3d position = Utilities::Vector3d(0,0,0), Utilities::Rotation3d rotation = Utilities::Rotation3d(0,0,0), Utilities::Vector3d scale = Utilities::Vector3d(1,1,1));
 	};
 }

@@ -86,7 +86,7 @@ void mainStart() {
 		primitive->type = PrimitiveType::Cube;
 		primitive->colour = SDL_Color(0, 1, 0, 1);
 		Physics::CubeCollider* collider = floor->AddComponent(new Physics::CubeCollider());
-		Physics::RigidBody* pb = floor->AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layers::NON_MOVING));
+		Physics::RigidBody* pb = floor->AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layers::MOVING));
 	}
 	{
 		GameObject* cube = GameObject::Create();

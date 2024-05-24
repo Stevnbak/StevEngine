@@ -20,9 +20,9 @@ namespace StevEngine::Physics {
 		this->shape = new JPH::ScaledShape(shape, scale + this->gameObject->absScale());
 	}
 	void Collider::Destroy() {
-		///delete shape;
+		delete shape;
 		delete this;
 	}
 	//Cube collider
-	CubeCollider::CubeCollider(Utilities::Vector3d position, Utilities::Rotation3d rotation) : Collider(new JPH::BoxShape(), position, rotation) {}
+	CubeCollider::CubeCollider(Utilities::Vector3d position, Utilities::Rotation3d rotation, Utilities::Vector3d scale) : Collider(new JPH::BoxShape(Utilities::Vector3d(1,1,1)), position, rotation, scale) {}
 }
