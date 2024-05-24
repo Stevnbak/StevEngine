@@ -66,6 +66,9 @@ namespace StevEngine::Physics {
 		const uint cMaxContactConstraints = 10240;
 		//Initialize job system
 		jobSystem.Init(1024);
+		// Create default layers
+		new Layer("Moving", false);
+		new Layer("Static", true);
 		// Create the actual physics system.
 		joltSystem.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, broad_phase_layer_interface, object_vs_broadphase_layer_filter, object_vs_object_layer_filter);
 		// Set system settings

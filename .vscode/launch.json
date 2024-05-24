@@ -6,7 +6,7 @@
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/Build/bin/debug",
-			"args": ["-fsanitize=address"],
+			"args": [],
 			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}/Build/bin",
 			"environment": [],

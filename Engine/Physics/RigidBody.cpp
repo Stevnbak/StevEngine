@@ -7,7 +7,7 @@
 
 namespace StevEngine::Physics {
 	//Constructor
-	RigidBody::RigidBody(JPH::EMotionType motionType, JPH::ObjectLayer layer, float mass) {
+	RigidBody::RigidBody(JPH::EMotionType motionType, Layer* layer, float mass) {
 		this->motionType = motionType;
 		this->layer = layer;
 		this->mass = mass;
@@ -18,7 +18,7 @@ namespace StevEngine::Physics {
 		UpdateColliders();
 		//Create body
 		///delete body;
-		JPH::BodyCreationSettings bodySettings = JPH::BodyCreationSettings(shape, gameObject->position, gameObject->rotation, motionType, layer);
+		JPH::BodyCreationSettings bodySettings = JPH::BodyCreationSettings(shape, gameObject->position, gameObject->rotation, motionType, layer->id);
 		bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
 		bodySettings.mMassPropertiesOverride.mMass = mass;
 		body = physics->bodyInterface->CreateBody(bodySettings);

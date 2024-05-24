@@ -1,6 +1,6 @@
 # Compiler options
 CXX       := /usr/bin/g++-13
-CXX_FLAGS := -std=c++23 -ggdb
+CXX_FLAGS := -std=c++23 -ggdb -fsanitize=address
 # Platform
 TARGET := Linux
 # Folder paths

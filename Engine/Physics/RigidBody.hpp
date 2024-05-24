@@ -2,6 +2,7 @@
 #include <Core/GameObject.hpp>
 #include <Core/Utilities.hpp>
 #include <Physics/Colliders.hpp>
+#include <Physics/Layers.hpp>
 
 //Jolt imports
 #include <Jolt/Jolt.h>
@@ -18,7 +19,7 @@ namespace StevEngine::Physics {
 			JPH::Body* GetBody() { return body; }
 		private:
 			JPH::EMotionType motionType;
-			JPH::ObjectLayer layer;
+			Layer* layer;
 			std::vector<Collider*> colliders;
 			JPH::Body* body;
 			JPH::Ref<JPH::Shape> shape;
@@ -31,7 +32,7 @@ namespace StevEngine::Physics {
 			void Draw() {}
 			void Destroy();
 			//Constructor
-			RigidBody(JPH::EMotionType motionType, JPH::ObjectLayer layer, float mass = 1);
+			RigidBody(JPH::EMotionType motionType, Layer* layer, float mass = 1);
 			//Other functions
 			void UpdateColliders();
 	};

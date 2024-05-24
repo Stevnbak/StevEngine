@@ -1,6 +1,7 @@
 #include <Core/Engine.hpp>
 #include <Visuals/BasicComponents.hpp>
 #include <Physics/RigidBody.hpp>
+#include <Physics/Layers.hpp>
 #include <Core/ResourceManager.hpp>
 
 #include <SDL2/SDL_opengl.h>
@@ -86,7 +87,7 @@ void mainStart() {
 		primitive->type = PrimitiveType::Cube;
 		primitive->colour = SDL_Color(0, 1, 0, 1);
 		Physics::CubeCollider* collider = floor->AddComponent(new Physics::CubeCollider());
-		Physics::RigidBody* pb = floor->AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layers::MOVING));
+		Physics::RigidBody* pb = floor->AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layer::GetLayerByName("Static")));
 	}
 	{
 		GameObject* cube = GameObject::Create();
@@ -96,7 +97,7 @@ void mainStart() {
 		primitive->type = PrimitiveType::Cube;
 		primitive->colour = SDL_Color(1, 0, 0, 1);
 		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
-		Physics::RigidBody* pb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layers::MOVING));
+		Physics::RigidBody* pb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 	}
 	/**GameObject* testSphere = GameObject::Create();
 	testSphere->scale = Utilities::Vector3d(3, 3, 3); 
