@@ -1,11 +1,13 @@
-#include "Log.hpp"
 #include "GameObject.hpp"
+#include <Core/Log.hpp>
+
+#include <SDL2/SDL_opengl.h>
+
 #include <format>
 #include <map>
 #include <list>
 #include <stdexcept>
 #include <type_traits>
-#include <SDL2/SDL_opengl.h>
 #include <iostream>
 
 namespace StevEngine {

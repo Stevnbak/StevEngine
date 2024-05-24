@@ -1,9 +1,10 @@
 #include "Camera.hpp"
-#include "Engine.hpp"
-#include "Utilities.hpp"
+#include <Core/Engine.hpp>
+#include <Core/Utilities.hpp>
+#include <Core/Log.hpp>
+
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
-#include "Log.hpp"
 #include <math.h>
 using namespace StevEngine;
 using namespace StevEngine::Utilities;
@@ -16,7 +17,6 @@ void Camera::SetOptions(bool orthographic, double zoomValue, double aspectRatio)
 }
 
 void Camera::UpdateView() {
-	//Log::Normal("Updating camera view", true);
 	//Move everything else based on camera position
 	glTranslated(-gameObject->position.X, -gameObject->position.Y, -gameObject->position.Z);
 	//Rotate everything else based on camera rotation

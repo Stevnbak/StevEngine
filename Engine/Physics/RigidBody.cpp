@@ -1,18 +1,18 @@
-#include "PhysicsBody.hpp"
-#include "Physics.hpp"
+#include "RigidBody.hpp"
+#include <Physics/System.hpp>
 #include <math.h>
 #include <iostream>
-#include "Log.hpp"
-#include "Engine.hpp"
+#include <Core/Log.hpp>
+#include <Core/Engine.hpp>
 
 namespace StevEngine::Physics {
 	//Constructor
-	PhysicsBody::PhysicsBody(JPH::EMotionType motionType, JPH::ObjectLayer layer) {
+	RigidBody::RigidBody(JPH::EMotionType motionType, JPH::ObjectLayer layer) {
 		this->motionType = motionType;
 		this->layer = layer;
 	}
 	//Basic functions
-	void PhysicsBody::Start() {
+	void RigidBody::Start() {
 		//Get collider info
 		UpdateColliders();
 		//Create body
@@ -23,32 +23,32 @@ namespace StevEngine::Physics {
 		body = physics->bodyInterface->CreateBody(bodySettings);
 		physics->bodyInterface->AddBody(body->GetID(), JPH::EActivation::Activate);
 	}
-	void PhysicsBody::Update(double deltaTime) {
-		Log::Normal(std::format("Position: {},{},{}", body->GetPosition().GetX(), body->GetPosition().GetY(), body->GetPosition().GetZ()));
+	void RigidBody::Update(double deltaTime) {
+		///Log::Normal(std::format("Position: {},{},{}", body->GetPosition().GetX(), body->GetPosition().GetY(), body->GetPosition().GetZ()));
 		this->gameObject->position = body->GetPosition();
 	}
-	void PhysicsBody::Destroy() {
+	void RigidBody::Destroy() {
 		///delete this->shape;
 		///delete this->body;
 		delete this;
 	}
 	//Force functions
-	void PhysicsBody::AddForce(Utilities::Vector3d force) {
+	void RigidBody::AddForce(Utilities::Vector3d force) {
 		force.Divide(mass);
 		acceleration += force;
 	}
-	void PhysicsBody::AddImpulseForce(Utilities::Vector3d force, double time) {
+	void RigidBody::AddImpulseForce(Utilities::Vector3d force, double time) {
 		activeImpulseForces.push_back(std::pair<Utilities::Vector3d, double>(force, time));
 	}
-	void PhysicsBody::AddForceAtPoint(Utilities::Vector3d force, Utilities::Vector3d point) {
+	void RigidBody::AddForceAtPoint(Utilities::Vector3d force, Utilities::Vector3d point) {
 
 	}
-	void PhysicsBody::ResetAcceleration() {
+	void RigidBody::ResetAcceleration() {
 		acceleration = Utilities::Vector3d(0, 0, 0);
 		angularAcceleration = Utilities::Vector3d(0, 0, 0);
 	}
 	//Other functions
-	void PhysicsBody::UpdateImpulseForces(double deltaTime) {
+	void RigidBody::UpdateImpulseForces(double deltaTime) {
 		for (int i = 0; i < activeImpulseForces.size(); i++) {
 			std::pair<Utilities::Vector3d, double>* value = &activeImpulseForces[i];
 			value->second -= deltaTime;
@@ -59,7 +59,7 @@ namespace StevEngine::Physics {
 			AddForce(value->first);
 		}
 	}
-	void PhysicsBody::UpdateColliders() {
+	void RigidBody::UpdateColliders() {
 		//Find all colliders:
 		std::vector<Collider*> c = gameObject->GetAllComponents<Collider>();
 		for (int i = 0; i < gameObject->GetChildCount(); i++) {
@@ -84,10 +84,10 @@ namespace StevEngine::Physics {
 		else
 			Log::Error(result.GetError().c_str());
 	}
-	void PhysicsBody::UpdateCollisions() {
+	void RigidBody::UpdateCollisions() {
 
 	}
-	void PhysicsBody::Gravity() {
+	void RigidBody::Gravity() {
 		// Formula: F_t = m * g
 		if (isAffectedByGravity) {
 			Utilities::Vector3d gravityForce = gravityDirection.Get();
@@ -97,7 +97,7 @@ namespace StevEngine::Physics {
 			AddForce(gravityForce);
 		}
 	}
-	void PhysicsBody::Drag() {
+	void RigidBody::Drag() {
 		// Formula: F_d = 0.5 * FluidDensity * (Velocity ^ 2) * Coefficient * Area
 		Utilities::Vector3d dragForce = velocity.Get().Mult(-1); // Opposite direction to velocity
 		dragForce.Normalize();

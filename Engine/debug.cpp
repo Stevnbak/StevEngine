@@ -1,11 +1,10 @@
-#pragma comment(lib, "StevEngine")
+#include <Core/Engine.hpp>
+#include <Visuals/BasicComponents.hpp>
+#include <Physics/RigidBody.hpp>
+#include <Core/ResourceManager.hpp>
+
 #include <SDL2/SDL_opengl.h>
-#include "StevEngine.hpp"
-#include "Physics.hpp"
-#include "PhysicsBody.hpp"
-#include "Colliders.hpp"
-#include "ResourceManager.hpp"
-#include "GL/gl.h"
+#include <GL/gl.h>
 
 using namespace StevEngine;
 
@@ -87,7 +86,7 @@ void mainStart() {
 		primitive->type = PrimitiveType::Cube;
 		primitive->colour = SDL_Color(0, 1, 0, 1);
 		Physics::CubeCollider* collider = floor->AddComponent(new Physics::CubeCollider());
-		Physics::PhysicsBody* pb = floor->AddComponent(new Physics::PhysicsBody(JPH::EMotionType::Static, Physics::Layers::NON_MOVING));
+		Physics::RigidBody* pb = floor->AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layers::NON_MOVING));
 	}
 	{
 		GameObject* cube = GameObject::Create();
@@ -97,7 +96,7 @@ void mainStart() {
 		primitive->type = PrimitiveType::Cube;
 		primitive->colour = SDL_Color(1, 0, 0, 1);
 		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
-		Physics::PhysicsBody* pb = cube->AddComponent(new Physics::PhysicsBody(JPH::EMotionType::Dynamic, Physics::Layers::MOVING));
+		Physics::RigidBody* pb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layers::MOVING));
 	}
 	/**GameObject* testSphere = GameObject::Create();
 	testSphere->scale = Utilities::Vector3d(3, 3, 3); 

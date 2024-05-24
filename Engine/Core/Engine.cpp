@@ -10,35 +10,39 @@
 #include <SDL2/SDL_opengl.h>
 #include <Jolt/Jolt.h>
 //Engine
-#include "Utilities.hpp"
-#include "InputSystem.hpp"
-#include "GameObject.hpp"
-#include "Log.hpp"
-#include "ResourceManager.hpp"
-#include "Camera.hpp"
+#include <Core/Utilities.hpp>
+#include <Core/InputSystem.hpp>
+#include <Core/GameObject.hpp>
+#include <Core/Log.hpp>
+#include <Core/ResourceManager.hpp>
+#include <Physics/System.hpp>
+#include <Visuals/Camera.hpp>
 
 using namespace std;
 using namespace StevEngine::Utilities;
 using namespace StevEngine::InputSystem;
 
+//Get current process time in ms
+uint GetTime() {
+	return SDL_GetTicks();
+	/**
+	return std::round(((double)1000 / (targetFPS)) - (frameTime));
+	*/
+}
+
 namespace StevEngine {
-	int targetFPS = 60;
-	double currentFPS;
-	std::vector<long> frameTimes;
+	int targetFPS = 100;
+	double currentFPS = 0;
 	bool running = true;
-	long lastUpdateTime = clock();
 	double t = 0.0;
-	long currentTime = clock();
 
 	SDL_Window* window = NULL;
 	SDL_Event ev;
 	Physics::System* physics;
 
-	extern GLint WIDTH = 1080, HEIGHT = 720;
+	GLint WIDTH = 1080, HEIGHT = 720;
 	
 	void Tick(double deltaTime) {
-		//FPS
-		///Log::Normal(std::format("DeltaTime: {} | FPS: {}", deltaTime, currentFPS), true);
 		//Run Jolt Physics step
 		physics->Update(deltaTime);
 		//Input?
@@ -54,8 +58,7 @@ namespace StevEngine {
 	void Draw() {
 		// Clear the colorbuffer 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
-		//Drawing
+		// Drawing
 		if (ActiveCamera != nullptr) {
 			//Start cam matrix
 			glPushMatrix();
@@ -68,22 +71,9 @@ namespace StevEngine {
 			//Reset cam matrix
 			glPopMatrix();
 		}
-
-		//Refresh OpenGL window
+		// Refresh OpenGL window
 		SDL_GL_SetSwapInterval(0);
 		SDL_GL_SwapWindow(window);
-
-		//Calculate current FPS
-		long newTime = clock();
-		frameTimes.push_back(newTime);
-		if (frameTimes.size() > 50) {
-			frameTimes.erase(frameTimes.begin());
-		}
-		double frameDuration = newTime - frameTimes[0];
-		if (frameDuration != 0) currentFPS = 1000 / (frameDuration / (double)frameTimes.size());
-		else currentFPS = INFINITY;
-		///Log::Normal(std::format("Current FPS: {}; frameTime: {}; Clock: {}", std::round(currentFPS), (newTime - lastUpdateTime), clock()), true);
-		lastUpdateTime = newTime;
 	}
 
 	int StartEngine(const char* title, bool fullScreen, void (*mainUpdate)(double deltaTime), void (*mainStart)()) {
@@ -128,11 +118,8 @@ namespace StevEngine {
 		ActiveCamera->SetOptions(false, 1, 16 / 9);
 		//Main start function
 		if (mainStart) mainStart();
-		//Draw first frame
-		Draw();
-
 		//Main loop
-		lastUpdateTime = clock();
+		uint lastUpdateTime = GetTime();
 		while (running) {
 			//Reset mouse delta
 			ResetMouseDelta();
@@ -156,10 +143,10 @@ namespace StevEngine {
 								Draw();
 								break;
 							case SDL_WINDOWEVENT_ENTER:
-								Log::Normal(std::format("Mouse entered our window! Motion: {},{}", ev.motion.x, ev.motion.y));
+								Log::Normal(std::format("Mouse entered our window! Motion: {},{}", ev.motion.x, ev.motion.y), true);
 								break;
 							case SDL_WINDOWEVENT_LEAVE:
-								Log::Normal(std::format("Mouse left our window! Motion: {},{}", ev.motion.x, ev.motion.y));
+								Log::Normal(std::format("Mouse left our window! Motion: {},{}", ev.motion.x, ev.motion.y), true);
 								break;
 						}
 						break;
@@ -189,26 +176,29 @@ namespace StevEngine {
 			}
 
 			//Calculate delta time
-			long newTime = clock();
-			long frameTime = newTime - currentTime;
-			currentTime = newTime;
-			while (frameTime > 0.0)
-			{
-				double deltaTime = std::min(frameTime, (long)(targetFPS == -1 ? INFINITY : 1000 / targetFPS));
-				//Call tick
-				Tick(deltaTime / 1000);
-				//Main update callback
-				if(mainUpdate) mainUpdate(deltaTime);
-				frameTime -= deltaTime;
-				t += deltaTime;
-			}
+			uint newTime = GetTime();
+			uint frameTime = newTime - lastUpdateTime;
+			lastUpdateTime = newTime;
+
+			//Run update
+			double deltaTime = (double)frameTime / (double)1000;
+			Tick(deltaTime);
+			if(mainUpdate) mainUpdate(deltaTime);
+
 			//Draw the frame
 			Draw();
 
+			//Calculate FPS:
+			if (frameTime != 0) currentFPS = 1000 / frameTime;
+			else currentFPS = INFINITY;
+			Log::Normal(std::format("Current FPS: {}; frameTime: {}; Clock: {}", std::round(currentFPS), frameTime, newTime), true);
+
 			//Wait for next frame
-			double sleepDuration = ((double)1000 / (targetFPS)) - (frameTime);
-			if (sleepDuration < 0) sleepDuration = 0;
-			if (targetFPS != -1) SDL_Delay(sleepDuration);
+			if (targetFPS != -1) {
+				int sleepDuration = std::clamp((1000.0 / (double)targetFPS) - (double)frameTime, 0.0, (double)INFINITY);
+				if (sleepDuration < 0) sleepDuration = 0;
+				SDL_Delay(sleepDuration);
+			}
 		}
 
 		//Destroy all game objects
@@ -231,4 +221,3 @@ namespace StevEngine {
 		return 0;
 	}
 }
-

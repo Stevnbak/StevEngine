@@ -1,11 +1,11 @@
+#include "Log.hpp"
+
 #include <iostream>
 #include <fstream>
 #include <filesystem>
 #include <ctime>
 #include <algorithm>
-#include "Log.hpp"
 #include <filesystem>
-#pragma warning(disable: 4996)
 
 namespace Log {
 	//Engine log?

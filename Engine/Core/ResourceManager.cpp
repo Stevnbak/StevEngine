@@ -1,5 +1,6 @@
 #include "ResourceManager.hpp"
-#include "Log.hpp"
+#include <Core/Log.hpp>
+
 #include <filesystem>
 #include <fstream>
 #include <algorithm>
@@ -72,7 +73,7 @@ namespace StevEngine {
 		const Resource* GetResource(std::string path) {
 			for (std::pair<short, const Resource> resourcePair : resources) {
 				if (resourcePair.second.fullPath.find(path) == std::string::npos) continue;
-				return &resourcePair.second;
+				return &(&resourcePair)->second;
 			}
 			Log::Error("Resource with relative path: \"" + path + "\" not found.", true);
 			return nullptr;

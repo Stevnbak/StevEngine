@@ -1,5 +1,5 @@
-#include "Physics.hpp"
-#include "Log.hpp"
+#include "System.hpp"
+#include <Core/Log.hpp>
 
 #include <math.h>
 #include <iostream>
@@ -43,7 +43,7 @@ namespace StevEngine::Physics {
 
 	//Tick
 	void System::Update(double deltaTime) {
-		joltSystem.Update(deltaTime / 1000, 1, &tempAllocator, &jobSystem);
+		joltSystem.Update(deltaTime, 1, &tempAllocator, &jobSystem);
 	}
 
 	//Start

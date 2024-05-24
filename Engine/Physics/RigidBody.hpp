@@ -1,7 +1,7 @@
 #pragma once
-#include "GameObject.hpp"
-#include "Utilities.hpp"
-#include "Colliders.hpp"
+#include <Core/GameObject.hpp>
+#include <Core/Utilities.hpp>
+#include <Physics/Colliders.hpp>
 
 //Jolt imports
 #include <Jolt/Jolt.h>
@@ -23,7 +23,7 @@ namespace StevEngine::Physics {
 			void FreezeRotation();
 	};
 	//Physics component
-	class PhysicsBody : public Component {
+	class RigidBody : public Component {
 		//Information
 		public:
 			//Basic values
@@ -62,7 +62,7 @@ namespace StevEngine::Physics {
 			void Draw() {}
 			void Destroy();
 			//Constructor
-			PhysicsBody(JPH::EMotionType motionType, JPH::ObjectLayer layer);
+			RigidBody(JPH::EMotionType motionType, JPH::ObjectLayer layer);
 			//Force functions
 			void AddForce(Utilities::Vector3d force);
 			void AddImpulseForce(Utilities::Vector3d force, double time = 1);

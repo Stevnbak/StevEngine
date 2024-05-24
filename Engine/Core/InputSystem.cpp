@@ -1,9 +1,11 @@
-#include "Log.hpp"
-#include "Engine.hpp"
 #include "InputSystem.hpp"
-#include "GameObject.hpp"
+#include <Core/Log.hpp>
+#include <Core/Engine.hpp>
+#include <Core/GameObject.hpp>
+
 #include <SDL2/SDL.h> 
 #include <GL/glew.h>
+
 #include <map>
 #include <vector>
 

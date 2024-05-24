@@ -5,8 +5,8 @@
             "compilerPath": "/usr/bin/g++-13",
             "includePath": [
                 "${default}",
-                "${workspaceFolder}/include",
-                "${workspaceFolder}/JoltPhysics"
+                "${workspaceFolder}/Engine",
+                "${workspaceFolder}/Libraries/JoltPhysics"
             ],
             "defines": [],
             "cppStandard": "c++23",

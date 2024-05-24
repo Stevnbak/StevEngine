@@ -1,9 +1,11 @@
+#include "BasicComponents.hpp"
+#include <Core/Log.hpp>
+#include <Core/Utilities.hpp>
+
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include <math.h>
-#include "BasicVisualComponents.hpp"
-#include "Log.hpp"
-#include "Utilities.hpp"
 
 namespace StevEngine {
 	//Primitive functions

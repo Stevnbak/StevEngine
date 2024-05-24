@@ -1,11 +1,11 @@
 #pragma once
-#include "Utilities.hpp"
-#include "Log.hpp"
+#include <Core/Utilities.hpp>
+#include <Core/Log.hpp>
+#include <Core/InputSystem.hpp>
 #include <map>
 #include <vector>
 #include <any>
 #include <type_traits>
-#include "InputSystem.hpp"
 
 
 namespace StevEngine {

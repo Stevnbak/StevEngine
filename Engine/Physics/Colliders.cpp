@@ -1,6 +1,8 @@
+#include "Colliders.hpp"
+
 #include <stdexcept>
 #include <algorithm>
-#include "Colliders.hpp"
+
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
 #include <Jolt/Physics/Collision/Shape/ScaledShape.h>
