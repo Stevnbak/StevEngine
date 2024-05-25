@@ -10,15 +10,6 @@
 namespace StevEngine {
 	//Primitive functions
 
-	void DrawQuad() {
-		glBegin(GL_QUADS);
-		glVertex3f(0.5, -0.5, 0);
-		glVertex3f(0.5, 0.5, 0);
-		glVertex3f(-0.5, 0.5, 0);
-		glVertex3f(-0.5, -0.5, 0);
-		glEnd();
-	}
-
 	void DrawCube() {
 		// BACK
 		glBegin(GL_POLYGON);
@@ -61,18 +52,6 @@ namespace StevEngine {
 		glVertex3f(0.5, -0.5, 0.5);
 		glVertex3f(-0.5, -0.5, 0.5);
 		glVertex3f(-0.5, -0.5, -0.5);
-		glEnd();
-	}
-
-	void DrawCircle() {
-		int detail = 50;
-		glBegin(GL_POLYGON);
-		float anglePerStep = (2 * M_PI) / detail; //In Radians
-		for (int i = 0; i <= detail; i++)
-		{
-			float currentAngle = (anglePerStep) * i;
-			glVertex3f(0.5 * std::cos(currentAngle), 0.5 * std::sin(currentAngle), 0);
-		}
 		glEnd();
 	}
 
@@ -209,45 +188,43 @@ namespace StevEngine {
 			glEnd();
 		}
 	}
-}
 
-//Main draw function
-void StevEngine::Primitive::Draw() {
-	//Colour
-	glColor4d(colour.r, colour.g, colour.b, colour.a);
-	//Push Matrix
-	glPushMatrix();
-	//Rotation
-	rotation.OpenGLRotate();
-	//Position
-	glTranslated(position.X, position.Y, position.Z);
-	//Scale
-	glScaled(scale.X, scale.Y, scale.Z);
-	//Draw primitive
-	switch (type) {
-	case PrimitiveType::Quad:
-		DrawQuad();
-		break;
-	case PrimitiveType::Cube:
-		DrawCube();
-		break;
-	case PrimitiveType::Circle:
-		DrawCircle();
-		break;
-	case PrimitiveType::Sphere:
-		DrawSphere();
-		break;
-	case PrimitiveType::Cylinder:
-		DrawCylinder();
-		break;
-	case PrimitiveType::Capsule:
-		DrawCapsule();
-		break;
-	default:
-		break;
+	//Constructor
+	Primitive::Primitive(PrimitiveType type) {
+		this->type = type;
 	}
 
-	//Pop matrix
-	glPopMatrix();
+	//Main draw function
+	void Primitive::Draw() {
+		//Colour
+		glColor4d(colour.r, colour.g, colour.b, colour.a);
+		//Push Matrix
+		glPushMatrix();
+		//Rotation
+		rotation.OpenGLRotate();
+		//Position
+		glTranslated(position.X, position.Y, position.Z);
+		//Scale
+		glScaled(scale.X, scale.Y, scale.Z);
+		//Draw primitive
+		switch (type) {
+		case PrimitiveType::Cube:
+			DrawCube();
+			break;
+		case PrimitiveType::Sphere:
+			DrawSphere();
+			break;
+		case PrimitiveType::Cylinder:
+			DrawCylinder();
+			break;
+		case PrimitiveType::Capsule:
+			DrawCapsule();
+			break;
+		default:
+			break;
+		}
 
+		//Pop matrix
+		glPopMatrix();
+	}
 }

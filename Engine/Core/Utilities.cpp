@@ -83,6 +83,11 @@ namespace StevEngine {
 			Z = other.GetZ();
 			return *this;
 		}
+		Vector3d::Vector3d (const JPH::Vec3& other) {
+			X = other.GetX();
+			Y = other.GetY();
+			Z = other.GetZ();
+		}
 
 #pragma endregion
 		//Vector2d
@@ -159,7 +164,7 @@ namespace StevEngine {
 		void Rotation3d::OpenGLRotate() {
 			glRotated(yaw, 0, 1, 0);
 			glRotated(pitch, 1, 0, 0);
-			glRotated(roll, 0, 0, 1);
+			glRotated(roll, 0, 0, -1);
 		}
 		Vector3d Rotation3d::forward() {
 			Vector3d direction (

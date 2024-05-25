@@ -5,15 +5,14 @@
 namespace StevEngine {
 	enum PrimitiveType {
 		None,
-		Quad,
 		Cube,
-		Circle,
 		Sphere,
 		Cylinder,
 		Capsule
 	};
 	class Primitive : public Component {
 		public:
+			Primitive(PrimitiveType type);
 			void Update(double deltaTime) {}
 			void Draw();
 			void Start() {}

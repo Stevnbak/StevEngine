@@ -80,52 +80,33 @@ void mainStart() {
 	glClearColor(0, 0, 0, 1);
 	//Create test objects
 	{
-		GameObject* floor = GameObject::Create();
-		floor->scale = Utilities::Vector3d(10, 1, 10);
-		floor->position = Utilities::Vector3d(0, -1, 0);
-		Primitive* primitive = floor->AddComponent(new Primitive());
-		primitive->type = PrimitiveType::Cube;
+		GameObject* floor = GameObject::Create("Cube", Utilities::Vector3d(0, -1, 0), Utilities::Rotation3d(0,0,0), Utilities::Vector3d(10, 1, 10));
+		Primitive* primitive = floor->AddComponent(new Primitive(PrimitiveType::Cube));
 		primitive->colour = SDL_Color(0, 1, 0, 1);
 		Physics::CubeCollider* collider = floor->AddComponent(new Physics::CubeCollider());
-		Physics::RigidBody* pb = floor->AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layer::GetLayerByName("Static")));
+		Physics::RigidBody* rb = floor->AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layer::GetLayerByName("Static")));
 	}
 	{
-		GameObject* cube = GameObject::Create();
-		cube->scale = Utilities::Vector3d(1, 1, 1);
-		cube->position = Utilities::Vector3d(0, 2, 0);
-		Primitive* primitive = cube->AddComponent(new Primitive());
-		primitive->type = PrimitiveType::Cube;
+		GameObject* cube = GameObject::Create("Cube", Utilities::Vector3d(0, 4, 0), Utilities::Rotation3d(), Utilities::Vector3d(1, 2, 1));
+		Primitive* primitive = cube->AddComponent(new Primitive(PrimitiveType::Cube));
 		primitive->colour = SDL_Color(1, 0, 0, 1);
 		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
-		Physics::RigidBody* pb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		Physics::RigidBody* rb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 	}
-	/**GameObject* testSphere = GameObject::Create();
-	testSphere->scale = Utilities::Vector3d(3, 3, 3); 
-	testSphere->position = Utilities::Vector3d(2, 1, -1);
-	Primitive* sphere = testSphere->AddComponent<Primitive>();
-	sphere->type = PrimitiveType::Sphere;
-	sphere->colour = SDL_Color(1, 0, 0, 1);
-	GameObject* testCylinder = GameObject::Create(); 
-	testCylinder->scale = Utilities::Vector3d(1, 1, 3); 
-	testCylinder->position = Utilities::Vector3d(1, 2, 3);
-	testCylinder->rotation = Utilities::Rotation3d(45,0,0);
-	Primitive* cylinder = testCylinder->AddComponent<Primitive>();
-	cylinder->type = PrimitiveType::Cylinder;
-	cylinder->colour = SDL_Color(0, 0, 1, 1);
-	GameObject* testCapsule = GameObject::Create();
-	testCapsule->scale = Utilities::Vector3d(1, 1, 2);
-	testCapsule->position = Utilities::Vector3d(-4, -2, 1);
-	testCapsule->rotation = Utilities::Rotation3d(-90, 0, 0);
-	Primitive* capsule = testCapsule->AddComponent<Primitive>();
-	capsule->type = PrimitiveType::Capsule;
-	capsule->colour = SDL_Color(0, 1, 1, 1);
-	GameObject* testQuad = GameObject::Create(); 
-	testQuad->scale = Utilities::Vector3d(2, 2, 1);
-	testQuad->position = Utilities::Vector3d(-5, 0, 5);
-	Primitive* quad = testQuad->AddComponent<Primitive>();
-	quad->type = PrimitiveType::Quad;
-	quad->colour = SDL_Color(1, 1, 0, 1);*/
-
+	{
+		GameObject* sphere = GameObject::Create("Sphere", Utilities::Vector3d(3, 3, 0));
+		Primitive* primitive = sphere->AddComponent(new Primitive(PrimitiveType::Sphere));
+		primitive->colour = SDL_Color(1, 0, 0, 1);
+		Physics::Collider* collider = sphere->AddComponent(new Physics::SphereCollider());
+		Physics::RigidBody* rb = sphere->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+	}
+	{
+		GameObject* sphere = GameObject::Create("Cylinder", Utilities::Vector3d(0, 3, 3));
+		Primitive* primitive = sphere->AddComponent(new Primitive(PrimitiveType::Cylinder));
+		primitive->colour = SDL_Color(0, 0, 1, 1);
+		Physics::Collider* collider = sphere->AddComponent(new Physics::CylinderCollider());
+		Physics::RigidBody* rb = sphere->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+	}
 	//Add Camera controller
 	///ActiveCamera->gameObject->AddComponent(new CameraController());
 	ActiveCamera->gameObject->position = Utilities::Vector3d(0, 5, 10);

@@ -25,7 +25,7 @@ namespace StevEngine::Physics {
 	}
 
 	void RigidBody::Update(double deltaTime) {
-		if(body->GetMotionType() != JPH::EMotionType::Static || true) {
+		if(body->GetMotionType() != JPH::EMotionType::Static) {
 			Log::Normal(std::format("Position: {},{},{}; JoltCenterPosition: {},{},{}", this->gameObject->position.X, this->gameObject->position.Y, this->gameObject->position.Z, body->GetCenterOfMassPosition().GetX(), body->GetCenterOfMassPosition().GetY(), body->GetCenterOfMassPosition().GetZ()));
 			this->gameObject->position = body->GetWorldSpaceBounds().GetCenter();
 		}

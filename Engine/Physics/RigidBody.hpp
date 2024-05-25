@@ -15,6 +15,7 @@ namespace StevEngine::Physics {
 	class RigidBody : public Component {
 		//Information
 		public:
+			bool unique = true;
 			//Basic values
 			JPH::Body* GetBody() { return body; }
 		private:

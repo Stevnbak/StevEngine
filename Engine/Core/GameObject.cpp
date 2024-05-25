@@ -147,6 +147,6 @@ namespace StevEngine {
 		gameObject = object;
 	}
 	void Component::Destroy() {
-		delete this;
+		//delete this;
 	}
 }

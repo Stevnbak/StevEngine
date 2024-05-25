@@ -27,6 +27,7 @@ namespace StevEngine {
 				operator Vector2d();
 				operator JPH::Vec3();
 				Vector3d& operator= (const JPH::Vec3& other);
+				Vector3d(const JPH::Vec3& other);
 				//Operators
 				Vector3d operator+(const Vector3d& other) const;
 				Vector3d operator-(const Vector3d& other) const;
