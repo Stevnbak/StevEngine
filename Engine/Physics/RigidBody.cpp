@@ -17,8 +17,7 @@ namespace StevEngine::Physics {
 		//Get collider info
 		UpdateColliders();
 		//Create body
-		///delete body;
-		JPH::BodyCreationSettings bodySettings = JPH::BodyCreationSettings(shape, gameObject->position, gameObject->rotation, motionType, layer->id);
+		JPH::BodyCreationSettings bodySettings = JPH::BodyCreationSettings(shape, gameObject->absPosition() - shape->GetCenterOfMass(), gameObject->absRotation(), motionType, layer->id);
 		bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
 		bodySettings.mMassPropertiesOverride.mMass = mass;
 		body = physics->bodyInterface->CreateBody(bodySettings);
@@ -26,9 +25,9 @@ namespace StevEngine::Physics {
 	}
 
 	void RigidBody::Update(double deltaTime) {
-		if(body->GetMotionType() != JPH::EMotionType::Static) {
-			///Log::Normal(std::format("Position: {},{},{}", body->GetPosition().GetX(), body->GetPosition().GetY(), body->GetPosition().GetZ()));
-			this->gameObject->position = body->GetPosition();
+		if(body->GetMotionType() != JPH::EMotionType::Static || true) {
+			Log::Normal(std::format("Position: {},{},{}; JoltCenterPosition: {},{},{}", this->gameObject->position.X, this->gameObject->position.Y, this->gameObject->position.Z, body->GetCenterOfMassPosition().GetX(), body->GetCenterOfMassPosition().GetY(), body->GetCenterOfMassPosition().GetZ()));
+			this->gameObject->position = body->GetWorldSpaceBounds().GetCenter();
 		}
 	}
 
