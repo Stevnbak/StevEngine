@@ -1,10 +1,10 @@
-[submodule "Libraries/JoltPhysics"]
-	path = Libraries/JoltPhysics
+[submodule "libs/JoltPhysics"]
+	path = libs/JoltPhysics
 	url = https://github.com/jrouwe/JoltPhysics.git
-[submodule "Libraries/SDL2"]
-	path = Libraries/SDL2
+[submodule "libs/SDL2"]
+	path = libs/SDL2
 	url = https://github.com/libsdl-org/SDL.git
 	branch = SDL2
-[submodule "Libraries/GLEW"]
-	path = Libraries/GLEW
+[submodule "libs/GLEW"]
+	path = libs/GLEW
 	url = https://github.com/nigels-com/glew.git

@@ -6,9 +6,9 @@
             "includePath": [
                 "${default}",
                 "${workspaceFolder}/src",
-                "${workspaceFolder}/Libraries/JoltPhysics",
-                "${workspaceFolder}/Libraries/SDL2/include",
-                "${workspaceFolder}/Libraries/GLEW/include"
+                "${workspaceFolder}/libs/JoltPhysics",
+                "${workspaceFolder}/libs/SDL2/include",
+                "${workspaceFolder}/libs/GLEW/include"
             ],
             "defines": [],
             "cppStandard": "c++23",
