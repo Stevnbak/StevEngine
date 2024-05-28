@@ -1,9 +1,21 @@
 {
 	"tasks": [
 		{
+            "label": "debug",
+            "type": "shell",
+            "command": "make debug",
+            "options": {
+                "cwd": "${workspaceFolder}/Build"
+            },
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        },
+        {
             "label": "build",
             "type": "shell",
-            "command": "make",
+            "command": "make build",
             "options": {
                 "cwd": "${workspaceFolder}/Build"
             },

@@ -2,7 +2,7 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "C/C++: build and debug",
+			"name": "C/C++: debug",
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/Build/bin/debug",
@@ -20,7 +20,7 @@
 					"ignoreFailures": true
 				}
 			],
-			"preLaunchTask": "build"
+			"preLaunchTask": "debug"
 		}
 	]
 }
