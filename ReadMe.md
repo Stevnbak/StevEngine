@@ -1,23 +1,23 @@
 # StevEngine
 Custom game engine written in C++
 
-# Setup (linux)
+# Setup & Build (linux)
 
-Requires SDL2 and GLEW installed as system libraries
-```sh
-sudo apt-get install libsdl2-dev
-```
-```sh
-sudo apt-get install libglew-dev
+Clone and update submodules by running:
+```shell
+git submodule init
+git submodule update
 ```
 
-Requires JoltPhysics to be built first, see [JoltPhysics Documentation](https://github.com/jrouwe/JoltPhysics/blob/master/Build/README.md#building).
-Use these options in thee .sh or .bat (for example in JoltPhysics/Build/cmake_linux_clang_gcc.sh) file: `-DGENERATE_DEBUG_SYMBOLS=ON -DDEBUG_RENDERER_IN_DEBUG_AND_RELEASE=OFF -DPROFILER_IN_DEBUG_AND_RELEASE=OFF -DENABLE_OBJECT_STREAM=OFF`
-Full example command from project root: `cd Libraries/JoltPhysics/Build && ./cmake_linux_clang_gcc.sh Debug /usr/bin/g++-13 && cd Linux_Debug && make -j 8 && ./UnitTests`
+Build SDL2, GLEW and JoltPhysics by running the shell script in Build.
 
-And update MakeFile to match current build target.
+Please note:
+- *SDL2 and GLEW requires sudo privileges to install files in `/usr/local`*
+- *GLEW requires some build tools and OpenGL libraries to be installed, see more [here](https://github.com/nigels-com/glew/tree/glew-2.2.0?tab=readme-ov-file#linux-and-mac)*
+- *GLEW requires python to be installed, set the python installation name in `Build/linux_libraries.sh` to match your installation*
+```shell
+cd Build
+./linux_libraries.sh
+```
 
-## Useful links
-* https://www.gamedesigning.org/learn/make-a-game-engine/
-* https://www.gamedeveloper.com/blogs/how-to-make-your-own-c-game-engine
-* https://medium.com/geekculture/how-to-make-your-own-game-engine-and-why-ddf0acbc5f3
+Finally build StevEngine by running `make build` in the `Build`folder.

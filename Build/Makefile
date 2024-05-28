@@ -1,18 +1,20 @@
 # Compiler options
-CXX       := /usr/bin/g++-13
-CXX_FLAGS := -std=c++23 -ggdb -fsanitize=address
+CXX       			:= /usr/bin/g++-13
+CXX_FLAGS 			:= -std=c++23
+DEBUG_FLAGS			:= -ggdb -fsanitize=address
 # Folder paths
-ROOT	:= ../
-BIN     := bin
-OBJ 	:= obj
-LIB 	:= lib
-SRC     := Engine
+ROOT				:= ../
+BIN     			:= bin
+OBJ 				:= obj
+LIB 				:= lib
+SRC     			:= Engine
 # Libraries
-LIBS   := `sdl2-config --cflags --libs` -lGLEW -lGLU -lGL -L${ROOT}Libraries/JoltPhysics/Build/Linux_Debug -lJolt
-LIB_INCLUDE := -I${ROOT}Libraries/JoltPhysics
+LIBDIR 				:= ${ROOT}Libraries
+LIBS   				:= $(LIBDIR)/JoltPhysics/Build/Linux_Debug/libJolt.a $(LIBDIR)/SDL2/build/build/.libs/libSDL2.a $(LIBDIR)/GLEW/lib/libGLEW.a -lGL
+LIBS_INCLUDE 		:= -I$(LIBDIR)/JoltPhysics -I$(LIBDIR)/SDL2/include -I$(LIBDIR)/GLEW/include
 # Executable
-DEBUG_EXECUTABLE  := debug
-LIB_NAME := StevEngine
+DEBUG_EXECUTABLE	:= debug
+LIB_NAME			:= StevEngine
 
 
 
@@ -30,17 +32,17 @@ build: $(LIB)/$(LIB_NAME).a
 # Link to debug executable
 $(BIN)/$(DEBUG_EXECUTABLE): $(OBJS)
 	$(dir_guard)
-	$(CXX) $(CXX_FLAGS) -o $@ $^ -I${ROOT}$(SRC) $(LIBS) $(LIB_INCLUDE)
+	$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) -o $@ $^ -I${ROOT}$(SRC) $(LIBS) $(LIBS_INCLUDE)
 
 # Link to library archive
 $(LIB)/$(LIB_NAME).a: $(OBJS)
 	$(dir_guard)
-	ar -r $@ $^
+	ar -r $@ $^ $(LIBS)
 
 # Compile objects
 $(OBJ)/%.o: ${ROOT}$(SRC)/%.cpp
 	$(dir_guard)
-	$(CXX) $(CXX_FLAGS) -c $< -o $@ -I${ROOT}$(SRC) $(LIBS) $(LIB_INCLUDE)
+	$(CXX) $(CXX_FLAGS) -c $< -o $@ -I${ROOT}$(SRC) $(LIBS_INCLUDE)
 
 # Clean command
 clean:
