@@ -1,7 +1,7 @@
 #pragma once
-#include <Core/Utilities.hpp>
-#include <Core/Log.hpp>
-#include <Core/InputSystem.hpp>
+#include <core/Utilities.hpp>
+#include <core/Log.hpp>
+#include <core/InputSystem.hpp>
 #include <map>
 #include <vector>
 #include <any>

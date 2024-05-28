@@ -1,5 +1,5 @@
 #include "GameObject.hpp"
-#include <Core/Log.hpp>
+#include <core/Log.hpp>
 
 #include <SDL2/SDL_opengl.h>
 

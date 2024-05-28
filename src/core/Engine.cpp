@@ -10,13 +10,13 @@
 #include <SDL2/SDL_opengl.h>
 #include <Jolt/Jolt.h>
 //Engine
-#include <Core/Utilities.hpp>
-#include <Core/InputSystem.hpp>
-#include <Core/GameObject.hpp>
-#include <Core/Log.hpp>
-#include <Core/ResourceManager.hpp>
-#include <Physics/System.hpp>
-#include <Visuals/Camera.hpp>
+#include <core/Utilities.hpp>
+#include <core/InputSystem.hpp>
+#include <core/GameObject.hpp>
+#include <core/Log.hpp>
+#include <core/ResourceManager.hpp>
+#include <physics/System.hpp>
+#include <visuals/Camera.hpp>
 
 using namespace std;
 using namespace StevEngine::Utilities;
@@ -43,7 +43,7 @@ namespace StevEngine {
 	GLint WIDTH = 1080, HEIGHT = 720;
 	
 	void Tick(double deltaTime) {
-		//Run Jolt Physics step
+		//Run Jolt physics step
 		physics->Update(deltaTime);
 		//Input?
 		InputSystem::Update(deltaTime);

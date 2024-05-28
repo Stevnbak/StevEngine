@@ -1,7 +1,7 @@
 #include "Camera.hpp"
-#include <Core/Engine.hpp>
-#include <Core/Utilities.hpp>
-#include <Core/Log.hpp>
+#include <core/Engine.hpp>
+#include <core/Utilities.hpp>
+#include <core/Log.hpp>
 
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>

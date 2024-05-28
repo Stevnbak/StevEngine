@@ -1,5 +1,5 @@
 #include "ResourceManager.hpp"
-#include <Core/Log.hpp>
+#include <core/Log.hpp>
 
 #include <filesystem>
 #include <fstream>

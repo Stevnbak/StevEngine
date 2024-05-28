@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL2/SDL.h>
-#include <Core/Utilities.hpp>
-#include <Core/GameObject.hpp>
+#include <core/Utilities.hpp>
+#include <core/GameObject.hpp>
 namespace StevEngine {
 	enum PrimitiveType {
 		None,

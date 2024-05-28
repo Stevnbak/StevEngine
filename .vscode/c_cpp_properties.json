@@ -5,7 +5,7 @@
             "compilerPath": "/usr/bin/g++-13",
             "includePath": [
                 "${default}",
-                "${workspaceFolder}/Engine",
+                "${workspaceFolder}/src",
                 "${workspaceFolder}/Libraries/JoltPhysics",
                 "${workspaceFolder}/Libraries/SDL2/include",
                 "${workspaceFolder}/Libraries/GLEW/include"

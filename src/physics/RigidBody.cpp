@@ -1,9 +1,9 @@
 #include "RigidBody.hpp"
-#include <Physics/System.hpp>
+#include <physics/System.hpp>
 #include <math.h>
 #include <iostream>
-#include <Core/Log.hpp>
-#include <Core/Engine.hpp>
+#include <core/Log.hpp>
+#include <core/Engine.hpp>
 
 namespace StevEngine::Physics {
 	//Constructor

@@ -1,5 +1,5 @@
 #include "Utilities.hpp"
-#include <Core/Log.hpp>
+#include <core/Log.hpp>
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <SDL2/SDL_opengl.h>

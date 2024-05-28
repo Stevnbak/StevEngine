@@ -1,8 +1,8 @@
 #pragma once
-#include <Core/GameObject.hpp>
-#include <Core/Utilities.hpp>
-#include <Physics/Colliders.hpp>
-#include <Physics/Layers.hpp>
+#include <core/GameObject.hpp>
+#include <core/Utilities.hpp>
+#include <physics/Colliders.hpp>
+#include <physics/Layers.hpp>
 
 //Jolt imports
 #include <Jolt/Jolt.h>
@@ -11,7 +11,7 @@
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 
 namespace StevEngine::Physics {
-	//Physics component
+	//physics component
 	class RigidBody : public Component {
 		//Information
 		public:

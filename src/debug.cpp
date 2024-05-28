@@ -1,8 +1,8 @@
-#include <Core/Engine.hpp>
-#include <Visuals/BasicComponents.hpp>
-#include <Physics/RigidBody.hpp>
-#include <Physics/Layers.hpp>
-#include <Core/ResourceManager.hpp>
+#include <core/Engine.hpp>
+#include <visuals/BasicComponents.hpp>
+#include <physics/RigidBody.hpp>
+#include <physics/Layers.hpp>
+#include <core/ResourceManager.hpp>
 
 #include <SDL2/SDL_opengl.h>
 #include <GL/gl.h>

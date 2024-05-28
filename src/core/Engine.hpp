@@ -1,6 +1,6 @@
 #pragma once
-#include <Visuals/Camera.hpp>
-#include <Physics/System.hpp>
+#include <visuals/Camera.hpp>
+#include <physics/System.hpp>
 
 namespace StevEngine {
 	extern int targetFPS;

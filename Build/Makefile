@@ -7,7 +7,7 @@ ROOT				:= ../
 BIN     			:= bin
 OBJ 				:= obj
 LIB 				:= lib
-SRC     			:= Engine
+SRC     			:= src
 # Libraries
 LIBDIR 				:= ${ROOT}Libraries
 LIBS   				:= $(LIBDIR)/JoltPhysics/Build/Linux_Debug/libJolt.a $(LIBDIR)/SDL2/build/build/.libs/libSDL2.a $(LIBDIR)/GLEW/lib/libGLEW.a -lGL

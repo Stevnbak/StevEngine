@@ -1,6 +1,6 @@
 #pragma once
-#include <Core/GameObject.hpp>
-#include <Core/Utilities.hpp>
+#include <core/GameObject.hpp>
+#include <core/Utilities.hpp>
 //Jolt:
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Collision/Shape/Shape.h>

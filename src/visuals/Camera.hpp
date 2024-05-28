@@ -1,6 +1,6 @@
 #pragma once
-#include <Core/Utilities.hpp>
-#include <Core/GameObject.hpp>
+#include <core/Utilities.hpp>
+#include <core/GameObject.hpp>
 using namespace StevEngine::Utilities;
 
 namespace StevEngine {

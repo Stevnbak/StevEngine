@@ -1,5 +1,5 @@
 #include "System.hpp"
-#include <Core/Log.hpp>
+#include <core/Log.hpp>
 
 #include <math.h>
 #include <iostream>
@@ -53,7 +53,7 @@ namespace StevEngine::Physics {
 		// Install trace and assert callbacks
 		Trace = TraceImpl;
 		JPH_IF_ENABLE_ASSERTS(AssertFailed = AssertFailedImpl;)
-		// Create a factory and register Jolt Physics Types
+		// Create a factory and register Jolt physics Types
 		Factory::sInstance = new Factory();
 		RegisterTypes();
 		// This is the max amount of rigid bodies that you can add to the physics system. If you try to add more you'll get an error.

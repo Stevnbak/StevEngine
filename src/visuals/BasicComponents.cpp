@@ -1,6 +1,6 @@
 #include "BasicComponents.hpp"
-#include <Core/Log.hpp>
-#include <Core/Utilities.hpp>
+#include <core/Log.hpp>
+#include <core/Utilities.hpp>
 
 
 #include <SDL2/SDL.h>
