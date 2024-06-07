@@ -5,7 +5,7 @@
             "type": "shell",
             "command": "make debug",
             "options": {
-                "cwd": "${workspaceFolder}/Build"
+                "cwd": "${workspaceFolder}/build"
             },
             "group": {
                 "kind": "test",
@@ -17,7 +17,7 @@
             "type": "shell",
             "command": "make build",
             "options": {
-                "cwd": "${workspaceFolder}/Build"
+                "cwd": "${workspaceFolder}/build"
             },
             "group": {
                 "kind": "build",

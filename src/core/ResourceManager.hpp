@@ -1,32 +1,43 @@
 #pragma once
 #include <string>
+#include <filesystem>
+#include <fstream>
+#include <algorithm>
 #include <map>
 #include <vector>
 namespace StevEngine {
 	namespace ResourceManager {
-		class Resource;
-		extern std::string resourcePath;
-		extern std::map<short, const Resource> resources;
-		void RefreshMetadata();
-		const Resource* GetResource(short id);
-		const Resource* GetResource(std::string path);
-
 		class Resource {
 			public:
-				const short id;
-				std::string fullPath;
+				const ushort id;
+				const std::string path;
+				std::vector<char> data;
 				Resource();
-				Resource(std::string path);
-				Resource(std::string path, short oldId);
+				Resource(std::string path, std::vector<char> data);
 			private:
-				static short currentId;
-				static short GetNewId();
+				static ushort currentId;
 		};
 
-		//Read file functions
-		std::string ReadTextFile(const Resource* file);
-		void ReadJsonFile(const Resource* file);
-		void ReadXmlFile(const Resource* file);
-		std::vector<std::vector<std::string>> ReadCsvFile(const Resource* file);
+		class ResourceSystem {
+			public:
+				ResourceSystem(std::string resourcePath);
+				Resource GetFile(ushort id) const;
+				Resource GetFile(std::string path) const;
+				const std::string resourcePath;
+			private:
+				std::map<short, const Resource> resources;
+				std::map<std::string, short> pathToId;
+		};
+
+		//Helper functions
+
+		constexpr std::string DataToText(std::vector<char> data) {
+			return std::string(data.begin(), data.end());
+		}
 	}
 }
+
+/* TODO:
+[] Read all asset files
+[] Be able to get file-data
+*/

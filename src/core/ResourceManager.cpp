@@ -1,133 +1,48 @@
 #include "ResourceManager.hpp"
-#include <core/Log.hpp>
 
 #include <filesystem>
 #include <fstream>
 #include <algorithm>
 #include <string>
+#include <stdio.h>
+#include <string.h>
 namespace fs = std::filesystem;
+
+static std::vector<char> ReadAllBytes(char const* filename)
+{
+	std::ifstream ifs(filename, std::ios::binary|std::ios::ate);
+	std::ifstream::pos_type pos = ifs.tellg();
+	std::vector<char>  result(pos);
+	ifs.seekg(0, std::ios::beg);
+	ifs.read(&result[0], pos);
+	return result;
+}
 
 namespace StevEngine {
 	namespace ResourceManager {
-		std::string resourcePath = fs::absolute("./Resources").generic_string();
-		std::map<short, const Resource> resources = std::map<short, const Resource>();
-		void RefreshMetadata() {
-			std::string metaDataPath = resourcePath + "/meta.data";
-			//Read already established meta data
-			std::string metaDataText = "";
-			if (fs::exists(metaDataPath)) std::ifstream(metaDataPath) >> metaDataText;
-			Log::Normal(metaDataText);
-			//Add files to resources from meta data
-			std::string str;
-			std::stringstream ss(metaDataText);
-			std::vector<std::string> metaFiles;
-			while (std::getline(ss, str, '\n')) {
-				std::string idStr, pathStr;
-				std::stringstream sss(str);
-				std::getline(sss, idStr, ';');
-				std::getline(sss, pathStr, ';');
-				short id = stoi(idStr);
-				std::string fullPath = fs::absolute("./Resources" + pathStr).generic_string();
-				Log::Normal("Full path: " + fullPath + " Id: " + idStr + " Exists: " + std::format("{}", fs::exists(fullPath)), true);
-				if (fs::exists(fullPath)) {
-					const Resource resource(fullPath, id);
-					resources.insert({ resource.id, resource });
-					metaFiles.push_back(fullPath);
-					Log::Normal("Resource (from meta.data): " + resource.fullPath, true);
-				}
-				else {
-					Log::Error(std::format("File ({}) from meta.data, has been deleted or moved.", fullPath));
-				}
-			}
-			//Go through all files directory and add new ones to meta data
+		//Create resource system by reading all files
+		ResourceSystem::ResourceSystem(std::string resourcePath) : resourcePath(resourcePath) {
+			resources = std::map<short, const Resource>();
+			std::filesystem::create_directories(resourcePath);
 			for (const auto& entry : fs::directory_iterator(resourcePath)) {
 				std::string fullPath = fs::absolute(entry.path()).generic_string();
-				if (fullPath.find("/meta.data") != std::string::npos) continue;
-				if (std::find(metaFiles.begin(), metaFiles.end(), fullPath) != metaFiles.end()) continue;
-                ///std::ifstream myData(entry.path().generic_string(), std::ios::binary);
-                ///std::filebuf* data = myData.rdbuf();
-				const Resource resource (fs::absolute(entry.path()).generic_string());
+                std::vector<char> data = ReadAllBytes(entry.path().c_str());
+				const Resource resource (fs::relative(fullPath, resourcePath).generic_string(), data);
 				resources.insert({ resource.id, resource });
-				Log::Normal("Resource (from file): " + resource.fullPath, true);
+				pathToId.insert({ resource.path, resource.id });
 			}
-			//Update meta data based on resources
-			std::string newMetaDataText = "";
-			for (std::pair<short, const Resource> resourcePair : resources) {
-				std::string s = resourcePair.second.fullPath;
-				s.replace(s.begin(), s.begin() + resourcePath.length(), "");
-				newMetaDataText += std::format("{};{}\n", resourcePair.second.id, s);
-			}
-			std::ofstream outputFile(metaDataPath);
-			outputFile.write(newMetaDataText.c_str(), newMetaDataText.size());
+		}
+		//Get file
+		Resource ResourceSystem::GetFile(ushort id) const {
+			return resources.at(id);
+		}
+		Resource ResourceSystem::GetFile(std::string path) const {
+			return resources.at(pathToId.at(path));
 		}
 
-		const Resource* GetResource(short id) {
-			if (resources.find(id) == resources.end()) {
-				Log::Error(std::format("Resource with id: \"{}\" not found.", id), true);
-				return nullptr;
-			}
-			else {
-				return &resources[id];
-			}
-		}
-		const Resource* GetResource(std::string path) {
-			for (std::pair<short, const Resource> resourcePair : resources) {
-				if (resourcePair.second.fullPath.find(path) == std::string::npos) continue;
-				return &(&resourcePair)->second;
-			}
-			Log::Error("Resource with relative path: \"" + path + "\" not found.", true);
-			return nullptr;
-		}
+		ushort Resource::currentId = 0;
 
-		short Resource::currentId = 0;
-		short Resource::GetNewId() {
-			short id = -1;
-			while (id == -1) {
-				if (resources.count(Resource::currentId) != 1) {
-					id = Resource::currentId++;
-				}
-			};
-			return id;
-		}
-		Resource::Resource() : id(-1) {
-			fullPath = "";
-		}
-		Resource::Resource(std::string path) : id(GetNewId()) {
-			fullPath = path;
-		}
-		Resource::Resource(std::string path, short oldId) : id(oldId) {
-			fullPath = path;
-		}
-
-		//Read file functions
-		std::string ReadTextFile(const Resource* file) {
-			std::string output = "";
-			std::ifstream(file->fullPath) >> output;
-			return output;
-		}
-		std::vector<std::vector<std::string>> ReadCsvFile(const Resource* file, char delim) {
-			//Read as text
-			std::string input = ReadTextFile(file);
-			//Split per line
-			std::stringstream ss(input);
-			std::string currentLine;
-			std::vector<std::vector<std::string>> output;
-			while (std::getline(ss, currentLine, '\n')) {
-				std::stringstream lineStream(currentLine);
-				std::string currentValue;
-				std::vector<std::string> values;
-				while (std::getline(lineStream, currentValue, delim)) {
-					values.push_back(currentValue);
-				}
-				output.push_back(values);
-			}
-			return output;
-		}
-		void ReadJsonFile(const Resource* file) {
-			
-		}
-		void ReadXmlFile(const Resource* file) {
-
-		}
+		Resource::Resource(std::string path, std::vector<char> data) : id(Resource::currentId++), path(path), data(data) {}
+		Resource::Resource() : id(Resource::currentId++), path("") {}
 	}
 }

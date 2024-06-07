@@ -74,6 +74,7 @@ void mainUpdate(double deltaTime) {
 	ActiveCamera->gameObject->rotation.roll = 0;
 }
 
+const ResourceManager::ResourceSystem resourceSystem = ResourceManager::ResourceSystem(std::filesystem::absolute("./assets").generic_string());
 
 void mainStart() {
 	Log::Normal("Main start");
@@ -112,13 +113,16 @@ void mainStart() {
 	ActiveCamera->gameObject->position = Utilities::Vector3d(0, 5, 10);
 	ActiveCamera->gameObject->rotation = Utilities::Rotation3d(0, 0, 0);
 
-	//Resource manager test
-	///const ResourceManager::Resource* res = ResourceManager::GetResource(4);
+	//Test ressource manager
+	Log::Normal(std::format("Ressource path: {}", resourceSystem.resourcePath));
+	Log::Normal(std::format("Ressource 0: {}", resourceSystem.GetFile(0).path));
+	Log::Normal(std::format("Ressource \"test.txt\": {}", ResourceManager::DataToText(resourceSystem.GetFile("test.txt").data)));
 
 	//End
 	Log::Normal("Main start end");
 }
 
 int main(int argc, char** argv) {
+	//Start engine
 	return StartEngine("StevnGame", false, mainUpdate, mainStart);
 }
