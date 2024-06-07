@@ -92,7 +92,7 @@ namespace StevEngine::InputSystem {
 		else {
 			SDL_SetRelativeMouseMode(SDL_FALSE);
 		}
-		SDL_SetWindowGrab(window, cursorMode == CursorMode::Confined ? SDL_TRUE : SDL_FALSE);
+		SDL_SetWindowGrab(Engine::Instance->window, cursorMode == CursorMode::Confined ? SDL_TRUE : SDL_FALSE);
 		SDL_ShowCursor(cursorVisible ? SDL_ENABLE : SDL_DISABLE);
 	}
 }

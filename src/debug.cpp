@@ -71,13 +71,14 @@ void mainUpdate(double deltaTime) {
 	Utilities::Vector3d up = testQ.up();
 	Log::Normal(std::format("Up: ({};{};{})", up.X, up.Y, up.Z));
 	Log::Normal("----------------------");*/
-	ActiveCamera->gameObject->rotation.roll = 0;
+	Engine::Instance->activeCamera->gameObject->rotation.roll = 0;
 }
 
-const ResourceManager::ResourceSystem resourceSystem = ResourceManager::ResourceSystem(std::filesystem::absolute("./assets").generic_string());
-
-void mainStart() {
-	Log::Normal("Main start");
+int main(int argc, char** argv) {
+	//Create engine
+	Engine engine = Engine("StevnGame", 100, false, mainUpdate);
+	//Setup debug stuff:
+	Log::Normal("Start");
 	glClearColor(0, 0, 0, 1);
 	//Create test objects
 	{
@@ -109,20 +110,15 @@ void mainStart() {
 		Physics::RigidBody* rb = sphere->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 	}
 	//Add Camera controller
-	///ActiveCamera->gameObject->AddComponent(new CameraController());
-	ActiveCamera->gameObject->position = Utilities::Vector3d(0, 5, 10);
-	ActiveCamera->gameObject->rotation = Utilities::Rotation3d(0, 0, 0);
+	///Engine::Instance->activeCamera->gameObject->AddComponent(new CameraController());
+	Engine::Instance->activeCamera->gameObject->position = Utilities::Vector3d(0, 5, 10);
+	Engine::Instance->activeCamera->gameObject->rotation = Utilities::Rotation3d(0, 0, 0);
 
 	//Test ressource manager
-	Log::Normal(std::format("Ressource path: {}", resourceSystem.resourcePath));
-	Log::Normal(std::format("Ressource 0: {}", resourceSystem.GetFile(0).path));
-	Log::Normal(std::format("Ressource \"test.txt\": {}", ResourceManager::DataToText(resourceSystem.GetFile("test.txt").data)));
+	Log::Normal(std::format("Ressource path: {}", Engine::Instance->resources.resourcePath));
+	Log::Normal(std::format("Ressource 0: {}", Engine::Instance->resources.GetFile(0).path));
+	Log::Normal(std::format("Ressource \"test.txt\": {}", ResourceManager::DataToText(Engine::Instance->resources.GetFile("test.txt").data)));
 
-	//End
-	Log::Normal("Main start end");
-}
-
-int main(int argc, char** argv) {
 	//Start engine
-	return StartEngine("StevnGame", false, mainUpdate, mainStart);
+	engine.Start();
 }

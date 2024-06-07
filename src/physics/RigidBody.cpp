@@ -20,8 +20,8 @@ namespace StevEngine::Physics {
 		JPH::BodyCreationSettings bodySettings = JPH::BodyCreationSettings(shape, gameObject->absPosition() - shape->GetCenterOfMass(), gameObject->absRotation(), motionType, layer->id);
 		bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
 		bodySettings.mMassPropertiesOverride.mMass = mass;
-		body = physics->bodyInterface->CreateBody(bodySettings);
-		physics->bodyInterface->AddBody(body->GetID(), JPH::EActivation::Activate);
+		body = Engine::Instance->physics->bodyInterface->CreateBody(bodySettings);
+		Engine::Instance->physics->bodyInterface->AddBody(body->GetID(), JPH::EActivation::Activate);
 	}
 
 	void RigidBody::Update(double deltaTime) {

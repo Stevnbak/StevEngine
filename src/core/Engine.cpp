@@ -23,26 +23,11 @@ using namespace StevEngine::Utilities;
 using namespace StevEngine::InputSystem;
 
 //Get current process time in ms
-uint GetTime() {
-	return SDL_GetTicks();
-	/**
-	return std::round(((double)1000 / (targetFPS)) - (frameTime));
-	*/
-}
+uint GetTime() { return SDL_GetTicks(); }
 
 namespace StevEngine {
-	int targetFPS = 100;
-	double currentFPS = 0;
-	bool running = true;
-	double t = 0.0;
-
-	SDL_Window* window = NULL;
-	SDL_Event ev;
-	Physics::System* physics;
-
-	GLint WIDTH = 1080, HEIGHT = 720;
-	
-	void Tick(double deltaTime) {
+	Engine* Engine::Instance = nullptr;
+	void Engine::Update(double deltaTime) {
 		//Run Jolt physics step
 		physics->Update(deltaTime);
 		//Input?
@@ -53,17 +38,18 @@ namespace StevEngine {
 		}
 	}
 
-	Camera* ActiveCamera = nullptr;
+	bool running = true;
+	double t = 0.0;
 
-	void Draw() {
+	void Engine::Draw() {
 		// Clear the colorbuffer 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Drawing
-		if (ActiveCamera != nullptr) {
+		if (activeCamera != nullptr) {
 			//Start cam matrix
 			glPushMatrix();
 			//Set view based on camera:
-			ActiveCamera->UpdateView();
+			activeCamera->UpdateView();
 			//Draw objects
 			for (GameObject* object : GameObject::GetGameObjects()) {
 				object->Draw();
@@ -76,37 +62,44 @@ namespace StevEngine {
 		SDL_GL_SwapWindow(window);
 	}
 
-	int StartEngine(const char* title, bool fullScreen, void (*mainUpdate)(double deltaTime), void (*mainStart)()) {
+	Engine::Engine(const char * title, int targetFPS, bool fullScreen, void (*mainUpdate)(double deltaTime), GLint WIDTH, GLint HEIGHT) : 
+	title(title),
+	targetFPS(targetFPS),
+	fullScreen(fullScreen),
+	WIDTH(WIDTH),
+	HEIGHT(HEIGHT),
+	mainUpdate(mainUpdate),
+	physics(new Physics::System()),
+	resources(ResourceManager::ResourceSystem(std::filesystem::absolute("./assets").generic_string()))
+	{
+		//Create instance
+		if(Instance != nullptr) {
+			throw "Engine has already been initialized.";
+		}
+		Instance = this;
+
+		//Initialize logging
 		Log::StartLogging(title);
-		Log::Normal("Started StevEngine", true);
-		//Load resources
-		///ResourceManager::RefreshMetadata();
+
 		//Initialize SDL window
 		if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-			Log::Error("Failed initializing SDL: " + string(SDL_GetError()), true);
-			return 1;
+			throw "Failed initializing SDL: " + string(SDL_GetError());
 		}
 		//Create SDL window
 		window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | ( fullScreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE ));
 		if (!window) {
-			Log::Error("Failed to create window: " + string(SDL_GetError()), true);
-			return 1;
+			throw "Failed to create window: " + string(SDL_GetError());
 		}
 		//SDL & OpenGL properties
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 		glewExperimental = GL_TRUE;
-		SDL_GLContext context = SDL_GL_CreateContext(window);
+		context = SDL_GL_CreateContext(window);
 		// Initialize GLEW to setup the OpenGL Function pointers 
 		if (glewInit() != GLEW_OK)
 		{
-			Log::Error("Failed to initialize GLEW ", true);
-			return 1;
+			throw "Failed to initialize GLEW ";
 		}
-
-		//Create physics system
-		physics = new Physics::System();
-
 		// Define the OpenGL viewport dimensions
 		GLint size = max(WIDTH, HEIGHT);
 		glViewport(0, 0, size, size);
@@ -114,10 +107,14 @@ namespace StevEngine {
 		glEnable(GL_DEPTH_TEST);
 
 		//Create main camera
-		ActiveCamera = GameObject::Create("Main Camera", Vector3d(0, 0, 0), Rotation3d(0, 0, 0))->AddComponent(new Camera());
-		ActiveCamera->SetOptions(false, 1, 16 / 9);
-		//Main start function
-		if (mainStart) mainStart();
+		activeCamera = GameObject::Create("Main Camera", Vector3d(0, 0, 0), Rotation3d(0, 0, 0))->AddComponent(new Camera());
+		activeCamera->SetOptions(false, 1, 16 / 9);
+
+		//Done creating engine
+		Log::Normal("Initialized Engine", true);
+	}
+
+	int Engine::Start() {
 		//Main loop
 		uint lastUpdateTime = GetTime();
 		while (running) {
@@ -182,7 +179,7 @@ namespace StevEngine {
 
 			//Run update
 			double deltaTime = (double)frameTime / (double)1000;
-			Tick(deltaTime);
+			Update(deltaTime);
 			if(mainUpdate) mainUpdate(deltaTime);
 
 			//Draw the frame
@@ -220,4 +217,5 @@ namespace StevEngine {
 		//Return int
 		return 0;
 	}
+	
 }
