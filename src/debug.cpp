@@ -115,9 +115,14 @@ int main(int argc, char** argv) {
 	Engine::Instance->activeCamera->gameObject->rotation = Utilities::Rotation3d(0, 0, 0);
 
 	//Test ressource manager
-	Log::Normal(std::format("Ressource path: {}", Engine::Instance->resources.resourcePath));
-	Log::Normal(std::format("Ressource 0: {}", Engine::Instance->resources.GetFile(0).path));
-	Log::Normal(std::format("Ressource \"test.txt\": {}", ResourceManager::DataToText(Engine::Instance->resources.GetFile("test.txt").data)));
+	Log::Normal(std::format("Ressource path: {}", Engine::Instance->resources->resourcePath));
+	Log::Normal(std::format("Ressource 0: {}", Engine::Instance->resources->GetFile(0).path));
+	Log::Normal(std::format("Ressource \"test.txt\": {}", Resources::DataToText(Engine::Instance->resources->GetFile("test.txt").data)));
+
+	//Play audio
+	GameObject* audioPlayer = GameObject::Create("Audio Player");
+	Audio::Emitter* emitter = audioPlayer->AddComponent(new Audio::Emitter("audio.wav", false));
+	emitter->Play();
 
 	//Start engine
 	engine.Start();

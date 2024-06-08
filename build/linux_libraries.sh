@@ -13,6 +13,12 @@ cd build
 make
 sudo make install
 
+#SDL_Mixer
+cd $root/SDL_Mixer
+./configure
+make
+sudo make install
+
 #GLEW https://github.com/nigels-com/glew/tree/glew-2.2.0?tab=readme-ov-file#linux-and-mac
 cd $root/GLEW
 make extensions PYTHON=python3

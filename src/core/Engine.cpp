@@ -70,7 +70,8 @@ namespace StevEngine {
 	HEIGHT(HEIGHT),
 	mainUpdate(mainUpdate),
 	physics(new Physics::System()),
-	resources(ResourceManager::ResourceSystem(std::filesystem::absolute("./assets").generic_string()))
+	resources(new Resources::System(std::filesystem::absolute("./assets").generic_string())),
+	audio(new Audio::System())
 	{
 		//Create instance
 		if(Instance != nullptr) {
@@ -210,6 +211,9 @@ namespace StevEngine {
 		window = NULL;
 
 		delete physics;
+		delete resources;
+		audio->CleanUp();
+		delete audio;
 
 		// Quit SDL
 		SDL_Quit();
@@ -218,4 +222,7 @@ namespace StevEngine {
 		return 0;
 	}
 	
+	double Engine::getFPS() {
+		return currentFPS;
+	}
 }

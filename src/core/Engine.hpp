@@ -2,6 +2,7 @@
 #include <visuals/Camera.hpp>
 #include <physics/System.hpp>
 #include <core/ResourceManager.hpp>
+#include <audio/System.hpp>
 
 #include <GL/glew.h>
 
@@ -18,8 +19,9 @@ namespace StevEngine {
 			Camera* activeCamera;
 			Physics::System* physics;
 			SDL_Window* window;
-			ResourceManager::ResourceSystem resources;
-			int getFPS();
+			Resources::System* resources;
+			Audio::System* audio;
+			double getFPS();
 		private:
 			const char * title;
 			int targetFPS;

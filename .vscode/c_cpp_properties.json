@@ -8,6 +8,7 @@
                 "${workspaceFolder}/src",
                 "${workspaceFolder}/libs/JoltPhysics",
                 "${workspaceFolder}/libs/SDL2/include",
+                "${workspaceFolder}/libs/SDL_Mixer/include",
                 "${workspaceFolder}/libs/GLEW/include"
             ],
             "defines": [],
