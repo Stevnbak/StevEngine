@@ -12,19 +12,16 @@ namespace StevEngine::Audio {
         this->audioData = NULL;
         this->loop = loop;
         this->volume = volume;
+        this->channel = -1;
         //Load audo file
-        audioData = Mix_LoadWAV_RW(Engine::Instance->resources->GetFile(audioPath).data, 1);
+        SDL_RWops* data = Engine::Instance->resources->GetFile(audioPath).GetData();
+        audioData = Mix_LoadWAV_RW(data, 0);
+        SDL_FreeRW(data);
         if (audioData == NULL) {
-            if (audioData) {
-                Mix_FreeChunk(audioData);
-                audioData = NULL;
-            }
-            throw std::format("Couldn't load {}: {}\n", audioPath, SDL_GetError());
+            Log::Error(std::format("Couldn't load {}: {}", audioPath, SDL_GetError()), true);
+        } else {
+            Log::Normal("Created emitter component");
         }
-    }
-
-    Mix_Chunk* Emitter::GetData() {
-        return audioData;
     }
 
     void Emitter::Play() {
@@ -36,5 +33,6 @@ namespace StevEngine::Audio {
             Mix_FreeChunk(audioData);
             audioData = NULL;
         }
+        delete this;
     }
 }

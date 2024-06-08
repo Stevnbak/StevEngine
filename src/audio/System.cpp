@@ -1,21 +1,28 @@
 #include "System.hpp"
-#include <SDL.h>
-#include <SDL_mixer.h>
-
 #include "core/Log.hpp"
 #include "core/ResourceManager.hpp"
 #include "core/Engine.hpp"
+
+#include <SDL.h>
+#include <SDL_mixer.h>
+
+#include <algorithm>
+
+static void SDLCALL StaticChannelCompleted (int channel)
+{
+    StevEngine::Engine::Instance->audio->ChannelCompleted(channel);
+}
 
 
 namespace StevEngine::Audio {
     System::System() {
         //Initialize
+        ///activeSounds = std::vector<Emitter*>();
+        activeSounds.push_back(nullptr);
         audio_rate = MIX_DEFAULT_FREQUENCY;
         audio_format = MIX_DEFAULT_FORMAT;
         audio_channels = MIX_DEFAULT_CHANNELS;
-        loops = 0;
-
-        /* Open the audio device */
+        // Open the audio device
         if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, 4096) < 0) {
             throw std::format("Couldn't open audio: %s\n", SDL_GetError());
             CleanUp();
@@ -26,17 +33,32 @@ namespace StevEngine::Audio {
                 (SDL_AUDIO_ISFLOAT(audio_format) ? " (float)" : ""),
                 (audio_channels > 2) ? "surround" :
                 (audio_channels > 1) ? "stereo" : "mono"));
-            if (loops) {
-                Log::Normal(" (looping)\n");
-            } else {
-                putchar('\n');
-            }
         }
         audio_open = 1;
+        //Set channel finished callback
+        Mix_ChannelFinished(StaticChannelCompleted);
+    }
+
+    void SDLCALL System::ChannelCompleted (int channel)
+    {
+        Log::Normal("Channel completed");
+        for(int i = 1; i < activeSounds.size(); i++) {
+            if(activeSounds[i]->channel == channel) {
+                activeSounds[i]->channel = -1;
+                activeSounds.erase(activeSounds.begin() + i);
+            }
+        }
     }
 
     void System::Play(Emitter* emitter) {
-        Mix_PlayChannel(-1, emitter->GetData(), emitter->loop ? -1 : 0);
+        if(emitter->channel != -1) {
+            Mix_HaltChannel(emitter->channel);
+        }
+        int channel = Mix_PlayChannel(-1, emitter->GetData(), emitter->loop ? -1 : 0);
+        emitter->channel = channel;
+        if(channel != -1) {
+            activeSounds.push_back(emitter);
+        }
     }
 
     void System::CleanUp() {

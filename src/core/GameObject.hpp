@@ -133,8 +133,8 @@ namespace StevEngine {
 				return gameObjects;
 			}
 			void Destroy();
-			GameObject();
 		private: 
+			GameObject();
 			int id;
 			std::vector<Component*> components;
 			std::vector<GameObject*> children;

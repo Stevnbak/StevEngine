@@ -8,8 +8,8 @@ namespace StevEngine::Physics {
     // Layer class
 
     Layer::Layer(std::string name, bool isStatic) : name(name), isStatic(isStatic), id(currentId++), BroadPhaseLayer(isStatic ? BroadPhaseLayers::NON_MOVING : BroadPhaseLayers::MOVING) {
-        layers.insert(std::pair<uint, Layer*>(id, this));
-        layersByName.insert(std::pair<std::string, Layer*>(name, GetLayerById(id)));
+        layers.insert(std::make_pair(id, this));
+        layersByName.insert(std::make_pair(name, GetLayerById(id)));
     }
     Layer* Layer::GetLayerByName(std::string name) {
         return layersByName.at(name);

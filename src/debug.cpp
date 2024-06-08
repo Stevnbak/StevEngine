@@ -108,6 +108,7 @@ int main(int argc, char** argv) {
 		primitive->colour = SDL_Color(0, 0, 1, 1);
 		Physics::Collider* collider = sphere->AddComponent(new Physics::CylinderCollider());
 		Physics::RigidBody* rb = sphere->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		///sphere->Destroy();
 	}
 	//Add Camera controller
 	///Engine::Instance->activeCamera->gameObject->AddComponent(new CameraController());
@@ -116,13 +117,16 @@ int main(int argc, char** argv) {
 
 	//Test ressource manager
 	Log::Normal(std::format("Ressource path: {}", Engine::Instance->resources->resourcePath));
-	Log::Normal(std::format("Ressource 0: {}", Engine::Instance->resources->GetFile(0).path));
-	Log::Normal(std::format("Ressource \"test.txt\": {}", Resources::DataToText(Engine::Instance->resources->GetFile("test.txt").data)));
+	Log::Normal(std::format("Ressource 0: {}", Engine::Instance->resources->GetFile(1).path));
+	Log::Normal(std::format("Ressource \"test.txt\": {}", Resources::DataToText(Engine::Instance->resources->GetFile("test.txt").GetData())));
+	Log::Normal(std::format("Ressource \"test.txt\": {}", Resources::DataToText(Engine::Instance->resources->GetFile("test.txt").GetData())));
 
 	//Play audio
 	GameObject* audioPlayer = GameObject::Create("Audio Player");
 	Audio::Emitter* emitter = audioPlayer->AddComponent(new Audio::Emitter("audio.wav", false));
+	Audio::Emitter emitter2 = Audio::Emitter("audio.wav", true);
 	emitter->Play();
+	emitter2.Play();
 
 	//Start engine
 	engine.Start();

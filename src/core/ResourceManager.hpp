@@ -13,11 +13,9 @@ namespace StevEngine {
 			public:
 				const ushort id;
 				const std::string path;
-				//std::vector<char> data;
-				SDL_RWops* data;
 				Resource();
-				//Resource(std::string path, std::vector<char> data);
-				Resource(std::string path, SDL_RWops* data);
+				Resource(std::string path);
+				SDL_RWops* GetData();
 			private:
 				static ushort currentId;
 		};
@@ -28,14 +26,13 @@ namespace StevEngine {
 				Resource GetFile(ushort id) const;
 				Resource GetFile(std::string path) const;
 				const std::string resourcePath;
-				void CleanUp();
 			private:
 				std::map<ushort, const Resource> resources;
 				std::map<std::string, ushort> pathToId;
 		};
 
 		//Helper functions
-		constexpr std::string DataToText(SDL_RWops* data) {
+		constexpr std::string DataToText(SDL_RWops* data)  {
 			bool reading = true;
 			std::vector<char> chars;
 			while(reading) {
@@ -43,12 +40,8 @@ namespace StevEngine {
 				if(b == 0) reading = false;
 				else chars.push_back(b);
 			}
+			SDL_FreeRW(data);
 			return std::string(chars.begin(), chars.end());
 		}
 	}
 }
-
-/* TODO:
-[] Read all asset files
-[] Be able to get file-data
-*/

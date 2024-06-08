@@ -1,7 +1,7 @@
 # Compiler options
 CXX       			:= /usr/bin/g++-13
 CXX_FLAGS 			:= -std=c++23
-DEBUG_FLAGS			:= -ggdb -fsanitize=address
+DEBUG_FLAGS			:= -ggdb -fsanitize=address -g
 # Folder paths
 ROOT				:= ../
 BIN     			:= bin
@@ -42,7 +42,7 @@ $(LIB)/$(LIB_NAME).a: $(OBJS)
 # Compile objects
 $(OBJ)/%.o: ${ROOT}$(SRC)/%.cpp
 	$(dir_guard)
-	$(CXX) $(CXX_FLAGS) -c $< -o $@ -I${ROOT}$(SRC) $(LIBS_INCLUDE)
+	$(CXX) $(CXX_FLAGS) -g -c $< -o $@ -I${ROOT}$(SRC) $(LIBS_INCLUDE)
 
 # Clean command
 clean:

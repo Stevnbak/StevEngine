@@ -1,4 +1,5 @@
 #include "ResourceManager.hpp"
+#include "Engine.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -27,19 +28,12 @@ namespace StevEngine {
 			std::filesystem::create_directories(resourcePath);
 			for (const auto& entry : fs::directory_iterator(resourcePath)) {
 				std::string fullPath = fs::absolute(entry.path()).generic_string();
-                ///std::vector<char> data = ReadAllBytes(entry.path().c_str());
-				SDL_RWops* data = SDL_RWFromFile(fullPath.c_str(), "rb");
-				const Resource resource (fs::relative(fullPath, resourcePath).generic_string(), data);
+				const Resource resource (fs::relative(fullPath, resourcePath).generic_string());
 				resources.insert({ resource.id, resource });
 				pathToId.insert({ resource.path, resource.id });
 			}
 		}
 
-		void System::CleanUp() {
-			for(std::pair<ushort, const Resource> resource : resources) {
-				SDL_FreeRW(resource.second.data);
-			}
-		}
 		//Get file
 		Resource System::GetFile(ushort id) const {
 			return resources.at(id);
@@ -51,7 +45,11 @@ namespace StevEngine {
 		ushort Resource::currentId = 0;
 
 		///Resource::Resource(std::string path, std::vector<char> data) : id(Resource::currentId++), path(path), data(data) {}
-		Resource::Resource(std::string path, SDL_RWops* data) : id(Resource::currentId++), path(path), data(data) {}
+		Resource::Resource(std::string path) : id(Resource::currentId++), path(path) {}
 		Resource::Resource() : id(Resource::currentId++), path("") {}
+
+		SDL_RWops* Resource::GetData()  {
+			return SDL_RWFromFile((Engine::Instance->resources->resourcePath + "/" + path).c_str(), "rb");
+		};
 	}
 }
