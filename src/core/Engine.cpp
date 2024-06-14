@@ -70,7 +70,7 @@ namespace StevEngine {
 	HEIGHT(HEIGHT),
 	mainUpdate(mainUpdate),
 	physics(new Physics::System()),
-	resources(new Resources::System(std::filesystem::absolute("./assets").generic_string())),
+	resources(new Resources::System(std::filesystem::absolute("./assets").generic_string() + "/")),
 	audio(new Audio::System())
 	{
 		//Create instance
@@ -108,8 +108,7 @@ namespace StevEngine {
 		glEnable(GL_DEPTH_TEST);
 
 		//Create main camera
-		activeCamera = GameObject::Create("Main Camera", Vector3d(0, 0, 0), Rotation3d(0, 0, 0))->AddComponent(new Camera());
-		activeCamera->SetOptions(false, 1, 16 / 9);
+		activeCamera = GameObject::Create("Main Camera", Vector3d(0, 0, 0), Rotation3d(0, 0, 0))->AddComponent(new Camera(false, 1, 16 / 9));
 
 		//Done creating engine
 		Log::Normal("Initialized Engine", true);

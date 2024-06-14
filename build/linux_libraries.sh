@@ -31,5 +31,9 @@ cd Build
 cmake -S . -B Linux_Debug -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=$COMPILER "${@}" -DGENERATE_DEBUG_SYMBOLS=ON -DDEBUG_RENDERER_IN_DEBUG_AND_RELEASE=OFF -DPROFILER_IN_DEBUG_AND_RELEASE=OFF -DENABLE_OBJECT_STREAM=OFF
 cd Linux_Debug && make -j 8 && ./UnitTests
 
+#TinyXML2
+cd $root/TinyXML2
+make
+
 # Return to ./build
 cd $root/../build

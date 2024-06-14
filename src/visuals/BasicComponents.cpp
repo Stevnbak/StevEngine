@@ -89,7 +89,6 @@ namespace StevEngine {
 		}
 	}
 
-
 	void DrawSphere() {
 		int detail = 50;
 		float anglePerStep = (2 * M_PI) / detail; //In Radians
@@ -190,7 +189,7 @@ namespace StevEngine {
 	}
 
 	//Constructor
-	Primitive::Primitive(PrimitiveType type) {
+	Primitive::Primitive(PrimitiveType type) : Component("Primitive") {
 		this->type = type;
 	}
 
@@ -226,5 +225,16 @@ namespace StevEngine {
 
 		//Pop matrix
 		glPopMatrix();
+	}
+
+	void Primitive::Export(tinyxml2::XMLElement* element) {
+        element->SetAttribute("type", (int)type);
+        element->SetAttribute("position", std::format("[{},{},{}]", position.X, position.Y, position.Z).c_str());
+		element->SetAttribute("rotation", std::format("[{},{},{}]", rotation.pitch, rotation.yaw, rotation.roll).c_str());
+		element->SetAttribute("scale", std::format("[{},{},{}]", scale.X, scale.Y, scale.Z).c_str());
+        element->SetAttribute("color", std::format("[{},{},{},{}]", colour.r, colour.g, colour.b, colour.a).c_str());
+    }
+    Primitive::Primitive(tinyxml2::XMLElement* node) : Primitive((PrimitiveType)node->IntAttribute("type")) {
+
 	}
 }

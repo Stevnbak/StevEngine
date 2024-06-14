@@ -1,5 +1,6 @@
 #pragma once
 #include <Jolt/Jolt.h>
+#include <string>
 
 namespace StevEngine {
 	namespace Utilities {
@@ -14,6 +15,7 @@ namespace StevEngine {
 			public:
 				double X = 0, Y = 0, Z = 0;
 				Vector3d(double x, double y, double z);
+				Vector3d(std::string str);
 				Vector3d();
 				Vector3d Get();
 				double Magnitude();
@@ -22,10 +24,10 @@ namespace StevEngine {
 				Vector3d Mult(double value);
 				Vector3d Divide(double value);
 				Vector3d Cross(const Vector3d& other) const;
-				Vector2d ConvertTo2D();
 				//Conversions
 				operator Vector2d();
 				operator JPH::Vec3();
+				operator std::string();
 				Vector3d& operator= (const JPH::Vec3& other);
 				Vector3d(const JPH::Vec3& other);
 				//Operators
@@ -42,6 +44,7 @@ namespace StevEngine {
 			public:
 				double X = 0, Y = 0;
 				Vector2d(double x, double y);
+				Vector2d(std::string str);
 				Vector2d();
 				Vector2d Get();
 				double Magnitude();
@@ -58,6 +61,7 @@ namespace StevEngine {
 				Vector2d operator/(const double& other) const;
 				//Conversions
 				operator Vector3d();
+				operator std::string();
 		};
 
 		//Rotation3d definition
@@ -67,6 +71,7 @@ namespace StevEngine {
 				double pitch = 0;
 				double roll = 0;
 				Rotation3d();
+				Rotation3d(std::string str);
 				Rotation3d(double yaw, double pitch, double roll);
 				void OpenGLRotate();
 				Vector3d forward();
@@ -79,6 +84,7 @@ namespace StevEngine {
 				Rotation3d& operator-=(const Rotation3d& other);
 				//Conversions
 				operator JPH::Quat();
+				operator std::string();
 				///Rotation3d& operator= (const JPH::Quat& other);
 		};
 

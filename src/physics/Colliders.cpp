@@ -11,7 +11,8 @@
 
 
 namespace StevEngine::Physics {
-	Collider::Collider(JPH::Ref<JPH::Shape> shape, Utilities::Vector3d position, Utilities::Rotation3d rotation, Utilities::Vector3d scale) {
+	Collider::Collider(JPH::Ref<JPH::Shape> shape, Utilities::Vector3d position, Utilities::Rotation3d rotation, Utilities::Vector3d scale, std::string type) 
+		: Component(type) {
 		this->shape = shape;
 		this->position = position;
 		this->rotation = rotation;
@@ -29,17 +30,24 @@ namespace StevEngine::Physics {
 	void Collider::Draw() {}
 
 	//Cube collider
-	CubeCollider::CubeCollider(Utilities::Vector3d position, Utilities::Rotation3d rotation, Utilities::Vector3d scale) : Collider(new JPH::BoxShape(Utilities::Vector3d(0.5, 0.5, 0.5)), position, rotation, scale) {}
+	CubeCollider::CubeCollider(Utilities::Vector3d position, Utilities::Rotation3d rotation, Utilities::Vector3d scale) 
+		: Collider(new JPH::BoxShape(Utilities::Vector3d(0.5, 0.5, 0.5)), position, rotation, scale, "CubeCollider") {}
 
 	//Sphere collider
 	SphereCollider::SphereCollider(Utilities::Vector3d position, Utilities::Rotation3d rotation, Utilities::Vector3d scale) 
-		: Collider(new JPH::SphereShape(0.5), position, rotation, scale) {}
+		: Collider(new JPH::SphereShape(0.5), position, rotation, scale, "SphereCollider") {}
 
 	//Cylinder collider
 	CylinderCollider::CylinderCollider(Utilities::Vector3d position, Utilities::Rotation3d rotation, Utilities::Vector3d scale) 
-		: Collider(new JPH::CylinderShape(0.5,0.5), position, rotation, scale) {}
+		: Collider(new JPH::CylinderShape(0.5,0.5), position, rotation, scale, "CylinderCollider") {}
 
 	//Capsule collider
 	CapsuleCollider::CapsuleCollider(Utilities::Vector3d position, Utilities::Rotation3d rotation, Utilities::Vector3d scale) 
-		: Collider(new JPH::CapsuleShape(0.5,0.5), position, rotation, scale) {}
+		: Collider(new JPH::CapsuleShape(0.5,0.5), position, rotation, scale, "CapsuleCollider") {}
+
+	//Export colliders
+	void Collider::Export(tinyxml2::XMLElement* element) {
+        
+    }
+	Collider::Collider(tinyxml2::XMLElement* node) : Component(node) {}
 }

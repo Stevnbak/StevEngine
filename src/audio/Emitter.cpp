@@ -6,7 +6,7 @@
 #include <SDL_mixer.h>
 
 namespace StevEngine::Audio {
-    Emitter::Emitter(std::string audioPath, bool loop, double volume) {
+    Emitter::Emitter(std::string audioPath, bool loop, double volume): Component("Emitter") {
         //Set basic variables
         this->audioPath = audioPath;
         this->audioData = NULL;
@@ -27,6 +27,13 @@ namespace StevEngine::Audio {
     void Emitter::Play() {
         Engine::Instance->audio->Play(this);
     }
+
+    void Emitter::Export(tinyxml2::XMLElement* element) {
+        element->SetAttribute("path", audioPath.c_str());
+        element->SetAttribute("loop", loop);
+        element->SetAttribute("volume", volume);
+    }
+    Emitter::Emitter(tinyxml2::XMLElement* node) : Emitter(node->Attribute("path"), node->BoolAttribute("loop"), node->DoubleAttribute("volume")) {}
 
     void Emitter::Destroy() {
         if (audioData) {

@@ -1,5 +1,6 @@
 #include "GameObject.hpp"
 #include <core/Log.hpp>
+#include <core/Engine.hpp>
 
 #include <SDL2/SDL_opengl.h>
 
@@ -14,6 +15,7 @@ namespace StevEngine {
 	//Static variables
 	int GameObject::currentID = 0;
 	std::vector<GameObject*> GameObject::gameObjects;
+	//std::map<std::string, FactoryBase*> GameObject::componentFactories = std::map<std::string, FactoryBase*>();
 
 	//Main functions
 	void GameObject::Start() {
@@ -98,6 +100,32 @@ namespace StevEngine {
 		object->Start();
 		return object;
 	}
+	GameObject* GameObject::CreateFromFile(Resources::Resource file) {
+		tinyxml2::XMLDocument doc;
+		tinyxml2::XMLError status = doc.LoadFile((Engine::Instance->resources->resourcePath + file.path).c_str());
+		tinyxml2::XMLElement* elem = doc.FirstChildElement();
+		GameObject* object = CreateFromXML(doc.FirstChildElement());
+		return object;
+	}
+	GameObject* GameObject::CreateFromXML(tinyxml2::XMLElement* node) {
+		//Create base object:
+		GameObject* object = Create(node->Attribute("name"), Utilities::Vector3d(node->Attribute("position")), Utilities::Rotation3d(node->Attribute("rotation")), Utilities::Vector3d(node->Attribute("scale")));
+		//Add child objects & components
+		tinyxml2::XMLElement* child = node->FirstChildElement();
+		for(int i = 0; i < node->ChildElementCount(); i++) {
+			std::string name = child->Name();
+			if(name == "GameObject") {
+				object->AddChild(CreateFromXML(child));
+			} else if(name == "Component") {
+				std::string test = child->Attribute("type");
+				FactoryBase* factory = componentFactories.at(test);
+				object->AddComponent((Component*)factory->create(child));
+			}
+			child = child->NextSiblingElement();
+		}
+		//Return
+		return object;
+	}
 	
 	//Children functions
 	int GameObject::AddChild(GameObject* gameObject) {
@@ -123,6 +151,56 @@ namespace StevEngine {
 		return -1;
 	}
 
+	//Export
+	std::string GameObject::Export() {
+		//Create xml document
+		tinyxml2::XMLDocument doc;
+		tinyxml2::XMLElement* main = doc.NewElement("GameObject");
+		doc.InsertFirstChild(main);
+
+		//Add basic info
+		main->SetAttribute("name", 		name.c_str());
+		main->SetAttribute("position", 	((std::string)position).c_str());
+		main->SetAttribute("rotation", 	((std::string)rotation).c_str());
+		main->SetAttribute("scale", 	((std::string)scale).c_str());
+
+		//Add components
+		for(Component* component : components) {
+			tinyxml2::XMLDocument xml;
+			xml.Parse(component->Export().c_str());
+			tinyxml2::XMLElement* element = xml.FirstChild()->ToElement();
+			main->InsertFirstChild(element->DeepClone(&doc));
+		}
+
+		//Add children
+		for(GameObject* child : children) {
+			tinyxml2::XMLDocument xml;
+			xml.Parse(child->Export().c_str());
+			main->InsertFirstChild(xml.FirstChild());
+		}
+
+		//Return xml as string
+		tinyxml2::XMLPrinter printer;
+		doc.Print( &printer );
+		return printer.CStr();
+	}
+	//Export component
+	std::string Component::Export() {
+		tinyxml2::XMLDocument doc;
+		tinyxml2::XMLElement* main = doc.NewElement("Component");
+		doc.InsertFirstChild(main);
+		//Add basic info
+		main->SetAttribute("type", type.c_str());
+
+		//Add component specific info
+		this->Export(main);
+		
+		//Return xml as string
+		tinyxml2::XMLPrinter printer;
+		doc.Print( &printer );
+		return printer.CStr();
+	}
+
 	//Destroy
 	void GameObject::Destroy() {
 		Log::Normal(std::format("Destroying object with id {}", id));
@@ -143,6 +221,8 @@ namespace StevEngine {
 	}
 
 	//Component
+	Component::Component(std::string type) : type(type) {}
+	Component::Component(tinyxml2::XMLElement* element) : Component(element->Attribute("type")) {}
 	void Component::SetObject(GameObject* object) {
 		gameObject = object;
 	}

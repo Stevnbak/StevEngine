@@ -12,3 +12,6 @@
 	path = libs/SDL_Mixer
 	url = https://github.com/libsdl-org/SDL_mixer.git
 	branch = SDL2
+[submodule "libs/TinyXML2"]
+	path = libs/TinyXML2
+	url = https://github.com/leethomason/tinyxml2.git

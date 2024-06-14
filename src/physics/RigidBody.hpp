@@ -15,7 +15,7 @@ namespace StevEngine::Physics {
 	class RigidBody : public Component {
 		//Information
 		public:
-			bool unique = true;
+			static const bool unique = true;
 			//Basic values
 			JPH::Body* GetBody() { return body; }
 		private:
@@ -32,8 +32,11 @@ namespace StevEngine::Physics {
 			void Update(double deltaTime);
 			void Draw() {}
 			void Destroy();
+			//Export
+			void Export(tinyxml2::XMLElement* element);
 			//Constructor
 			RigidBody(JPH::EMotionType motionType, Layer* layer, float mass = 1);
+			RigidBody(tinyxml2::XMLElement* element);
 			//Other functions
 			void UpdateColliders();
 	};

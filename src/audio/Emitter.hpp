@@ -8,7 +8,8 @@ namespace StevEngine::Audio {
             void Start() {};
             void Update(double deltaTime) {};
 			void Draw() {};
-            Emitter() {};
+            void Export(tinyxml2::XMLElement* element);
+            Emitter(tinyxml2::XMLElement* node);
             Emitter(std::string audioPath, bool loop = false, double volume = 1);
             bool loop;
             double volume;

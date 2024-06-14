@@ -10,14 +10,15 @@ namespace StevEngine::Physics {
 	//Base collider
 	class Collider : public Component {
 		public:
-			Collider(JPH::Ref<JPH::Shape> shape, Utilities::Vector3d position = Utilities::Vector3d(0,0,0), Utilities::Rotation3d rotation = Utilities::Rotation3d(0,0,0), Utilities::Vector3d scale = Utilities::Vector3d(1,1,1));
-
+			Collider(JPH::Ref<JPH::Shape> shape, Utilities::Vector3d position = Utilities::Vector3d(0,0,0), Utilities::Rotation3d rotation = Utilities::Rotation3d(0,0,0), Utilities::Vector3d scale = Utilities::Vector3d(1,1,1), std::string type = "Collider");
+			Collider(tinyxml2::XMLElement* element);
 			void Draw();
 			void Update(double deltaTime) {};
 			void Start();
 			void Destroy();
+			void Export(tinyxml2::XMLElement* element);
 
-			bool unique = false;
+			static const bool unique = false;
 
 			JPH::Ref<JPH::Shape> shape;
 

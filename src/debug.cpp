@@ -1,4 +1,5 @@
 #include <core/Engine.hpp>
+#include <core/GameObject.hpp>
 #include <visuals/BasicComponents.hpp>
 #include <physics/RigidBody.hpp>
 #include <physics/Layers.hpp>
@@ -16,7 +17,19 @@ class CameraController : public Component {
 		void Draw() {}
 		void Update(double deltaTime);
 		void Start();
+		void Export(tinyxml2::XMLElement* element);
+		CameraController() : Component("CameraController") {};
+		CameraController(tinyxml2::XMLElement* element) : Component("CameraController") {
+			movementSpeed = element->DoubleAttribute("movementSpeed");
+			sensitivity = element->DoubleAttribute("sensitivity");
+		};
 };
+//FactoryBase* factory = GameObject::AddComponentFactory<CameraController>(std::string("CameraController"));
+
+void CameraController::Export(tinyxml2::XMLElement* element) {
+	element->SetAttribute("movementSpeed", movementSpeed);
+	element->SetAttribute("sensitivity", sensitivity);
+}
 void CameraController::Update(double deltaTime) {
 	if (InputSystem::cursorMode == InputSystem::CursorMode::Free) {
 		return;
@@ -117,16 +130,25 @@ int main(int argc, char** argv) {
 
 	//Test ressource manager
 	Log::Normal(std::format("Ressource path: {}", Engine::Instance->resources->resourcePath));
-	Log::Normal(std::format("Ressource 0: {}", Engine::Instance->resources->GetFile(1).path));
+	Log::Normal(std::format("Ressource 0: {}", Engine::Instance->resources->GetFile(0).path));
 	Log::Normal(std::format("Ressource \"test.txt\": {}", Resources::DataToText(Engine::Instance->resources->GetFile("test.txt").GetData())));
 	Log::Normal(std::format("Ressource \"test.txt\": {}", Resources::DataToText(Engine::Instance->resources->GetFile("test.txt").GetData())));
 
 	//Play audio
 	GameObject* audioPlayer = GameObject::Create("Audio Player");
 	Audio::Emitter* emitter = audioPlayer->AddComponent(new Audio::Emitter("audio.wav", false));
-	Audio::Emitter emitter2 = Audio::Emitter("audio.wav", true);
+	///Audio::Emitter emitter2 = Audio::Emitter("audio.wav", true);
 	emitter->Play();
-	emitter2.Play();
+	///emitter2.Play();
+
+	//Export gameobject
+	GameObject* object = GameObject::Create("Test object", Utilities::Vector3d(2, 3, 4));
+	object->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving"), 2));
+	std::string test = object->Export();
+	Log::Normal(std::string("XML Export: ") + test);
+	const char* t = test.c_str();
+
+	GameObject* object2 = GameObject::CreateFromFile(Engine::Instance->resources->GetFile("test.xml"));
 
 	//Start engine
 	engine.Start();

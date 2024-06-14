@@ -6,12 +6,13 @@
 #include <core/Engine.hpp>
 
 namespace StevEngine::Physics {
+	FactoryBase* factory = GameObject::AddComponentFactory<RigidBody>(std::string("RigidBody"));
 	//Constructor
-	RigidBody::RigidBody(JPH::EMotionType motionType, Layer* layer, float mass) {
+	RigidBody::RigidBody(JPH::EMotionType motionType, Layer* layer, float mass) : Component("RigidBody") {
 		this->motionType = motionType;
 		this->layer = layer;
 		this->mass = mass;
-	}
+	};
 
 	void RigidBody::Start() {
 		//Get collider info
@@ -62,4 +63,11 @@ namespace StevEngine::Physics {
 		delete shape;
 		delete this;
 	}
+
+	void RigidBody::Export(tinyxml2::XMLElement* element) {
+        element->SetAttribute("motionType", (uint8)motionType);
+        element->SetAttribute("layer", layer->name.c_str());
+        element->SetAttribute("mass", mass);
+    }
+    RigidBody::RigidBody(tinyxml2::XMLElement* node) : RigidBody((JPH::EMotionType)node->IntAttribute("motionType"), Layer::GetLayerByName(node->Attribute("layer")), node->FloatAttribute("mass")) {}
 }

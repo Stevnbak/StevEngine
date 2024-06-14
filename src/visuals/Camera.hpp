@@ -8,11 +8,13 @@ namespace StevEngine {
 		public:
 			bool isOrthographic;
 			double zoom, aspect, nearClip = 1, farClip = 100;
-			void SetOptions(bool orthographic, double zoomValue, double aspectRatio);
+			Camera(bool orthographic, double zoomValue, double aspectRatio);
+			Camera(tinyxml2::XMLElement* element);
 			void UpdateView();
 			//Component functions
 			void Start() {};
 			void Update(double deltaTime) {};
 			void Draw() {};
+			void Export(tinyxml2::XMLElement* element);
 	};
 }

@@ -10,11 +10,18 @@ using namespace StevEngine;
 using namespace StevEngine::Utilities;
 
 
-void Camera::SetOptions(bool orthographic, double zoomValue, double aspectRatio) {
+Camera::Camera(bool orthographic, double zoomValue, double aspectRatio) : Component("Camera") {
 	isOrthographic = orthographic;
 	zoom = zoomValue;
 	aspect = aspectRatio;
 }
+
+void Camera::Export(tinyxml2::XMLElement* element) {
+	element->SetAttribute("orthographic", isOrthographic);
+	element->SetAttribute("zoom", zoom);
+	element->SetAttribute("aspect", aspect);
+}
+Camera::Camera(tinyxml2::XMLElement* node) : Camera(node->BoolAttribute("orthographic"), node->DoubleAttribute("zoom"), node->DoubleAttribute("aspect")) {}
 
 void Camera::UpdateView() {
 	//Move everything else based on camera position

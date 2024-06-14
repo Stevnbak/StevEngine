@@ -10,8 +10,8 @@ LIB 				:= lib
 SRC     			:= src
 # Libraries
 LIBDIR 				:= ${ROOT}libs
-LIBS   				:= $(LIBDIR)/JoltPhysics/Build/Linux_Debug/libJolt.a $(LIBDIR)/SDL2/build/build/.libs/libSDL2.a $(LIBDIR)/SDL_Mixer/build/.libs/libSDL2_mixer.a $(LIBDIR)/GLEW/lib/libGLEW.a -lGL
-LIBS_INCLUDE 		:= -I$(LIBDIR)/JoltPhysics -I$(LIBDIR)/SDL2/include -I$(LIBDIR)/SDL_Mixer/include -I$(LIBDIR)/GLEW/include
+LIBS   				:= $(LIBDIR)/JoltPhysics/Build/Linux_Debug/libJolt.a $(LIBDIR)/SDL2/build/build/.libs/libSDL2.a $(LIBDIR)/SDL_Mixer/build/.libs/libSDL2_mixer.a $(LIBDIR)/GLEW/lib/libGLEW.a -lGL $(LIBDIR)/TinyXML2/libtinyxml2.a
+LIBS_INCLUDE 		:= -I$(LIBDIR)/JoltPhysics -I$(LIBDIR)/SDL2/include -I$(LIBDIR)/SDL_Mixer/include -I$(LIBDIR)/GLEW/include -I$(LIBDIR)/TinyXML2
 # Executable
 DEBUG_EXECUTABLE	:= debug
 LIB_NAME			:= StevEngine
@@ -46,6 +46,6 @@ $(OBJ)/%.o: ${ROOT}$(SRC)/%.cpp
 
 # Clean command
 clean:
-	-rm -rf $(BIN)
+	-rm $(BIN)/debug
 	-rm -rf $(LIB)
 	-rm -rf $(OBJ)

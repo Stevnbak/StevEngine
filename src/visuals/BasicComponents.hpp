@@ -13,15 +13,17 @@ namespace StevEngine {
 	class Primitive : public Component {
 		public:
 			Primitive(PrimitiveType type);
-			void Update(double deltaTime) {}
+			Primitive(tinyxml2::XMLElement* element);
+			void Update(double deltaTime) {};
 			void Draw();
-			void Start() {}
+			void Start() {};
+			void Export(tinyxml2::XMLElement* element);
 			//Basic properties
 			Utilities::Vector3d position = Utilities::Vector3d();
 			Utilities::Rotation3d rotation = Utilities::Rotation3d();
 			Utilities::Vector3d scale = Utilities::Vector3d(1, 1, 1);
 			PrimitiveType type = (PrimitiveType)0;
 			SDL_Color colour = SDL_Color(1,1,1,1);
-			bool unique = false;
+			static const bool unique = false;
 	};
 }

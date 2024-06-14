@@ -23,6 +23,7 @@ namespace StevEngine {
 	namespace Resources {
 		//Create resource system by reading all files
 		System::System(std::string resourcePath) : resourcePath(resourcePath) {
+			if(resourcePath.ends_with("/") == false) throw "Resource path must with \"/\"";
 			resources = std::map<ushort, const Resource>();
 			pathToId = std::map<std::string, ushort>();
 			std::filesystem::create_directories(resourcePath);
@@ -49,7 +50,7 @@ namespace StevEngine {
 		Resource::Resource() : id(Resource::currentId++), path("") {}
 
 		SDL_RWops* Resource::GetData()  {
-			return SDL_RWFromFile((Engine::Instance->resources->resourcePath + "/" + path).c_str(), "rb");
+			return SDL_RWFromFile((Engine::Instance->resources->resourcePath + path).c_str(), "rb");
 		};
 	}
 }

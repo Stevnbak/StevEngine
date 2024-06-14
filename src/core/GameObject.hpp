@@ -2,14 +2,47 @@
 #include <core/Utilities.hpp>
 #include <core/Log.hpp>
 #include <core/InputSystem.hpp>
+#include <core/ResourceManager.hpp>
+
 #include <map>
 #include <vector>
 #include <any>
 #include <type_traits>
-
+#include <tinyxml2.h>
 
 namespace StevEngine {
+	class GameObject;
 	class Component;
+
+	class FactoryBase {
+		public:
+			virtual Component* create(tinyxml2::XMLElement* node) const = 0;
+	};
+	template <class T> class ComponentFactory : public FactoryBase {
+		public:
+			Component* create(tinyxml2::XMLElement* node) const {
+				return new T(node);
+			}
+	};
+	
+	class Component {
+		public:
+			virtual void Start() = 0;
+			virtual void Update(double deltaTime) = 0;
+			virtual void Draw() = 0;
+			virtual void Export(tinyxml2::XMLElement* element) = 0;
+			std::string Export();
+			void Destroy();
+			void SetObject(GameObject* object);
+			static const bool unique = true;
+			GameObject* gameObject;
+			Component(std::string type);
+			Component(tinyxml2::XMLElement* node);
+		private:
+			std::string type;
+			static const FactoryBase* factory;
+	};
+
 	class GameObject {
 		public:
 			//Basic properties
@@ -126,13 +159,24 @@ namespace StevEngine {
 			GameObject* GetChild(int index);
 			int GetChildCount();
 			int GetIndexFromName(std::string name);
+			//Export
+			std::string Export();
 			//Static & Basic functions
 			static GameObject* Create();
 			static GameObject* Create(std::string name, Utilities::Vector3d position = Utilities::Vector3d(), Utilities::Rotation3d rotation = Utilities::Rotation3d(), Utilities::Vector3d scale = Utilities::Vector3d(1, 1, 1));
+			static GameObject* CreateFromFile(Resources::Resource file);
+			static GameObject* CreateFromXML(tinyxml2::XMLElement* node);
 			static std::vector<GameObject*> GetGameObjects() {
 				return gameObjects;
 			}
 			void Destroy();
+			//Static component factory stuff
+			private: static inline std::map<std::string, FactoryBase*> componentFactories = std::map<std::string, FactoryBase*>();
+			public: template<typename T> static ComponentFactory<T>* AddComponentFactory(std::string type) {
+				ComponentFactory<T>* component = new ComponentFactory<T>();
+				componentFactories.insert(std::make_pair(type, component));
+				return component;
+			};
 		private: 
 			GameObject();
 			int id;
@@ -140,16 +184,5 @@ namespace StevEngine {
 			std::vector<GameObject*> children;
 			static std::vector<GameObject*> gameObjects;
 			static int currentID;
-	};
-
-	class Component {
-		public:
-			virtual void Start() = 0;
-			virtual void Update(double deltaTime) = 0;
-			virtual void Draw() = 0;
-			void Destroy();
-			void SetObject(GameObject* object);
-			bool unique = true;
-			GameObject* gameObject;
 	};
 }

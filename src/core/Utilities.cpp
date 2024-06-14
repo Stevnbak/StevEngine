@@ -14,6 +14,22 @@ namespace StevEngine {
 			Y = y;
 			Z = z;
 		}
+		Vector3d::Vector3d(std::string str) {
+			if(!str.starts_with("[") || !str.ends_with("]") || !str.contains(";")) {
+				Log::Error("3D Vector string not valid.");
+				return;
+			}
+			//Create stream
+			std::istringstream ss(str.substr(1, str.length() - 2));
+			std::string s;
+			//Get values
+			std::getline(ss, s, ';');
+			X = stod(s);
+			std::getline(ss, s, ';');
+			Y = stod(s);
+			std::getline(ss, s, ';');
+			Z = stod(s);
+		}
 		Vector3d::Vector3d() {
 			X = 0;
 			Y = 0;
@@ -74,6 +90,9 @@ namespace StevEngine {
 		Vector3d::operator Vector2d() {
 			return Vector2d(X, Y);
 		}
+		Vector3d::operator std::string() {
+			return std::format("[{};{};{}]", X, Y, Z);
+		}
 		Vector3d::operator JPH::Vec3() {
 			return JPH::Vec3(X, Y, Z);
 		}
@@ -95,6 +114,20 @@ namespace StevEngine {
 		Vector2d::Vector2d(double x, double y) {
 			X = x;
 			Y = y;
+		}
+		Vector2d::Vector2d(std::string str) {
+			if(!str.starts_with("[") || !str.ends_with("]") || !str.contains(";")) {
+				Log::Error("2D Vector string not valid.");
+				return;
+			}
+			//Create stream
+			std::istringstream ss(str.substr(1, str.length() - 2));
+			std::string s;
+			//Get values
+			std::getline(ss, s, ';');
+			X = stod(s);
+			std::getline(ss, s, ';');
+			Y = stod(s);
 		}
 		Vector2d::Vector2d() {
 			X = 0;
@@ -148,6 +181,9 @@ namespace StevEngine {
 		Vector2d::operator Vector3d() {
 			return Vector3d(X, Y, 0);
 		}
+		Vector2d::operator std::string() {
+			return std::format("[{};{}]", X, Y);
+		}
 #pragma endregion
 		//Rotation3d
 #pragma region Rotation3d
@@ -155,6 +191,22 @@ namespace StevEngine {
 			yaw = 0;
 			pitch = 0;
 			roll = 0;
+		}
+		Rotation3d::Rotation3d(std::string str) {
+			if(!str.starts_with("[") || !str.ends_with("]") || !str.contains(";")) {
+				Log::Error("3D Rotation string not valid.");
+				return;
+			}
+			//Create stream
+			std::istringstream ss(str.substr(1, str.length() - 2));
+			std::string s;
+			//Get values
+			std::getline(ss, s, ';');
+			pitch = stod(s);
+			std::getline(ss, s, ';');
+			yaw = stod(s);
+			std::getline(ss, s, ';');
+			roll = stod(s);
 		}
 		Rotation3d::Rotation3d(double pitchDegrees, double yawDegrees, double rollDegrees) {
 			yaw = yawDegrees;
@@ -209,6 +261,9 @@ namespace StevEngine {
 				s1 * c2 * c3 + c1 * s2 * s3,
 				c1c2 * c3 - s1s2 * s3
 			);
+		}
+		Rotation3d::operator std::string() {
+			return std::format("[{};{};{}]", pitch, yaw, roll);
 		}
 		Rotation3d Rotation3d::operator+(const Rotation3d & other) const {
 			return Rotation3d(pitch + other.pitch, yaw + other.yaw, roll + other.roll);
