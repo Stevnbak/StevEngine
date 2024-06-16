@@ -8,27 +8,20 @@
 namespace StevEngine::Physics {
 	FactoryBase* bodyfactory = GameObject::AddComponentFactory<RigidBody>(std::string("RigidBody"));
 	//Constructor
-	RigidBody::RigidBody(JPH::EMotionType motionType, Layer* layer, float mass) : Component("RigidBody") {
-		this->motionType = motionType;
-		this->layer = layer;
-		this->mass = mass;
-	};
+	RigidBody::RigidBody(JPH::EMotionType motionType, Layer* layer, float mass)
+		: Component("RigidBody"), motionType(motionType), layer(layer), mass(mass), body(nullptr) {};
 
 	void RigidBody::Start() {
 		//Get collider info
 		UpdateColliders();
 		//Create body
-		JPH::BodyCreationSettings bodySettings = JPH::BodyCreationSettings(shape, gameObject->absPosition() - shape->GetCenterOfMass(), gameObject->absRotation(), motionType, layer->id);
-		bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
-		bodySettings.mMassPropertiesOverride.mMass = mass;
-		body = Engine::Instance->physics->bodyInterface->CreateBody(bodySettings);
-		Engine::Instance->physics->bodyInterface->AddBody(body->GetID(), JPH::EActivation::Activate);
+		UpdateBody();
 	}
 
 	void RigidBody::Update(double deltaTime) {
 		if(body->GetMotionType() != JPH::EMotionType::Static) {
-			///Log::Normal(std::format("Position: {},{},{}; JoltCenterPosition: {},{},{}", this->gameObject->position.X, this->gameObject->position.Y, this->gameObject->position.Z, body->GetCenterOfMassPosition().GetX(), body->GetCenterOfMassPosition().GetY(), body->GetCenterOfMassPosition().GetZ()));
 			this->gameObject->position = body->GetWorldSpaceBounds().GetCenter();
+			this->gameObject->rotation = body->GetRotation();
 		}
 	}
 
@@ -57,6 +50,14 @@ namespace StevEngine::Physics {
 		else
 			Log::Error(result.GetError().c_str());
 	}
+	void RigidBody::UpdateBody() {
+		if(body != nullptr) delete body;
+		JPH::BodyCreationSettings bodySettings = JPH::BodyCreationSettings(shape, gameObject->absPosition() - shape->GetCenterOfMass(), gameObject->absRotation(), motionType, layer->id);
+		bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
+		bodySettings.mMassPropertiesOverride.mMass = mass;
+		body = Engine::Instance->physics->bodyInterface->CreateBody(bodySettings);
+		Engine::Instance->physics->bodyInterface->AddBody(body->GetID(), JPH::EActivation::Activate);
+	}
 
 	void RigidBody::Destroy() {
 		delete body;
@@ -65,7 +66,7 @@ namespace StevEngine::Physics {
 	}
 
 	void RigidBody::Export(tinyxml2::XMLElement* element) {
-        element->SetAttribute("motionType", (uint8)motionType);
+        element->SetAttribute("motionType", (JPH::uint8)motionType);
         element->SetAttribute("layer", layer->name.c_str());
         element->SetAttribute("mass", mass);
     }

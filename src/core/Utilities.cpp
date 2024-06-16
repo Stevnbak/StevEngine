@@ -246,21 +246,7 @@ namespace StevEngine {
 			return degrees * (M_PI / 180);
 		}
 		Rotation3d::operator JPH::Quat() {
-			float c1 = (float)std::cos(-roll / 2.0);
-			float c2 = (float)std::cos(-yaw / 2.0);
-			float c3 = (float)std::cos( pitch / 2.0);
-			float c1c2 = c1 * c2;
-			float s1 = (float)std::sin(-roll / 2.0);
-			float s2 = (float)std::sin(-yaw / 2.0);
-			float s3 = (float)std::sin( pitch / 2.0);
-			float s1s2 = s1 * s2;
-
-			return JPH::Quat(
-				c1 * s2 * c3 - s1 * c2 * s3,
-				c1c2 * s3 + s1s2 * c3,
-				s1 * c2 * c3 + c1 * s2 * s3,
-				c1c2 * c3 - s1s2 * s3
-			);
+			return JPH::Quat::sEulerAngles(Vector3d(pitch, yaw, roll));
 		}
 		Rotation3d::operator std::string() {
 			return std::format("[{};{};{}]", pitch, yaw, roll);
@@ -281,6 +267,13 @@ namespace StevEngine {
 			this->pitch -= other.pitch;
 			this->yaw -= other.yaw;
 			this->roll -= other.roll;
+			return *this;
+		}
+		Rotation3d& Rotation3d::operator= (const JPH::Quat& other) {
+			Vector3d angles = other.GetEulerAngles();
+			this->pitch = angles.X;
+			this->yaw = angles.Y;
+			this->roll = angles.Z;
 			return *this;
 		}
 #pragma endregion

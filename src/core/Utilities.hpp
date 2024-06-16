@@ -85,7 +85,7 @@ namespace StevEngine {
 				//Conversions
 				operator JPH::Quat();
 				operator std::string();
-				///Rotation3d& operator= (const JPH::Quat& other);
+				Rotation3d& operator= (const JPH::Quat& other);
 		};
 
 		double DegreesToRadians(double degrees);

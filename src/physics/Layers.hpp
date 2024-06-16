@@ -7,7 +7,6 @@
 #include <Jolt/Physics/Collision/BroadPhase/BroadPhaseLayer.h>
 
 namespace StevEngine::Physics {
-    using namespace JPH;
     namespace BroadPhaseLayers
 	{
 		static constexpr JPH::BroadPhaseLayer NON_MOVING(0);
