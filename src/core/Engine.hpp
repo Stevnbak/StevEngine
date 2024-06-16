@@ -22,8 +22,8 @@ namespace StevEngine {
 			Resources::System* resources;
 			Audio::System* audio;
 			double getFPS();
-		private:
 			const char * title;
+		private:
 			int targetFPS;
 			double currentFPS;
 			bool fullScreen;

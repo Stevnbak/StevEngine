@@ -4,10 +4,12 @@ CXX_FLAGS 			:= -std=c++23
 DEBUG_FLAGS			:= -ggdb -fsanitize=address -g
 # Folder paths
 ROOT				:= ../
-BIN     			:= bin
-OBJ 				:= obj
 LIB 				:= lib
 SRC     			:= src
+DEBUG_RSC			:= assets
+BIN     			:= bin
+OBJ 				:= obj
+
 # Libraries
 LIBDIR 				:= ${ROOT}libs
 LIBS   				:= $(LIBDIR)/JoltPhysics/Build/Linux_Debug/libJolt.a $(LIBDIR)/SDL2/build/build/.libs/libSDL2.a $(LIBDIR)/SDL_Mixer/build/.libs/libSDL2_mixer.a $(LIBDIR)/GLEW/lib/libGLEW.a -lGL $(LIBDIR)/TinyXML2/libtinyxml2.a
@@ -21,6 +23,7 @@ LIB_NAME			:= StevEngine
 # Calculated variables
 SRCS := $(wildcard ${ROOT}$(SRC)/*.cpp) $(wildcard ${ROOT}$(SRC)/*/*.cpp)
 OBJS := $(SRCS:${ROOT}$(SRC)/%.cpp=$(OBJ)/%.o)
+ASSETS := $(wildcard ${ROOT}$(DEBUG_RSC)/*.*)
 dir_guard=@mkdir -p $(@D)
 
 # Debug command
@@ -30,12 +33,12 @@ debug: $(BIN)/$(DEBUG_EXECUTABLE)
 build: $(LIB)/$(LIB_NAME).a
 
 # Link to debug executable
-$(BIN)/$(DEBUG_EXECUTABLE): $(OBJS)
+$(BIN)/$(DEBUG_EXECUTABLE): $(OBJS) $(OBJ)/assets.o
 	$(dir_guard)
 	$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) -o $@ $^ -I${ROOT}$(SRC) $(LIBS) $(LIBS_INCLUDE)
 
 # Link to library archive
-$(LIB)/$(LIB_NAME).a: $(OBJS)
+$(LIB)/$(LIB_NAME).a: $(filter-out $(OBJ)/debug.o, $(OBJS))
 	$(dir_guard)
 	ar -r $@ $^ $(LIBS)
 
@@ -44,8 +47,13 @@ $(OBJ)/%.o: ${ROOT}$(SRC)/%.cpp
 	$(dir_guard)
 	$(CXX) $(CXX_FLAGS) -g -c $< -o $@ -I${ROOT}$(SRC) $(LIBS_INCLUDE)
 
+# Embed asset files
+$(OBJ)/assets.o: 
+	$(dir_guard)
+	ld -r -b binary -o $(OBJ)/assets.o $(ASSETS)
+
 # Clean command
 clean:
-	-rm $(BIN)/debug
+	-rm -rf $(BIN)
 	-rm -rf $(LIB)
 	-rm -rf $(OBJ)

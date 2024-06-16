@@ -101,7 +101,7 @@ namespace StevEngine {
 	}
 	GameObject* GameObject::CreateFromFile(Resources::Resource file) {
 		tinyxml2::XMLDocument doc;
-		tinyxml2::XMLError status = doc.LoadFile((Engine::Instance->resources->resourcePath + file.path).c_str());
+		doc.Parse(file.GetStrData().c_str());
 		tinyxml2::XMLElement* elem = doc.FirstChildElement();
 		GameObject* object = CreateFromXML(doc.FirstChildElement());
 		return object;
@@ -186,7 +186,7 @@ namespace StevEngine {
 	void GameObject::ExportToFile(std::string path) {
 		tinyxml2::XMLDocument doc;
 		doc.Parse(Export().c_str());
-		doc.SaveFile((Engine::Instance->resources->resourcePath + path).c_str());
+		doc.SaveFile((std::format("{}/{}/", "appdata", Engine::Instance->title) + path).c_str());
 	}
 	//Export component
 	std::string Component::Export() {

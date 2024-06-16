@@ -88,12 +88,32 @@ void mainUpdate(double deltaTime) {
 	Engine::Instance->activeCamera->gameObject->rotation.roll = 0;
 }
 
+//Debug files
+extern const char _binary____assets_test_txt_start[];
+extern const char _binary____assets_test_txt_end[];
+extern const char _binary____assets_test_2_txt_start[];
+extern const char _binary____assets_test_2_txt_end[];
+extern const char _binary____assets_audio_wav_start[];
+extern const char _binary____assets_audio_wav_end[];
+extern const char _binary____assets_cube_xml_start[];
+extern const char _binary____assets_cube_xml_end[];
+extern const char _binary____assets_test_xml_start[];
+extern const char _binary____assets_test_xml_end[];
+
 int main(int argc, char** argv) {
 	//Create engine
 	Engine engine = Engine("StevnGame", 100, false, mainUpdate);
 	//Setup debug stuff:
 	Log::Normal("Start");
 	glClearColor(0, 0, 0, 1);
+	
+	//Add debug assets
+	engine.resources->AddFile("test.txt", &_binary____assets_test_txt_start[0], _binary____assets_test_txt_end - _binary____assets_test_txt_start);
+	engine.resources->AddFile("test_2.txt", &_binary____assets_test_2_txt_start[0], _binary____assets_test_2_txt_end - _binary____assets_test_2_txt_start);
+	engine.resources->AddFile("audio.wav", &_binary____assets_audio_wav_start[0], _binary____assets_audio_wav_end - _binary____assets_audio_wav_start);
+	engine.resources->AddFile("cube.xml", &_binary____assets_cube_xml_start[0], _binary____assets_cube_xml_end - _binary____assets_cube_xml_start);
+	engine.resources->AddFile("test.xml", &_binary____assets_test_xml_start[0], _binary____assets_test_xml_end - _binary____assets_test_xml_start);
+
 	//Create test objects
 	{
 		GameObject* floor = GameObject::Create("Cube", Utilities::Vector3d(0, -1, 0), Utilities::Rotation3d(0,0,15), Utilities::Vector3d(100, 1, 100));
@@ -142,10 +162,9 @@ int main(int argc, char** argv) {
 	Engine::Instance->activeCamera->gameObject->rotation = Utilities::Rotation3d(0, 0, 0);
 
 	//Test ressource manager
-	Log::Normal(std::format("Ressource path: {}", Engine::Instance->resources->resourcePath));
 	Log::Normal(std::format("Ressource 0: {}", Engine::Instance->resources->GetFile(0).path));
-	Log::Normal(std::format("Ressource \"test.txt\": {}", Resources::DataToText(Engine::Instance->resources->GetFile("test.txt").GetData())));
-	Log::Normal(std::format("Ressource \"test.txt\": {}", Resources::DataToText(Engine::Instance->resources->GetFile("test.txt").GetData())));
+	Log::Normal(std::format("Ressource \"test.txt\": {}", Resources::DataToText(Engine::Instance->resources->GetFile("test.txt").GetSDLData())));
+	Log::Normal(std::format("Ressource \"test_2.txt\": {}", Engine::Instance->resources->GetFile("test_2.txt").GetStrData()));
 
 	//Play audio
 	GameObject* audioPlayer = GameObject::Create("Audio Player");

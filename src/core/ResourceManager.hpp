@@ -14,18 +14,21 @@ namespace StevEngine {
 				const ushort id;
 				const std::string path;
 				Resource();
-				Resource(std::string path);
-				SDL_RWops* GetData();
+				Resource(std::string path, const char* data, const int size);
+				SDL_RWops* GetSDLData();
+				std::string GetStrData();
 			private:
+				const char* data;
+				const int size;
 				static ushort currentId;
 		};
 
 		class System {
 			public:
-				System(std::string resourcePath);
+				System();
 				Resource GetFile(ushort id) const;
 				Resource GetFile(std::string path) const;
-				const std::string resourcePath;
+				void AddFile(std::string path, const char*, const int size);
 			private:
 				std::map<ushort, const Resource> resources;
 				std::map<std::string, ushort> pathToId;

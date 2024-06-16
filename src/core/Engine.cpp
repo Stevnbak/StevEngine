@@ -70,7 +70,7 @@ namespace StevEngine {
 	HEIGHT(HEIGHT),
 	mainUpdate(mainUpdate),
 	physics(new Physics::System()),
-	resources(new Resources::System(std::filesystem::absolute("./assets").generic_string() + "/")),
+	resources(new Resources::System()),
 	audio(new Audio::System())
 	{
 		//Create instance
