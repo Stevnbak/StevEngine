@@ -34,7 +34,7 @@ namespace StevEngine {
 			std::string Export();
 			void Destroy();
 			void SetObject(GameObject* object);
-			static const bool unique = true;
+			static const bool unique = false;
 			GameObject* gameObject;
 			Component(std::string type);
 			Component(tinyxml2::XMLElement* node);
@@ -161,6 +161,7 @@ namespace StevEngine {
 			int GetIndexFromName(std::string name);
 			//Export
 			std::string Export();
+			void ExportToFile(std::string path);
 			//Static & Basic functions
 			static GameObject* Create();
 			static GameObject* Create(std::string name, Utilities::Vector3d position = Utilities::Vector3d(), Utilities::Rotation3d rotation = Utilities::Rotation3d(), Utilities::Vector3d scale = Utilities::Vector3d(1, 1, 1));

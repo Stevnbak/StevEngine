@@ -27,15 +27,6 @@ static void TraceImpl(const char *inFMT, ...)
 	// Print to the TTY
 	Log::Warning(buffer);
 }
-// Callback for asserts
-#ifdef JPH_ENABLE_ASSERTS
-	static bool AssertFailedImpl(const char *inExpression, const char *inMessage, const char *inFile, uint inLine)
-	{
-		// Print to the TTY
-		Log::Warning(std::format("{}:{}: ({}) {}", inFile, inLine, inExpression, (inMessage != nullptr? inMessage : "")));
-		return true;
-	};
-#endif
 
 namespace StevEngine::Physics {
 	using namespace JPH;
@@ -52,7 +43,6 @@ namespace StevEngine::Physics {
 		RegisterDefaultAllocator();
 		// Install trace and assert callbacks
 		Trace = TraceImpl;
-		JPH_IF_ENABLE_ASSERTS(AssertFailed = AssertFailedImpl;)
 		// Create a factory and register Jolt physics Types
 		Factory::sInstance = new Factory();
 		RegisterTypes();

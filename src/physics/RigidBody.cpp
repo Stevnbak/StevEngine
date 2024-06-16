@@ -6,7 +6,7 @@
 #include <core/Engine.hpp>
 
 namespace StevEngine::Physics {
-	FactoryBase* factory = GameObject::AddComponentFactory<RigidBody>(std::string("RigidBody"));
+	FactoryBase* bodyfactory = GameObject::AddComponentFactory<RigidBody>(std::string("RigidBody"));
 	//Constructor
 	RigidBody::RigidBody(JPH::EMotionType motionType, Layer* layer, float mass) : Component("RigidBody") {
 		this->motionType = motionType;

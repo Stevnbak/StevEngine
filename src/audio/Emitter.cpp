@@ -34,6 +34,8 @@ namespace StevEngine::Audio {
         element->SetAttribute("volume", volume);
     }
     Emitter::Emitter(tinyxml2::XMLElement* node) : Emitter(node->Attribute("path"), node->BoolAttribute("loop"), node->DoubleAttribute("volume")) {}
+	FactoryBase* factory = GameObject::AddComponentFactory<Emitter>(std::string("Emitter"));
+
 
     void Emitter::Destroy() {
         if (audioData) {

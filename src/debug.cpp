@@ -2,6 +2,7 @@
 #include <core/GameObject.hpp>
 #include <visuals/BasicComponents.hpp>
 #include <physics/RigidBody.hpp>
+#include <physics/Colliders.hpp>
 #include <physics/Layers.hpp>
 #include <core/ResourceManager.hpp>
 
@@ -107,6 +108,17 @@ int main(int argc, char** argv) {
 		primitive->colour = SDL_Color(1, 0, 0, 1);
 		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
 		Physics::RigidBody* rb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		JPH::AABox bounds = collider->shape->GetLocalBounds();
+		Utilities::Vector3d center = collider->shape->GetCenterOfMass();
+		std::string test = cube->Export();
+		cube->ExportToFile("cube.xml");
+		Log::Normal(std::string("XML Cube Export: ") + test);
+		GameObject* cube2 = GameObject::CreateFromFile(Engine::Instance->resources->GetFile("cube.xml"));
+		Physics::Collider* col = cube2->GetComponent<Physics::Collider>();
+		JPH::AABox bounds2 = col->shape->GetLocalBounds();
+		Utilities::Vector3d center2 = col->shape->GetCenterOfMass();
+		Primitive* primitive2 = cube2->GetComponent<Primitive>();
+		primitive2->colour = SDL_Color(1, 1, 1, 1);
 	}
 	{
 		GameObject* sphere = GameObject::Create("Sphere", Utilities::Vector3d(3, 3, 0));

@@ -10,7 +10,7 @@ namespace StevEngine::Physics {
 	//Base collider
 	class Collider : public Component {
 		public:
-			Collider(JPH::Ref<JPH::Shape> shape, Utilities::Vector3d position = Utilities::Vector3d(0,0,0), Utilities::Rotation3d rotation = Utilities::Rotation3d(0,0,0), Utilities::Vector3d scale = Utilities::Vector3d(1,1,1), std::string type = "Collider");
+			Collider(JPH::Ref<JPH::Shape> shape, Utilities::Vector3d position = Utilities::Vector3d(0,0,0), Utilities::Rotation3d rotation = Utilities::Rotation3d(0,0,0), Utilities::Vector3d scale = Utilities::Vector3d(1,1,1));
 			Collider(tinyxml2::XMLElement* element);
 			void Draw();
 			void Update(double deltaTime) {};
@@ -29,6 +29,7 @@ namespace StevEngine::Physics {
 			Utilities::Vector3d scale = Utilities::Vector3d(1, 1, 1);
 			Utilities::Vector3d position = Utilities::Vector3d();
 			Utilities::Rotation3d rotation = Utilities::Rotation3d();
+			const JPH::Ref<JPH::Shape> rawShape;
 	};
 
 	//Cube collider

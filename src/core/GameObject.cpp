@@ -15,7 +15,6 @@ namespace StevEngine {
 	//Static variables
 	int GameObject::currentID = 0;
 	std::vector<GameObject*> GameObject::gameObjects;
-	//std::map<std::string, FactoryBase*> GameObject::componentFactories = std::map<std::string, FactoryBase*>();
 
 	//Main functions
 	void GameObject::Start() {
@@ -119,7 +118,7 @@ namespace StevEngine {
 			} else if(name == "Component") {
 				std::string test = child->Attribute("type");
 				FactoryBase* factory = componentFactories.at(test);
-				object->AddComponent((Component*)factory->create(child));
+				object->AddComponent(factory->create(child));
 			}
 			child = child->NextSiblingElement();
 		}
@@ -169,20 +168,25 @@ namespace StevEngine {
 			tinyxml2::XMLDocument xml;
 			xml.Parse(component->Export().c_str());
 			tinyxml2::XMLElement* element = xml.FirstChild()->ToElement();
-			main->InsertFirstChild(element->DeepClone(&doc));
+			main->InsertEndChild(element->DeepClone(&doc));
 		}
 
 		//Add children
 		for(GameObject* child : children) {
 			tinyxml2::XMLDocument xml;
 			xml.Parse(child->Export().c_str());
-			main->InsertFirstChild(xml.FirstChild());
+			main->InsertEndChild(xml.FirstChild());
 		}
 
 		//Return xml as string
 		tinyxml2::XMLPrinter printer;
 		doc.Print( &printer );
 		return printer.CStr();
+	}
+	void GameObject::ExportToFile(std::string path) {
+		tinyxml2::XMLDocument doc;
+		doc.Parse(Export().c_str());
+		doc.SaveFile((Engine::Instance->resources->resourcePath + path).c_str());
 	}
 	//Export component
 	std::string Component::Export() {

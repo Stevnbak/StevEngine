@@ -226,15 +226,18 @@ namespace StevEngine {
 		//Pop matrix
 		glPopMatrix();
 	}
-
+	//Export and import
 	void Primitive::Export(tinyxml2::XMLElement* element) {
-        element->SetAttribute("type", (int)type);
-        element->SetAttribute("position", std::format("[{},{},{}]", position.X, position.Y, position.Z).c_str());
-		element->SetAttribute("rotation", std::format("[{},{},{}]", rotation.pitch, rotation.yaw, rotation.roll).c_str());
-		element->SetAttribute("scale", std::format("[{},{},{}]", scale.X, scale.Y, scale.Z).c_str());
+        element->SetAttribute("primitivetype", (int)type);
+        element->SetAttribute("position", ((std::string)position).c_str());
+		element->SetAttribute("rotation", ((std::string)rotation).c_str());
+		element->SetAttribute("scale", ((std::string)scale).c_str());
         element->SetAttribute("color", std::format("[{},{},{},{}]", colour.r, colour.g, colour.b, colour.a).c_str());
     }
-    Primitive::Primitive(tinyxml2::XMLElement* node) : Primitive((PrimitiveType)node->IntAttribute("type")) {
-
+    Primitive::Primitive(tinyxml2::XMLElement* node) : Primitive((PrimitiveType)node->IntAttribute("primitivetype")) {
+		position = Utilities::Vector3d(node->Attribute("position"));
+		rotation = Utilities::Rotation3d(node->Attribute("rotation"));
+		scale = Utilities::Vector3d(node->Attribute("scale"));
 	}
+	FactoryBase* factory = GameObject::AddComponentFactory<Primitive>(std::string("Primitive"));
 }

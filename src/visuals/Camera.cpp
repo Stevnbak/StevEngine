@@ -22,6 +22,8 @@ void Camera::Export(tinyxml2::XMLElement* element) {
 	element->SetAttribute("aspect", aspect);
 }
 Camera::Camera(tinyxml2::XMLElement* node) : Camera(node->BoolAttribute("orthographic"), node->DoubleAttribute("zoom"), node->DoubleAttribute("aspect")) {}
+FactoryBase* factory = GameObject::AddComponentFactory<Camera>(std::string("Camera"));
+
 
 void Camera::UpdateView() {
 	//Move everything else based on camera position
