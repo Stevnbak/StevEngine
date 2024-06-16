@@ -72,7 +72,7 @@ namespace StevEngine {
 				double roll = 0;
 				Rotation3d();
 				Rotation3d(std::string str);
-				Rotation3d(double yaw, double pitch, double roll);
+				Rotation3d(double pitch, double yaw, double roll);
 				void OpenGLRotate();
 				Vector3d forward();
 				Vector3d right();

@@ -96,11 +96,12 @@ int main(int argc, char** argv) {
 	glClearColor(0, 0, 0, 1);
 	//Create test objects
 	{
-		GameObject* floor = GameObject::Create("Cube", Utilities::Vector3d(0, -1, 0), Utilities::Rotation3d(0,0,0), Utilities::Vector3d(10, 1, 10));
+		GameObject* floor = GameObject::Create("Cube", Utilities::Vector3d(0, -1, 0), Utilities::Rotation3d(0,0,15), Utilities::Vector3d(100, 1, 100));
 		Primitive* primitive = floor->AddComponent(new Primitive(PrimitiveType::Cube));
 		primitive->colour = SDL_Color(0, 1, 0, 1);
 		Physics::CubeCollider* collider = floor->AddComponent(new Physics::CubeCollider());
 		Physics::RigidBody* rb = floor->AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layer::GetLayerByName("Static")));
+		
 	}
 	{
 		GameObject* cube = GameObject::Create("Cube", Utilities::Vector3d(0, 4, 0), Utilities::Rotation3d(), Utilities::Vector3d(1, 2, 1));
@@ -137,7 +138,7 @@ int main(int argc, char** argv) {
 	}
 	//Add Camera controller
 	///Engine::Instance->activeCamera->gameObject->AddComponent(new CameraController());
-	Engine::Instance->activeCamera->gameObject->position = Utilities::Vector3d(0, 5, 10);
+	Engine::Instance->activeCamera->gameObject->position = Utilities::Vector3d(0, 4, 15);
 	Engine::Instance->activeCamera->gameObject->rotation = Utilities::Rotation3d(0, 0, 0);
 
 	//Test ressource manager

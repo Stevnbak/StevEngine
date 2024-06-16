@@ -214,39 +214,36 @@ namespace StevEngine {
 			roll = rollDegrees;
 		}
 		void Rotation3d::OpenGLRotate() {
-			glRotated(yaw, 0, 1, 0);
 			glRotated(pitch, 1, 0, 0);
-			glRotated(roll, 0, 0, -1);
+			glRotated(yaw, 0, 1, 0);
+			glRotated(roll, 0, 0, 1);
 		}
 		Vector3d Rotation3d::forward() {
 			Vector3d direction (
-				sin(DegreesToRadians(yaw)),
-				-sin(DegreesToRadians(pitch)),
-				cos(DegreesToRadians(pitch)) * cos(DegreesToRadians(yaw))
+				sin(JPH::DegreesToRadians(yaw)),
+				-sin(JPH::DegreesToRadians(pitch)),
+				cos(JPH::DegreesToRadians(pitch)) * cos(JPH::DegreesToRadians(yaw))
 			);
 			return direction;
 		}
 		Vector3d Rotation3d::right() {
 			Vector3d direction(
-				cos(DegreesToRadians(roll)) * cos(DegreesToRadians(yaw)),
-				sin(DegreesToRadians(roll)),
-				-sin(DegreesToRadians(yaw))
+				cos(JPH::DegreesToRadians(roll)) * cos(JPH::DegreesToRadians(yaw)),
+				sin(JPH::DegreesToRadians(roll)),
+				-sin(JPH::DegreesToRadians(yaw))
 			);
 			return direction;
 		}
 		Vector3d Rotation3d::up() {
 			Vector3d direction(
-				-sin(DegreesToRadians(roll)),
-				cos(DegreesToRadians(roll)) * cos(DegreesToRadians(pitch)),
-				sin(DegreesToRadians(pitch))
+				-sin(JPH::DegreesToRadians(roll)),
+				cos(JPH::DegreesToRadians(roll)) * cos(JPH::DegreesToRadians(pitch)),
+				sin(JPH::DegreesToRadians(pitch))
 			);
 			return direction;
 		}
-		double DegreesToRadians(double degrees) {
-			return degrees * (M_PI / 180);
-		}
 		Rotation3d::operator JPH::Quat() {
-			return JPH::Quat::sEulerAngles(Vector3d(pitch, yaw, roll));
+			return JPH::Quat::sEulerAngles(Vector3d(JPH::DegreesToRadians(pitch), JPH::DegreesToRadians(yaw), JPH::DegreesToRadians(roll)));
 		}
 		Rotation3d::operator std::string() {
 			return std::format("[{};{};{}]", pitch, yaw, roll);
@@ -271,9 +268,9 @@ namespace StevEngine {
 		}
 		Rotation3d& Rotation3d::operator= (const JPH::Quat& other) {
 			Vector3d angles = other.GetEulerAngles();
-			this->pitch = angles.X;
-			this->yaw = angles.Y;
-			this->roll = angles.Z;
+			this->pitch = JPH::RadiansToDegrees(angles.X);
+			this->yaw = JPH::RadiansToDegrees(angles.Y);
+			this->roll = JPH::RadiansToDegrees(angles.Z);
 			return *this;
 		}
 #pragma endregion

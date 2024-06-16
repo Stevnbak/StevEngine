@@ -30,7 +30,8 @@ void Camera::UpdateView() {
 	glTranslated(-gameObject->position.X, -gameObject->position.Y, -gameObject->position.Z);
 	//Rotate everything else based on camera rotation
 	glRotated(-gameObject->rotation.yaw,  0, 1, 0);
-	Vector3d right(cos(DegreesToRadians(gameObject->rotation.yaw)), 0, -sin(DegreesToRadians(gameObject->rotation.yaw)));
+	
+	Vector3d right = gameObject->rotation.right();
 	glRotated(-gameObject->rotation.pitch, right.X, right.Y, right.Z);
 	glRotated(-gameObject->rotation.roll, 0, 0, 1);
 	//Set projection

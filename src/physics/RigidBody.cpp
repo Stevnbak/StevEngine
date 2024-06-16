@@ -19,9 +19,13 @@ namespace StevEngine::Physics {
 	}
 
 	void RigidBody::Update(double deltaTime) {
-		if(body->GetMotionType() != JPH::EMotionType::Static) {
+		if(motionType != JPH::EMotionType::Static) {
 			this->gameObject->position = body->GetWorldSpaceBounds().GetCenter();
 			this->gameObject->rotation = body->GetRotation();
+		}
+		if(motionType == JPH::EMotionType::Static) {
+			JPH::AABox bounds = body->GetShape()->GetLocalBounds();
+			int test = 2;
 		}
 	}
 
@@ -41,7 +45,7 @@ namespace StevEngine::Physics {
 		for(Collider* col : c) {
 			if(std::find(colliders.begin(), colliders.end(), col) == colliders.end()) {
 				colliders.push_back(col);
-				shapeSettings.AddShape((col->gameObject->absPosition() + col->getPosition()), (col->gameObject->absRotation() + col->getRotation()), col->shape);
+				shapeSettings.AddShape((col->gameObject->absPosition() + col->getPosition()), (col->gameObject->absRotation() + col->getRotation() - gameObject->absRotation()), col->shape);
 			}
 		}
 		JPH::ShapeSettings::ShapeResult result = shapeSettings.Create();
