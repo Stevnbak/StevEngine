@@ -25,6 +25,8 @@ namespace StevEngine::Physics {
 			Utilities::Vector3 getScale()  { return scale; }
 			Utilities::Quaternion getRotation()  { return rotation; }
 			Utilities::Vector3 getPosition() { return position; }
+			Utilities::Range3 getBounds() { return shape->GetLocalBounds(); };
+			Utilities::Vector3 getCenterOfMass() { return shape->GetCenterOfMass(); };
 		protected:
 			Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1);
 			Utilities::Vector3 position = Utilities::Vector3();
