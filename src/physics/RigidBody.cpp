@@ -15,46 +15,48 @@ namespace StevEngine::Physics {
 		//Create shape
 		RefreshShape();
 		//Create new body
-		JPH::BodyCreationSettings bodySettings = JPH::BodyCreationSettings(shape, gameObject->GetWorldPosition() - shape->GetCenterOfMass(), gameObject->GetWorldRotation(), motionType, layer->id);
+		JPH::BodyCreationSettings bodySettings = JPH::BodyCreationSettings(shape, GameObject::GetObject(gameObject)->GetWorldPosition() - shape->GetCenterOfMass(), GameObject::GetObject(gameObject)->GetWorldRotation(), motionType, layer->id);
 		bodySettings.mGravityFactor = motionProperties.GravityFactor;
 		bodySettings.mLinearDamping = motionProperties.LinearDamping;
 		bodySettings.mAngularDamping = motionProperties.AngularDamping;
+		bodySettings.mAllowedDOFs = motionProperties.AllowedDOFs;
 		if(motionProperties.MaxLinearVelocity > 0) bodySettings.mMaxLinearVelocity = motionProperties.MaxLinearVelocity;
 		if(motionProperties.MaxAngularVelocity > 0) bodySettings.mMaxAngularVelocity = motionProperties.MaxAngularVelocity;
+		//	Set mass
+		JPH::MassProperties massProperties = bodySettings.GetMassProperties();
+		massProperties.ScaleToMass(mass);
 		bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
-		bodySettings.mMassPropertiesOverride.mMass = mass;
+		bodySettings.mMassPropertiesOverride = massProperties;
+		//	Create body from settings
 		body = Engine::Instance->physics->bodyInterface->CreateBody(bodySettings);
-		
 		Engine::Instance->physics->bodyInterface->AddBody(body->GetID(), JPH::EActivation::Activate);
 	}
 	void RigidBody::Update(double deltaTime) {
 		if(motionType != JPH::EMotionType::Static) {
-			this->gameObject->SetPosition(body->GetWorldSpaceBounds().GetCenter(), false);
-			this->gameObject->SetRotation(body->GetRotation(), false);
+			GameObject::GetObject(gameObject)->SetPosition(body->GetWorldSpaceBounds().GetCenter(), false);
+			GameObject::GetObject(gameObject)->SetRotation(body->GetRotation(), false);
 		}
 	}
 	void RigidBody::TransformUpdate(bool position, bool rotation, bool scale) {
-		if(position || rotation) if(body != nullptr) body->SetPositionAndRotationInternal(gameObject->GetWorldPosition() - shape->GetCenterOfMass(), gameObject->GetWorldRotation());
+		if(position || rotation) if(body != nullptr) body->SetPositionAndRotationInternal(GameObject::GetObject(gameObject)->GetWorldPosition() - shape->GetCenterOfMass(), GameObject::GetObject(gameObject)->GetWorldRotation());
 		if(scale) RefreshShape();
 	}
 	void RigidBody::RefreshShape() {
 		//Find all colliders:
 		colliders.clear();
-		colliders = gameObject->GetAllComponents<Collider>();
-		for (int i = 0; i < gameObject->GetChildCount(); i++) {
-			GameObject* child = gameObject->GetChild(i);
-			std::vector<Collider*> cc = child->GetAllComponents<Collider>();
+		colliders = GameObject::GetObject(gameObject)->GetAllComponents<Collider>();
+		for (int i = 0; i < GameObject::GetObject(gameObject)->GetChildCount(); i++) {
+			std::vector<Collider*> cc = GameObject::GetObject(GameObject::GetObject(gameObject)->GetChild(i))->GetAllComponents<Collider>();
 			colliders.insert(colliders.end(), cc.begin(), cc.end());
 		}
 		//Create new shape
 		JPH::MutableCompoundShapeSettings shapeSettings = JPH::MutableCompoundShapeSettings();
 		for(Collider* col : colliders) {
-			shapeSettings.AddShape((col->gameObject->GetWorldPosition() + col->getPosition()), (col->gameObject->GetWorldRotation() + col->getRotation() - gameObject->GetWorldRotation()), col->shape);
+			shapeSettings.AddShape((GameObject::GetObject(col->gameObject)->GetWorldPosition() + col->GetPosition()), (GameObject::GetObject(col->gameObject)->GetWorldRotation() + col->GetRotation() - GameObject::GetObject(gameObject)->GetWorldRotation()), col->shape);
 		}
 		//Create final shape
 		JPH::ShapeSettings::ShapeResult result = shapeSettings.Create();
 		if(result.IsValid()) {
-			delete shape;
 			shape = result.Get();
 			if(body != nullptr) {
 				body->SetShapeInternal(shape, false);

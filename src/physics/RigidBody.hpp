@@ -18,10 +18,12 @@ namespace StevEngine::Physics {
 			double MaxLinearVelocity;
 			double MaxAngularVelocity;
 			double GravityFactor;
+			JPH::EAllowedDOFs AllowedDOFs;
 			MotionProperties(
 				double gravityFactor = 1.0,
 				double linearDamping = 0.0, 
 				double angularDamping = 0.0, 
+				JPH::EAllowedDOFs allowedDOFs = JPH::EAllowedDOFs::All,
 				double maxLinearVelocity = 0.0, 
 				double maxAngularVelocity = 0.0
 			) {
@@ -30,6 +32,7 @@ namespace StevEngine::Physics {
 				this->MaxLinearVelocity = maxLinearVelocity;
 				this->MaxAngularVelocity = maxAngularVelocity;
 				this->GravityFactor = gravityFactor;
+				this->AllowedDOFs = allowedDOFs;
 			}
 	};
 
@@ -58,7 +61,7 @@ namespace StevEngine::Physics {
 			//Export
 			void Export(tinyxml2::XMLElement* element);
 			//Constructor
-			RigidBody(JPH::EMotionType motionType, Layer* layer, float mass = 1);
+			RigidBody(JPH::EMotionType motionType, Layer* layer, float mass = 1000);
 			RigidBody(tinyxml2::XMLElement* element);
 			//Other functions
 			void RefreshShape();

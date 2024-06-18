@@ -24,7 +24,7 @@ namespace StevEngine::Physics {
 	}
 	void Collider::Start() {
 		//Set correct scale for shape
-		Utilities::Vector3 abs = this->gameObject->GetWorldScale();
+		Utilities::Vector3 abs = GameObject::GetObject(this->gameObject)->GetWorldScale();
 		this->shape = new JPH::ScaledShape(rawShape, Utilities::Vector3(scale.X * abs.X, scale.Y * abs.Y, scale.Z * abs.Z));
 	}
 	void Collider::Destroy() {
@@ -38,17 +38,17 @@ namespace StevEngine::Physics {
 	void Collider::TransformUpdate(bool position, bool rotation, bool scale) {
 		//Re scale collider
 		if(scale) {
-			Utilities::Vector3 abs = this->gameObject->GetWorldScale();
+			Utilities::Vector3 abs = GameObject::GetObject(this->gameObject)->GetWorldScale();
 			this->shape = new JPH::ScaledShape(rawShape, Utilities::Vector3(this->scale.X * abs.X, this->scale.Y * abs.Y, this->scale.Z * abs.Z));
 		}
 		//Tell all related rigidbodies to update shape
-		GameObject* latest = this->gameObject;
-		while(latest->parent != nullptr) {
-			RigidBody* rb = latest->GetComponent<RigidBody>(false);
+		ID latest = this->gameObject;
+		while(latest != 0) {
+			RigidBody* rb = GameObject::GetObject(latest)->GetComponent<RigidBody>(false);
 			if(rb != nullptr) {
 				rb->RefreshShape();
 			}
-			latest = latest->parent;
+			latest = GameObject::GetObject(latest)->parent;
 		}
 	}
 

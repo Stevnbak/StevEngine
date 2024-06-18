@@ -27,10 +27,10 @@ FactoryBase* factory = GameObject::AddComponentFactory<Camera>(std::string("Came
 
 void Camera::UpdateView() {
 	//Move everything else based on camera position
-	Vector3 position = gameObject->GetWorldPosition();
+	Vector3 position = GameObject::GetObject(gameObject)->GetWorldPosition();
 	glTranslated(-position.X, -position.Y, -position.Z);
 	//Rotate everything else based on camera rotation
-	Quaternion rot = Quaternion::Conjugate(gameObject->GetWorldRotation());
+	Quaternion rot = Quaternion::Conjugate(GameObject::GetObject(gameObject)->GetWorldRotation());
 	std::tuple<double, Vector3> angleAxis = rot.GetAngleAxis();
 	double angle = Quaternion::RadiansToDegrees(std::get<0>(angleAxis));
 	Vector3 v = std::get<1>(angleAxis);

@@ -13,8 +13,8 @@
 
 namespace StevEngine {
 	//Static variables
-	int GameObject::currentID = 0;
-	std::vector<GameObject*> GameObject::gameObjects;
+	ID GameObject::currentID = 1;
+	std::map<ID, GameObject> GameObject::gameObjects;
 
 	//Main functions
 	void GameObject::Start() {
@@ -25,7 +25,6 @@ namespace StevEngine {
 	}
 	void GameObject::Update(double deltaTime) {
 		//Components
-		///Log::Normal(std::format("Object ({}) update. Component amount: {}", id, components.size()), true);
 		for (int i = 0; i < components.size(); i++) {
 			Component* component = components[i];
 			component->Update(deltaTime);
@@ -43,8 +42,8 @@ namespace StevEngine {
 	}
 	void GameObject::TransformView() {
 		//Parent transform
-		if (parent != nullptr) {
-			parent->TransformView();
+		if (parent != 0) {
+			gameObjects.at(parent).TransformView();
 		}
 		//Position
 		glTranslated(position.X, position.Y, position.Z);
@@ -88,92 +87,105 @@ namespace StevEngine {
 			components[i]->TransformUpdate(position, rotation, scale);
 		}
 		for (int i = 0; i < children.size(); i++) {
-			children[i]->TransformUpdate(position, rotation, scale);
+			gameObjects.at(children[i]).TransformUpdate(position, rotation, scale);
 		}
 	}
 	Utilities::Vector3 GameObject::GetWorldPosition() {
-		if(parent != nullptr) {
-			return parent->GetWorldPosition() + position;
+		if(parent != 0) {
+			return gameObjects.at(parent).GetWorldPosition() + position;
 		} else {
 			return position;
 		}
 	}
 	Utilities::Quaternion GameObject::GetWorldRotation() {
-		if(parent != nullptr) {
-			return parent->GetWorldRotation() + rotation;
+		if(parent != 0) {
+			return gameObjects.at(parent).GetWorldRotation() + rotation;
 		} else {
 			return rotation;
 		}
 	}
 	Utilities::Vector3 GameObject::GetWorldScale() {
-		if(parent != nullptr) {
-			return parent->GetWorldScale() + scale;
+		if(parent != 0) {
+			return gameObjects.at(parent).GetWorldScale() + scale;
 		} else {
 			return scale;
 		}
 	}
 
 	//Constructors
-	GameObject::GameObject() {
-		id = GameObject::currentID++;
-		name = "GameObject_" + id;
-		Log::Normal(std::format("Creating game object with new id {}", id), true);
+	GameObject::GameObject() : id(GameObject::currentID++), name("GameObject_" + id) {
+		Log::Normal(std::format("Creating gameobject with new id {}", id), true);
 	}
-	GameObject* GameObject::Create() {
-		GameObject* object = new GameObject();
-		GameObject::gameObjects.push_back(object);
-		object->Start();
-		return object;
+	GameObject::GameObject(std::string name) : id(GameObject::currentID++), name(name) {
+		Log::Normal(std::format("Creating gameobject with new id {}", id), true);
 	}
-	GameObject* GameObject::Create(std::string name, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) {
-		GameObject* object = new GameObject();
-		GameObject::gameObjects.push_back(object);
-		object->name = name;
-		object->position = position;
-		object->rotation = rotation;
-		object->scale = scale;
-		object->Start();
-		return object;
+	ID GameObject::Create() {
+		GameObject object = GameObject();
+		gameObjects.insert({object.id, object});
+		gameObjects.at(object.Id()).Start();
+		return object.Id();
 	}
-	GameObject* GameObject::CreateFromFile(Resources::Resource file) {
+	ID GameObject::Create(std::string name, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) {
+		GameObject object = GameObject(name);
+		object.position = position;
+		object.rotation = rotation;
+		object.scale = scale;
+		gameObjects.insert({object.id, object});
+		gameObjects.at(object.Id()).Start();
+		return object.Id();
+	}
+	ID GameObject::CreateFromFile(Resources::Resource file) {
 		tinyxml2::XMLDocument doc;
 		doc.Parse(file.GetStrData().c_str());
 		tinyxml2::XMLElement* elem = doc.FirstChildElement();
-		GameObject* object = CreateFromXML(doc.FirstChildElement());
-		return object;
+		return CreateFromXML(doc.FirstChildElement());
 	}
-	GameObject* GameObject::CreateFromXML(tinyxml2::XMLElement* node) {
+	ID GameObject::CreateFromXML(tinyxml2::XMLElement* node) {
 		//Create base object:
-		GameObject* object = Create(node->Attribute("name"), Utilities::Vector3(node->Attribute("position")), Utilities::Quaternion(node->Attribute("rotation")), Utilities::Vector3(node->Attribute("scale")));
+		GameObject object = GameObject(node->Attribute("name"));
+		object.position = Utilities::Vector3(node->Attribute("position"));
+		object.rotation = Utilities::Quaternion(node->Attribute("rotation"));
+		object.scale = Utilities::Vector3(node->Attribute("scale"));
+		gameObjects.insert({object.id, object});
+		GameObject* obj = GetObject(object.id);
 		//Add child objects & components
 		tinyxml2::XMLElement* child = node->FirstChildElement();
 		for(int i = 0; i < node->ChildElementCount(); i++) {
 			std::string name = child->Name();
 			if(name == "GameObject") {
-				object->AddChild(CreateFromXML(child));
+				obj->AddChild(CreateFromXML(child));
 			} else if(name == "Component") {
 				std::string test = child->Attribute("type");
 				FactoryBase* factory = componentFactories.at(test);
-				object->AddComponent(factory->create(child));
+				obj->AddComponent(factory->create(child));
 			}
 			child = child->NextSiblingElement();
 		}
+		//Add to list
+		obj->Start();
 		//Return
-		return object;
+		return object.id;
 	}
+	std::vector<ID> GameObject::GetAllObjects() {
+		std::vector<ID> keys;
+		for(std::map<ID, GameObject>::iterator it = gameObjects.begin(); it != gameObjects.end(); ++it) {
+			keys.push_back(it->first);
+		}
+		return keys;
+	}
+
 	
 	//Children functions
-	int GameObject::AddChild(GameObject* gameObject) {
+	int GameObject::AddChild(ID gameObject) {
 		children.push_back(gameObject);
-		gameObject->parent = this;
+		gameObjects.at(gameObject).parent = gameObject;
 		return children.size() - 1;
 	}
 	void GameObject::RemoveChild(int index) {
-		GameObject* child = GetChild(index);
-		child->parent = nullptr;
+		gameObjects.at(GetChild(index)).parent = 0;
 		children.erase(children.begin() + index);
 	}
-	GameObject* GameObject::GetChild(int index) {
+	ID GameObject::GetChild(int index) {
 		return children[index];
 	}
 	int GameObject::GetChildCount() {
@@ -181,7 +193,7 @@ namespace StevEngine {
 	}
 	int GameObject::GetIndexFromName(std::string name) {
 		for (int i = 0; i < children.size(); i++) {
-			if (children[i]->name == name) return i;
+			if (gameObjects.at(children[i]).name == name) return i;
 		}
 		return -1;
 	}
@@ -208,9 +220,9 @@ namespace StevEngine {
 		}
 
 		//Add children
-		for(GameObject* child : children) {
+		for(ID child : children) {
 			tinyxml2::XMLDocument xml;
-			xml.Parse(child->Export().c_str());
+			xml.Parse(gameObjects.at(child).Export().c_str());
 			main->InsertEndChild(xml.FirstChild());
 		}
 
@@ -244,14 +256,11 @@ namespace StevEngine {
 	//Destroy
 	void GameObject::Destroy() {
 		Log::Normal(std::format("Destroying object with id {}", id));
-		//Remove from gameobject list
-		for (int i = 0; i < GameObject::gameObjects.size(); i++) {
-			if (GameObject::gameObjects[i]->id == id) {
-				GameObject::gameObjects.erase(GameObject::gameObjects.begin() + i);
-				break;
-			}
+		//Destroy children
+		for (int i = 0; i < children.size(); i++) {
+			GameObject::GetObject(children[i])->Destroy();
 		}
-		//Clear component memory
+		//Destroy components
 		for (int i = 0; i < components.size(); i++)
 		{
 			components[i]->Destroy();
@@ -263,7 +272,7 @@ namespace StevEngine {
 	//Component
 	Component::Component(std::string type) : type(type) {}
 	Component::Component(tinyxml2::XMLElement* element) : Component(element->Attribute("type")) {}
-	void Component::SetObject(GameObject* object) {
+	void Component::SetObject(ID object) {
 		gameObject = object;
 	}
 	void Component::Destroy() {

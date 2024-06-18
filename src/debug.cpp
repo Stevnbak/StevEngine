@@ -117,14 +117,16 @@ int main(int argc, char** argv) {
 
 	//Create test objects
 	{
-		GameObject* floor = GameObject::Create("Cube", Utilities::Vector3(0, -1, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(15), Utilities::Vector3::forward), Utilities::Vector3(100, 1, 100));
+		ID id = GameObject::Create("Cube", Utilities::Vector3(0, -1, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(15), Utilities::Vector3::forward), Utilities::Vector3(100, 1, 100));
+		GameObject* floor = GameObject::GetObject(id);
 		Primitive* primitive = floor->AddComponent(new Primitive(PrimitiveType::Cube));
 		primitive->colour = SDL_Color(0, 1, 0, 1);
 		Physics::CubeCollider* collider = floor->AddComponent(new Physics::CubeCollider());
 		Physics::RigidBody* rb = floor->AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layer::GetLayerByName("Static")));
 	}
 	{
-		GameObject* cube = GameObject::Create("Cube", Utilities::Vector3(0, 4, 0), Utilities::Quaternion(), Utilities::Vector3(1, 2, 1));
+		ID id = GameObject::Create("Cube", Utilities::Vector3(0, 4, 0), Utilities::Quaternion(), Utilities::Vector3(1, 2, 1));
+		GameObject* cube = GameObject::GetObject(id);
 		Primitive* primitive = cube->AddComponent(new Primitive(PrimitiveType::Cube));
 		primitive->colour = SDL_Color(1, 0, 0, 1);
 		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
@@ -135,7 +137,8 @@ int main(int argc, char** argv) {
 		std::string test = cube->Export();
 		cube->ExportToFile("cube.xml");
 		Log::Normal(std::string("XML Cube Export: ") + test);
-		GameObject* cube2 = GameObject::CreateFromFile(Engine::Instance->resources->GetFile("cube.xml"));
+		ID id2 = GameObject::CreateFromFile(Engine::Instance->resources->GetFile("cube.xml"));
+		GameObject* cube2 = GameObject::GetObject(id2);
 		Physics::Collider* col = cube2->GetComponent<Physics::Collider>();
 		JPH::AABox bounds2 = col->shape->GetLocalBounds();
 		Utilities::Vector3 center2 = col->shape->GetCenterOfMass();
@@ -143,14 +146,16 @@ int main(int argc, char** argv) {
 		primitive2->colour = SDL_Color(1, 1, 1, 1);
 	}
 	{
-		GameObject* sphere = GameObject::Create("Sphere", Utilities::Vector3(3, 3, 0));
+		ID id = GameObject::Create("Sphere", Utilities::Vector3(3, 3, 0));
+		GameObject* sphere = GameObject::GetObject(id);
 		Primitive* primitive = sphere->AddComponent(new Primitive(PrimitiveType::Sphere));
 		primitive->colour = SDL_Color(1, 0, 0, 1);
 		Physics::Collider* collider = sphere->AddComponent(new Physics::SphereCollider());
 		Physics::RigidBody* rb = sphere->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 	}
 	{
-		GameObject* sphere = GameObject::Create("Cylinder", Utilities::Vector3(0, 3, 3));
+		ID id = GameObject::Create("Cylinder", Utilities::Vector3(0, 3, 3));
+		GameObject* sphere = GameObject::GetObject(id);
 		Primitive* primitive = sphere->AddComponent(new Primitive(PrimitiveType::Cylinder));
 		primitive->colour = SDL_Color(0, 0, 1, 1);
 		Physics::Collider* collider = sphere->AddComponent(new Physics::CylinderCollider());
@@ -159,8 +164,9 @@ int main(int argc, char** argv) {
 	}
 	//Add Camera controller
 	///Engine::Instance->activeCamera->gameObject->AddComponent(new CameraController());
-	Engine::Instance->activeCamera->gameObject->SetPosition(Utilities::Vector3(0, 4, 15));
-	Engine::Instance->activeCamera->gameObject->SetRotation(Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward));
+	GameObject* camObj = GameObject::GetObject(Engine::Instance->activeCamera->gameObject);
+	camObj->SetPosition(Utilities::Vector3(0, 4, 15));
+	camObj->SetRotation(Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward));
 
 	//Test ressource manager
 	Log::Normal(std::format("Ressource 0: {}", Engine::Instance->resources->GetFile(0).path));
@@ -168,20 +174,12 @@ int main(int argc, char** argv) {
 	Log::Normal(std::format("Ressource \"test_2.txt\": {}", Engine::Instance->resources->GetFile("test_2.txt").GetStrData()));
 
 	//Play audio
-	GameObject* audioPlayer = GameObject::Create("Audio Player");
+	ID audioId = GameObject::Create("Audio Player");
+	GameObject* audioPlayer = GameObject::GetObject(audioId);
 	Audio::Emitter* emitter = audioPlayer->AddComponent(new Audio::Emitter("audio.wav", false));
 	///Audio::Emitter emitter2 = Audio::Emitter("audio.wav", true);
 	emitter->Play();
 	///emitter2.Play();
-
-	//Export gameobject
-	GameObject* object = GameObject::Create("Test object", Utilities::Vector3(2, 3, 4));
-	object->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving"), 2));
-	std::string test = object->Export();
-	Log::Normal(std::string("XML Export: ") + test);
-	const char* t = test.c_str();
-
-	GameObject* object2 = GameObject::CreateFromFile(Engine::Instance->resources->GetFile("test.xml"));
 
 	//Start engine
 	engine.Start();

@@ -33,8 +33,8 @@ namespace StevEngine {
 		//Input?
 		InputSystem::Update(deltaTime);
 		//Update GameObjects
-		for (GameObject* object : GameObject::GetGameObjects()) {
-			object->Update(deltaTime);
+		for (ID id : GameObject::GetAllObjects()) {
+			GameObject::GetObject(id)->Update(deltaTime);
 		}
 	}
 
@@ -51,8 +51,8 @@ namespace StevEngine {
 			//Set view based on camera:
 			activeCamera->UpdateView();
 			//Draw objects
-			for (GameObject* object : GameObject::GetGameObjects()) {
-				object->Draw();
+			for (ID id : GameObject::GetAllObjects()) {
+				GameObject::GetObject(id)->Draw();
 			}
 			//Reset cam matrix
 			glPopMatrix();
@@ -78,10 +78,8 @@ namespace StevEngine {
 			throw "Engine has already been initialized.";
 		}
 		Instance = this;
-
 		//Initialize logging
 		Log::StartLogging(title);
-
 		//Initialize SDL window
 		if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
 			throw "Failed initializing SDL: " + string(SDL_GetError());
@@ -106,10 +104,8 @@ namespace StevEngine {
 		glViewport(0, 0, size, size);
 		glClearColor(1, 0.9, 1, 1);
 		glEnable(GL_DEPTH_TEST);
-
 		//Create main camera
-		activeCamera = GameObject::Create("Main Camera", Vector3(0, 0, 0), Quaternion())->AddComponent(new Camera(false, 1, 16 / 9));
-
+		activeCamera = GameObject::GetObject(GameObject::Create("Main Camera", Vector3(0, 0, 0), Quaternion()))->AddComponent(new Camera(false, 1, 16 / 9));
 		//Done creating engine
 		Log::Normal("Initialized Engine", true);
 	}
@@ -199,9 +195,10 @@ namespace StevEngine {
 		}
 
 		//Destroy all game objects
-		for (GameObject* object : GameObject::GetGameObjects()) {
-			object->Destroy();
+		for (ID id : GameObject::GetAllObjects()) {
+			GameObject::GetObject(id)->Destroy();
 		}
+		
 		Log::CloseLogging();
 
 		// Destroy the window. This will also destroy the surface

@@ -11,6 +11,8 @@
 #include <tinyxml2.h>
 
 namespace StevEngine {
+	using ID = uint16_t;
+
 	class GameObject;
 	class Component;
 
@@ -24,7 +26,7 @@ namespace StevEngine {
 				return new T(node);
 			}
 	};
-	
+
 	class Component {
 		public:
 			virtual void Start() = 0;
@@ -33,9 +35,9 @@ namespace StevEngine {
 			virtual void Export(tinyxml2::XMLElement* element) = 0;
 			std::string Export();
 			void Destroy();
-			void SetObject(GameObject* object);
+			void SetObject(ID object);
 			static const bool unique = false;
-			GameObject* gameObject;
+			ID gameObject;
 			Component(std::string type);
 			Component(tinyxml2::XMLElement* node);
 			virtual void TransformUpdate(bool position, bool rotation, bool scale) {};
@@ -47,11 +49,12 @@ namespace StevEngine {
 	class GameObject {
 		//Basic properties
 		public:
-			std::string name;
+			const std::string name;
+			ID Id() { return id; }
 		private:
-			int id;
+			ID id;
 			std::vector<Component*> components;
-			std::vector<GameObject*> children;
+			std::vector<ID> children;
 		//Transform
 		private:
 			Utilities::Vector3 position = Utilities::Vector3();
@@ -79,10 +82,10 @@ namespace StevEngine {
 			void TransformView();
 			void Destroy();
 			//Children functions
-			GameObject* parent = nullptr;
-			int AddChild(GameObject* gameObject);
+			ID parent = 0;
+			int AddChild(ID gameObjectID);
 			void RemoveChild(int index);
-			GameObject* GetChild(int index);
+			ID GetChild(int index);
 			int GetChildCount();
 			int GetIndexFromName(std::string name);
 			//Export functions
@@ -90,22 +93,24 @@ namespace StevEngine {
 			void ExportToFile(std::string path);
 		private: 
 			GameObject();
+			GameObject(std::string name);
 		//Static:
 		public:
-			static GameObject* Create();
-			static GameObject* Create(std::string name, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1));
-			static GameObject* CreateFromFile(Resources::Resource file);
-			static GameObject* CreateFromXML(tinyxml2::XMLElement* node);
-			static std::vector<GameObject*> GetGameObjects() { return gameObjects; }
+			static ID Create();
+			static ID Create(std::string name, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1));
+			static ID CreateFromFile(Resources::Resource file);
+			static ID CreateFromXML(tinyxml2::XMLElement* node);
 			template<typename T> static ComponentFactory<T>* AddComponentFactory(std::string type) {
 				ComponentFactory<T>* component = new ComponentFactory<T>();
 				componentFactories.insert(std::make_pair(type, component));
 				return component;
 			};
+			static GameObject* GetObject(ID id) { return &gameObjects.at(id); }
+			static std::vector<ID> GetAllObjects();
 		private:
 			static inline std::map<std::string, FactoryBase*> componentFactories = std::map<std::string, FactoryBase*>();
-			static std::vector<GameObject*> gameObjects;
-			static int currentID;
+			static std::map<ID, GameObject> gameObjects;
+			static ID currentID;
 		//Component functions
 		public:
 			template <class ComponentType> ComponentType* GetComponent(bool log = true) {
@@ -156,8 +161,7 @@ namespace StevEngine {
 				allComponents.insert(allComponents.end(), current.begin(), current.end());
 				//Find components in each child object
 				for (int i = 0; i < children.size(); i++) {
-					GameObject* child = children[i];
-					std::vector<ComponentType*> childComp = child->GetAllComponentsInChildren<ComponentType>();
+					std::vector<ComponentType*> childComp = gameObjects.at(children[i]).GetAllComponentsInChildren<ComponentType>();
 					allComponents.insert(allComponents.end(), childComp.begin(), childComp.end());
 				}
 				//Return components
@@ -177,7 +181,7 @@ namespace StevEngine {
 					}
 				}
 				//Add to list
-				component->SetObject(this);
+				component->SetObject(this->id);
 				component->Start();
 				components.push_back(component);
 				return component;
