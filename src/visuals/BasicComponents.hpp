@@ -19,9 +19,9 @@ namespace StevEngine {
 			void Start() {};
 			void Export(tinyxml2::XMLElement* element);
 			//Basic properties
-			Utilities::Vector3d position = Utilities::Vector3d();
-			Utilities::Rotation3d rotation = Utilities::Rotation3d();
-			Utilities::Vector3d scale = Utilities::Vector3d(1, 1, 1);
+			Utilities::Vector3 position = Utilities::Vector3();
+			Utilities::Quaternion rotation = Utilities::Quaternion();
+			Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1);
 			PrimitiveType type = (PrimitiveType)0;
 			SDL_Color colour = SDL_Color(1,1,1,1);
 			static const bool unique = false;

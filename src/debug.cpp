@@ -36,9 +36,9 @@ void CameraController::Update(double deltaTime) {
 		return;
 	}
 	//Move position
-	Utilities::Vector3d forward = gameObject->rotation.forward();
-	Utilities::Vector3d right = gameObject->rotation.right();
-	Utilities::Vector3d up = gameObject->rotation.up();
+	Utilities::Vector3 forward = gameObject->rotation.Forward();
+	Utilities::Vector3 right = gameObject->rotation.Right();
+	Utilities::Vector3 up = gameObject->rotation.Up();
 	if (InputSystem::IsKeyPressed(SDLK_w)) {
 		gameObject->position -= forward * movementSpeed * deltaTime;
 	} 
@@ -58,8 +58,8 @@ void CameraController::Update(double deltaTime) {
 		gameObject->position -= up * movementSpeed * deltaTime;
 	}
 	//Look around
-	gameObject->rotation.yaw -= InputSystem::mouseDelta.X * sensitivity * deltaTime;
-	gameObject->rotation.pitch -= InputSystem::mouseDelta.Y * sensitivity * deltaTime;
+	gameObject->rotation *= Quaternion::FromAngleAxis(InputSystem::mouseDelta.X * sensitivity * deltaTime, up);
+	gameObject->rotation *= Quaternion::FromAngleAxis(InputSystem::mouseDelta.Y * sensitivity * deltaTime, right);
 }
 void CameraController::Start() {
 	InputSystem::cursorMode = InputSystem::CursorMode::Locked;
@@ -77,15 +77,14 @@ void CameraController::Start() {
 }
 
 void mainUpdate(double deltaTime) {
-	/*Utilities::Rotation3d testQ(0, 0, 90);
-	Utilities::Vector3d forward = testQ.forward();
+	/*Utilities::Quaternion testQ(0, 0, 90);
+	Utilities::Vector3 forward = testQ.forward();
 	Log::Normal(std::format("Forward: ({};{};{})", forward.X, forward.Y, forward.Z));
-	Utilities::Vector3d right = testQ.right();
+	Utilities::Vector3 right = testQ.right();
 	Log::Normal(std::format("Right: ({};{};{})", right.X, right.Y, right.Z));
-	Utilities::Vector3d up = testQ.up();
+	Utilities::Vector3 up = testQ.up();
 	Log::Normal(std::format("Up: ({};{};{})", up.X, up.Y, up.Z));
 	Log::Normal("----------------------");*/
-	Engine::Instance->activeCamera->gameObject->rotation.roll = 0;
 }
 
 //Debug files
@@ -116,7 +115,7 @@ int main(int argc, char** argv) {
 
 	//Create test objects
 	{
-		GameObject* floor = GameObject::Create("Cube", Utilities::Vector3d(0, -1, 0), Utilities::Rotation3d(0,0,15), Utilities::Vector3d(100, 1, 100));
+		GameObject* floor = GameObject::Create("Cube", Utilities::Vector3(0, -1, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(15), Utilities::Vector3::forward), Utilities::Vector3(100, 1, 100));
 		Primitive* primitive = floor->AddComponent(new Primitive(PrimitiveType::Cube));
 		primitive->colour = SDL_Color(0, 1, 0, 1);
 		Physics::CubeCollider* collider = floor->AddComponent(new Physics::CubeCollider());
@@ -124,32 +123,32 @@ int main(int argc, char** argv) {
 		
 	}
 	{
-		GameObject* cube = GameObject::Create("Cube", Utilities::Vector3d(0, 4, 0), Utilities::Rotation3d(), Utilities::Vector3d(1, 2, 1));
+		GameObject* cube = GameObject::Create("Cube", Utilities::Vector3(0, 4, 0), Utilities::Quaternion(), Utilities::Vector3(1, 2, 1));
 		Primitive* primitive = cube->AddComponent(new Primitive(PrimitiveType::Cube));
 		primitive->colour = SDL_Color(1, 0, 0, 1);
 		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
 		Physics::RigidBody* rb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		JPH::AABox bounds = collider->shape->GetLocalBounds();
-		Utilities::Vector3d center = collider->shape->GetCenterOfMass();
+		Utilities::Vector3 center = collider->shape->GetCenterOfMass();
 		std::string test = cube->Export();
 		cube->ExportToFile("cube.xml");
 		Log::Normal(std::string("XML Cube Export: ") + test);
 		GameObject* cube2 = GameObject::CreateFromFile(Engine::Instance->resources->GetFile("cube.xml"));
 		Physics::Collider* col = cube2->GetComponent<Physics::Collider>();
 		JPH::AABox bounds2 = col->shape->GetLocalBounds();
-		Utilities::Vector3d center2 = col->shape->GetCenterOfMass();
+		Utilities::Vector3 center2 = col->shape->GetCenterOfMass();
 		Primitive* primitive2 = cube2->GetComponent<Primitive>();
 		primitive2->colour = SDL_Color(1, 1, 1, 1);
 	}
 	{
-		GameObject* sphere = GameObject::Create("Sphere", Utilities::Vector3d(3, 3, 0));
+		GameObject* sphere = GameObject::Create("Sphere", Utilities::Vector3(3, 3, 0));
 		Primitive* primitive = sphere->AddComponent(new Primitive(PrimitiveType::Sphere));
 		primitive->colour = SDL_Color(1, 0, 0, 1);
 		Physics::Collider* collider = sphere->AddComponent(new Physics::SphereCollider());
 		Physics::RigidBody* rb = sphere->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 	}
 	{
-		GameObject* sphere = GameObject::Create("Cylinder", Utilities::Vector3d(0, 3, 3));
+		GameObject* sphere = GameObject::Create("Cylinder", Utilities::Vector3(0, 3, 3));
 		Primitive* primitive = sphere->AddComponent(new Primitive(PrimitiveType::Cylinder));
 		primitive->colour = SDL_Color(0, 0, 1, 1);
 		Physics::Collider* collider = sphere->AddComponent(new Physics::CylinderCollider());
@@ -158,8 +157,8 @@ int main(int argc, char** argv) {
 	}
 	//Add Camera controller
 	///Engine::Instance->activeCamera->gameObject->AddComponent(new CameraController());
-	Engine::Instance->activeCamera->gameObject->position = Utilities::Vector3d(0, 4, 15);
-	Engine::Instance->activeCamera->gameObject->rotation = Utilities::Rotation3d(0, 0, 0);
+	Engine::Instance->activeCamera->gameObject->position = Utilities::Vector3(0, 4, 15);
+	Engine::Instance->activeCamera->gameObject->rotation = Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward);
 
 	//Test ressource manager
 	Log::Normal(std::format("Ressource 0: {}", Engine::Instance->resources->GetFile(0).path));
@@ -174,7 +173,7 @@ int main(int argc, char** argv) {
 	///emitter2.Play();
 
 	//Export gameobject
-	GameObject* object = GameObject::Create("Test object", Utilities::Vector3d(2, 3, 4));
+	GameObject* object = GameObject::Create("Test object", Utilities::Vector3(2, 3, 4));
 	object->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving"), 2));
 	std::string test = object->Export();
 	Log::Normal(std::string("XML Export: ") + test);

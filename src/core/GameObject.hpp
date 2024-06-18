@@ -47,13 +47,13 @@ namespace StevEngine {
 		public:
 			//Basic properties
 			std::string name;
-			Utilities::Vector3d position = Utilities::Vector3d();
-			Utilities::Rotation3d rotation = Utilities::Rotation3d();
-			Utilities::Vector3d scale = Utilities::Vector3d(1,1,1);
+			Utilities::Vector3 position = Utilities::Vector3();
+			Utilities::Quaternion rotation = Utilities::Quaternion();
+			Utilities::Vector3 scale = Utilities::Vector3(1,1,1);
 			//Absolute properties
-			Utilities::Vector3d absPosition();
-			Utilities::Rotation3d absRotation();
-			Utilities::Vector3d absScale();
+			Utilities::Vector3 absPosition();
+			Utilities::Quaternion absRotation();
+			Utilities::Vector3 absScale();
 			//Main functions
 			void Start();
 			void Update(double deltaTime);
@@ -164,7 +164,7 @@ namespace StevEngine {
 			void ExportToFile(std::string path);
 			//Static & Basic functions
 			static GameObject* Create();
-			static GameObject* Create(std::string name, Utilities::Vector3d position = Utilities::Vector3d(), Utilities::Rotation3d rotation = Utilities::Rotation3d(), Utilities::Vector3d scale = Utilities::Vector3d(1, 1, 1));
+			static GameObject* Create(std::string name, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1));
 			static GameObject* CreateFromFile(Resources::Resource file);
 			static GameObject* CreateFromXML(tinyxml2::XMLElement* node);
 			static std::vector<GameObject*> GetGameObjects() {

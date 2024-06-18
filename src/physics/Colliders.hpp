@@ -10,7 +10,7 @@ namespace StevEngine::Physics {
 	//Base collider
 	class Collider : public Component {
 		public:
-			Collider(JPH::Ref<JPH::Shape> shape, Utilities::Vector3d position = Utilities::Vector3d(0,0,0), Utilities::Rotation3d rotation = Utilities::Rotation3d(0,0,0), Utilities::Vector3d scale = Utilities::Vector3d(1,1,1));
+			Collider(JPH::Ref<JPH::Shape> shape, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1,1,1));
 			Collider(tinyxml2::XMLElement* element);
 			void Draw();
 			void Update(double deltaTime) {};
@@ -22,37 +22,37 @@ namespace StevEngine::Physics {
 
 			JPH::Ref<JPH::Shape> shape;
 
-			Utilities::Vector3d getScale()  { return scale; }
-			Utilities::Rotation3d getRotation()  { return rotation; }
-			Utilities::Vector3d getPosition() { return position; }
+			Utilities::Vector3 getScale()  { return scale; }
+			Utilities::Quaternion getRotation()  { return rotation; }
+			Utilities::Vector3 getPosition() { return position; }
 		protected:
-			Utilities::Vector3d scale = Utilities::Vector3d(1, 1, 1);
-			Utilities::Vector3d position = Utilities::Vector3d();
-			Utilities::Rotation3d rotation = Utilities::Rotation3d();
+			Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1);
+			Utilities::Vector3 position = Utilities::Vector3();
+			Utilities::Quaternion rotation = Utilities::Quaternion();
 			const JPH::Ref<JPH::Shape> rawShape;
 	};
 
 	//Cube collider
 	class CubeCollider : public Collider {
 		public:
-			CubeCollider(Utilities::Vector3d position = Utilities::Vector3d(0,0,0), Utilities::Rotation3d rotation = Utilities::Rotation3d(0,0,0), Utilities::Vector3d scale = Utilities::Vector3d(1,1,1));
+			CubeCollider(Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1,1,1));
 	};
 
 	//Sphere collider
 	class SphereCollider : public Collider {
 		public:
-			SphereCollider(Utilities::Vector3d position = Utilities::Vector3d(0,0,0), Utilities::Rotation3d rotation = Utilities::Rotation3d(0,0,0), Utilities::Vector3d scale = Utilities::Vector3d(1,1,1));
+			SphereCollider(Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1,1,1));
 	};
 
 	//Cylinder collider
 	class CylinderCollider : public Collider {
 		public:
-			CylinderCollider(Utilities::Vector3d position = Utilities::Vector3d(0,0,0), Utilities::Rotation3d rotation = Utilities::Rotation3d(0,0,0), Utilities::Vector3d scale = Utilities::Vector3d(1,1,1));
+			CylinderCollider(Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1,1,1));
 	};
 
 	//Capsule collider
 	class CapsuleCollider : public Collider {
 		public:
-			CapsuleCollider(Utilities::Vector3d position = Utilities::Vector3d(0,0,0), Utilities::Rotation3d rotation = Utilities::Rotation3d(0,0,0), Utilities::Vector3d scale = Utilities::Vector3d(1,1,1));
+			CapsuleCollider(Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1,1,1));
 	};
 }

@@ -1,5 +1,6 @@
 #include "System.hpp"
 #include <core/Log.hpp>
+#include <core/Utilities.hpp>
 
 #include <math.h>
 #include <iostream>
@@ -63,6 +64,7 @@ namespace StevEngine::Physics {
 		joltSystem.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, broad_phase_layer_interface, object_vs_broadphase_layer_filter, object_vs_object_layer_filter);
 		// Set system settings
 		joltSystem.SetPhysicsSettings(settings);
+		joltSystem.SetGravity(Utilities::Vector3::up * (-9.815));
 		//Get The body interface
 		bodyInterface = &joltSystem.GetBodyInterface();
 	}

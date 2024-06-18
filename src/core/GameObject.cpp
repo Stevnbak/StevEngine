@@ -33,12 +33,12 @@ namespace StevEngine {
 	}
 	void GameObject::Draw() {
 		glPushMatrix();
-		TransformView();
-		//Components
-		for (int i = 0; i < components.size(); i++) {
-			Component* component = components[i];
-			component->Draw();
-		}
+			TransformView();
+			//Components
+			for (int i = 0; i < components.size(); i++) {
+				Component* component = components[i];
+				component->Draw();
+			}
 		glPopMatrix();
 	}
 	void GameObject::TransformView() {
@@ -49,27 +49,30 @@ namespace StevEngine {
 		//Position
 		glTranslated(position.X, position.Y, position.Z);
 		//Rotation
-		rotation.OpenGLRotate();
+		std::tuple<double, Utilities::Vector3> angleAxis = rotation.GetAngleAxis();
+		double angle = Utilities::Quaternion::RadiansToDegrees(std::get<0>(angleAxis));
+		Utilities::Vector3 v = std::get<1>(angleAxis);
+		glRotated(angle, v.X, v.Y, v.Z);
 		//Scale
 		glScaled(scale.X, scale.Y, scale.Z);
 	}
 
 	//Absolute properties
-	Utilities::Vector3d GameObject::absPosition() {
+	Utilities::Vector3 GameObject::absPosition() {
 		if(parent != nullptr) {
 			return parent->absPosition() + position;
 		} else {
 			return position;
 		}
 	}
-	Utilities::Rotation3d GameObject::absRotation() {
+	Utilities::Quaternion GameObject::absRotation() {
 		if(parent != nullptr) {
 			return parent->absRotation() + rotation;
 		} else {
 			return rotation;
 		}
 	}
-	Utilities::Vector3d GameObject::absScale() {
+	Utilities::Vector3 GameObject::absScale() {
 		if(parent != nullptr) {
 			return parent->absScale() + scale;
 		} else {
@@ -89,7 +92,7 @@ namespace StevEngine {
 		object->Start();
 		return object;
 	}
-	GameObject* GameObject::Create(std::string name, Utilities::Vector3d position, Utilities::Rotation3d rotation, Utilities::Vector3d scale) {
+	GameObject* GameObject::Create(std::string name, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) {
 		GameObject* object = new GameObject();
 		GameObject::gameObjects.push_back(object);
 		object->name = name;
@@ -108,7 +111,7 @@ namespace StevEngine {
 	}
 	GameObject* GameObject::CreateFromXML(tinyxml2::XMLElement* node) {
 		//Create base object:
-		GameObject* object = Create(node->Attribute("name"), Utilities::Vector3d(node->Attribute("position")), Utilities::Rotation3d(node->Attribute("rotation")), Utilities::Vector3d(node->Attribute("scale")));
+		GameObject* object = Create(node->Attribute("name"), Utilities::Vector3(node->Attribute("position")), Utilities::Quaternion(node->Attribute("rotation")), Utilities::Vector3(node->Attribute("scale")));
 		//Add child objects & components
 		tinyxml2::XMLElement* child = node->FirstChildElement();
 		for(int i = 0; i < node->ChildElementCount(); i++) {

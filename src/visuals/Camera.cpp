@@ -27,20 +27,21 @@ FactoryBase* factory = GameObject::AddComponentFactory<Camera>(std::string("Came
 
 void Camera::UpdateView() {
 	//Move everything else based on camera position
-	glTranslated(-gameObject->position.X, -gameObject->position.Y, -gameObject->position.Z);
+	Vector3 position = gameObject->absPosition();
+	glTranslated(-position.X, -position.Y, -position.Z);
 	//Rotate everything else based on camera rotation
-	glRotated(-gameObject->rotation.yaw,  0, 1, 0);
-	
-	Vector3d right = gameObject->rotation.right();
-	glRotated(-gameObject->rotation.pitch, right.X, right.Y, right.Z);
-	glRotated(-gameObject->rotation.roll, 0, 0, 1);
+	Quaternion rot = Quaternion::Conjugate(gameObject->absRotation());
+	std::tuple<double, Vector3> angleAxis = rot.GetAngleAxis();
+	double angle = Quaternion::RadiansToDegrees(std::get<0>(angleAxis));
+	Vector3 v = std::get<1>(angleAxis);
+	glRotated(angle, v.X, v.Y, v.Z);
 	//Set projection
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	if (isOrthographic)
 	{
-		double width = (1 / aspect) / (zoom / gameObject->position.Z);
-		double height = (1 * aspect) / (zoom / gameObject->position.Z);
+		double width = (1 / aspect) / (zoom / position.Z);
+		double height = (1 * aspect) / (zoom / position.Z);
 		//Set up an orthographic projection with the same near clip plane
 		glOrtho(-width, width, -height, height, nearClip, farClip);
 	}

@@ -56,14 +56,14 @@ namespace StevEngine::InputSystem {
 		}
 	}
 	//Mouse inputs:
-	Utilities::Vector2d mousePosition = Utilities::Vector2d();
-	Utilities::Vector2d mouseDelta = Utilities::Vector2d();
+	Utilities::Vector2 mousePosition = Utilities::Vector2();
+	Utilities::Vector2 mouseDelta = Utilities::Vector2();
 	double mouseWheelDelta = 0;
 	void MouseMotion(double X, double Y, double DeltaX, double DeltaY) {
-		mousePosition = Utilities::Vector2d(X, Y);
+		mousePosition = Utilities::Vector2(X, Y);
 		///Log::Normal(std::format("Recieved mouse movement. X: {} Y: {}", mousePosition.X, mousePosition.Y), true);
 		//Calculate delta movements
-		mouseDelta = Utilities::Vector2d(DeltaX, DeltaY);
+		mouseDelta = Utilities::Vector2(DeltaX, DeltaY);
 		///Log::Normal(std::format("Mouse delta X: {} Mouse delta Y: {}", mouseDelta.X, mouseDelta.Y), true);
 	}
 	void MouseWheel(double value) {
@@ -75,7 +75,7 @@ namespace StevEngine::InputSystem {
 		}
 	}
 	void ResetMouseDelta() {
-		mouseDelta = Utilities::Vector2d();
+		mouseDelta = Utilities::Vector2();
 		///Log::Normal(std::format("Mouse delta X: {} Mouse delta Y: {}", mouseDelta.X, mouseDelta.Y), true);
 	}
 

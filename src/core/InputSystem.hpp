@@ -13,8 +13,8 @@ namespace StevEngine::InputSystem {
 	void KeyDown(SDL_Keycode key);
 	void KeyUp(SDL_Keycode key);
 	//Mouse inputs
-	extern Utilities::Vector2d mousePosition;
-	extern Utilities::Vector2d mouseDelta;
+	extern Utilities::Vector2 mousePosition;
+	extern Utilities::Vector2 mouseDelta;
 	extern double mouseWheelDelta;
 	void MouseMotion(double X, double Y, double DeltaX, double DeltaY);
 	void MouseWheel(double value);

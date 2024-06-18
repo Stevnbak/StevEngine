@@ -21,9 +21,9 @@ LIB_NAME			:= StevEngine
 
 
 # Calculated variables
-SRCS := $(wildcard ${ROOT}$(SRC)/*.cpp) $(wildcard ${ROOT}$(SRC)/*/*.cpp)
+SRCS := $(shell find ${ROOT}$(SRC) -name "*.cpp")
 OBJS := $(SRCS:${ROOT}$(SRC)/%.cpp=$(OBJ)/%.o)
-ASSETS := $(wildcard ${ROOT}$(DEBUG_RSC)/*.*)
+ASSETS := $(shell find ${ROOT}$(DEBUG_RSC) -name "*.*")
 dir_guard=@mkdir -p $(@D)
 
 # Debug command

@@ -15,7 +15,7 @@
 
 
 namespace StevEngine::Physics {
-	Collider::Collider(JPH::Ref<JPH::Shape> shape, Utilities::Vector3d position, Utilities::Rotation3d rotation, Utilities::Vector3d scale) 
+	Collider::Collider(JPH::Ref<JPH::Shape> shape, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) 
 	: rawShape(shape), Component("Collider") {
 		this->position = position;
 		this->rotation = rotation;
@@ -23,8 +23,8 @@ namespace StevEngine::Physics {
 	}
 	void Collider::Start() {
 		//Set correct scale for shape
-		Utilities::Vector3d abs = this->gameObject->absScale();
-		this->shape = new JPH::ScaledShape(rawShape, Utilities::Vector3d(scale.X * abs.X, scale.Y * abs.Y, scale.Z * abs.Z));
+		Utilities::Vector3 abs = this->gameObject->absScale();
+		this->shape = new JPH::ScaledShape(rawShape, Utilities::Vector3(scale.X * abs.X, scale.Y * abs.Y, scale.Z * abs.Z));
 	}
 	void Collider::Destroy() {
 		delete shape;
@@ -34,19 +34,19 @@ namespace StevEngine::Physics {
 	void Collider::Draw() {}
 
 	//Cube collider
-	CubeCollider::CubeCollider(Utilities::Vector3d position, Utilities::Rotation3d rotation, Utilities::Vector3d scale) 
-		: Collider(new JPH::BoxShape(Utilities::Vector3d(0.5, 0.5, 0.5)), position, rotation, scale) {}
+	CubeCollider::CubeCollider(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) 
+		: Collider(new JPH::BoxShape(Utilities::Vector3(0.5, 0.5, 0.5)), position, rotation, scale) {}
 
 	//Sphere collider
-	SphereCollider::SphereCollider(Utilities::Vector3d position, Utilities::Rotation3d rotation, Utilities::Vector3d scale) 
+	SphereCollider::SphereCollider(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) 
 		: Collider(new JPH::SphereShape(0.5), position, rotation, scale) {}
 
 	//Cylinder collider
-	CylinderCollider::CylinderCollider(Utilities::Vector3d position, Utilities::Rotation3d rotation, Utilities::Vector3d scale) 
+	CylinderCollider::CylinderCollider(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) 
 		: Collider(new JPH::CylinderShape(0.5,0.5), position, rotation, scale) {}
 
 	//Capsule collider
-	CapsuleCollider::CapsuleCollider(Utilities::Vector3d position, Utilities::Rotation3d rotation, Utilities::Vector3d scale) 
+	CapsuleCollider::CapsuleCollider(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) 
 		: Collider(new JPH::CapsuleShape(0.5,0.5), position, rotation, scale) {}
 
 	//Export colliders
@@ -82,9 +82,9 @@ namespace StevEngine::Physics {
 		}
 	}
 	Collider::Collider(tinyxml2::XMLElement* node) : rawShape(ImportShape(node)), Component(node) {
-		position = Utilities::Vector3d(node->Attribute("position"));
-		rotation = Utilities::Rotation3d(node->Attribute("rotation"));
-		scale = Utilities::Vector3d(node->Attribute("scale"));
+		position = Utilities::Vector3(node->Attribute("position"));
+		rotation = Utilities::Quaternion(node->Attribute("rotation"));
+		scale = Utilities::Vector3(node->Attribute("scale"));
 	}
 	FactoryBase* colfactory = GameObject::AddComponentFactory<Collider>(std::string("Collider"));
 }

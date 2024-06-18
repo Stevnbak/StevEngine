@@ -48,20 +48,20 @@ namespace StevEngine::Physics {
 			bool IsDynamic () const { return body->IsDynamic(); }
 			float GetFriction () const { return body->GetFriction(); }
 			void SetFriction (float inFriction) { return body->SetFriction(inFriction); }
-			Utilities::Vector3d GetLinearVelocity () const { return body->GetLinearVelocity(); }
-			void SetLinearVelocity (Utilities::Vector3d inLinearVelocity) { return body->SetLinearVelocity(inLinearVelocity); }
-			void SetLinearVelocityClamped (Utilities::Vector3d inLinearVelocity) { return body->SetLinearVelocityClamped(inLinearVelocity); }
-			Utilities::Vector3d GetAngularVelocity () const { return body->GetAngularVelocity(); }
-			void SetAngularVelocity (Utilities::Vector3d inAngularVelocity) { return body->SetAngularVelocity(inAngularVelocity); }
-			void SetAngularVelocityClamped (Utilities::Vector3d inAngularVelocity) { return body->SetAngularVelocityClamped(inAngularVelocity); }
-			Utilities::Vector3d GetPointVelocityCOM (Utilities::Vector3d inPointRelativeToCOM) const { return body->GetPointVelocityCOM(inPointRelativeToCOM); }
-			Utilities::Vector3d GetPointVelocity (Utilities::Vector3d inPoint) const { return body->GetPointVelocity(inPoint); }
-			void AddForce (Utilities::Vector3d inForce) { return body->AddForce(inForce); }
-			void AddForce (Utilities::Vector3d inForce, Utilities::Vector3d inPosition) { return body->AddForce(inForce, inPosition); }
-			void AddTorque (Utilities::Vector3d inTorque) { return body->AddTorque(inTorque); }
-			void AddImpulse (Utilities::Vector3d inImpulse) { return body->AddImpulse(inImpulse); }
-			void AddImpulse (Utilities::Vector3d inImpulse, Utilities::Vector3d inPosition) { return body->AddImpulse(inImpulse, inPosition); }
-			void AddAngularImpulse (Utilities::Vector3d inAngularImpulse) { return body->AddAngularImpulse(inAngularImpulse); }
-			void MoveKinematic (Utilities::Vector3d inTargetPosition, Utilities::Rotation3d inTargetRotation, float inDeltaTime) { return body->MoveKinematic(inTargetPosition, inTargetRotation, inDeltaTime); }
+			Utilities::Vector3 GetLinearVelocity () const { return body->GetLinearVelocity(); }
+			void SetLinearVelocity (Utilities::Vector3 inLinearVelocity) { return body->SetLinearVelocity(inLinearVelocity); }
+			void SetLinearVelocityClamped (Utilities::Vector3 inLinearVelocity) { return body->SetLinearVelocityClamped(inLinearVelocity); }
+			Utilities::Vector3 GetAngularVelocity () const { return body->GetAngularVelocity(); }
+			void SetAngularVelocity (Utilities::Vector3 inAngularVelocity) { return body->SetAngularVelocity(inAngularVelocity); }
+			void SetAngularVelocityClamped (Utilities::Vector3 inAngularVelocity) { return body->SetAngularVelocityClamped(inAngularVelocity); }
+			Utilities::Vector3 GetPointVelocityCOM (Utilities::Vector3 inPointRelativeToCOM) const { return body->GetPointVelocityCOM(inPointRelativeToCOM); }
+			Utilities::Vector3 GetPointVelocity (Utilities::Vector3 inPoint) const { return body->GetPointVelocity(inPoint); }
+			void AddForce (Utilities::Vector3 inForce) { return body->AddForce(inForce); }
+			void AddForce (Utilities::Vector3 inForce, Utilities::Vector3 inPosition) { return body->AddForce(inForce, inPosition); }
+			void AddTorque (Utilities::Vector3 inTorque) { return body->AddTorque(inTorque); }
+			void AddImpulse (Utilities::Vector3 inImpulse) { return body->AddImpulse(inImpulse); }
+			void AddImpulse (Utilities::Vector3 inImpulse, Utilities::Vector3 inPosition) { return body->AddImpulse(inImpulse, inPosition); }
+			void AddAngularImpulse (Utilities::Vector3 inAngularImpulse) { return body->AddAngularImpulse(inAngularImpulse); }
+			void MoveKinematic (Utilities::Vector3 inTargetPosition, Utilities::Quaternion inTargetRotation, float inDeltaTime) { return body->MoveKinematic(inTargetPosition, inTargetRotation, inDeltaTime); }
 	};
 }
