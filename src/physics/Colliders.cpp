@@ -52,6 +52,25 @@ namespace StevEngine::Physics {
 		}
 	}
 
+	//Update transform
+	void Collider::SetScale(Utilities::Vector3 scale) {
+		this->scale = scale;
+		TransformUpdate(false, false, true);
+	}
+	void Collider::SetRotation(Utilities::Quaternion rotation) {
+		this->rotation = rotation;
+		TransformUpdate(false, true, false);
+	}
+	void Collider::SetPosition(Utilities::Vector3 position) {
+		this->position = position;
+		TransformUpdate(true, false, false);
+	}
+	void Collider::SetTransform(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) {
+		this->scale = scale;
+		this->rotation = rotation;
+		this->position = position;
+		TransformUpdate(true, true, true);
+	}
 	//Cube collider
 	CubeCollider::CubeCollider(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) 
 		: Collider(new JPH::BoxShape(Utilities::Vector3(0.5, 0.5, 0.5)), position, rotation, scale) {}
