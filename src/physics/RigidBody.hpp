@@ -11,6 +11,28 @@
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 
 namespace StevEngine::Physics {
+	class MotionProperties {
+		public:
+			double LinearDamping;
+			double AngularDamping;
+			double MaxLinearVelocity;
+			double MaxAngularVelocity;
+			double GravityFactor;
+			MotionProperties(
+				double gravityFactor = 1.0,
+				double linearDamping = 0.0, 
+				double angularDamping = 0.0, 
+				double maxLinearVelocity = 0.0, 
+				double maxAngularVelocity = 0.0
+			) {
+				this->LinearDamping = linearDamping;
+				this->AngularDamping = angularDamping;
+				this->MaxLinearVelocity = maxLinearVelocity;
+				this->MaxAngularVelocity = maxAngularVelocity;
+				this->GravityFactor = gravityFactor;
+			}
+	};
+
 	class RigidBody : public Component {
 		//Information
 		public:
@@ -21,6 +43,7 @@ namespace StevEngine::Physics {
 			const Layer* layer;
 			const float mass;
 		private:
+			MotionProperties motionProperties;
 			std::vector<Collider*> colliders;
 			JPH::Body* body;
 			JPH::Ref<JPH::Shape> shape;
@@ -31,15 +54,15 @@ namespace StevEngine::Physics {
 			void Update(double deltaTime);
 			void Draw() {}
 			void Destroy();
+			void TransformUpdate(bool position, bool rotation, bool scale);
 			//Export
 			void Export(tinyxml2::XMLElement* element);
 			//Constructor
 			RigidBody(JPH::EMotionType motionType, Layer* layer, float mass = 1);
 			RigidBody(tinyxml2::XMLElement* element);
-		private:
 			//Other functions
-			void UpdateColliders();
-			void UpdateBody();
+			void RefreshShape();
+			void SetMotionProperties(MotionProperties properties);
 		//Jolt Wrappers
 		public:
 			bool IsActive () const { return body->IsActive(); }

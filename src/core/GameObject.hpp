@@ -38,28 +38,76 @@ namespace StevEngine {
 			GameObject* gameObject;
 			Component(std::string type);
 			Component(tinyxml2::XMLElement* node);
+			virtual void TransformUpdate(bool position, bool rotation, bool scale) {};
 		private:
 			std::string type;
 			static const FactoryBase* factory;
 	};
 
 	class GameObject {
+		//Basic properties
 		public:
-			//Basic properties
 			std::string name;
+		private:
+			int id;
+			std::vector<Component*> components;
+			std::vector<GameObject*> children;
+		//Transform
+		private:
 			Utilities::Vector3 position = Utilities::Vector3();
 			Utilities::Quaternion rotation = Utilities::Quaternion();
 			Utilities::Vector3 scale = Utilities::Vector3(1,1,1);
+		public:
+			Utilities::Vector3 GetPosition();
+			Utilities::Quaternion GetRotation();
+			Utilities::Vector3 GetScale();
+			//Update properties
+			void SetPosition(Utilities::Vector3 position, bool announce = true);
+			void SetRotation(Utilities::Quaternion rotation, bool announce = true);
+			void SetScale(Utilities::Vector3 scale, bool announce = true);
+			void SetTransform(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, bool announce = true);
+			void TransformUpdate(bool position, bool rotation, bool scale);
 			//Absolute properties
-			Utilities::Vector3 absPosition();
-			Utilities::Quaternion absRotation();
-			Utilities::Vector3 absScale();
-			//Main functions
+			Utilities::Vector3 GetWorldPosition();
+			Utilities::Quaternion GetWorldRotation();
+			Utilities::Vector3 GetWorldScale();
+		//Main functions
+		public:
 			void Start();
 			void Update(double deltaTime);
 			void Draw();
 			void TransformView();
-			//Component functions
+			void Destroy();
+			//Children functions
+			GameObject* parent = nullptr;
+			int AddChild(GameObject* gameObject);
+			void RemoveChild(int index);
+			GameObject* GetChild(int index);
+			int GetChildCount();
+			int GetIndexFromName(std::string name);
+			//Export functions
+			std::string Export();
+			void ExportToFile(std::string path);
+		private: 
+			GameObject();
+		//Static:
+		public:
+			static GameObject* Create();
+			static GameObject* Create(std::string name, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1));
+			static GameObject* CreateFromFile(Resources::Resource file);
+			static GameObject* CreateFromXML(tinyxml2::XMLElement* node);
+			static std::vector<GameObject*> GetGameObjects() { return gameObjects; }
+			template<typename T> static ComponentFactory<T>* AddComponentFactory(std::string type) {
+				ComponentFactory<T>* component = new ComponentFactory<T>();
+				componentFactories.insert(std::make_pair(type, component));
+				return component;
+			};
+		private:
+			static inline std::map<std::string, FactoryBase*> componentFactories = std::map<std::string, FactoryBase*>();
+			static std::vector<GameObject*> gameObjects;
+			static int currentID;
+		//Component functions
+		public:
 			template <class ComponentType> ComponentType* GetComponent(bool log = true) {
 				//Check if component type is a Component
 				if (!std::is_base_of_v<Component, ComponentType>) {
@@ -94,6 +142,26 @@ namespace StevEngine {
 				}
 				//Return null
 				return foundComponents;
+			}
+			template <class ComponentType> std::vector<ComponentType*> GetAllComponentsInChildren() {
+				//Define vector
+				std::vector<ComponentType*> allComponents;
+				//Check if component type is a Component
+				if (!std::is_base_of_v<Component, ComponentType>) {
+					Log::Error("Component must be derived from abstract class Component", true);
+					return allComponents;
+				}
+				//Find components in this object:
+				std::vector<ComponentType*> current = GetAllComponents<ComponentType>();
+				allComponents.insert(allComponents.end(), current.begin(), current.end());
+				//Find components in each child object
+				for (int i = 0; i < children.size(); i++) {
+					GameObject* child = children[i];
+					std::vector<ComponentType*> childComp = child->GetAllComponentsInChildren<ComponentType>();
+					allComponents.insert(allComponents.end(), childComp.begin(), childComp.end());
+				}
+				//Return components
+				return allComponents;
 			}
 			template <class ComponentType> ComponentType* AddComponent(ComponentType* component) {
 				//Check if component type is a Component
@@ -152,38 +220,5 @@ namespace StevEngine {
 				}
 				Log::Error(std::format("No component of type \"{}\" found on object {}", typeid(ComponentType).name(), id), true);
 			}
-			//Children functions
-			GameObject* parent = nullptr;
-			int AddChild(GameObject* gameObject);
-			void RemoveChild(int index);
-			GameObject* GetChild(int index);
-			int GetChildCount();
-			int GetIndexFromName(std::string name);
-			//Export
-			std::string Export();
-			void ExportToFile(std::string path);
-			//Static & Basic functions
-			static GameObject* Create();
-			static GameObject* Create(std::string name, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1));
-			static GameObject* CreateFromFile(Resources::Resource file);
-			static GameObject* CreateFromXML(tinyxml2::XMLElement* node);
-			static std::vector<GameObject*> GetGameObjects() {
-				return gameObjects;
-			}
-			void Destroy();
-			//Static component factory stuff
-			private: static inline std::map<std::string, FactoryBase*> componentFactories = std::map<std::string, FactoryBase*>();
-			public: template<typename T> static ComponentFactory<T>* AddComponentFactory(std::string type) {
-				ComponentFactory<T>* component = new ComponentFactory<T>();
-				componentFactories.insert(std::make_pair(type, component));
-				return component;
-			};
-		private: 
-			GameObject();
-			int id;
-			std::vector<Component*> components;
-			std::vector<GameObject*> children;
-			static std::vector<GameObject*> gameObjects;
-			static int currentID;
 	};
 }

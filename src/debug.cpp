@@ -11,6 +11,7 @@
 
 using namespace StevEngine;
 
+/**
 class CameraController : public Component {
 	public:
 		double movementSpeed = 4;
@@ -40,7 +41,7 @@ void CameraController::Update(double deltaTime) {
 	Utilities::Vector3 right = gameObject->rotation.Right();
 	Utilities::Vector3 up = gameObject->rotation.Up();
 	if (InputSystem::IsKeyPressed(SDLK_w)) {
-		gameObject->position -= forward * movementSpeed * deltaTime;
+		gameObject->SetPosition(gameObject->GetPosition() - forward * movementSpeed * deltaTime);
 	} 
 	if (InputSystem::IsKeyPressed(SDLK_s)) {
 		gameObject->position += forward * movementSpeed * deltaTime;
@@ -75,6 +76,7 @@ void CameraController::Start() {
 		}
 	});
 }
+ */
 
 void mainUpdate(double deltaTime) {
 	/*Utilities::Quaternion testQ(0, 0, 90);
@@ -120,7 +122,6 @@ int main(int argc, char** argv) {
 		primitive->colour = SDL_Color(0, 1, 0, 1);
 		Physics::CubeCollider* collider = floor->AddComponent(new Physics::CubeCollider());
 		Physics::RigidBody* rb = floor->AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layer::GetLayerByName("Static")));
-		
 	}
 	{
 		GameObject* cube = GameObject::Create("Cube", Utilities::Vector3(0, 4, 0), Utilities::Quaternion(), Utilities::Vector3(1, 2, 1));
@@ -128,6 +129,7 @@ int main(int argc, char** argv) {
 		primitive->colour = SDL_Color(1, 0, 0, 1);
 		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
 		Physics::RigidBody* rb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		rb->SetMotionProperties(Physics::MotionProperties(1, 0.5));
 		JPH::AABox bounds = collider->shape->GetLocalBounds();
 		Utilities::Vector3 center = collider->shape->GetCenterOfMass();
 		std::string test = cube->Export();
@@ -157,8 +159,8 @@ int main(int argc, char** argv) {
 	}
 	//Add Camera controller
 	///Engine::Instance->activeCamera->gameObject->AddComponent(new CameraController());
-	Engine::Instance->activeCamera->gameObject->position = Utilities::Vector3(0, 4, 15);
-	Engine::Instance->activeCamera->gameObject->rotation = Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward);
+	Engine::Instance->activeCamera->gameObject->SetPosition(Utilities::Vector3(0, 4, 15));
+	Engine::Instance->activeCamera->gameObject->SetRotation(Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward));
 
 	//Test ressource manager
 	Log::Normal(std::format("Ressource 0: {}", Engine::Instance->resources->GetFile(0).path));

@@ -57,24 +57,57 @@ namespace StevEngine {
 		glScaled(scale.X, scale.Y, scale.Z);
 	}
 
-	//Absolute properties
-	Utilities::Vector3 GameObject::absPosition() {
+	//Transform
+	Utilities::Vector3 GameObject::GetPosition() { return position; }
+	Utilities::Quaternion GameObject::GetRotation() { return rotation; }
+	Utilities::Vector3 GameObject::GetScale() { return scale; }
+	void GameObject::SetPosition(Utilities::Vector3 position, bool announce) {
+		this->position = position;
+		if(announce)
+			TransformUpdate(true, false, false);
+	}
+	void GameObject::SetRotation(Utilities::Quaternion rotation, bool announce) {
+		this->rotation = rotation;
+		if(announce)
+			TransformUpdate(false, true, false);
+	}
+	void GameObject::SetScale(Utilities::Vector3 scale, bool announce) {
+		this->scale = scale;
+		if(announce)
+			TransformUpdate(false, false, true);
+	}
+	void GameObject::SetTransform(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, bool announce) {
+		this->position = position;
+		this->rotation = rotation;
+		this->scale = scale;
+		if(announce)
+			TransformUpdate(true, true, true);
+	}
+	void GameObject::TransformUpdate(bool position, bool rotation, bool scale) {
+		for (int i = 0; i < components.size(); i++) {
+			components[i]->TransformUpdate(position, rotation, scale);
+		}
+		for (int i = 0; i < children.size(); i++) {
+			children[i]->TransformUpdate(position, rotation, scale);
+		}
+	}
+	Utilities::Vector3 GameObject::GetWorldPosition() {
 		if(parent != nullptr) {
-			return parent->absPosition() + position;
+			return parent->GetWorldPosition() + position;
 		} else {
 			return position;
 		}
 	}
-	Utilities::Quaternion GameObject::absRotation() {
+	Utilities::Quaternion GameObject::GetWorldRotation() {
 		if(parent != nullptr) {
-			return parent->absRotation() + rotation;
+			return parent->GetWorldRotation() + rotation;
 		} else {
 			return rotation;
 		}
 	}
-	Utilities::Vector3 GameObject::absScale() {
+	Utilities::Vector3 GameObject::GetWorldScale() {
 		if(parent != nullptr) {
-			return parent->absScale() + scale;
+			return parent->GetWorldScale() + scale;
 		} else {
 			return scale;
 		}

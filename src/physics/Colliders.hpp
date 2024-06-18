@@ -17,6 +17,7 @@ namespace StevEngine::Physics {
 			void Start();
 			void Destroy();
 			void Export(tinyxml2::XMLElement* element);
+			void TransformUpdate(bool position, bool rotation, bool scale);
 
 			static const bool unique = false;
 

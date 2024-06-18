@@ -1,4 +1,6 @@
 #pragma once
+#include "Vector3.hpp"
+
 #include <Jolt/Jolt.h>
 #include <Jolt/Geometry/AABox.h>
 #include <string>

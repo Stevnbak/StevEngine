@@ -1,4 +1,5 @@
 #include "Colliders.hpp"
+#include "RigidBody.hpp"
 
 #include <stdexcept>
 #include <algorithm>
@@ -23,7 +24,7 @@ namespace StevEngine::Physics {
 	}
 	void Collider::Start() {
 		//Set correct scale for shape
-		Utilities::Vector3 abs = this->gameObject->absScale();
+		Utilities::Vector3 abs = this->gameObject->GetWorldScale();
 		this->shape = new JPH::ScaledShape(rawShape, Utilities::Vector3(scale.X * abs.X, scale.Y * abs.Y, scale.Z * abs.Z));
 	}
 	void Collider::Destroy() {
@@ -31,7 +32,25 @@ namespace StevEngine::Physics {
 		delete rawShape;
 		delete this;
 	}
-	void Collider::Draw() {}
+	void Collider::Draw() {
+		
+	}
+	void Collider::TransformUpdate(bool position, bool rotation, bool scale) {
+		//Re scale collider
+		if(scale) {
+			Utilities::Vector3 abs = this->gameObject->GetWorldScale();
+			this->shape = new JPH::ScaledShape(rawShape, Utilities::Vector3(this->scale.X * abs.X, this->scale.Y * abs.Y, this->scale.Z * abs.Z));
+		}
+		//Tell all related rigidbodies to update shape
+		GameObject* latest = this->gameObject;
+		while(latest->parent != nullptr) {
+			RigidBody* rb = latest->GetComponent<RigidBody>(false);
+			if(rb != nullptr) {
+				rb->RefreshShape();
+			}
+			latest = latest->parent;
+		}
+	}
 
 	//Cube collider
 	CubeCollider::CubeCollider(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) 
