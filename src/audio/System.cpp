@@ -10,7 +10,7 @@
 
 static void SDLCALL StaticChannelCompleted (int channel)
 {
-    StevEngine::Engine::Instance->audio->ChannelCompleted(channel);
+    StevEngine::Engine::Instance->audio.ChannelCompleted(channel);
 }
 
 

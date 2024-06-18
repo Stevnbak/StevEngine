@@ -14,7 +14,7 @@ namespace StevEngine::Audio {
         this->volume = volume;
         this->channel = -1;
         //Load audo file
-        SDL_RWops* data = Engine::Instance->resources->GetFile(audioPath).GetSDLData();
+        SDL_RWops* data = Engine::Instance->resources.GetFile(audioPath).GetSDLData();
         audioData = Mix_LoadWAV_RW(data, 0);
         SDL_FreeRW(data);
         if (audioData == NULL) {
@@ -25,7 +25,7 @@ namespace StevEngine::Audio {
     }
 
     void Emitter::Play() {
-        Engine::Instance->audio->Play(this);
+        Engine::Instance->audio.Play(this);
     }
 
     void Emitter::Export(tinyxml2::XMLElement* element) {

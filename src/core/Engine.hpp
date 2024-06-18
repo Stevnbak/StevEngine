@@ -17,10 +17,10 @@ namespace StevEngine {
 			void Update(double deltaTime);
 		public:
 			Camera* activeCamera;
-			Physics::System* physics;
+			Physics::System physics;
 			SDL_Window* window;
-			Resources::System* resources;
-			Audio::System* audio;
+			Resources::System resources;
+			Audio::System audio;
 			double getFPS();
 			const char * title;
 		private:

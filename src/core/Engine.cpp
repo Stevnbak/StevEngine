@@ -29,7 +29,7 @@ namespace StevEngine {
 	Engine* Engine::Instance = nullptr;
 	void Engine::Update(double deltaTime) {
 		//Run Jolt physics step
-		physics->Update(deltaTime);
+		physics.Update(deltaTime);
 		//Input?
 		InputSystem::Update(deltaTime);
 		//Update GameObjects
@@ -69,9 +69,9 @@ namespace StevEngine {
 	WIDTH(WIDTH),
 	HEIGHT(HEIGHT),
 	mainUpdate(mainUpdate),
-	physics(new Physics::System()),
-	resources(new Resources::System()),
-	audio(new Audio::System())
+	physics(Physics::System()),
+	resources(Resources::System()),
+	audio(Audio::System())
 	{
 		//Create instance
 		if(Instance != nullptr) {
@@ -206,10 +206,7 @@ namespace StevEngine {
 		SDL_DestroyWindow(window);
 		window = NULL;
 
-		delete physics;
-		delete resources;
-		audio->CleanUp();
-		delete audio;
+		audio.CleanUp();
 
 		// Quit SDL
 		SDL_Quit();

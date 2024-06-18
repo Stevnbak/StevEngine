@@ -28,8 +28,8 @@ namespace StevEngine::Physics {
 		bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
 		bodySettings.mMassPropertiesOverride = massProperties;
 		//	Create body from settings
-		body = Engine::Instance->physics->bodyInterface->CreateBody(bodySettings);
-		Engine::Instance->physics->bodyInterface->AddBody(body->GetID(), JPH::EActivation::Activate);
+		body = Engine::Instance->physics.bodyInterface->CreateBody(bodySettings);
+		Engine::Instance->physics.bodyInterface->AddBody(body->GetID(), JPH::EActivation::Activate);
 	}
 	void RigidBody::Update(double deltaTime) {
 		if(motionType != JPH::EMotionType::Static) {
@@ -80,7 +80,7 @@ namespace StevEngine::Physics {
 
 
 	void RigidBody::Destroy() {
-		Engine::Instance->physics->bodyInterface->DestroyBody(body->GetID());
+		Engine::Instance->physics.bodyInterface->DestroyBody(body->GetID());
 		delete shape;
 		delete this;
 	}
