@@ -1,6 +1,7 @@
 #include "BasicComponents.hpp"
 #include <core/Log.hpp>
 #include <core/Utilities.hpp>
+#include <core/GameObject.hpp>
 
 
 #include <SDL2/SDL.h>

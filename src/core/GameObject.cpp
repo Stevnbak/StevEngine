@@ -116,23 +116,24 @@ namespace StevEngine {
 	GameObject::GameObject() : id(GameObject::currentID++), name("GameObject_" + id) {
 		Log::Normal(std::format("Creating gameobject with new id {}", id), true);
 	}
-	GameObject::GameObject(std::string name) : id(GameObject::currentID++), name(name) {
-		Log::Normal(std::format("Creating gameobject with new id {}", id), true);
+	GameObject::GameObject(ID id, std::string name) : id(id), name(name) {
+		Log::Normal(std::format("Creating gameobject with id {}", id), true);
 	}
 	ID GameObject::Create() {
-		GameObject object = GameObject();
-		gameObjects.insert({object.id, object});
-		gameObjects.at(object.Id()).Start();
-		return object.Id();
+		ID id = GameObject::currentID++;
+		gameObjects.insert(std::make_pair(id, GameObject(id, "GameObject_" + id)));
+		gameObjects.at(id).Start();
+		return id;
 	}
 	ID GameObject::Create(std::string name, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) {
-		GameObject object = GameObject(name);
-		object.position = position;
-		object.rotation = rotation;
-		object.scale = scale;
-		gameObjects.insert({object.id, object});
-		gameObjects.at(object.Id()).Start();
-		return object.Id();
+		ID id = GameObject::currentID++;
+		gameObjects.insert(std::make_pair(id, GameObject(id, name)));
+		GameObject* object = GetObject(id);
+		object->position = position;
+		object->rotation = rotation;
+		object->scale = scale;
+		object->Start();
+		return id;
 	}
 	ID GameObject::CreateFromFile(Resources::Resource file) {
 		tinyxml2::XMLDocument doc;
@@ -142,29 +143,25 @@ namespace StevEngine {
 	}
 	ID GameObject::CreateFromXML(tinyxml2::XMLElement* node) {
 		//Create base object:
-		GameObject object = GameObject(node->Attribute("name"));
-		object.position = Utilities::Vector3(node->Attribute("position"));
-		object.rotation = Utilities::Quaternion(node->Attribute("rotation"));
-		object.scale = Utilities::Vector3(node->Attribute("scale"));
-		gameObjects.insert({object.id, object});
-		GameObject* obj = GetObject(object.id);
+		ID id = Create(node->Attribute("name"), Utilities::Vector3(node->Attribute("position")), Utilities::Quaternion(node->Attribute("rotation")), Utilities::Vector3(node->Attribute("scale")));
+		GameObject* object = GetObject(id);
 		//Add child objects & components
 		tinyxml2::XMLElement* child = node->FirstChildElement();
 		for(int i = 0; i < node->ChildElementCount(); i++) {
 			std::string name = child->Name();
 			if(name == "GameObject") {
-				obj->AddChild(CreateFromXML(child));
+				object->AddChild(CreateFromXML(child));
 			} else if(name == "Component") {
 				std::string test = child->Attribute("type");
 				FactoryBase* factory = componentFactories.at(test);
-				obj->AddComponent(factory->create(child));
+				object->AddComponent(factory->create(child));
 			}
 			child = child->NextSiblingElement();
 		}
 		//Add to list
-		obj->Start();
+		object->Start();
 		//Return
-		return object.id;
+		return id;
 	}
 	std::vector<ID> GameObject::GetAllObjects() {
 		std::vector<ID> keys;
@@ -190,12 +187,6 @@ namespace StevEngine {
 	}
 	int GameObject::GetChildCount() {
 		return children.size();
-	}
-	int GameObject::GetIndexFromName(std::string name) {
-		for (int i = 0; i < children.size(); i++) {
-			if (gameObjects.at(children[i]).name == name) return i;
-		}
-		return -1;
 	}
 
 	//Export
@@ -254,28 +245,16 @@ namespace StevEngine {
 	}
 
 	//Destroy
-	void GameObject::Destroy() {
-		Log::Normal(std::format("Destroying object with id {}", id));
+	GameObject::~GameObject() {
+		///Log::Normal(std::format("Destroying object with id {}", id));
 		//Destroy children
 		for (int i = 0; i < children.size(); i++) {
-			GameObject::GetObject(children[i])->Destroy();
+			delete GameObject::GetObject(children[i]);
 		}
 		//Destroy components
 		for (int i = 0; i < components.size(); i++)
 		{
-			components[i]->Destroy();
+			delete components[i];
 		}
-		//Clear memory
-		delete this;
-	}
-
-	//Component
-	Component::Component(std::string type) : type(type) {}
-	Component::Component(tinyxml2::XMLElement* element) : Component(element->Attribute("type")) {}
-	void Component::SetObject(ID object) {
-		gameObject = object;
-	}
-	void Component::Destroy() {
-		
 	}
 }

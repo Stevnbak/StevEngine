@@ -14,8 +14,6 @@
 #include <core/InputSystem.hpp>
 #include <core/GameObject.hpp>
 #include <core/Log.hpp>
-#include <core/ResourceManager.hpp>
-#include <physics/System.hpp>
 #include <visuals/Camera.hpp>
 
 using namespace std;
@@ -195,10 +193,9 @@ namespace StevEngine {
 		}
 
 		//Destroy all game objects
-		for (ID id : GameObject::GetAllObjects()) {
-			GameObject::GetObject(id)->Destroy();
-		}
+		GameObject::gameObjects.clear();
 		
+		//Stop logging
 		Log::CloseLogging();
 
 		// Destroy the window. This will also destroy the surface

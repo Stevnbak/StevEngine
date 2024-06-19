@@ -1,5 +1,5 @@
 #pragma once
-#include <core/GameObject.hpp>
+#include <core/Component.hpp>
 #include <core/Utilities.hpp>
 #include <physics/Colliders.hpp>
 #include <physics/Layers.hpp>
@@ -11,32 +11,33 @@
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 
 namespace StevEngine::Physics {
-	class MotionProperties {
-		public:
-			double LinearDamping;
-			double AngularDamping;
-			double MaxLinearVelocity;
-			double MaxAngularVelocity;
-			double GravityFactor;
-			JPH::EAllowedDOFs AllowedDOFs;
-			MotionProperties(
-				double gravityFactor = 1.0,
-				double linearDamping = 0.0, 
-				double angularDamping = 0.0, 
-				JPH::EAllowedDOFs allowedDOFs = JPH::EAllowedDOFs::All,
-				double maxLinearVelocity = 0.0, 
-				double maxAngularVelocity = 0.0
-			) {
-				this->LinearDamping = linearDamping;
-				this->AngularDamping = angularDamping;
-				this->MaxLinearVelocity = maxLinearVelocity;
-				this->MaxAngularVelocity = maxAngularVelocity;
-				this->GravityFactor = gravityFactor;
-				this->AllowedDOFs = allowedDOFs;
-			}
+	struct MotionProperties {
+		double LinearDamping;
+		double AngularDamping;
+		double MaxLinearVelocity;
+		double MaxAngularVelocity;
+		double GravityFactor;
+		JPH::EAllowedDOFs AllowedDOFs;
+		MotionProperties(
+			double gravityFactor = 1.0,
+			double linearDamping = 0.0, 
+			double angularDamping = 0.0, 
+			JPH::EAllowedDOFs allowedDOFs = JPH::EAllowedDOFs::All,
+			double maxLinearVelocity = 0.0, 
+			double maxAngularVelocity = 0.0
+		) {
+			this->LinearDamping = linearDamping;
+			this->AngularDamping = angularDamping;
+			this->MaxLinearVelocity = maxLinearVelocity;
+			this->MaxAngularVelocity = maxAngularVelocity;
+			this->GravityFactor = gravityFactor;
+			this->AllowedDOFs = allowedDOFs;
+		}
 	};
 
 	class RigidBody : public Component {
+		friend class Collider;
+		friend class StevEngine::GameObject;
 		//Information
 		public:
 			static const bool unique = true;
@@ -56,16 +57,17 @@ namespace StevEngine::Physics {
 			void Start();
 			void Update(double deltaTime);
 			void Draw() {}
-			void Destroy();
-			void TransformUpdate(bool position, bool rotation, bool scale);
-			//Export
-			void Export(tinyxml2::XMLElement* element);
+			~RigidBody();
 			//Constructor
 			RigidBody(JPH::EMotionType motionType, Layer* layer, float mass = 1000);
 			RigidBody(tinyxml2::XMLElement* element);
 			//Other functions
-			void RefreshShape();
 			void SetMotionProperties(MotionProperties properties);
+		private:
+			void RefreshShape();
+			void TransformUpdate(bool position, bool rotation, bool scale);
+			//Export
+			void Export(tinyxml2::XMLElement* element);
 		//Jolt Wrappers
 		public:
 			bool IsActive () const { return body->IsActive(); }

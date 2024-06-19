@@ -8,28 +8,31 @@
 #include <vector>
 
 namespace StevEngine {
+	class Engine;
 	namespace Resources {
 		class Resource {
+			friend class System;
 			public:
 				const ushort id;
 				const std::string path;
-				Resource();
-				Resource(std::string path, const char* data, const int size);
 				SDL_RWops* GetSDLData();
 				std::string GetStrData();
 			private:
+				Resource();
+				Resource(std::string path, const char* data, const int size);
 				const char* data;
 				const int size;
 				static ushort currentId;
 		};
 
 		class System {
+			friend class StevEngine::Engine;
 			public:
-				System();
 				Resource GetFile(ushort id) const;
 				Resource GetFile(std::string path) const;
 				void AddFile(std::string path, const char*, const int size);
 			private:
+				System();
 				std::map<ushort, const Resource> resources;
 				std::map<std::string, ushort> pathToId;
 		};

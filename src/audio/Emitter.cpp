@@ -1,6 +1,7 @@
 #include "Emitter.hpp"
-#include "core/Engine.hpp"
 #include "audio/System.hpp"
+#include "core/Engine.hpp"
+#include "core/GameObject.hpp"
 
 #include <SDL.h>
 #include <SDL_mixer.h>
@@ -37,11 +38,10 @@ namespace StevEngine::Audio {
 	FactoryBase* factory = GameObject::AddComponentFactory<Emitter>(std::string("Emitter"));
 
 
-    void Emitter::Destroy() {
+    Emitter::~Emitter() {
         if (audioData) {
             Mix_FreeChunk(audioData);
             audioData = NULL;
         }
-        delete this;
     }
 }

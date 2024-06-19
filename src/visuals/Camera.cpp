@@ -2,6 +2,7 @@
 #include <core/Engine.hpp>
 #include <core/Utilities.hpp>
 #include <core/Log.hpp>
+#include <core/GameObject.hpp>
 
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
@@ -27,10 +28,10 @@ FactoryBase* factory = GameObject::AddComponentFactory<Camera>(std::string("Came
 
 void Camera::UpdateView() {
 	//Move everything else based on camera position
-	Vector3 position = GameObject::GetObject(gameObject)->GetWorldPosition();
+	Vector3 position = GameObject::GetObject(GetParent())->GetWorldPosition();
 	glTranslated(-position.X, -position.Y, -position.Z);
 	//Rotate everything else based on camera rotation
-	Quaternion rot = Quaternion::Conjugate(GameObject::GetObject(gameObject)->GetWorldRotation());
+	Quaternion rot = Quaternion::Conjugate(GameObject::GetObject(GetParent())->GetWorldRotation());
 	std::tuple<double, Vector3> angleAxis = rot.GetAngleAxis();
 	double angle = Quaternion::RadiansToDegrees(std::get<0>(angleAxis));
 	Vector3 v = std::get<1>(angleAxis);

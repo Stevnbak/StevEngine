@@ -1,5 +1,5 @@
 #pragma once
-#include <core/GameObject.hpp>
+#include <core/Component.hpp>
 #include <core/Utilities.hpp>
 //Jolt:
 #include <Jolt/Jolt.h>
@@ -9,19 +9,19 @@ namespace StevEngine::Physics {
 
 	//Base collider
 	class Collider : public Component {
+		friend class StevEngine::GameObject;
 		public:
 			Collider(JPH::Ref<JPH::Shape> shape, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1,1,1));
 			Collider(tinyxml2::XMLElement* element);
+			~Collider();
+		private:
 			void Draw();
 			void Update(double deltaTime) {};
 			void Start();
-			void Destroy();
 			void Export(tinyxml2::XMLElement* element);
 			void TransformUpdate(bool position, bool rotation, bool scale);
-
+		public:
 			static const bool unique = false;
-
-			JPH::Ref<JPH::Shape> shape;
 
 			Utilities::Vector3 GetScale()  { return scale; }
 			Utilities::Quaternion GetRotation()  { return rotation; }
@@ -32,11 +32,13 @@ namespace StevEngine::Physics {
 			void SetTransform(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale);
 			Utilities::Range3 GetBounds() { return shape->GetLocalBounds(); };
 			Utilities::Vector3 GetCenterOfMass() { return shape->GetCenterOfMass(); };
+			JPH::Ref<JPH::Shape> GetShape() { return shape; }
 		protected:
 			Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1);
 			Utilities::Vector3 position = Utilities::Vector3();
 			Utilities::Quaternion rotation = Utilities::Quaternion();
 			const JPH::Ref<JPH::Shape> rawShape;
+			JPH::Ref<JPH::Shape> shape;
 	};
 
 	//Cube collider
