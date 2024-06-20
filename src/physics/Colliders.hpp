@@ -1,5 +1,5 @@
 #pragma once
-#include <core/Component.hpp>
+#include <core/scenes/Component.hpp>
 #include <core/Utilities.hpp>
 //Jolt:
 #include <Jolt/Jolt.h>
@@ -16,13 +16,13 @@ namespace StevEngine::Physics {
 			~Collider();
 		private:
 			void Draw();
+			void Deactivate();
 			void Update(double deltaTime) {};
 			void Start();
 			void Export(tinyxml2::XMLElement* element);
 			void TransformUpdate(bool position, bool rotation, bool scale);
 		public:
 			static const bool unique = false;
-
 			Utilities::Vector3 GetScale()  { return scale; }
 			Utilities::Quaternion GetRotation()  { return rotation; }
 			Utilities::Vector3 GetPosition() { return position; }

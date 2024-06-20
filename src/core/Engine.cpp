@@ -12,7 +12,7 @@
 //Engine
 #include <core/Utilities.hpp>
 #include <core/InputSystem.hpp>
-#include <core/GameObject.hpp>
+#include <core/scenes/GameObject.hpp>
 #include <core/Log.hpp>
 #include <visuals/Camera.hpp>
 
@@ -31,8 +31,9 @@ namespace StevEngine {
 		//Input?
 		InputSystem::Update(deltaTime);
 		//Update GameObjects
-		for (ID id : GameObject::GetAllObjects()) {
-			GameObject::GetObject(id)->Update(deltaTime);
+		Scene* scene = scenes.GetScene(scenes.active);
+		for (ID id : scene->GetAllObjects()) {
+			scene->GetObject(id)->Update(deltaTime);
 		}
 	}
 
@@ -43,14 +44,15 @@ namespace StevEngine {
 		// Clear the colorbuffer 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Drawing
-		if (activeCamera != nullptr) {
+		if (scenes.GetActiveScene()->activeCamera != nullptr) {
 			//Start cam matrix
 			glPushMatrix();
 			//Set view based on camera:
-			activeCamera->UpdateView();
+			scenes.GetActiveScene()->activeCamera->UpdateView();
 			//Draw objects
-			for (ID id : GameObject::GetAllObjects()) {
-				GameObject::GetObject(id)->Draw();
+			Scene* scene = scenes.GetScene(scenes.active);
+			for (ID id : scene->GetAllObjects()) {
+				scene->GetObject(id)->Draw();
 			}
 			//Reset cam matrix
 			glPopMatrix();
@@ -69,7 +71,8 @@ namespace StevEngine {
 	mainUpdate(mainUpdate),
 	physics(Physics::System()),
 	resources(Resources::System()),
-	audio(Audio::System())
+	audio(Audio::System()),
+	scenes(SceneManager())
 	{
 		//Create instance
 		if(Instance != nullptr) {
@@ -102,13 +105,13 @@ namespace StevEngine {
 		glViewport(0, 0, size, size);
 		glClearColor(1, 0.9, 1, 1);
 		glEnable(GL_DEPTH_TEST);
-		//Create main camera
-		activeCamera = GameObject::GetObject(GameObject::Create("Main Camera", Vector3(0, 0, 0), Quaternion()))->AddComponent(new Camera(false, 1, 16 / 9));
 		//Done creating engine
 		Log::Normal("Initialized Engine", true);
 	}
 
 	int Engine::Start() {
+		//Activate first scene if none has been activated
+		scenes.ActivateDefault();
 		//Main loop
 		uint lastUpdateTime = GetTime();
 		while (running) {
@@ -192,8 +195,8 @@ namespace StevEngine {
 			}
 		}
 
-		//Destroy all game objects
-		GameObject::gameObjects.clear();
+		//Destroy all scenes
+		scenes.scenes.clear();
 		
 		//Stop logging
 		Log::CloseLogging();

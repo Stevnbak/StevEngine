@@ -10,6 +10,7 @@ namespace StevEngine {
             friend class StevEngine::Engine;
             public:
                 void Play(Emitter* emitter);
+                void Stop(int channel);
                 void SDLCALL ChannelCompleted(int channel);
             private:
                 System();

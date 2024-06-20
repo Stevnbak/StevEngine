@@ -61,6 +61,10 @@ namespace StevEngine::Audio {
         }
     }
 
+    void System::Stop(int channel) {
+        Mix_HaltChannel(channel);
+    }
+
     void System::CleanUp() {
         if (audio_open) {
             Mix_CloseAudio();

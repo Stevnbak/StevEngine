@@ -1,6 +1,7 @@
 #include "Colliders.hpp"
 #include "RigidBody.hpp"
-#include <core/GameObject.hpp>
+#include <core/scenes/GameObject.hpp>
+#include "core/scenes/Scene.hpp"
 
 #include <stdexcept>
 #include <algorithm>
@@ -25,8 +26,11 @@ namespace StevEngine::Physics {
 	}
 	void Collider::Start() {
 		//Set correct scale for shape
-		Utilities::Vector3 abs = GameObject::GetObject(GetParent())->GetWorldScale();
+		Utilities::Vector3 abs = GetParent()->GetWorldScale();
 		this->shape = new JPH::ScaledShape(rawShape, Utilities::Vector3(scale.X * abs.X, scale.Y * abs.Y, scale.Z * abs.Z));
+	}
+	void Collider::Deactivate()	{
+		if(shape) shape->Release();
 	}
 	Collider::~Collider() {
 		if(shape) shape->Release();
@@ -36,19 +40,19 @@ namespace StevEngine::Physics {
 		
 	}
 	void Collider::TransformUpdate(bool position, bool rotation, bool scale) {
+		GameObject* latest = GetParent();
 		//Re scale collider
 		if(scale) {
-			Utilities::Vector3 abs = GameObject::GetObject(GetParent())->GetWorldScale();
+			Utilities::Vector3 abs = latest->GetWorldScale();
 			this->shape = new JPH::ScaledShape(rawShape, Utilities::Vector3(this->scale.X * abs.X, this->scale.Y * abs.Y, this->scale.Z * abs.Z));
 		}
 		//Tell all related rigidbodies to update shape
-		ID latest = GetParent();
 		while(latest != 0) {
-			RigidBody* rb = GameObject::GetObject(latest)->GetComponent<RigidBody>(false);
+			RigidBody* rb = latest->GetComponent<RigidBody>(false);
 			if(rb != nullptr) {
 				rb->RefreshShape();
 			}
-			latest = GameObject::GetObject(latest)->GetParent();
+			latest = latest->GetParent();
 		}
 	}
 

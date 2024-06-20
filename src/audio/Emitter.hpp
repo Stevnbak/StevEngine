@@ -1,5 +1,5 @@
 #pragma once
-#include "core/Component.hpp"
+#include "core/scenes/Component.hpp"
 #include <SDL_mixer.h>
 
 namespace StevEngine {
@@ -23,6 +23,7 @@ namespace StevEngine {
             private:
                 void Export(tinyxml2::XMLElement* element);
                 void Start() {};
+                void Deactivate();
                 void Update(double deltaTime) {};
                 void Draw() {};
         };

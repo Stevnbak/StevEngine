@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL2/SDL.h>
 #include <core/Utilities.hpp>
-#include <core/Component.hpp>
+#include <core/scenes/Component.hpp>
 namespace StevEngine {
 	enum PrimitiveType {
 		None,
@@ -25,6 +25,7 @@ namespace StevEngine {
 		private:
 			void Update(double deltaTime) {};
 			void Draw();
+			void Deactivate() {};
 			void Start() {};
 			void Export(tinyxml2::XMLElement* element);
 	};

@@ -3,8 +3,7 @@
 #include <core/Log.hpp>
 #include <core/InputSystem.hpp>
 #include <core/ResourceManager.hpp>
-#include "Component.hpp"
-#include <core/Engine.hpp>
+#include <core/scenes/Component.hpp>
 
 #include <map>
 #include <vector>
@@ -17,12 +16,14 @@ namespace StevEngine {
 
 	class GameObject {
 		friend class Engine;
+		friend class Scene;
 		//Basic properties
 		public:
 			const std::string name;
 			ID Id() { return id; }
 		private:
 			ID id;
+			std::string scene;
 		//Transform
 		public:
 			Utilities::Vector3 GetPosition();
@@ -48,39 +49,33 @@ namespace StevEngine {
 			void ExportToFile(std::string path);
 		private: 
 			void Start();
+			void Deactivate();
 			void Update(double deltaTime);
 			void Draw();
 			std::string Export();
 			void TransformView();
 			GameObject();
-			GameObject(ID id, std::string name);
+			GameObject(ID id, std::string name, std::string scene);
 		//Children functions
 		public:
 			int AddChild(ID gameObjectID);
 			void RemoveChild(int index);
-			ID GetChild(int index);
+			GameObject* GetChild(int index);
 			int GetChildCount();
-			ID GetParent() { return parent; }
+			GameObject* GetParent();
 		private:
 			ID parent = 0;
 			std::vector<ID> children;
 		//Static:
 		public:
-			static ID Create();
-			static ID Create(std::string name, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1));
-			static ID CreateFromFile(Resources::Resource file);
 			template<typename T> static ComponentFactory<T>* AddComponentFactory(std::string type) {
 				ComponentFactory<T>* component = new ComponentFactory<T>();
 				componentFactories.insert(std::make_pair(type, component));
 				return component;
 			};
-			static GameObject* GetObject(ID id) { return &gameObjects.at(id); }
-			static std::vector<ID> GetAllObjects();
 		private:
 			static inline std::map<std::string, FactoryBase*> componentFactories = std::map<std::string, FactoryBase*>();
-			static std::map<ID, GameObject> gameObjects;
 			static ID currentID;
-			static ID CreateFromXML(tinyxml2::XMLElement* node);
 		//Component functions
 		private:
 			std::vector<Component*> components;
@@ -124,7 +119,7 @@ namespace StevEngine {
 				allComponents.insert(allComponents.end(), current.begin(), current.end());
 				//Find components in each child object
 				for (int i = 0; i < children.size(); i++) {
-					std::vector<T*> childComp = gameObjects.at(children[i]).GetAllComponentsInChildren<T>();
+					std::vector<T*> childComp = GetChild(i)->GetAllComponentsInChildren<T>();
 					allComponents.insert(allComponents.end(), childComp.begin(), childComp.end());
 				}
 				//Return components
@@ -141,8 +136,7 @@ namespace StevEngine {
 					}
 				}
 				//Add to list
-				component->SetObject(this->id);
-				component->Start();
+				component->SetObject(this->id, this->scene);
 				components.push_back(component);
 				return component;
 			}

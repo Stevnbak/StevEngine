@@ -1,8 +1,8 @@
 #pragma once
-#include <visuals/Camera.hpp>
 #include <physics/System.hpp>
 #include <core/ResourceManager.hpp>
 #include <audio/System.hpp>
+#include <core/scenes/SceneManager.hpp>
 
 #include <GL/glew.h>
 
@@ -16,11 +16,11 @@ namespace StevEngine {
 			void Draw();
 			void Update(double deltaTime);
 		public:
-			Camera* activeCamera;
-			Physics::System physics;
 			SDL_Window* window;
+			Physics::System physics;
 			Resources::System resources;
 			Audio::System audio;
+			SceneManager scenes;
 			double getFPS();
 			const char * title;
 		private:

@@ -1,6 +1,6 @@
 #pragma once
 #include <core/Utilities.hpp>
-#include <core/Component.hpp>
+#include <core/scenes/Component.hpp>
 using namespace StevEngine::Utilities;
 
 namespace StevEngine {
@@ -18,6 +18,7 @@ namespace StevEngine {
 			//Component functions
 			void UpdateView();
 			void Start() {};
+			void Deactivate() {};
 			void Update(double deltaTime) {};
 			void Draw() {};
 			void Export(tinyxml2::XMLElement* element);

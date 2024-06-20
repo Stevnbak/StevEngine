@@ -1,5 +1,5 @@
 #pragma once
-#include <core/Component.hpp>
+#include <core/scenes/Component.hpp>
 #include <core/Utilities.hpp>
 #include <physics/Colliders.hpp>
 #include <physics/Layers.hpp>
@@ -55,6 +55,7 @@ namespace StevEngine::Physics {
 		public:
 			//Basic component functions
 			void Start();
+			void Deactivate();
 			void Update(double deltaTime);
 			void Draw() {}
 			~RigidBody();

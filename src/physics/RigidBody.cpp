@@ -2,7 +2,7 @@
 #include <physics/System.hpp>
 #include <core/Log.hpp>
 #include <core/Engine.hpp>
-#include <core/GameObject.hpp>
+#include <core/scenes/GameObject.hpp>
 
 #include <math.h>
 #include <iostream>
@@ -17,7 +17,8 @@ namespace StevEngine::Physics {
 		//Create shape
 		RefreshShape();
 		//Create new body
-		JPH::BodyCreationSettings bodySettings = JPH::BodyCreationSettings(shape, GameObject::GetObject(GetParent())->GetWorldPosition() - shape->GetCenterOfMass(), GameObject::GetObject(GetParent())->GetWorldRotation(), motionType, layer->id);
+		GameObject* parent = GetParent();
+		JPH::BodyCreationSettings bodySettings = JPH::BodyCreationSettings(shape, parent->GetWorldPosition() - shape->GetCenterOfMass(), parent->GetWorldRotation(), motionType, layer->id);
 		bodySettings.mGravityFactor = motionProperties.GravityFactor;
 		bodySettings.mLinearDamping = motionProperties.LinearDamping;
 		bodySettings.mAngularDamping = motionProperties.AngularDamping;
@@ -33,28 +34,35 @@ namespace StevEngine::Physics {
 		body = Engine::Instance->physics.GetBodyInterface()->CreateBody(bodySettings);
 		Engine::Instance->physics.GetBodyInterface()->AddBody(body->GetID(), JPH::EActivation::Activate);
 	}
+	void RigidBody::Deactivate() {
+		if(body) Engine::Instance->physics.GetBodyInterface()->DestroyBody(body->GetID());
+		if(shape) shape->Release();
+	}
 	void RigidBody::Update(double deltaTime) {
 		if(motionType != JPH::EMotionType::Static) {
-			GameObject::GetObject(GetParent())->SetPosition(body->GetWorldSpaceBounds().GetCenter(), false);
-			GameObject::GetObject(GetParent())->SetRotation(body->GetRotation(), false);
+			GameObject* parent = GetParent();
+			parent->SetPosition(body->GetWorldSpaceBounds().GetCenter(), false);
+			parent->SetRotation(body->GetRotation(), false);
 		}
 	}
 	void RigidBody::TransformUpdate(bool position, bool rotation, bool scale) {
-		if(position || rotation) if(body != nullptr) body->SetPositionAndRotationInternal(GameObject::GetObject(GetParent())->GetWorldPosition() - shape->GetCenterOfMass(), GameObject::GetObject(GetParent())->GetWorldRotation());
+		GameObject* parent = GetParent();
+		if(position || rotation) if(body != nullptr) body->SetPositionAndRotationInternal(parent->GetWorldPosition() - shape->GetCenterOfMass(), parent->GetWorldRotation());
 		if(scale) RefreshShape();
 	}
 	void RigidBody::RefreshShape() {
+		GameObject* parent = GetParent();
 		//Find all colliders:
 		colliders.clear();
-		colliders = GameObject::GetObject(GetParent())->GetAllComponents<Collider>();
-		for (int i = 0; i < GameObject::GetObject(GetParent())->GetChildCount(); i++) {
-			std::vector<Collider*> cc = GameObject::GetObject(GameObject::GetObject(GetParent())->GetChild(i))->GetAllComponents<Collider>();
+		colliders = parent->GetAllComponents<Collider>();
+		for (int i = 0; i < parent->GetChildCount(); i++) {
+			std::vector<Collider*> cc = parent->GetChild(i)->GetAllComponents<Collider>();
 			colliders.insert(colliders.end(), cc.begin(), cc.end());
 		}
 		//Create new shape
 		JPH::MutableCompoundShapeSettings shapeSettings = JPH::MutableCompoundShapeSettings();
 		for(Collider* col : colliders) {
-			shapeSettings.AddShape((GameObject::GetObject(col->GetParent())->GetWorldPosition() + col->GetPosition()), (GameObject::GetObject(col->GetParent())->GetWorldRotation() + col->GetRotation() - GameObject::GetObject(GetParent())->GetWorldRotation()), col->GetShape());
+			shapeSettings.AddShape((col->GetParent()->GetWorldPosition() + col->GetPosition()), (col->GetParent()->GetWorldRotation() + col->GetRotation() - parent->GetWorldRotation()), col->GetShape());
 		}
 		//Create final shape
 		JPH::ShapeSettings::ShapeResult result = shapeSettings.Create();
@@ -81,7 +89,7 @@ namespace StevEngine::Physics {
 	}
 
 	RigidBody::~RigidBody() {
-		Engine::Instance->physics.GetBodyInterface()->DestroyBody(body->GetID());
+		if(body) Engine::Instance->physics.GetBodyInterface()->DestroyBody(body->GetID());
 		if(shape) shape->Release();
 	}
 

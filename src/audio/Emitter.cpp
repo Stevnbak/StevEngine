@@ -1,7 +1,7 @@
 #include "Emitter.hpp"
 #include "audio/System.hpp"
 #include "core/Engine.hpp"
-#include "core/GameObject.hpp"
+#include "core/scenes/GameObject.hpp"
 
 #include <SDL.h>
 #include <SDL_mixer.h>
@@ -27,6 +27,10 @@ namespace StevEngine::Audio {
 
     void Emitter::Play() {
         Engine::Instance->audio.Play(this);
+    }
+
+    void Emitter::Deactivate() {
+        if(channel != -1) Engine::Instance->audio.Stop(channel);
     }
 
     void Emitter::Export(tinyxml2::XMLElement* element) {
