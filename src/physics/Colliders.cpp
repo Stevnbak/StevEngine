@@ -104,15 +104,18 @@ namespace StevEngine::Physics {
 		JPH::Shape::MaterialToIDMap material_to_id;
 		rawShape->SaveWithChildren(stream_out, shape_to_id, material_to_id);
 		std::string shapeString = data.str();
-		std::vector<char> vec(shapeString.begin(), shapeString.end());
-		std::replace(vec.begin(), vec.end(), '\000', '0');
-		element->SetAttribute("shape", std::string(vec.begin(), vec.end()).c_str());
+		std::stringstream out;
+		for(size_t i = 0; i < shapeString.size(); i++) out << std::setw(4) << std::setfill('0') << std::hex << (short)shapeString[i];
+		element->SetAttribute("shape", out.str().c_str());
     }
 	JPH::Ref<JPH::Shape> ImportShape(tinyxml2::XMLElement* node) {
 		std::string raw = node->Attribute("shape");
-		std::vector<char> vec(raw.begin(), raw.end());
-		std::replace(vec.begin(), vec.end(), '0', '\000');
-		std::stringstream data(std::string(vec.begin(), vec.end()));
+		std::stringstream data;
+		for (size_t i = 0; i < raw.length(); i += 4)
+		{
+			char sz[5] = {raw[i], raw[i+1], raw[i+2], raw[i+3], '\0'};
+			data << (strtoul(sz, NULL, 16));
+		}
 		JPH::StreamInWrapper stream_in(data);
 		JPH::Shape::IDToShapeMap id_to_shape;
 		JPH::Shape::IDToMaterialMap id_to_material;
