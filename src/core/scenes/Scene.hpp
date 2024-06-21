@@ -13,22 +13,22 @@ namespace StevEngine {
         public:
             const std::string name;
         public:
-			ID CreateObject();
-			ID CreateObject(std::string name, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1));
-			ID CreateObjectFromFile(Resources::Resource file);
-			GameObject* GetObject(ID id) { return &gameObjects.at(id); }
+			Utilities::ID CreateObject();
+			Utilities::ID CreateObject(std::string name, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1));
+			Utilities::ID CreateObjectFromFile(Resources::Resource file);
+			GameObject* GetObject(Utilities::ID id) { return &gameObjects.at(id); }
             GameObject* GetCamera() { return activeCamera->GetParent(); }
-			std::vector<ID> GetAllObjects();
-            void DestroyObject(ID id);
-            void ExportToFile(Resources::Resource file);
+			std::vector<Utilities::ID> GetAllObjects();
+            void DestroyObject(Utilities::ID id);
+            void ExportToFile();
 		private:
-            bool active;
+            bool active = false;
             void Activate();
             void Deactivate();
             Scene(std::string name);
-            Scene(Resources::Resource file);
+            Scene(tinyxml2::XMLElement* node);
 			Camera* activeCamera;
-			std::map<ID, GameObject> gameObjects;
-			ID CreateObjectFromXML(tinyxml2::XMLElement* node);
+			std::map<Utilities::ID, GameObject> gameObjects;
+			Utilities::ID CreateObjectFromXML(tinyxml2::XMLElement* node);
     };
 }

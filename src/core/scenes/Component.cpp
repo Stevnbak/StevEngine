@@ -1,6 +1,8 @@
 #include "Component.hpp"
 #include "core/Engine.hpp"
 
+using namespace StevEngine::Utilities;
+
 namespace StevEngine {
     Component::Component(std::string type) : type(type) {}
     Component::Component(tinyxml2::XMLElement* element) : Component(element->Attribute("type")) {}

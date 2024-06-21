@@ -10,6 +10,7 @@
 #include <GL/gl.h>
 
 using namespace StevEngine;
+using namespace StevEngine::Utilities;
 
 /**
 class CameraController : public Component {
@@ -96,10 +97,10 @@ extern const char _binary____assets_test_2_txt_start[];
 extern const char _binary____assets_test_2_txt_end[];
 extern const char _binary____assets_audio_wav_start[];
 extern const char _binary____assets_audio_wav_end[];
-extern const char _binary____assets_cube_xml_start[];
-extern const char _binary____assets_cube_xml_end[];
-extern const char _binary____assets_test_xml_start[];
-extern const char _binary____assets_test_xml_end[];
+extern const char _binary____assets_cube_object_start[];
+extern const char _binary____assets_cube_object_end[];
+extern const char _binary____assets_Debug_scene_scene_start[];
+extern const char _binary____assets_Debug_scene_scene_end[];
 
 int main(int argc, char** argv) {
 	//Create engine
@@ -112,10 +113,11 @@ int main(int argc, char** argv) {
 	engine.resources.AddFile("test.txt", &_binary____assets_test_txt_start[0], _binary____assets_test_txt_end - _binary____assets_test_txt_start);
 	engine.resources.AddFile("test_2.txt", &_binary____assets_test_2_txt_start[0], _binary____assets_test_2_txt_end - _binary____assets_test_2_txt_start);
 	engine.resources.AddFile("audio.wav", &_binary____assets_audio_wav_start[0], _binary____assets_audio_wav_end - _binary____assets_audio_wav_start);
-	engine.resources.AddFile("cube.xml", &_binary____assets_cube_xml_start[0], _binary____assets_cube_xml_end - _binary____assets_cube_xml_start);
-	engine.resources.AddFile("test.xml", &_binary____assets_test_xml_start[0], _binary____assets_test_xml_end - _binary____assets_test_xml_start);
+	engine.resources.AddFile("cube.object", &_binary____assets_cube_object_start[0], _binary____assets_cube_object_end - _binary____assets_cube_object_start);
+	engine.resources.AddFile("Debug_scene.scene", &_binary____assets_Debug_scene_scene_start[0], _binary____assets_Debug_scene_scene_end - _binary____assets_Debug_scene_scene_start);
 
 	//Create new scene
+	//Scene* scene = engine.scenes.CreateSceneFromFile(engine.resources.GetFile("Debug_scene.scene"));
 	Scene* scene = engine.scenes.CreateScene("Debug scene");
 
 	//Create test objects
@@ -135,8 +137,8 @@ int main(int argc, char** argv) {
 		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
 		Physics::RigidBody* rb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		rb->SetMotionProperties(Physics::MotionProperties(1, 0.5));
-		cube->ExportToFile("cube.xml");
-		ID id2 = scene->CreateObjectFromFile(Engine::Instance->resources.GetFile("cube.xml"));
+		cube->ExportToFile("cube");
+		ID id2 = scene->CreateObjectFromFile(Engine::Instance->resources.GetFile("cube.object"));
 		GameObject* cube2 = scene->GetObject(id2);
 		Physics::Collider* col = cube2->GetComponent<Physics::Collider>();
 		Primitive* primitive2 = cube2->GetComponent<Primitive>();
@@ -175,6 +177,9 @@ int main(int argc, char** argv) {
 	Audio::Emitter* emitter = audioPlayer->AddComponent(new Audio::Emitter("audio.wav", false));
 	///Audio::Emitter emitter2 = Audio::Emitter("audio.wav", true);
 	///emitter2.Play();
+
+	//Export scene
+	scene->ExportToFile();
 
 	//Start engine
 	engine.Start();

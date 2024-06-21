@@ -7,22 +7,20 @@
 
 #include <map>
 #include <vector>
-#include <any>
+#include <array>
 #include <type_traits>
 #include <tinyxml2.h>
 
 namespace StevEngine {
-	using ID = uint16_t;
-
 	class GameObject {
 		friend class Engine;
 		friend class Scene;
 		//Basic properties
 		public:
 			const std::string name;
-			ID Id() { return id; }
+			Utilities::ID Id() { return id; }
 		private:
-			ID id;
+			Utilities::ID id;
 			std::string scene;
 		//Transform
 		public:
@@ -46,7 +44,7 @@ namespace StevEngine {
 		//Main functions
 		public:
 			~GameObject();
-			void ExportToFile(std::string path);
+			void ExportToFile(std::string name);
 		private: 
 			void Start();
 			void Deactivate();
@@ -55,17 +53,17 @@ namespace StevEngine {
 			std::string Export();
 			void TransformView();
 			GameObject();
-			GameObject(ID id, std::string name, std::string scene);
+			GameObject(Utilities::ID id, std::string name, std::string scene);
 		//Children functions
 		public:
-			int AddChild(ID gameObjectID);
+			int AddChild(Utilities::ID gameObjectID);
 			void RemoveChild(int index);
 			GameObject* GetChild(int index);
 			int GetChildCount();
 			GameObject* GetParent();
 		private:
-			ID parent = 0;
-			std::vector<ID> children;
+			Utilities::ID parent = Utilities::ID::empty;
+			std::vector<Utilities::ID> children;
 		//Static:
 		public:
 			template<typename T> static ComponentFactory<T>* AddComponentFactory(std::string type) {
@@ -75,7 +73,6 @@ namespace StevEngine {
 			};
 		private:
 			static inline std::map<std::string, FactoryBase*> componentFactories = std::map<std::string, FactoryBase*>();
-			static ID currentID;
 		//Component functions
 		private:
 			std::vector<Component*> components;
@@ -91,7 +88,7 @@ namespace StevEngine {
 					}
 				}
 				//Return null
-				if (log) Log::Error(std::format("No component of type \"{}\" found on object {}", typeid(T).name(), id), true);
+				if (log) Log::Error(std::format("No component of type \"{}\" found on object {}", typeid(T).name(), id.GetString()), true);
 				return nullptr;
 			}
 			template <class T>
@@ -131,7 +128,7 @@ namespace StevEngine {
 				//If unique check uniqueness
 				if (component->unique) {
 					if (GetComponent<T>(false) != nullptr) {
-						Log::Error(std::format("Object {} already has a component of type \"{}\", and this component requires to be unique", id, typeid(T).name()));
+						Log::Error(std::format("Object {} already has a component of type \"{}\", and this component requires to be unique", id.GetString(), typeid(T).name()));
 						return nullptr;
 					}
 				}
@@ -170,7 +167,7 @@ namespace StevEngine {
 						return;
 					}
 				}
-				Log::Error(std::format("No component of type \"{}\" found on object {}", typeid(T).name(), id), true);
+				Log::Error(std::format("No component of type \"{}\" found on object {}", typeid(T).name(), id.GetString()), true);
 			}
 	};
 }

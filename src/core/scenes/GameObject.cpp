@@ -12,27 +12,21 @@
 #include <iostream>
 
 namespace StevEngine {
-	//Static variables
-	ID GameObject::currentID = 1;
-
 	//Main functions
 	void GameObject::Start() {
-		for (int i = 0; i < components.size(); i++) {
-			Component* component = components[i];
+		for (Component* component : components) {
 			component->Start();
 		}
 	}
 	void GameObject::Deactivate() {
-		for (int i = 0; i < components.size(); i++) {
-			Component* component = components[i];
-			component->Start();
+		for (size_t i = 0; i < components.size(); i++) {
+			components.at(i)->Deactivate();
 		}
 	}
 	void GameObject::Update(double deltaTime) {
 		//Components
-		for (int i = 0; i < components.size(); i++) {
-			Component* component = components[i];
-			component->Update(deltaTime);
+		for (size_t i = 0; i < components.size(); i++) {
+			components.at(i)->Update(deltaTime);
 		}
 	}
 	void GameObject::Draw() {
@@ -40,14 +34,13 @@ namespace StevEngine {
 			TransformView();
 			//Components
 			for (int i = 0; i < components.size(); i++) {
-				Component* component = components[i];
-				component->Draw();
+				components.at(i)->Draw();
 			}
 		glPopMatrix();
 	}
 	void GameObject::TransformView() {
 		//Parent transform
-		if (parent != 0) {
+		if (!parent.IsNull()) {
 			Engine::Instance->scenes.GetScene(scene)->GetObject(parent)->TransformView();
 		}
 		//Position
@@ -96,21 +89,21 @@ namespace StevEngine {
 		}
 	}
 	Utilities::Vector3 GameObject::GetWorldPosition() {
-		if(parent != 0) {
+		if(!parent.IsNull()) {
 			return Engine::Instance->scenes.GetScene(scene)->GetObject(parent)->GetWorldPosition() + position;
 		} else {
 			return position;
 		}
 	}
 	Utilities::Quaternion GameObject::GetWorldRotation() {
-		if(parent != 0) {
+		if(!parent.IsNull()) {
 			return Engine::Instance->scenes.GetScene(scene)->GetObject(parent)->GetWorldRotation() + rotation;
 		} else {
 			return rotation;
 		}
 	}
 	Utilities::Vector3 GameObject::GetWorldScale() {
-		if(parent != 0) {
+		if(!parent.IsNull()) {
 			return Engine::Instance->scenes.GetScene(scene)->GetObject(parent)->GetWorldScale() + scale;
 		} else {
 			return scale;
@@ -118,21 +111,21 @@ namespace StevEngine {
 	}
 
 	//Constructors
-	GameObject::GameObject() : id(GameObject::currentID++), name("GameObject_" + id) {
-		Log::Normal(std::format("Creating gameobject with new id {}", id), true);
+	GameObject::GameObject() : id(Utilities::ID()), name("GameObject") {
+		Log::Normal(std::format("Creating gameobject with new id {}", id.GetString()), true);
 	}
-	GameObject::GameObject(ID id, std::string name, std::string scene) : id(id), name(name), scene(scene) {
-		Log::Normal(std::format("Creating gameobject with id {}", id), true);
+	GameObject::GameObject(Utilities::ID id, std::string name, std::string scene) : id(id), name(name), scene(scene) {
+		Log::Normal(std::format("Creating gameobject with id {}", id.GetString()), true);
 	}
 
 	//Children functions
-	int GameObject::AddChild(ID gameObject) {
+	int GameObject::AddChild(Utilities::ID gameObject) {
 		children.push_back(gameObject);
 		Engine::Instance->scenes.GetScene(scene)->GetObject(gameObject)->parent = gameObject;
 		return children.size() - 1;
 	}
 	void GameObject::RemoveChild(int index) {
-		GetChild(index)->parent = 0;
+		GetChild(index)->parent = Utilities::ID::empty;
 		children.erase(children.begin() + index);
 	}
 	GameObject* GameObject::GetChild(int index) {
@@ -142,7 +135,7 @@ namespace StevEngine {
 		return children.size();
 	}
 	GameObject* GameObject::GetParent() {
-		if(parent != 0) return Engine::Instance->scenes.GetScene(scene)->GetObject(parent);
+		if(!parent.IsNull()) return Engine::Instance->scenes.GetScene(scene)->GetObject(parent);
 		else return nullptr;
 	}
 
@@ -155,6 +148,7 @@ namespace StevEngine {
 
 		//Add basic info
 		main->SetAttribute("name", 		name.c_str());
+		main->SetAttribute("id", 		id.GetString().c_str());
 		main->SetAttribute("position", 	((std::string)position).c_str());
 		main->SetAttribute("rotation", 	((std::string)rotation).c_str());
 		main->SetAttribute("scale", 	((std::string)scale).c_str());
@@ -168,10 +162,11 @@ namespace StevEngine {
 		}
 
 		//Add children
-		for(ID child : children) {
+		for(Utilities::ID child : children) {
 			tinyxml2::XMLDocument xml;
 			xml.Parse(Engine::Instance->scenes.GetScene(scene)->GetObject(child)->Export().c_str());
-			main->InsertEndChild(xml.FirstChild());
+			tinyxml2::XMLElement* element = xml.FirstChild()->ToElement();
+			main->InsertEndChild(element->DeepClone(&doc));
 		}
 
 		//Return xml as string
@@ -179,10 +174,10 @@ namespace StevEngine {
 		doc.Print( &printer );
 		return printer.CStr();
 	}
-	void GameObject::ExportToFile(std::string path) {
+	void GameObject::ExportToFile(std::string name) {
 		tinyxml2::XMLDocument doc;
 		doc.Parse(Export().c_str());
-		doc.SaveFile((std::format("{}/{}/", "appdata", Engine::Instance->title) + path).c_str());
+		doc.SaveFile((std::format("{}/{}/", "appdata", Engine::Instance->title) + name + ".object").c_str());
 	}
 
 	//Destroy

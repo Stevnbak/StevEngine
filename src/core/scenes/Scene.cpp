@@ -1,14 +1,20 @@
 #include "Scene.hpp"
+#include <format>
+#include <regex>
+#include "core/Engine.hpp"
+#include "core/utilities/ID.hpp"
+
+using namespace StevEngine::Utilities;
 
 namespace StevEngine {
 	ID Scene::CreateObject() {
-		ID id = GameObject::currentID++;
-		gameObjects.insert(std::make_pair(id, GameObject(id, "GameObject_" + id, this->name)));
+		ID id;
+		gameObjects.insert(std::make_pair(id, GameObject(id, "GameObject", this->name)));
 		if(active) gameObjects.at(id).Start();
 		return id;
 	}
 	ID Scene::CreateObject(std::string name, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) {
-		ID id = GameObject::currentID++;
+		ID id;
 		gameObjects.insert(std::make_pair(id, GameObject(id, name, this->name)));
 		GameObject* object = GetObject(id);
 		object->position = position;
@@ -25,7 +31,7 @@ namespace StevEngine {
 	}
 	ID Scene::CreateObjectFromXML(tinyxml2::XMLElement* node) {
 		//Create base object:
-		ID id = GameObject::currentID++;
+		ID id = ID(node->Attribute("id"));
 		gameObjects.insert(std::make_pair(id, GameObject(id, node->Attribute("name"), this->name)));
 		GameObject* object = GetObject(id);
 		object->position = Utilities::Vector3(node->Attribute("position"));
@@ -47,7 +53,7 @@ namespace StevEngine {
 		//Run start
 		if(active) object->Start();
 		//Return
-		return id;
+		return object->id;
 	}
 	std::vector<ID> Scene::GetAllObjects() {
 		std::vector<ID> keys;
@@ -59,16 +65,29 @@ namespace StevEngine {
 	void Scene::DestroyObject(ID id) {
 		gameObjects.erase(id);
 	}
-    Scene::Scene(Resources::Resource file) : name(name) {
-        //Create main camera
-		activeCamera = GetObject(CreateObject("Main Camera", Vector3(0, 0, 0), Quaternion()))->AddComponent(new Camera(false, 1, 16 / 9));
-    }
+    Scene::Scene(tinyxml2::XMLElement* node) : name(node->Attribute("name")) {}
 	Scene::Scene(std::string name) : name(name) {
         //Create main camera
 		activeCamera = GetObject(CreateObject("Main Camera"))->AddComponent(new Camera(false, 1, 16 / 9));
     }
-	void Scene::ExportToFile(Resources::Resource file) {
+	void Scene::ExportToFile() {
+		tinyxml2::XMLDocument doc;
+		tinyxml2::XMLElement* main = doc.NewElement("Scene");
+		doc.InsertFirstChild(main);
+		main->SetAttribute("name", name.c_str());
+		main->SetAttribute("camera", activeCamera->GetParent()->Id().GetString().c_str());
 
+		for (ID id : GetAllObjects()) {
+			GameObject* object = &gameObjects.at(id);
+			bool test = object->parent.IsNull();
+			if(!object->parent.IsNull()) continue;
+			tinyxml2::XMLDocument xml;
+			xml.Parse(object->Export().c_str());
+			tinyxml2::XMLElement* element = xml.FirstChild()->ToElement();
+			main->InsertEndChild(element->DeepClone(&doc));
+		}
+
+		doc.SaveFile((std::format("{}/{}/", "appdata", Engine::Instance->title) + std::regex_replace(name, std::regex(" "), "_") + ".scene").c_str());
 	}
 	void Scene::Activate() {
 		active = true;

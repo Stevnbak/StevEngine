@@ -190,9 +190,7 @@ namespace StevEngine {
 	}
 
 	//Constructor
-	Primitive::Primitive(PrimitiveType type) : Component("Primitive") {
-		this->type = type;
-	}
+	Primitive::Primitive(PrimitiveType type) : Component("Primitive"), type(type) {}
 
 	//Main draw function
 	void Primitive::Draw() {
@@ -242,6 +240,23 @@ namespace StevEngine {
 		position = Utilities::Vector3(node->Attribute("position"));
 		rotation = Utilities::Quaternion(node->Attribute("rotation"));
 		scale = Utilities::Vector3(node->Attribute("scale"));
+		std::string str = node->Attribute("color");
+		if(!str.starts_with("[") || !str.ends_with("]") || !str.contains(",")) {
+			Log::Error("Primitive color string not valid.");
+		} else {
+			//Create stream
+			std::istringstream ss(str.substr(1, str.length() - 2));
+			std::string s;
+			//Get values
+			std::getline(ss, s, ',');
+			colour.r = stod(s);
+			std::getline(ss, s, ',');
+			colour.g = stod(s);
+			std::getline(ss, s, ',');
+			colour.b = stod(s);
+			std::getline(ss, s, ',');
+			colour.a = stod(s);
+		}
 	}
 	FactoryBase* factory = GameObject::AddComponentFactory<Primitive>(std::string("Primitive"));
 }

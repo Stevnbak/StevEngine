@@ -21,7 +21,6 @@ namespace StevEngine {
 			Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1);
 			PrimitiveType type = (PrimitiveType)0;
 			SDL_Color colour = SDL_Color(1,1,1,1);
-			static const bool unique = false;
 		private:
 			void Update(double deltaTime) {};
 			void Draw();

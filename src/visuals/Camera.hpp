@@ -1,7 +1,6 @@
 #pragma once
 #include <core/Utilities.hpp>
 #include <core/scenes/Component.hpp>
-using namespace StevEngine::Utilities;
 
 namespace StevEngine {
 	class GameObject;
@@ -15,6 +14,7 @@ namespace StevEngine {
 			Camera(bool orthographic, double zoomValue, double aspectRatio);
 			Camera(tinyxml2::XMLElement* element);
 		private:
+			static const bool unique = true;
 			//Component functions
 			void UpdateView();
 			void Start() {};

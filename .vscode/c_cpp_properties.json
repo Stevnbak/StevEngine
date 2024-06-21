@@ -10,7 +10,8 @@
                 "${workspaceFolder}/libs/SDL2/include",
                 "${workspaceFolder}/libs/SDL_Mixer/include",
                 "${workspaceFolder}/libs/GLEW/include",
-                "${workspaceFolder}/libs/TinyXML2"
+                "${workspaceFolder}/libs/TinyXML2",
+                "${workspaceFolder}/libs/uuidv7"
             ],
             "defines": [],
             "cppStandard": "c++23",

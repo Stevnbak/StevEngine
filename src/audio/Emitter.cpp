@@ -20,8 +20,6 @@ namespace StevEngine::Audio {
         SDL_FreeRW(data);
         if (audioData == NULL) {
             Log::Error(std::format("Couldn't load {}: {}", audioPath, SDL_GetError()), true);
-        } else {
-            Log::Normal("Created emitter component");
         }
     }
 

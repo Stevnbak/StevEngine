@@ -1,5 +1,5 @@
-<GameObject name="Cube" position="[0;4;0]" rotation="[1;0;0;0]" scale="[1;2;1]">
+<GameObject name="Cube" id="01903b23-dec8-7c6c-9bb7-fc5af41aa1a5" position="[0;4;0]" rotation="[1;0;0;0]" scale="[1;2;1]">
     <Component type="Primitive" primitivetype="1" position="[0;0;0]" rotation="[1;0;0;0]" scale="[1;1;1]" color="[1,0,0,1]"/>
     <Component type="Collider" position="[0;0;0]" rotation="[1;0;0;0]" scale="[1;1;1]" shape="00000000000000zD000?000?000?ÍÌL=000000000000000ÿÿÿÿ"/>
-    <Component type="RigidBody" motionType="2" layer="Moving" mass="1"/>
+    <Component type="RigidBody" motionType="2" layer="Moving" mass="1000"/>
 </GameObject>

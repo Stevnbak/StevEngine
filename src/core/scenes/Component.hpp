@@ -1,23 +1,21 @@
 #pragma once
 #include <core/Log.hpp>
+#include <core/utilities/ID.hpp>
 #include <tinyxml2.h>
 
 
 namespace StevEngine {
-    using ID = uint16_t;
-
 	class GameObject;
 	class Scene;
 
 	class Component {
 		friend class GameObject;
 		//Properties
-		public:
-			static const bool unique = false;
 		private:
-			ID gameObject;
+			Utilities::ID gameObject = Utilities::ID::empty;
 			std::string scene;
 			std::string type;
+			static const bool unique = false;
 		//Functions
 		public:
 			Component(std::string type);
@@ -30,7 +28,7 @@ namespace StevEngine {
 			virtual void Deactivate() = 0;
 			virtual void Update(double deltaTime) = 0;
 			virtual void Draw() = 0;
-			void SetObject(ID object, std::string scene);
+			void SetObject(Utilities::ID object, std::string scene);
 			virtual void TransformUpdate(bool position, bool rotation, bool scale) {};
 			virtual void Export(tinyxml2::XMLElement* element) = 0;
 			std::string Export();

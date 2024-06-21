@@ -40,13 +40,13 @@ namespace StevEngine::Physics {
 		friend class StevEngine::GameObject;
 		//Information
 		public:
-			static const bool unique = true;
 			//Basic values
 			JPH::Body* GetBody() { return body; }
 			const JPH::EMotionType motionType;
 			const Layer* layer;
 			const float mass;
 		private:
+			static const bool unique = true;
 			MotionProperties motionProperties;
 			std::vector<Collider*> colliders;
 			JPH::Body* body;

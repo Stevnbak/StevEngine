@@ -62,7 +62,8 @@ namespace StevEngine::Physics {
 		//Create new shape
 		JPH::MutableCompoundShapeSettings shapeSettings = JPH::MutableCompoundShapeSettings();
 		for(Collider* col : colliders) {
-			shapeSettings.AddShape((col->GetParent()->GetWorldPosition() + col->GetPosition()), (col->GetParent()->GetWorldRotation() + col->GetRotation() - parent->GetWorldRotation()), col->GetShape());
+			if(col->GetShape())
+				shapeSettings.AddShape((col->GetParent()->GetWorldPosition() + col->GetPosition()), (col->GetParent()->GetWorldRotation() + col->GetRotation() - parent->GetWorldRotation()), col->GetShape());
 		}
 		//Create final shape
 		JPH::ShapeSettings::ShapeResult result = shapeSettings.Create();

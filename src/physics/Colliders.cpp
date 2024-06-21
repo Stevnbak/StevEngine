@@ -27,7 +27,7 @@ namespace StevEngine::Physics {
 	void Collider::Start() {
 		//Set correct scale for shape
 		Utilities::Vector3 abs = GetParent()->GetWorldScale();
-		this->shape = new JPH::ScaledShape(rawShape, Utilities::Vector3(scale.X * abs.X, scale.Y * abs.Y, scale.Z * abs.Z));
+		if(rawShape) this->shape = new JPH::ScaledShape(rawShape, Utilities::Vector3(scale.X * abs.X, scale.Y * abs.Y, scale.Z * abs.Z));
 	}
 	void Collider::Deactivate()	{
 		if(shape) shape->Release();
@@ -120,6 +120,7 @@ namespace StevEngine::Physics {
 		if (result.IsValid())
 			return result.Get();
 		else {
+			Log::Error(std::format("Collider failed to import shape. Error: {}", result.GetError()));
 			return NULL;
 		}
 	}
