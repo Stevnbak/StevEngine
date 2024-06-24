@@ -1,7 +1,7 @@
 #include "Colliders.hpp"
 #include "RigidBody.hpp"
-#include <core/scenes/GameObject.hpp>
-#include "core/scenes/Scene.hpp"
+#include <scenes/GameObject.hpp>
+#include "scenes/Scene.hpp"
 
 #include <stdexcept>
 #include <algorithm>
@@ -106,6 +106,7 @@ namespace StevEngine::Physics {
 		std::string shapeString = data.str();
 		std::stringstream out;
 		for(size_t i = 0; i < shapeString.size(); i++) out << std::setw(4) << std::setfill('0') << std::hex << (short)shapeString[i];
+		std::string test = out.str();
 		element->SetAttribute("shape", out.str().c_str());
     }
 	JPH::Ref<JPH::Shape> ImportShape(tinyxml2::XMLElement* node) {
@@ -114,8 +115,10 @@ namespace StevEngine::Physics {
 		for (size_t i = 0; i < raw.length(); i += 4)
 		{
 			char sz[5] = {raw[i], raw[i+1], raw[i+2], raw[i+3], '\0'};
-			data << (strtoul(sz, NULL, 16));
+			char out = strtoul(sz, NULL, 16);
+			data << out;
 		}
+		std::string test = data.str();
 		JPH::StreamInWrapper stream_in(data);
 		JPH::Shape::IDToShapeMap id_to_shape;
 		JPH::Shape::IDToMaterialMap id_to_material;

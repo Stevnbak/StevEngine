@@ -1,5 +1,5 @@
 #include "Component.hpp"
-#include "core/Engine.hpp"
+#include "main/Engine.hpp"
 
 using namespace StevEngine::Utilities;
 

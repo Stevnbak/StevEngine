@@ -1,6 +1,6 @@
 #include "System.hpp"
-#include <core/Log.hpp>
-#include <core/Utilities.hpp>
+#include <main/Log.hpp>
+#include <utilities/Vector3.hpp>
 
 #include <math.h>
 #include <iostream>

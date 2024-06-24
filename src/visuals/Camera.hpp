@@ -1,6 +1,5 @@
 #pragma once
-#include <core/Utilities.hpp>
-#include <core/scenes/Component.hpp>
+#include <scenes/Component.hpp>
 
 namespace StevEngine {
 	class GameObject;

@@ -1,7 +1,7 @@
 #include "System.hpp"
-#include "core/Log.hpp"
-#include "core/ResourceManager.hpp"
-#include "core/Engine.hpp"
+#include "main/Log.hpp"
+#include "main/ResourceManager.hpp"
+#include "main/Engine.hpp"
 
 #include <SDL.h>
 #include <SDL_mixer.h>

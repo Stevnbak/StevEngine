@@ -1,9 +1,10 @@
 #pragma once
-#include <core/Utilities.hpp>
-#include <core/Log.hpp>
-#include <core/InputSystem.hpp>
-#include <core/ResourceManager.hpp>
-#include <core/scenes/Component.hpp>
+#include <utilities/Vector3.hpp>
+#include <utilities/Quaternion.hpp>
+#include <main/Log.hpp>
+#include <main/InputSystem.hpp>
+#include <main/ResourceManager.hpp>
+#include <scenes/Component.hpp>
 
 #include <map>
 #include <vector>

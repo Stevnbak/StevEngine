@@ -1,6 +1,8 @@
 #pragma once
-#include <core/scenes/Component.hpp>
-#include <core/Utilities.hpp>
+#include <scenes/Component.hpp>
+#include <utilities/Vector3.hpp>
+#include <utilities/Range3.hpp>
+#include <utilities/Quaternion.hpp>
 //Jolt:
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Collision/Shape/Shape.h>

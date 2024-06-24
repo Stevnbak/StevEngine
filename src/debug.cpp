@@ -1,10 +1,10 @@
-#include <core/Engine.hpp>
-#include <core/scenes/GameObject.hpp>
+#include <main/Engine.hpp>
+#include <scenes/GameObject.hpp>
 #include <visuals/BasicComponents.hpp>
 #include <physics/RigidBody.hpp>
 #include <physics/Colliders.hpp>
 #include <physics/Layers.hpp>
-#include <core/ResourceManager.hpp>
+#include <main/ResourceManager.hpp>
 
 #include <SDL2/SDL_opengl.h>
 #include <GL/gl.h>
@@ -136,6 +136,7 @@ int main(int argc, char** argv) {
 		primitive->colour = SDL_Color(1, 0, 0, 1);
 		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
 		Physics::RigidBody* rb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		int test = (int)JPH::EShapeSubType::Box;
 		rb->SetMotionProperties(Physics::MotionProperties(1, 0.5));
 		cube->ExportToFile("cube");
 		ID id2 = scene->CreateObjectFromFile(Engine::Instance->resources.GetFile("cube.object"));

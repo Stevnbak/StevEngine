@@ -1,6 +1,6 @@
 #pragma once
-#include <core/Log.hpp>
-#include <core/utilities/ID.hpp>
+#include <main/Log.hpp>
+#include <utilities/ID.hpp>
 #include <tinyxml2.h>
 
 

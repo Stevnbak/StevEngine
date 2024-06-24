@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene.hpp"
-#include "core/ResourceManager.hpp"
+#include "main/ResourceManager.hpp"
 #include <string>
 
 

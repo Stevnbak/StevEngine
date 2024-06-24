@@ -1,6 +1,7 @@
 #pragma once
-#include <core/scenes/Component.hpp>
-#include <core/Utilities.hpp>
+#include <scenes/Component.hpp>
+#include <utilities/Vector3.hpp>
+#include <utilities/Quaternion.hpp>
 #include <physics/Colliders.hpp>
 #include <physics/Layers.hpp>
 

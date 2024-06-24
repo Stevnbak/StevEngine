@@ -1,8 +1,8 @@
 #pragma once
 #include <physics/System.hpp>
-#include <core/ResourceManager.hpp>
+#include <main/ResourceManager.hpp>
 #include <audio/System.hpp>
-#include <core/scenes/SceneManager.hpp>
+#include <scenes/SceneManager.hpp>
 
 #include <GL/glew.h>
 

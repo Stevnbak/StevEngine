@@ -1,8 +1,8 @@
 #include "Scene.hpp"
 #include <format>
 #include <regex>
-#include "core/Engine.hpp"
-#include "core/utilities/ID.hpp"
+#include "main/Engine.hpp"
+#include "utilities/ID.hpp"
 
 using namespace StevEngine::Utilities;
 

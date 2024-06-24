@@ -1,7 +1,8 @@
 #pragma once
 #include <SDL2/SDL.h>
-#include <core/Utilities.hpp>
-#include <core/scenes/Component.hpp>
+#include <utilities/Vector3.hpp>
+#include <utilities/Quaternion.hpp>
+#include <scenes/Component.hpp>
 namespace StevEngine {
 	enum PrimitiveType {
 		None,

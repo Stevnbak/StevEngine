@@ -1,7 +1,7 @@
 #include "Emitter.hpp"
 #include "audio/System.hpp"
-#include "core/Engine.hpp"
-#include "core/scenes/GameObject.hpp"
+#include "main/Engine.hpp"
+#include "scenes/GameObject.hpp"
 
 #include <SDL.h>
 #include <SDL_mixer.h>

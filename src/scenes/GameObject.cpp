@@ -1,6 +1,6 @@
 #include "GameObject.hpp"
-#include <core/Log.hpp>
-#include <core/Engine.hpp>
+#include <main/Log.hpp>
+#include <main/Engine.hpp>
 
 #include <SDL2/SDL_opengl.h>
 

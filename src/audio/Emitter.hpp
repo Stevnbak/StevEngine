@@ -1,5 +1,5 @@
 #pragma once
-#include "core/scenes/Component.hpp"
+#include "scenes/Component.hpp"
 #include <SDL_mixer.h>
 
 namespace StevEngine {

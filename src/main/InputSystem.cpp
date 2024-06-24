@@ -1,7 +1,7 @@
 #include "InputSystem.hpp"
-#include <core/Log.hpp>
-#include <core/Engine.hpp>
-#include <core/scenes/GameObject.hpp>
+#include <main/Log.hpp>
+#include <main/Engine.hpp>
+#include <scenes/GameObject.hpp>
 
 #include <SDL2/SDL.h> 
 #include <GL/glew.h>

@@ -1,7 +1,7 @@
 #pragma once
-#include "core/ResourceManager.hpp"
+#include "main/ResourceManager.hpp"
 #include <visuals/Camera.hpp>
-#include "core/scenes/GameObject.hpp"
+#include "scenes/GameObject.hpp"
 
 namespace StevEngine {
     class Engine;

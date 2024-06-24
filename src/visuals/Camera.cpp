@@ -1,8 +1,9 @@
 #include "Camera.hpp"
-#include <core/Engine.hpp>
-#include <core/Utilities.hpp>
-#include <core/Log.hpp>
-#include <core/scenes/GameObject.hpp>
+#include <main/Engine.hpp>
+#include <utilities/Vector3.hpp>
+#include <utilities/Quaternion.hpp>
+#include <main/Log.hpp>
+#include <scenes/GameObject.hpp>
 
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>

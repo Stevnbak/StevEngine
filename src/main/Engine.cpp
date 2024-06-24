@@ -10,14 +10,11 @@
 #include <SDL2/SDL_opengl.h>
 #include <Jolt/Jolt.h>
 //Engine
-#include <core/Utilities.hpp>
-#include <core/InputSystem.hpp>
-#include <core/scenes/GameObject.hpp>
-#include <core/Log.hpp>
+#include <main/InputSystem.hpp>
+#include <scenes/GameObject.hpp>
+#include <main/Log.hpp>
 #include <visuals/Camera.hpp>
 
-using namespace std;
-using namespace StevEngine::Utilities;
 using namespace StevEngine::InputSystem;
 
 //Get current process time in ms
@@ -32,7 +29,7 @@ namespace StevEngine {
 		InputSystem::Update(deltaTime);
 		//Update GameObjects
 		Scene* scene = scenes.GetScene(scenes.active);
-		for (ID id : scene->GetAllObjects()) {
+		for (Utilities::ID id : scene->GetAllObjects()) {
 			scene->GetObject(id)->Update(deltaTime);
 		}
 	}
@@ -51,7 +48,7 @@ namespace StevEngine {
 			scenes.GetActiveScene()->activeCamera->UpdateView();
 			//Draw objects
 			Scene* scene = scenes.GetScene(scenes.active);
-			for (ID id : scene->GetAllObjects()) {
+			for (Utilities::ID id : scene->GetAllObjects()) {
 				scene->GetObject(id)->Draw();
 			}
 			//Reset cam matrix
@@ -83,12 +80,12 @@ namespace StevEngine {
 		Log::StartLogging(title);
 		//Initialize SDL window
 		if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-			throw "Failed initializing SDL: " + string(SDL_GetError());
+			throw "Failed initializing SDL: " + std::string(SDL_GetError());
 		}
 		//Create SDL window
 		window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | ( fullScreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE ));
 		if (!window) {
-			throw "Failed to create window: " + string(SDL_GetError());
+			throw "Failed to create window: " + std::string(SDL_GetError());
 		}
 		//SDL & OpenGL properties
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -101,7 +98,7 @@ namespace StevEngine {
 			throw "Failed to initialize GLEW ";
 		}
 		// Define the OpenGL viewport dimensions
-		GLint size = max(WIDTH, HEIGHT);
+		GLint size = std::max(WIDTH, HEIGHT);
 		glViewport(0, 0, size, size);
 		glClearColor(1, 0.9, 1, 1);
 		glEnable(GL_DEPTH_TEST);
@@ -133,7 +130,7 @@ namespace StevEngine {
 								WIDTH = ev.window.data1;
 								HEIGHT = ev.window.data2;
 								SDL_SetWindowSize(window, WIDTH, HEIGHT);
-								glViewport(0, 0, max(WIDTH, HEIGHT), max(WIDTH, HEIGHT));
+								glViewport(0, 0, std::max(WIDTH, HEIGHT), std::max(WIDTH, HEIGHT));
 								Draw();
 								break;
 							case SDL_WINDOWEVENT_ENTER:
