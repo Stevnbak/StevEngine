@@ -27,7 +27,7 @@ namespace StevEngine {
         }
         Quaternion::Quaternion(std::string str) {
             if(!str.starts_with("[") || !str.ends_with("]") || !str.contains(";")) {
-                Log::Error("Quaternion string not valid.");
+                Log::Error("Quaternion string not valid.", true);
                 return;
             }
             //Create stream

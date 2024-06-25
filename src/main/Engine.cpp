@@ -68,6 +68,7 @@ namespace StevEngine {
 	mainUpdate(mainUpdate),
 	physics(Physics::System()),
 	resources(Resources::System()),
+	data(GameData::System(title)),
 	audio(Audio::System()),
 	scenes(SceneManager())
 	{
@@ -77,7 +78,7 @@ namespace StevEngine {
 		}
 		Instance = this;
 		//Initialize logging
-		Log::StartLogging(title);
+		Log::StartLogging(data.directoryPath);
 		//Initialize SDL window
 		if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
 			throw "Failed initializing SDL: " + std::string(SDL_GetError());
@@ -134,10 +135,10 @@ namespace StevEngine {
 								Draw();
 								break;
 							case SDL_WINDOWEVENT_ENTER:
-								Log::Normal(std::format("Mouse entered our window! Motion: {},{}", ev.motion.x, ev.motion.y), true);
+								Log::Debug(std::format("Mouse entered our window! Motion: {},{}", ev.motion.x, ev.motion.y), true);
 								break;
 							case SDL_WINDOWEVENT_LEAVE:
-								Log::Normal(std::format("Mouse left our window! Motion: {},{}", ev.motion.x, ev.motion.y), true);
+								Log::Debug(std::format("Mouse left our window! Motion: {},{}", ev.motion.x, ev.motion.y), true);
 								break;
 						}
 						break;
@@ -161,7 +162,7 @@ namespace StevEngine {
 						KeyUp(ev.button.button);
 						break;
 					case SDL_WINDOW_MOUSE_CAPTURE:
-						Log::Normal(std::format("Mouse capture: {}, {}", ev.motion.x, ev.motion.y));
+						Log::Debug(std::format("Mouse capture: {}, {}", ev.motion.x, ev.motion.y), true);
 						break;
 				}
 			}
@@ -182,7 +183,7 @@ namespace StevEngine {
 			//Calculate FPS:
 			if (frameTime != 0) currentFPS = 1000 / frameTime;
 			else currentFPS = INFINITY;
-			///Log::Normal(std::format("Current FPS: {}; frameTime: {}; Clock: {}", std::round(currentFPS), frameTime, newTime), true);
+			///Log::Debug(std::format("Current FPS: {}; frameTime: {}; Clock: {}", std::round(currentFPS), frameTime, newTime), true);
 
 			//Wait for next frame
 			if (targetFPS != -1) {

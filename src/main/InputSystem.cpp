@@ -32,15 +32,15 @@ namespace StevEngine::InputSystem {
 			pressed = inputMap[key];
 		}
 
-		///Log::Normal(std::format("Key ({}) has pressed value of {}", SDL_GetKeyName(key), pressed), true);
+		///Log::Debug(std::format("Key ({}) has pressed value of {}", SDL_GetKeyName(key), pressed), true);
 		return pressed;
 	}
 	void ForcePressKey(SDL_Keycode key, bool value) {
-		///Log::Normal(std::format("Changed pressed status of key ({}) to {}", SDL_GetKeyName(key), value), true);
+		///Log::Debug(std::format("Changed pressed status of key ({}) to {}", SDL_GetKeyName(key), value), true);
 		inputMap[key] = value;
 	}
 	void KeyDown(SDL_Keycode key) {
-		///Log::Normal(std::format("Recieved input event ({}) for key down: {}", key, SDL_GetKeyName(key)), true);
+		///Log::Debug(std::format("Recieved input event ({}) for key down: {}", key, SDL_GetKeyName(key)), true);
 		inputMap[key] = true;
 		//Call input event functions
 		for (std::function<void(SDL_Keycode)> method : KeyDownEvents) {
@@ -48,7 +48,7 @@ namespace StevEngine::InputSystem {
 		}
 	}
 	void KeyUp(SDL_Keycode key) {
-		///Log::Normal(std::format("Recieved input event ({}) for key up: {}", key, SDL_GetKeyName(key)), true);
+		///Log::Debug(std::format("Recieved input event ({}) for key up: {}", key, SDL_GetKeyName(key)), true);
 		inputMap[key] = false;
 		//Call input event functions
 		for (std::function<void(SDL_Keycode)> method : KeyUpEvents) {
@@ -61,14 +61,14 @@ namespace StevEngine::InputSystem {
 	double mouseWheelDelta = 0;
 	void MouseMotion(double X, double Y, double DeltaX, double DeltaY) {
 		mousePosition = Utilities::Vector2(X, Y);
-		///Log::Normal(std::format("Recieved mouse movement. X: {} Y: {}", mousePosition.X, mousePosition.Y), true);
+		///Log::Debug(std::format("Recieved mouse movement. X: {} Y: {}", mousePosition.X, mousePosition.Y), true);
 		//Calculate delta movements
 		mouseDelta = Utilities::Vector2(DeltaX, DeltaY);
-		///Log::Normal(std::format("Mouse delta X: {} Mouse delta Y: {}", mouseDelta.X, mouseDelta.Y), true);
+		///Log::Debug(std::format("Mouse delta X: {} Mouse delta Y: {}", mouseDelta.X, mouseDelta.Y), true);
 	}
 	void MouseWheel(double value) {
 		mouseWheelDelta = value;
-		///Log::Normal(std::format("Mouse wheel: {}", mouseWheelDelta), true);
+		///Log::Debug(std::format("Mouse wheel: {}", mouseWheelDelta), true);
 		//Call input event functions
 		for (std::function<void(double)> method : MouseWheelEvents) {
 			method(value);
@@ -76,7 +76,7 @@ namespace StevEngine::InputSystem {
 	}
 	void ResetMouseDelta() {
 		mouseDelta = Utilities::Vector2();
-		///Log::Normal(std::format("Mouse delta X: {} Mouse delta Y: {}", mouseDelta.X, mouseDelta.Y), true);
+		///Log::Debug(std::format("Mouse delta X: {} Mouse delta Y: {}", mouseDelta.X, mouseDelta.Y), true);
 	}
 
 	//Cursor mode

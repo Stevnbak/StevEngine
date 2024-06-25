@@ -129,7 +129,7 @@ namespace StevEngine {
 				//If unique check uniqueness
 				if (component->unique) {
 					if (GetComponent<T>(false) != nullptr) {
-						Log::Error(std::format("Object {} already has a component of type \"{}\", and this component requires to be unique", id.GetString(), typeid(T).name()));
+						Log::Error(std::format("Object {} already has a component of type \"{}\", and this component requires to be unique", id.GetString(), typeid(T).name()), true);
 						return nullptr;
 					}
 				}

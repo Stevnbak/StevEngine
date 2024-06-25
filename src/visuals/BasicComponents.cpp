@@ -243,7 +243,7 @@ namespace StevEngine {
 		scale = Utilities::Vector3(node->Attribute("scale"));
 		std::string str = node->Attribute("color");
 		if(!str.starts_with("[") || !str.ends_with("]") || !str.contains(",")) {
-			Log::Error("Primitive color string not valid.");
+			Log::Error("Primitive color string not valid.", true);
 		} else {
 			//Create stream
 			std::istringstream ss(str.substr(1, str.length() - 2));

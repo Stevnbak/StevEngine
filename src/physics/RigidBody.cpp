@@ -74,7 +74,7 @@ namespace StevEngine::Physics {
 			}
 		}
 		else {
-			Log::Error(result.GetError().c_str());
+			Log::Error(result.GetError().c_str(), true);
 		}
 	}
 	void RigidBody::SetMotionProperties(MotionProperties properties) {

@@ -1,6 +1,7 @@
 #pragma once
 #include <physics/System.hpp>
 #include <main/ResourceManager.hpp>
+#include <main/DataManager.hpp>
 #include <audio/System.hpp>
 #include <scenes/SceneManager.hpp>
 
@@ -19,6 +20,7 @@ namespace StevEngine {
 			SDL_Window* window;
 			Physics::System physics;
 			Resources::System resources;
+			GameData::System data;
 			Audio::System audio;
 			SceneManager scenes;
 			double getFPS();

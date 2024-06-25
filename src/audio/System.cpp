@@ -32,7 +32,7 @@ namespace StevEngine::Audio {
                 (audio_format&0xFF),
                 (SDL_AUDIO_ISFLOAT(audio_format) ? " (float)" : ""),
                 (audio_channels > 2) ? "surround" :
-                (audio_channels > 1) ? "stereo" : "mono"));
+                (audio_channels > 1) ? "stereo" : "mono"), true);
         }
         audio_open = 1;
         //Set channel finished callback
@@ -41,7 +41,6 @@ namespace StevEngine::Audio {
 
     void SDLCALL System::ChannelCompleted (int channel)
     {
-        Log::Normal("Channel completed");
         for(int i = 1; i < activeSounds.size(); i++) {
             if(activeSounds[i]->channel == channel) {
                 activeSounds[i]->channel = -1;

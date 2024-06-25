@@ -87,7 +87,7 @@ namespace StevEngine {
 			main->InsertEndChild(element->DeepClone(&doc));
 		}
 
-		doc.SaveFile((std::format("{}/{}/", "appdata", Engine::Instance->title) + std::regex_replace(name, std::regex(" "), "_") + ".scene").c_str());
+		doc.SaveFile((Engine::Instance->data.GetDirectoryPath() + std::regex_replace(name, std::regex(" "), "_") + ".scene").c_str());
 	}
 	void Scene::Activate() {
 		active = true;

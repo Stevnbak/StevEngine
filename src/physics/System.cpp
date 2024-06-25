@@ -26,7 +26,7 @@ static void TraceImpl(const char *inFMT, ...)
 	vsnprintf(buffer, sizeof(buffer), inFMT, list);
 	va_end(list);
 	// Print to the TTY
-	Log::Warning(buffer);
+	Log::Warning(buffer, true);
 }
 
 namespace StevEngine::Physics {

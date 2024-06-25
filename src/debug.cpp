@@ -108,6 +108,10 @@ int main(int argc, char** argv) {
 	//Setup debug stuff:
 	Log::Normal("Start");
 	glClearColor(0, 0, 0, 1);
+
+	Log::Debug("Debug log");
+	Log::Warning("Warning log");
+	Log::Error("Error log");
 	
 	//Add debug assets
 	engine.resources.AddFile("test.txt", &_binary____assets_test_txt_start[0], _binary____assets_test_txt_end - _binary____assets_test_txt_start);
@@ -168,9 +172,14 @@ int main(int argc, char** argv) {
 	camObj->SetRotation(Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward));
 
 	//Test ressource manager
-	Log::Normal(std::format("Ressource 0: {}", Engine::Instance->resources.GetFile(0).path));
-	Log::Normal(std::format("Ressource \"test.txt\": {}", Resources::DataToText(Engine::Instance->resources.GetFile("test.txt").GetSDLData())));
-	Log::Normal(std::format("Ressource \"test_2.txt\": {}", Engine::Instance->resources.GetFile("test_2.txt").GetStrData()));
+	Log::Debug(std::format("Ressource 0: {}", Engine::Instance->resources.GetFile(0).path));
+	Log::Debug(std::format("Ressource \"test.txt\": {}", Resources::DataToText(Engine::Instance->resources.GetFile("test.txt").GetSDLData())));
+	Log::Debug(std::format("Ressource \"test_2.txt\": {}", Engine::Instance->resources.GetFile("test_2.txt").GetStrData()));
+
+	//Test data manager
+	Log::Debug("Before: " + engine.data.ReadData("test"));
+	engine.data.SaveData("test", "test data");
+	Log::Debug("After: " + engine.data.ReadData("test"));
 
 	//Play audio
 	ID audioId = scene->CreateObject("Audio Player");

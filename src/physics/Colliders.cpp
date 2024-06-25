@@ -126,7 +126,7 @@ namespace StevEngine::Physics {
 		if (result.IsValid())
 			return result.Get();
 		else {
-			Log::Error(std::format("Collider failed to import shape. Error: {}", result.GetError()));
+			Log::Error(std::format("Collider failed to import shape. Error: {}", result.GetError()), true);
 			return NULL;
 		}
 	}

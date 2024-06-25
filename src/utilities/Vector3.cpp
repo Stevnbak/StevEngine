@@ -22,7 +22,7 @@ namespace StevEngine {
         }
         Vector3::Vector3(std::string str) {
             if(!str.starts_with("[") || !str.ends_with("]") || !str.contains(";")) {
-				Log::Error("3D Vector string not valid.");
+				Log::Error("3D Vector string not valid.", true);
 				return;
 			}
 			//Create stream

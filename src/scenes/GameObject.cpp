@@ -177,12 +177,12 @@ namespace StevEngine {
 	void GameObject::ExportToFile(std::string name) {
 		tinyxml2::XMLDocument doc;
 		doc.Parse(Export().c_str());
-		doc.SaveFile((std::format("{}/{}/", "appdata", Engine::Instance->title) + name + ".object").c_str());
+		doc.SaveFile((Engine::Instance->data.GetDirectoryPath() + name + ".object").c_str());
 	}
 
 	//Destroy
 	GameObject::~GameObject() {
-		///Log::Normal(std::format("Destroying object with id {}", id));
+		///Log::Normal(std::format("Destroying object with id {}", id), true);
 		//Destroy children
 		for (int i = 0; i < children.size(); i++) {
 			Engine::Instance->scenes.GetScene(scene)->DestroyObject(children[i]);
