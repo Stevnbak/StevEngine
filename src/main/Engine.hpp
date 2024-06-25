@@ -5,7 +5,7 @@
 #include <audio/System.hpp>
 #include <scenes/SceneManager.hpp>
 
-#include <GL/glew.h>
+#include <SDL_opengl.h>
 
 namespace StevEngine {
 	class Engine {

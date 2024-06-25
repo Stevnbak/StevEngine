@@ -4,7 +4,6 @@
 #include <utilities/Quaternion.hpp>
 #include <scenes/GameObject.hpp>
 
-
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include <math.h>
@@ -197,6 +196,9 @@ namespace StevEngine {
 	void Primitive::Draw() {
 		//Colour
 		glColor4d(colour.r, colour.g, colour.b, colour.a);
+		//Texture
+		glBindTexture(GL_TEXTURE_2D, 13);
+		
 		//Push Matrix
 		glPushMatrix();
 		//Position

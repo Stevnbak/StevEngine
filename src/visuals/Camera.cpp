@@ -5,7 +5,6 @@
 #include <main/Log.hpp>
 #include <scenes/GameObject.hpp>
 
-#include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
 #include <math.h>
 using namespace StevEngine;

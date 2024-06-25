@@ -6,7 +6,6 @@
 #include <algorithm> 
 //Libraries
 #include <SDL2/SDL.h>
-#include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
 #include <Jolt/Jolt.h>
 //Engine
@@ -91,13 +90,7 @@ namespace StevEngine {
 		//SDL & OpenGL properties
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-		glewExperimental = GL_TRUE;
 		context = SDL_GL_CreateContext(window);
-		// Initialize GLEW to setup the OpenGL Function pointers 
-		if (glewInit() != GLEW_OK)
-		{
-			throw "Failed to initialize GLEW ";
-		}
 		// Define the OpenGL viewport dimensions
 		GLint size = std::max(WIDTH, HEIGHT);
 		glViewport(0, 0, size, size);

@@ -5,9 +5,6 @@
 	path = libs/SDL2
 	url = https://github.com/libsdl-org/SDL.git
 	branch = SDL2
-[submodule "libs/GLEW"]
-	path = libs/GLEW
-	url = https://github.com/nigels-com/glew.git
 [submodule "libs/SDL_Mixer"]
 	path = libs/SDL_Mixer
 	url = https://github.com/libsdl-org/SDL_mixer.git

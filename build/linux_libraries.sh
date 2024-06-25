@@ -1,8 +1,8 @@
 COMPILER=/usr/bin/g++-13
 
-echo "SDL2 and GLEW requires access to /usr/local, so these will require being ran with sudo"
+echo "SDL2 requires access to /usr/local, so it will require being ran with sudo"
 cd ../libs
-sudo echo "Starting to build..."
+echo "Starting to build..."
 root=$(pwd)
 
 #SDL2 https://wiki.libsdl.org/SDL2/Installation#linuxunix
@@ -17,12 +17,6 @@ sudo make install
 cd $root/SDL_Mixer
 ./configure
 make
-sudo make install
-
-#GLEW https://github.com/nigels-com/glew/tree/glew-2.2.0?tab=readme-ov-file#linux-and-mac
-cd $root/GLEW
-make extensions PYTHON=python3
-make CFLAGS.EXTRA="-DGLEW_STATIC"
 sudo make install
 
 #Jolt
