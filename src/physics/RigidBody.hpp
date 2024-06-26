@@ -58,7 +58,7 @@ namespace StevEngine::Physics {
 			void Start();
 			void Deactivate();
 			void Update(double deltaTime);
-			void Draw() {}
+			void Draw(glm::mat4x4 transform) {}
 			~RigidBody();
 			//Constructor
 			RigidBody(JPH::EMotionType motionType, Layer* layer, float mass = 1000);

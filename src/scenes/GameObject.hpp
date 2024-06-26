@@ -11,6 +11,7 @@
 #include <array>
 #include <type_traits>
 #include <tinyxml2.h>
+#include <glm/mat4x4.hpp>
 
 namespace StevEngine {
 	class GameObject {
@@ -50,9 +51,8 @@ namespace StevEngine {
 			void Start();
 			void Deactivate();
 			void Update(double deltaTime);
-			void Draw();
+			void Draw(glm::mat4x4 transform);
 			std::string Export();
-			void TransformView();
 			GameObject();
 			GameObject(Utilities::ID id, std::string name, std::string scene);
 		//Children functions

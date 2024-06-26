@@ -17,7 +17,7 @@ namespace StevEngine::Physics {
 			Collider(tinyxml2::XMLElement* element);
 			~Collider();
 		private:
-			void Draw();
+			void Draw(glm::mat4x4 transform);
 			void Deactivate();
 			void Update(double deltaTime) {};
 			void Start();

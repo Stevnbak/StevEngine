@@ -12,3 +12,6 @@
 [submodule "libs/TinyXML2"]
 	path = libs/TinyXML2
 	url = https://github.com/leethomason/tinyxml2.git
+[submodule "libs/glm"]
+	path = libs/glm
+	url = https://github.com/g-truc/glm.git

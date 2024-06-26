@@ -2,7 +2,7 @@
 #include <main/Log.hpp>
 #include <utilities/ID.hpp>
 #include <tinyxml2.h>
-
+#include <glm/mat4x4.hpp>
 
 namespace StevEngine {
 	class GameObject;
@@ -27,7 +27,7 @@ namespace StevEngine {
 			virtual void Start() = 0;
 			virtual void Deactivate() = 0;
 			virtual void Update(double deltaTime) = 0;
-			virtual void Draw() = 0;
+			virtual void Draw(glm::mat4x4 transform) = 0;
 			void SetObject(Utilities::ID object, std::string scene);
 			virtual void TransformUpdate(bool position, bool rotation, bool scale) {};
 			virtual void Export(tinyxml2::XMLElement* element) = 0;

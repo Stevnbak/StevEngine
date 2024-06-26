@@ -103,16 +103,17 @@ namespace StevEngine {
         std::tuple<double, Vector3> Quaternion::GetAngleAxis() const {
             Quaternion n = Get();
             if (W > 1) n.Normalize();
-            double s = sqrt(1 - n.W * n.W);
+            double s = 1 - n.W * n.W;
             double x,y,z;
             if (s < 0.001) {
-                x = n.X;
-                y = n.Y;
-                z = n.Z;
+                x = 0;
+                y = 0;
+                z = 1;
             } else {
-                x = n.X / s;
-                y = n.Y / s;
-                z = n.Z / s;
+                double t = sqrt(s);
+                x = n.X / t;
+                y = n.Y / t;
+                z = n.Z / t;
             }
             double angle = 2 * acos(n.W);
             return std::tuple<double, Vector3>(angle, Vector3(x, y, z));

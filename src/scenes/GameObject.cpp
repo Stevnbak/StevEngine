@@ -2,7 +2,9 @@
 #include <main/Log.hpp>
 #include <main/Engine.hpp>
 
-#include <SDL2/SDL_opengl.h>
+#include <glad/glad.h>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <format>
 #include <map>
@@ -29,29 +31,21 @@ namespace StevEngine {
 			components.at(i)->Update(deltaTime);
 		}
 	}
-	void GameObject::Draw() {
-		glPushMatrix();
-			TransformView();
-			//Components
-			for (int i = 0; i < components.size(); i++) {
-				components.at(i)->Draw();
-			}
-		glPopMatrix();
-	}
-	void GameObject::TransformView() {
-		//Parent transform
-		if (!parent.IsNull()) {
-			Engine::Instance->scenes.GetScene(scene)->GetObject(parent)->TransformView();
-		}
-		//Position
-		glTranslated(position.X, position.Y, position.Z);
-		//Rotation
-		std::tuple<double, Utilities::Vector3> angleAxis = rotation.GetAngleAxis();
-		double angle = Utilities::Quaternion::RadiansToDegrees(std::get<0>(angleAxis));
-		Utilities::Vector3 v = std::get<1>(angleAxis);
-		glRotated(angle, v.X, v.Y, v.Z);
+	void GameObject::Draw(glm::mat4x4 transform) {
+		//Move
+		transform = glm::translate(transform, glm::vec3(position.X, position.Y, position.Z));
+		//Rotate
+		transform *= glm::mat4_cast(glm::quat(rotation.W,rotation.X,rotation.Y,rotation.Z));
 		//Scale
-		glScaled(scale.X, scale.Y, scale.Z);
+		transform = glm::scale(transform, glm::vec3(scale.X, scale.Y, scale.Z));
+		//Components
+		for (int i = 0; i < components.size(); i++) {
+			components.at(i)->Draw(transform);
+		}
+		//Children
+		for (int i = 0; i < children.size(); i++) {
+			GetChild(i)->Draw(transform);
+		}
 	}
 
 	//Transform
@@ -90,7 +84,8 @@ namespace StevEngine {
 	}
 	Utilities::Vector3 GameObject::GetWorldPosition() {
 		if(!parent.IsNull()) {
-			return Engine::Instance->scenes.GetScene(scene)->GetObject(parent)->GetWorldPosition() + position;
+			GameObject* object = GetParent();
+			return ((object->GetRotation() * object->GetWorldPosition()) + position);
 		} else {
 			return position;
 		}
@@ -104,7 +99,7 @@ namespace StevEngine {
 	}
 	Utilities::Vector3 GameObject::GetWorldScale() {
 		if(!parent.IsNull()) {
-			return Engine::Instance->scenes.GetScene(scene)->GetObject(parent)->GetWorldScale() + scale;
+			return Utilities::Vector3::CombineScale(Engine::Instance->scenes.GetScene(scene)->GetObject(parent)->GetWorldScale(), scale);
 		} else {
 			return scale;
 		}

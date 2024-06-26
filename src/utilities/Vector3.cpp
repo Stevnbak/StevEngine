@@ -134,5 +134,12 @@ namespace StevEngine {
         double Vector3::Dot(Vector3 a, Vector3 b) {
 			return (a.X * b.X) + (a.Y * b.Y) + (a.Z * b.Z);
         }
+        Vector3 Vector3::CombineScale(Vector3 a, Vector3 b) {
+            Utilities::Vector3 s = a.Get();
+			s.X *= b.X;
+			s.Y *= b.Y;
+			s.Z *= b.Z;
+            return s;
+        }
     }
 }

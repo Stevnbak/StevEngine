@@ -17,7 +17,8 @@ namespace StevEngine {
 			Utilities::ID CreateObject(std::string name, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1));
 			Utilities::ID CreateObjectFromFile(Resources::Resource file);
 			GameObject* GetObject(Utilities::ID id) { return &gameObjects.at(id); }
-            GameObject* GetCamera() { return activeCamera->GetParent(); }
+            Camera* GetCamera() { return activeCamera; }
+            GameObject* GetCameraObject() { return activeCamera->GetParent(); }
 			std::vector<Utilities::ID> GetAllObjects();
             void DestroyObject(Utilities::ID id);
             void ExportToFile();

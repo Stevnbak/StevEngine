@@ -41,6 +41,7 @@ namespace StevEngine {
 				static double Distance(Vector3 a, Vector3 b);
 				static Vector3 Cross(Vector3 a, Vector3 b);
 				static double Dot(Vector3 a, Vector3 b);
+				static Vector3 CombineScale(Vector3 a, Vector3 b);
 		};
     }
 }

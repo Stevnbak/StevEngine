@@ -3,9 +3,11 @@
 #include <main/ResourceManager.hpp>
 #include <main/DataManager.hpp>
 #include <audio/System.hpp>
+#include <visuals/render/System.hpp>
 #include <scenes/SceneManager.hpp>
 
-#include <SDL_opengl.h>
+#include <glad/glad.h>
+#include <SDL2/SDL.h>
 
 namespace StevEngine {
 	class Engine {
@@ -18,6 +20,7 @@ namespace StevEngine {
 			void Update(double deltaTime);
 		public:
 			SDL_Window* window;
+			Render::System render;
 			Physics::System physics;
 			Resources::System resources;
 			GameData::System data;

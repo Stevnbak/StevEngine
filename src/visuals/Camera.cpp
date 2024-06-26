@@ -5,7 +5,9 @@
 #include <main/Log.hpp>
 #include <scenes/GameObject.hpp>
 
-#include <SDL2/SDL_opengl.h>
+#include <glad/glad.h>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <math.h>
 using namespace StevEngine;
 using namespace StevEngine::Utilities;
@@ -26,32 +28,33 @@ Camera::Camera(tinyxml2::XMLElement* node) : Camera(node->BoolAttribute("orthogr
 FactoryBase* factory = GameObject::AddComponentFactory<Camera>(std::string("Camera"));
 
 
-void Camera::UpdateView() {
+glm::mat4x4 Camera::GetView() {
+	glm::mat4x4 transform = glm::mat4(1.0f);
 	//Move everything else based on camera position
 	Vector3 position = GetParent()->GetWorldPosition();
-	glTranslated(-position.X, -position.Y, -position.Z);
+	transform = glm::translate(transform, glm::vec3(-position.X, -position.Y, -position.Z));
+
 	//Rotate everything else based on camera rotation
-	Quaternion rot = Quaternion::Conjugate(GetParent()->GetWorldRotation());
-	std::tuple<double, Vector3> angleAxis = rot.GetAngleAxis();
-	double angle = Quaternion::RadiansToDegrees(std::get<0>(angleAxis));
-	Vector3 v = std::get<1>(angleAxis);
-	glRotated(angle, v.X, v.Y, v.Z);
-	//Set projection
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
+	Quaternion rotation = Quaternion::Conjugate(GetParent()->GetWorldRotation());
+	transform *= glm::mat4_cast(glm::quat(rotation.W,rotation.X,rotation.Y,rotation.Z));
+
+	return transform;
+}
+
+glm::mat4x4 Camera::GetProjection() {
 	if (isOrthographic)
 	{
+		Vector3 position = GetParent()->GetWorldPosition();
 		double width = (1 / aspect) / (zoom / position.Z);
 		double height = (1 * aspect) / (zoom / position.Z);
 		//Set up an orthographic projection with the same near clip plane
-		glOrtho(-width, width, -height, height, nearClip, farClip);
+		return glm::ortho(-width, width, -height, height, nearClip, farClip);
 	}
 	else
 	{
 		double width = (1 / aspect) / zoom;
 		double height = (1 * aspect) / zoom;
 		//Set the perspective with the appropriate aspect ratio
-		glFrustum(-width, width, -height, height, nearClip, farClip);
+		return glm::perspective(glm::radians(45.0), width/height, nearClip, farClip);
 	}
-	glMatrixMode(GL_MODELVIEW);
 }

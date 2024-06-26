@@ -25,7 +25,7 @@ namespace StevEngine {
                 void Start() {};
                 void Deactivate();
                 void Update(double deltaTime) {};
-                void Draw() {};
+                void Draw(glm::mat4x4 transform) {};
         };
     }
 }

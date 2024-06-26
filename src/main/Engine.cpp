@@ -3,11 +3,10 @@
 #include <iostream>
 #include <map>
 #include <chrono>
-#include <algorithm> 
-//Libraries
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
-#include <Jolt/Jolt.h>
+#include <algorithm>
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 //Engine
 #include <main/InputSystem.hpp>
 #include <scenes/GameObject.hpp>
@@ -33,30 +32,27 @@ namespace StevEngine {
 		}
 	}
 
-	bool running = true;
-	double t = 0.0;
-
 	void Engine::Draw() {
 		// Clear the colorbuffer 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Drawing
+		render.StartFrame();
 		if (scenes.GetActiveScene()->activeCamera != nullptr) {
-			//Start cam matrix
-			glPushMatrix();
-			//Set view based on camera:
-			scenes.GetActiveScene()->activeCamera->UpdateView();
 			//Draw objects
-			Scene* scene = scenes.GetScene(scenes.active);
+			Scene* scene = scenes.GetActiveScene();
 			for (Utilities::ID id : scene->GetAllObjects()) {
-				scene->GetObject(id)->Draw();
+				if(!scene->GetObject(id)->parent.IsNull()) continue;
+				scene->GetObject(id)->Draw(glm::mat4x4(1.0));
 			}
-			//Reset cam matrix
-			glPopMatrix();
 		}
+		// Render
+		render.EndFrame();
 		// Refresh OpenGL window
 		SDL_GL_SetSwapInterval(0);
 		SDL_GL_SwapWindow(window);
 	}
+
+	bool running = true;
 
 	Engine::Engine(const char * title, int targetFPS, bool fullScreen, void (*mainUpdate)(double deltaTime), GLint WIDTH, GLint HEIGHT) : 
 	title(title),
@@ -65,6 +61,7 @@ namespace StevEngine {
 	WIDTH(WIDTH),
 	HEIGHT(HEIGHT),
 	mainUpdate(mainUpdate),
+	render(Render::System()),
 	physics(Physics::System()),
 	resources(Resources::System()),
 	data(GameData::System(title)),
@@ -73,25 +70,49 @@ namespace StevEngine {
 	{
 		//Create instance
 		if(Instance != nullptr) {
-			throw "Engine has already been initialized.";
+			throw("Engine has already been initialized.");
 		}
 		Instance = this;
 		//Initialize logging
 		Log::StartLogging(data.directoryPath);
-		//Initialize SDL window
-		if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-			throw "Failed initializing SDL: " + std::string(SDL_GetError());
+		//Initialize SDL
+		if (SDL_Init(SDL_INIT_EVENTS | SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_VIDEO) < 0) {
+			throw("Failed initializing SDL: " + std::string(SDL_GetError()));
 		}
-		//Create SDL window
-		window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | ( fullScreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE ));
-		if (!window) {
-			throw "Failed to create window: " + std::string(SDL_GetError());
-		}
-		//SDL & OpenGL properties
+		//OpenGL properties
+		int context_flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG;
+		context_flags |= SDL_GL_CONTEXT_DEBUG_FLAG; //Debug flags
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, context_flags);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3 );
+		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+        SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+        SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+        SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+        SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		//Create SDL window
+		window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | ( fullScreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE ));
+		if (!window) {
+			throw("Failed to create window: " + std::string(SDL_GetError()));
+		}
 		context = SDL_GL_CreateContext(window);
-		// Define the OpenGL viewport dimensions
+		if (!context) {
+			throw("Failed to create OpenGL context: " + std::string(SDL_GetError()));
+		}
+		SDL_GL_MakeCurrent(window, context);
+		//Initialize GLAD:
+        if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+            throw("Failed to initialize GLAD");
+        }
+		Log::Debug(std::format("OpenGL Version: {}.{}", GLVersion.major, GLVersion.minor));
+		Log::Debug(std::format("OpenGL Shading Language Version: {}", (char *)glGetString(GL_SHADING_LANGUAGE_VERSION)));
+		Log::Debug(std::format("OpenGL Vendor: {}", (char *)glGetString(GL_VENDOR)));
+		Log::Debug(std::format("OpenGL Renderer: {}", (char *)glGetString(GL_RENDERER)));
+		render.Init();
+		//Define the OpenGL viewport dimensions
 		GLint size = std::max(WIDTH, HEIGHT);
 		glViewport(0, 0, size, size);
 		glClearColor(1, 0.9, 1, 1);

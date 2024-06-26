@@ -1,16 +1,14 @@
 #include <main/Engine.hpp>
 #include <scenes/GameObject.hpp>
-#include <visuals/BasicComponents.hpp>
+#include <visuals/Primitive.hpp>
 #include <physics/RigidBody.hpp>
 #include <physics/Colliders.hpp>
 #include <physics/Layers.hpp>
 #include <main/ResourceManager.hpp>
 
-#include <SDL2/SDL_opengl.h>
-#include <GL/gl.h>
-
 using namespace StevEngine;
 using namespace StevEngine::Utilities;
+using namespace StevEngine::Visuals;
 
 /**
 class CameraController : public Component {
@@ -86,8 +84,7 @@ void mainUpdate(double deltaTime) {
 	Utilities::Vector3 right = testQ.right();
 	Log::Normal(std::format("Right: ({};{};{})", right.X, right.Y, right.Z));
 	Utilities::Vector3 up = testQ.up();
-	Log::Normal(std::format("Up: ({};{};{})", up.X, up.Y, up.Z));
-	Log::Normal("----------------------");*/
+	Log::Normal(std::format("Up: ({};{};{})", up.X, up.Y, up.Z));*/
 }
 
 //Debug files
@@ -128,16 +125,16 @@ int main(int argc, char** argv) {
 	{
 		ID id = scene->CreateObject("Cube", Utilities::Vector3(0, -1, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(15), Utilities::Vector3::forward), Utilities::Vector3(100, 1, 100));
 		GameObject* floor = scene->GetObject(id);
-		Primitive* primitive = floor->AddComponent(new Primitive(PrimitiveType::Cube));
-		primitive->colour = SDL_Color(0, 1, 0, 1);
+		CubePrimitive* primitive = floor->AddComponent(new CubePrimitive());
+		primitive->color = SDL_Color(0, 1, 0, 1);
 		Physics::CubeCollider* collider = floor->AddComponent(new Physics::CubeCollider());
 		Physics::RigidBody* rb = floor->AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layer::GetLayerByName("Static")));
 	}
 	{
 		ID id = scene->CreateObject("Cube", Utilities::Vector3(0, 4, 0), Utilities::Quaternion(), Utilities::Vector3(1, 2, 1));
 		GameObject* cube = scene->GetObject(id);
-		Primitive* primitive = cube->AddComponent(new Primitive(PrimitiveType::Cube));
-		primitive->colour = SDL_Color(1, 0, 0, 1);
+		CubePrimitive* primitive = cube->AddComponent(new CubePrimitive());
+		primitive->color = SDL_Color(1, 0, 0, 1);
 		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
 		Physics::RigidBody* rb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		int test = (int)JPH::EShapeSubType::Box;
@@ -146,29 +143,29 @@ int main(int argc, char** argv) {
 		ID id2 = scene->CreateObjectFromFile(Engine::Instance->resources.GetFile("cube.object"));
 		GameObject* cube2 = scene->GetObject(id2);
 		Physics::Collider* col = cube2->GetComponent<Physics::Collider>();
-		Primitive* primitive2 = cube2->GetComponent<Primitive>();
-		primitive2->colour = SDL_Color(1, 1, 1, 1);
+		CubePrimitive* primitive2 = cube2->GetComponent<CubePrimitive>();
+		primitive2->color = SDL_Color(1, 1, 1, 1);
 	}
 	{
 		ID id = scene->CreateObject("Sphere", Utilities::Vector3(3, 3, 0));
 		GameObject* sphere = scene->GetObject(id);
-		Primitive* primitive = sphere->AddComponent(new Primitive(PrimitiveType::Sphere));
-		primitive->colour = SDL_Color(1, 0, 0, 1);
+		SpherePrimitive* primitive = sphere->AddComponent(new SpherePrimitive());
+		primitive->color = SDL_Color(1, 0, 0, 1);
 		Physics::Collider* collider = sphere->AddComponent(new Physics::SphereCollider());
 		Physics::RigidBody* rb = sphere->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 	}
 	{
 		ID id = scene->CreateObject("Cylinder", Utilities::Vector3(0, 3, 3));
 		GameObject* sphere = scene->GetObject(id);
-		Primitive* primitive = sphere->AddComponent(new Primitive(PrimitiveType::Cylinder));
-		primitive->colour = SDL_Color(0, 0, 1, 1);
+		CylinderPrimitive* primitive = sphere->AddComponent(new CylinderPrimitive());
+		primitive->color = SDL_Color(0, 0, 1, 1);
 		Physics::Collider* collider = sphere->AddComponent(new Physics::CylinderCollider());
 		Physics::RigidBody* rb = sphere->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 	}
 	//Add Camera controller
-	GameObject* camObj = scene->GetCamera();
+	GameObject* camObj = scene->GetCameraObject();
 	///camObj->AddComponent(CameraController());
-	camObj->SetPosition(Utilities::Vector3(0, 4, 15));
+	camObj->SetPosition(Utilities::Vector3(0, 4, 25));
 	camObj->SetRotation(Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward));
 
 	//Test ressource manager
@@ -185,8 +182,7 @@ int main(int argc, char** argv) {
 	ID audioId = scene->CreateObject("Audio Player");
 	GameObject* audioPlayer = scene->GetObject(audioId);
 	Audio::Emitter* emitter = audioPlayer->AddComponent(new Audio::Emitter("audio.wav", false));
-	///Audio::Emitter emitter2 = Audio::Emitter("audio.wav", true);
-	///emitter2.Play();
+	//emitter->Play();
 
 	//Export scene
 	scene->ExportToFile();

@@ -36,7 +36,7 @@ namespace StevEngine::Physics {
 		if(shape) shape->Release();
 		if(rawShape) rawShape->Release();
 	}
-	void Collider::Draw() {
+	void Collider::Draw(glm::mat4x4 transform) {
 		
 	}
 	void Collider::TransformUpdate(bool position, bool rotation, bool scale) {
