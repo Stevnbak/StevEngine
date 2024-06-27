@@ -13,6 +13,7 @@
                 "${workspaceFolder}/libs/uuidv7-h"
             ],
             "defines": [],
+            "compilerArgs": ["-lm", "-lSDL2", "-lSDL2_mixer"],
             "cppStandard": "c++23",
             "intelliSenseMode": "linux-gcc-x64"
         }
