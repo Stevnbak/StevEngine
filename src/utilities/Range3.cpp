@@ -27,7 +27,7 @@ namespace StevEngine {
 		}
 		//Conversions
 		Range3::operator JPH::AABox() {
-			return JPH::AABox(Low, High);
+			return JPH::AABox((JPH::DVec3)Low, (JPH::DVec3)High);
 		}
 		Range3& Range3::operator= (const JPH::AABox& other) {
 			Low = other.mMin;

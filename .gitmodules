@@ -1,17 +1,12 @@
 [submodule "libs/JoltPhysics"]
 	path = libs/JoltPhysics
 	url = https://github.com/jrouwe/JoltPhysics.git
-[submodule "libs/SDL2"]
-	path = libs/SDL2
-	url = https://github.com/libsdl-org/SDL.git
-	branch = SDL2
-[submodule "libs/SDL_Mixer"]
-	path = libs/SDL_Mixer
-	url = https://github.com/libsdl-org/SDL_mixer.git
-	branch = SDL2
 [submodule "libs/TinyXML2"]
 	path = libs/TinyXML2
 	url = https://github.com/leethomason/tinyxml2.git
 [submodule "libs/glm"]
 	path = libs/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "libs/uuidv7-h"]
+	path = libs/uuidv7-h
+	url = https://github.com/LiosK/uuidv7-h.git

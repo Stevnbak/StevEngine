@@ -87,18 +87,6 @@ void mainUpdate(double deltaTime) {
 	Log::Normal(std::format("Up: ({};{};{})", up.X, up.Y, up.Z));*/
 }
 
-//Debug files
-extern const char _binary____assets_test_txt_start[];
-extern const char _binary____assets_test_txt_end[];
-extern const char _binary____assets_test_2_txt_start[];
-extern const char _binary____assets_test_2_txt_end[];
-extern const char _binary____assets_audio_wav_start[];
-extern const char _binary____assets_audio_wav_end[];
-extern const char _binary____assets_cube_object_start[];
-extern const char _binary____assets_cube_object_end[];
-extern const char _binary____assets_Debug_scene_scene_start[];
-extern const char _binary____assets_Debug_scene_scene_end[];
-
 int main(int argc, char** argv) {
 	//Create engine
 	Engine engine = Engine("StevnGame", 100, false, mainUpdate);
@@ -111,11 +99,11 @@ int main(int argc, char** argv) {
 	Log::Error("Error log");
 	
 	//Add debug assets
-	engine.resources.AddFile("test.txt", &_binary____assets_test_txt_start[0], _binary____assets_test_txt_end - _binary____assets_test_txt_start);
+	/*engine.resources.AddFile("test.txt", &_binary____assets_test_txt_start[0], _binary____assets_test_txt_end - _binary____assets_test_txt_start);
 	engine.resources.AddFile("test_2.txt", &_binary____assets_test_2_txt_start[0], _binary____assets_test_2_txt_end - _binary____assets_test_2_txt_start);
 	engine.resources.AddFile("audio.wav", &_binary____assets_audio_wav_start[0], _binary____assets_audio_wav_end - _binary____assets_audio_wav_start);
 	engine.resources.AddFile("cube.object", &_binary____assets_cube_object_start[0], _binary____assets_cube_object_end - _binary____assets_cube_object_start);
-	engine.resources.AddFile("Debug_scene.scene", &_binary____assets_Debug_scene_scene_start[0], _binary____assets_Debug_scene_scene_end - _binary____assets_Debug_scene_scene_start);
+	engine.resources.AddFile("Debug_scene.scene", &_binary____assets_Debug_scene_scene_start[0], _binary____assets_Debug_scene_scene_end - _binary____assets_Debug_scene_scene_start);*/
 
 	//Create new scene
 	//Scene* scene = engine.scenes.CreateSceneFromFile(engine.resources.GetFile("Debug_scene.scene"));
@@ -140,11 +128,11 @@ int main(int argc, char** argv) {
 		int test = (int)JPH::EShapeSubType::Box;
 		rb->SetMotionProperties(Physics::MotionProperties(1, 0.5));
 		cube->ExportToFile("cube");
-		ID id2 = scene->CreateObjectFromFile(Engine::Instance->resources.GetFile("cube.object"));
+		/*ID id2 = scene->CreateObjectFromFile(Engine::Instance->resources.GetFile("cube.object"));
 		GameObject* cube2 = scene->GetObject(id2);
 		Physics::Collider* col = cube2->GetComponent<Physics::Collider>();
 		CubePrimitive* primitive2 = cube2->GetComponent<CubePrimitive>();
-		primitive2->color = SDL_Color(1, 1, 1, 1);
+		primitive2->color = SDL_Color(1, 1, 1, 1);*/
 	}
 	{
 		ID id = scene->CreateObject("Sphere", Utilities::Vector3(3, 3, 0));
@@ -169,7 +157,7 @@ int main(int argc, char** argv) {
 	camObj->SetRotation(Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward));
 
 	//Test ressource manager
-	Log::Debug(std::format("Ressource 0: {}", Engine::Instance->resources.GetFile(0).path));
+	/*Log::Debug(std::format("Ressource 0: {}", Engine::Instance->resources.GetFile(0).path));
 	Log::Debug(std::format("Ressource \"test.txt\": {}", Resources::DataToText(Engine::Instance->resources.GetFile("test.txt").GetSDLData())));
 	Log::Debug(std::format("Ressource \"test_2.txt\": {}", Engine::Instance->resources.GetFile("test_2.txt").GetStrData()));
 
@@ -181,7 +169,7 @@ int main(int argc, char** argv) {
 	//Play audio
 	ID audioId = scene->CreateObject("Audio Player");
 	GameObject* audioPlayer = scene->GetObject(audioId);
-	Audio::Emitter* emitter = audioPlayer->AddComponent(new Audio::Emitter("audio.wav", false));
+	Audio::Emitter* emitter = audioPlayer->AddComponent(new Audio::Emitter("audio.wav", false));*/
 	//emitter->Play();
 
 	//Export scene

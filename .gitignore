@@ -8,8 +8,5 @@
 *.code-workspace
 
 # Project
-build/bin/*
-!build/bin/assets
-build/lib
-build/obj
+build/*
 links.txt

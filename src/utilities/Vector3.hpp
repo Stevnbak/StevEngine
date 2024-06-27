@@ -33,9 +33,12 @@ namespace StevEngine {
                 //Conversions
 				explicit operator Vector2();
 				explicit operator std::string();
+                operator JPH::DVec3();
                 operator JPH::Vec3();
 				Vector3& operator= (const JPH::Vec3& other);
+				Vector3& operator= (const JPH::DVec3& other);
 				Vector3(const JPH::Vec3& other);
+				Vector3(const JPH::DVec3& other);
                 //Static stuff
                 static Vector3 up, right, forward;
 				static double Distance(Vector3 a, Vector3 b);

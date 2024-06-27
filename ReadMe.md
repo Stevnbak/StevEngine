@@ -1,25 +1,25 @@
 # StevEngine
 Custom game engine written in C++
 
-# Setup & Build (linux)
+# Setup & Build
 
 Clone and update submodules by running:
 ```shell
-git submodule init
-git submodule update
+git submodule update --init
 ```
 
-Build SDL2, SDL_Mixer, JoltPhysics and Tinyxml2 by running the shell script in Build.
+Install SDL2 and SDL2_Mixer system wide:
 
-Please note:
-- *SDL2 requires sudo privileges to install files in `/usr/local`*
+- SDL2:
+    - Linux: `sudo apt-get install libsdl2-dev`
+    - Windows: Download from https://github.com/libsdl-org/SDL/releases
+- SDL2_Mixer
+    - Linux: `sudo apt-get install libsdl2-mixer-dev`
+    - Windows: Download from https://github.com/libsdl-org/SDL_mixer/releases
+
+Build StevEngine and all other external libraries by running (replace `<compiler>` with your c++ compiler such as g++ or clang++):
 ```shell
-cd Build
-./linux_libraries.sh
+cd build && CXX=<compiler> cmake .. --build
 ```
-Finally build StevEngine by running `make build` in the `build`folder.
-
-## GLAD setup
-glad is added as a library based on [this configuration](https://glad.dav1d.de/#language=c&specification=gl&api=gl%3D3.3&api=gles1%3Dnone&api=gles2%3Dnone&api=glsc2%3Dnone&profile=core&loader=on).
 
 

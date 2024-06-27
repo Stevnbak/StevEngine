@@ -5,10 +5,10 @@
 			"name": "C/C++: debug",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/build/bin/debug",
+			"program": "${workspaceFolder}/build/debug",
 			"args": [],
 			"stopAtEntry": false,
-			"cwd": "${workspaceFolder}/build/bin",
+			"cwd": "${workspaceFolder}/build",
 			"environment": [],
 			"externalConsole": false,
 			"MIMode": "gdb",
@@ -20,7 +20,7 @@
 					"ignoreFailures": true
 				}
 			],
-			"preLaunchTask": "debug"
+			"preLaunchTask": "build"
 		}
 	]
 }

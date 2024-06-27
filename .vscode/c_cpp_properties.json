@@ -7,12 +7,10 @@
                 "${default}",
                 "${workspaceFolder}/src",
                 "${workspaceFolder}/libs/JoltPhysics",
-                "${workspaceFolder}/libs/SDL2/include",
-                "${workspaceFolder}/libs/SDL_Mixer/include",
                 "${workspaceFolder}/libs/glad/include",
                 "${workspaceFolder}/libs/glm",
                 "${workspaceFolder}/libs/TinyXML2",
-                "${workspaceFolder}/libs/uuidv7"
+                "${workspaceFolder}/libs/uuidv7-h"
             ],
             "defines": [],
             "cppStandard": "c++23",

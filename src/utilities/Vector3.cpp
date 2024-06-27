@@ -103,6 +103,20 @@ namespace StevEngine {
         Vector3::operator std::string() {
             return std::format("[{};{};{}]", X, Y, Z);
         }
+        Vector3::operator JPH::DVec3() {
+			return JPH::DVec3(X, Y, Z);
+        }
+        Vector3& Vector3::operator= (const JPH::DVec3& other) {
+            X = other.GetX();
+			Y = other.GetY();
+			Z = other.GetZ();
+			return *this;
+        }
+        Vector3::Vector3(const JPH::DVec3& other) {
+            X = other.GetX();
+			Y = other.GetY();
+			Z = other.GetZ();
+        }
         Vector3::operator JPH::Vec3() {
 			return JPH::Vec3(X, Y, Z);
         }
