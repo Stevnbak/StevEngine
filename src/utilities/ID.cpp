@@ -44,6 +44,12 @@ namespace StevEngine {
         bool ID::IsNull() {
             return (this->string == empty.string); 
         }
+        ID& ID::operator=(const ID& other) {
+            for(int i = 0; i < 16; i++) 
+                raw[i] = other.raw[i];
+            string = other.string;
+            return *this;
+        }
         bool ID::operator==(const ID& other) const {
             return (string == other.string);
         }

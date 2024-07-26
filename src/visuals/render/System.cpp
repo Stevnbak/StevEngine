@@ -10,23 +10,30 @@
 namespace StevEngine {
     namespace Render {
         const char *vertexShaderSource = "#version 330 core\n"
-            "layout (location = 0) in vec3 aPos;\n"
-            "layout (location = 1) in vec4 aColor;\n"
+            "layout (location = 0) in vec3 vPos;\n"
+            "layout (location = 1) in vec2 vTex;\n"
             "uniform mat4 model;\n"
             "uniform mat4 view;\n"
             "uniform mat4 projection;\n"
-            "out vec4 outColor;\n"
+            "out vec2 fTexCoord;\n"
             "void main()\n"
             "{\n"
-            "   gl_Position = projection * view * model * vec4(aPos, 1.0);\n"
-            "   outColor = aColor;\n"
+            "   gl_Position = projection * view * model * vec4(vPos, 1.0);\n"
+            "   fTexCoord = vTex;\n"
             "}\0";
         const char *fragmentShaderSource = "#version 330 core\n"
             "out vec4 FragColor;\n"
-            "in vec4 outColor;\n"
+            "in vec2 fTexCoord;\n"
+            "uniform vec4 fColor;\n"
+            "uniform bool fIsTextured;\n"
+            "uniform sampler2D fTexture;\n"
             "void main()\n"
             "{\n"
-                "FragColor = outColor;\n"
+                "vec4 tex = vec4(1.0, 1.0, 1.0, 1.0);"
+                "if (fIsTextured) {"
+                    "tex = texture(fTexture, fTexCoord);"
+                "}"
+                "FragColor = tex * fColor;\n"
             "}\n";
 
         System::System() {}
@@ -38,11 +45,11 @@ namespace StevEngine {
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             glGenBuffers(1, &EBO);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-            // position attribute
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
+            // position
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, Vertex::size, (void*)0);
             glEnableVertexAttribArray(0);
-            // color attribute
-            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3* sizeof(float)));
+            // texture coordinates
+            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, Vertex::size, (void*)((3) * sizeof(float)));
             glEnableVertexAttribArray(1);
             //Shaders
             unsigned int vertexShader;
@@ -83,34 +90,30 @@ namespace StevEngine {
             glDeleteShader(fragmentShader);
         }
 
-        void System::DrawObject(Object object) {
+        void System::DrawObject(Object object, glm::mat4x4 transform) {
             //Update transform
             unsigned int transformLoc = glGetUniformLocation(shaderProgram, "model");
-            glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(object.transform));
-            //Create vertices & indices arrays
-            float vertices[(int)(object.vertices.size() * (7.0/3.0))];
-            int j = 0;
-            int t=object.vertices.size();
-            for(int i = 0; i < object.vertices.size(); i += 3) {
-                vertices[j++] = object.vertices[i];
-                vertices[j++] = object.vertices[i+1];
-                vertices[j++] = object.vertices[i+2];
-                vertices[j++] = object.color.r;
-                vertices[j++] = object.color.g;
-                vertices[j++] = object.color.b;
-                vertices[j++] = object.color.a;
+            glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+            //Update texture
+            unsigned int isTexturedLoc = glGetUniformLocation(shaderProgram, "fIsTextured");
+            glUniform1i(isTexturedLoc, (int)object.textured);
+            if(object.textured) {
+                unsigned int textureLoc = glGetUniformLocation(shaderProgram, "fTexture");
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, object.texture);
+                glUniform1i(textureLoc, 0);
             }
-            unsigned int indices[object.indices.size()];
-            std::copy(object.indices.begin(), object.indices.end(), indices);
+            //Update color
+            unsigned int colorLoc = glGetUniformLocation(shaderProgram, "fColor");
+            glUniform4fv(colorLoc, 1, glm::value_ptr(glm::vec4(object.color.r,object.color.g,object.color.b,object.color.a)));
             //Draw object
-            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, object.vertices.size() * sizeof(float), object.vertices.data(), GL_STATIC_DRAW);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, object.indices.size() * sizeof(float), object.indices.data(), GL_STATIC_DRAW);
             glDrawElements(GL_TRIANGLES, object.indices.size(), GL_UNSIGNED_INT, 0);
         }
         
         void System::StartFrame() {
             //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Temp
-
             glUseProgram(shaderProgram);
             glBindVertexArray(VAO);
             
@@ -127,7 +130,6 @@ namespace StevEngine {
 
         void System::EndFrame() {
             glBindVertexArray(0);
-            //objects.clear();
         }
     }
 }

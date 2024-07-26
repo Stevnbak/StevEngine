@@ -11,6 +11,7 @@ namespace StevEngine {
                 ID (uint8_t* raw);
                 ID (std::string string);
                 std::string GetString() { return string; }
+                ID& operator=(const ID& other);
                 bool operator==(const ID& other) const;
                 bool operator<(const ID& other) const;
                 bool operator() (const ID& lhs, const ID& rhs) const;

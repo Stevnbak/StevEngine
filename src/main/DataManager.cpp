@@ -18,7 +18,7 @@ namespace StevEngine {
             start.open(directoryPath + "gamedata");
             std::string line;
             while (std::getline(start, line)) {
-                if(!line.contains("=")) continue;
+                if(line.find("=") == 0) continue;
                 int split = line.find("=");
                 data.insert(std::make_pair(line.substr(0, split), line.substr(split + 1, line.length() - 1).c_str()));
             }

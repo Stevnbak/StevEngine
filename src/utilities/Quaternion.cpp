@@ -26,7 +26,7 @@ namespace StevEngine {
             Z = from.Z;
         }
         Quaternion::Quaternion(std::string str) {
-            if(!str.starts_with("[") || !str.ends_with("]") || !str.contains(";")) {
+            if(!str.starts_with("[") || !str.ends_with("]") || str.find(";") == 0) {
                 Log::Error("Quaternion string not valid.", true);
                 return;
             }

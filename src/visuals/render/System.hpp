@@ -1,6 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
-#include <glad/glad.h> 
+#include <glad/glad.h>
 #include <glm/mat4x4.hpp>
 
 #include "Object.hpp"
@@ -11,7 +11,7 @@ namespace StevEngine {
         class System {
 			friend class StevEngine::Engine;
 			public:
-				void DrawObject(Object object);
+				void DrawObject(Object object, glm::mat4x4 transform);
 			private:
                 System();
                 void Init();

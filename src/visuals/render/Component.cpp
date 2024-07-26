@@ -7,10 +7,10 @@
 namespace StevEngine {
     namespace Render {
         //Constructor
-        RenderComponent::RenderComponent(std::vector<float> vertices, std::vector<unsigned int> indices, std::string type) 
-            : Component(type), vertices(vertices), indices(indices) {}
-		RenderComponent::RenderComponent(std::vector<float> vertices, std::vector<unsigned int> indices, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, std::string type)
-            : Component(type), vertices(vertices), indices(indices), position(position), rotation(rotation), scale(scale) {}
+        RenderComponent::RenderComponent(std::vector<Vertex> vertices, std::string type) 
+            : Component(type), vertices(vertices), object(Object(vertices, color)) {}
+		RenderComponent::RenderComponent(std::vector<Vertex> vertices, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, std::string type)
+            : Component(type), vertices(vertices), position(position), rotation(rotation), scale(scale), object(Object(vertices, color)) {}
 
 		//Main draw function
 		void RenderComponent::Draw(glm::mat4x4 transform) {
@@ -23,8 +23,13 @@ namespace StevEngine {
 			Utilities::Vector3 v = std::get<1>(angleAxis);
 			transform = glm::rotate(transform, (float)std::get<0>(angleAxis), glm::vec3(v.X, v.Y, v.Z));
 			//Draw
-			Engine::Instance->render.DrawObject(Render::Object(vertices, indices, transform, color));
+			Engine::Instance->render.DrawObject(object, transform);
 		}
+		void RenderComponent::SetColor(SDL_Color color) {
+			this->color = color;
+			object.color = color;
+		}
+		
 		//Export and import
 		void RenderComponent::Export(tinyxml2::XMLElement* element) {
 			element->SetAttribute("position", ((std::string)position).c_str());
@@ -32,12 +37,12 @@ namespace StevEngine {
 			element->SetAttribute("scale", ((std::string)scale).c_str());
 			element->SetAttribute("color", std::format("[{},{},{},{}]", color.r, color.g, color.b, color.a).c_str());
 		}
-		RenderComponent::RenderComponent(tinyxml2::XMLElement* node) : Component(node->Attribute("type")) {
+		RenderComponent::RenderComponent(tinyxml2::XMLElement* node) : Component(node->Attribute("type")), object(Object({}, {})) {
 			position = Utilities::Vector3(node->Attribute("position"));
 			rotation = Utilities::Quaternion(node->Attribute("rotation"));
 			scale = Utilities::Vector3(node->Attribute("scale"));
 			std::string str = node->Attribute("color");
-			if(!str.starts_with("[") || !str.ends_with("]") || !str.contains(",")) {
+			if(!str.starts_with("[") || !str.ends_with("]") || str.find(";") == 0) {
 				Log::Error("RenderComponent color string not valid.", true);
 			} else {
 				//Create stream

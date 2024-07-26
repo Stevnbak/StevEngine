@@ -114,7 +114,7 @@ int main(int argc, char** argv) {
 		ID id = scene->CreateObject("Cube", Utilities::Vector3(0, -1, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(15), Utilities::Vector3::forward), Utilities::Vector3(100, 1, 100));
 		GameObject* floor = scene->GetObject(id);
 		CubePrimitive* primitive = floor->AddComponent(new CubePrimitive());
-		primitive->color = SDL_Color(0, 1, 0, 1);
+		primitive->SetColor(SDL_Color(0, 1, 0, 1));
 		Physics::CubeCollider* collider = floor->AddComponent(new Physics::CubeCollider());
 		Physics::RigidBody* rb = floor->AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layer::GetLayerByName("Static")));
 	}
@@ -122,7 +122,7 @@ int main(int argc, char** argv) {
 		ID id = scene->CreateObject("Cube", Utilities::Vector3(0, 4, 0), Utilities::Quaternion(), Utilities::Vector3(1, 2, 1));
 		GameObject* cube = scene->GetObject(id);
 		CubePrimitive* primitive = cube->AddComponent(new CubePrimitive());
-		primitive->color = SDL_Color(1, 0, 0, 1);
+		primitive->SetColor(SDL_Color(1, 0, 0, 1));
 		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
 		Physics::RigidBody* rb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		int test = (int)JPH::EShapeSubType::Box;
@@ -132,13 +132,13 @@ int main(int argc, char** argv) {
 		GameObject* cube2 = scene->GetObject(id2);
 		Physics::Collider* col = cube2->GetComponent<Physics::Collider>();
 		CubePrimitive* primitive2 = cube2->GetComponent<CubePrimitive>();
-		primitive2->color = SDL_Color(1, 1, 1, 1);*/
+		primitive2->SetColor(SDL_Color(1, 1, 1, 1));*/
 	}
 	{
 		ID id = scene->CreateObject("Sphere", Utilities::Vector3(3, 3, 0));
 		GameObject* sphere = scene->GetObject(id);
 		SpherePrimitive* primitive = sphere->AddComponent(new SpherePrimitive());
-		primitive->color = SDL_Color(1, 0, 0, 1);
+		primitive->SetColor(SDL_Color(1, 0, 0, 1));
 		Physics::Collider* collider = sphere->AddComponent(new Physics::SphereCollider());
 		Physics::RigidBody* rb = sphere->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 	}
@@ -146,7 +146,7 @@ int main(int argc, char** argv) {
 		ID id = scene->CreateObject("Cylinder", Utilities::Vector3(0, 3, 3));
 		GameObject* sphere = scene->GetObject(id);
 		CylinderPrimitive* primitive = sphere->AddComponent(new CylinderPrimitive());
-		primitive->color = SDL_Color(0, 0, 1, 1);
+		primitive->SetColor(SDL_Color(0, 0, 1, 1));
 		Physics::Collider* collider = sphere->AddComponent(new Physics::CylinderCollider());
 		Physics::RigidBody* rb = sphere->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 	}
@@ -173,7 +173,7 @@ int main(int argc, char** argv) {
 	//emitter->Play();
 
 	//Export scene
-	scene->ExportToFile();
+	///scene->ExportToFile();
 
 	//Start engine
 	engine.Start();
