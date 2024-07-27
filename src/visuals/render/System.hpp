@@ -4,6 +4,7 @@
 #include <glm/mat4x4.hpp>
 
 #include "Object.hpp"
+#include "CustomObject.hpp"
 
 namespace StevEngine {
     class Engine;
@@ -12,12 +13,12 @@ namespace StevEngine {
 			friend class StevEngine::Engine;
 			public:
 				void DrawObject(Object object, glm::mat4x4 transform);
+				void DrawCustomObject(CustomObject* object, glm::mat4x4 transform);
 			private:
                 System();
                 void Init();
                 void StartFrame();
                 void EndFrame();
-                std::vector<Object> objects;
                 unsigned int shaderProgram;
                 unsigned int VBO;
                 unsigned int EBO;

@@ -20,7 +20,7 @@ Install SDL2 and SDL2_Mixer system wide:
     - Linux: `sudo apt-get install libsdl2-image-dev` (also see https://trenki2.github.io/blog/2017/07/04/using-sdl2-image-with-cmake/)
     - Windows: Download from https://github.com/libsdl-org/SDL_image/releases
 
-Build StevEngine and all other external libraries by running (replace `<compiler>` with your c++ compiler such as g++ or clang++):
+Build StevEngine and all other external libraries by running the following command (replace `<compiler>` with your c++ compiler such as g++ or clang++):
 ```shell
 cd build && CXX=<compiler> cmake .. --build
 ```

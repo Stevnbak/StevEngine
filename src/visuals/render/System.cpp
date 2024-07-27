@@ -111,6 +111,12 @@ namespace StevEngine {
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, object.indices.size() * sizeof(float), object.indices.data(), GL_STATIC_DRAW);
             glDrawElements(GL_TRIANGLES, object.indices.size(), GL_UNSIGNED_INT, 0);
         }
+
+        void System::DrawCustomObject(CustomObject* object, glm::mat4x4 transform) {
+            glUseProgram(0);
+            object->Draw(transform);
+            glUseProgram(shaderProgram);
+        }
         
         void System::StartFrame() {
             //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Temp
