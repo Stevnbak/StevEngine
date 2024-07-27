@@ -1,3 +1,4 @@
+#ifdef StevEngine_AUDIO
 #include "System.hpp"
 #include "main/Log.hpp"
 #include "main/ResourceManager.hpp"
@@ -71,3 +72,4 @@ namespace StevEngine::Audio {
         }
     }
 }
+#endif

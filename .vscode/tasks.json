@@ -3,7 +3,7 @@
 		{
             "label": "debug",
             "type": "shell",
-            "command": "CXX=g++-13 cmake .. -DCMAKE_BUILD_TYPE=Debug",
+            "command": "CXX=g++-13 cmake .. -DCMAKE_BUILD_TYPE=Debug -DDEBUG_EXECUTABLE=ON",
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },
@@ -12,7 +12,7 @@
         {
             "label": "release",
             "type": "shell",
-            "command": "CXX=g++-13 cmake .. -DCMAKE_BUILD_TYPE=Release",
+            "command": "CXX=g++-13 cmake .. -DCMAKE_BUILD_TYPE=Release -DDEBUG_EXECUTABLE=OFF",
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },

@@ -6,30 +6,85 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # build StevEngine as static library
-file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.hpp" "src/*.cpp")
-add_library(${PROJECT_NAME} STATIC ${SOURCES})
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
+file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS "src/*.hpp")
+add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADERS})
 target_include_directories(${PROJECT_NAME} PUBLIC src)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 
+if(CMAKE_BUILD_TYPE MATCHES "Debug")
+	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_DEBUGGING)
+endif()
+
+# modularity options
+
+set(build_string "StevEngine with BASE")
+
+option(USE_INPUTS "Use the input manager" ON)
+if (USE_INPUTS)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_INPUTS)
+    set(build_string "${build_string}, INPUTS")
+endif()
+
+option(USE_PLAYER_DATA "Use the data manager" ON)
+if (USE_PLAYER_DATA)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_PLAYER_DATA)
+    set(build_string "${build_string}, PLAYER_DATA")
+endif()
+
+option(SHOW_WINDOW "Show the game window" ON)
+if (SHOW_WINDOW)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_SHOW_WINDOW)
+    set(build_string "${build_string}, WINDOW")
+endif()
+
+option(USE_RENDERER_GL "Use the OpenGL renderer" ON)
+if (USE_RENDERER_GL AND SHOW_WINDOW)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_RENDERER_GL)
+    set(build_string "${build_string}, RENDERER_GL")
+endif()
+
+
+option(USE_PHYSICS "Use the physics engine" ON)
+if (USE_PHYSICS)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_PHYSICS)
+    set(build_string "${build_string}, PHYSICS")
+endif()
+
+option(USE_AUDIO "Use the audio system" ON)
+if (USE_AUDIO)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_AUDIO)
+    set(build_string "${build_string}, AUDIO")
+endif()
+
+message("Building ${build_string}")
+
 # external libraries
 
-# GLAD
-target_sources(${PROJECT_NAME} PRIVATE libs/glad/src/glad.c)
-target_include_directories(${PROJECT_NAME} PUBLIC libs/glad/include)
+if(USE_RENDERER_GL)
+    ## GLAD
+    target_sources(${PROJECT_NAME} PRIVATE libs/glad/src/glad.c)
+    target_include_directories(${PROJECT_NAME} PUBLIC libs/glad/include)
+endif()
 
-# Jolt
-set(ENABLE_OBJECT_STREAM OFF)
-set(USE_ASSERTS OFF)
-set(DEBUG_RENDERER_IN_DEBUG_AND_RELEASE OFF)
-set(PROFILER_IN_DEBUG_AND_RELEASE OFF)
-set(USE_STD_VECTOR ON)
-set(GENERATE_DEBUG_SYMBOLS OFF)
-set(DOUBLE_PRECISION ON)
-add_subdirectory(libs/JoltPhysics/Build)
-target_link_libraries(${PROJECT_NAME} PRIVATE Jolt)
-target_include_directories(${PROJECT_NAME} PUBLIC libs/JoltPhysics)
+## glm
+target_include_directories(${PROJECT_NAME} PUBLIC libs/glm)
 
-# SDL2
+if(USE_PHYSICS)
+    ## Jolt
+    set(ENABLE_OBJECT_STREAM OFF)
+    set(USE_ASSERTS OFF)
+    set(DEBUG_RENDERER_IN_DEBUG_AND_RELEASE OFF)
+    set(PROFILER_IN_DEBUG_AND_RELEASE OFF)
+    set(USE_STD_VECTOR ON)
+    set(GENERATE_DEBUG_SYMBOLS OFF)
+    set(DOUBLE_PRECISION ON)
+    add_subdirectory(libs/JoltPhysics/Build)
+    target_link_libraries(${PROJECT_NAME} PRIVATE Jolt)
+    target_include_directories(${PROJECT_NAME} PUBLIC libs/JoltPhysics)
+endif()
+
+## SDL2
 find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2-static)
 find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
 if(TARGET SDL2::SDL2main)
@@ -37,27 +92,26 @@ if(TARGET SDL2::SDL2main)
 endif()
 target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2-static)
 
-# SDL_Mixer
-find_package(SDL2_mixer REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_mixer::SDL2_mixer)
+if(USE_AUDIO)
+    ## SDL_Mixer
+    find_package(SDL2_mixer REQUIRED)
+    target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_mixer::SDL2_mixer)
+endif()
 
-# SDL_Image
+## SDL_Image
 #find_package(SDL2_image REQUIRED)
 #target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image)
 
-# Tinyxml2
+## Tinyxml2
 target_sources(${PROJECT_NAME} PUBLIC libs/TinyXML2/tinyxml2.cpp)
 target_include_directories(${PROJECT_NAME} PUBLIC libs/TinyXML2)
 
-
-# uuidv7
+## uuidv7
 target_include_directories(${PROJECT_NAME} PUBLIC libs/uuidv7-h)
 
-# glm
-target_include_directories(${PROJECT_NAME} PUBLIC libs/glm)
-
 # build debug executable
-if(CMAKE_BUILD_TYPE MATCHES "Debug")
+option(DEBUG_EXECUTABLE "Build the debug program for testing the engine." OFF)
+if(DEBUG_EXECUTABLE)
     add_executable(debug debug/main.cpp)
     target_link_libraries(debug PRIVATE ${PROJECT_NAME})
 endif()

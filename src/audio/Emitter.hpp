@@ -1,4 +1,5 @@
 #pragma once
+#ifdef StevEngine_AUDIO
 #include "scenes/Component.hpp"
 #include <SDL2/SDL_mixer.h>
 
@@ -29,3 +30,4 @@ namespace StevEngine {
         };
     }
 }
+#endif

@@ -89,11 +89,8 @@ void mainUpdate(double deltaTime) {
 
 int main(int argc, char** argv) {
 	//Create engine
-	Engine engine = Engine("StevnGame", 100, false, mainUpdate);
-	//Setup debug stuff:
-	Log::Normal("Start");
-	glClearColor(0, 0, 0, 1);
-
+	Engine engine = Engine("Debug", 60, mainUpdate);
+	//Debug logging:
 	Log::Debug("Debug log");
 	Log::Warning("Warning log");
 	Log::Error("Error log");
@@ -113,42 +110,60 @@ int main(int argc, char** argv) {
 	{
 		ID id = scene->CreateObject("Cube", Utilities::Vector3(0, -1, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(15), Utilities::Vector3::forward), Utilities::Vector3(100, 1, 100));
 		GameObject* floor = scene->GetObject(id);
+		#ifdef StevEngine_RENDERER_GL
 		CubePrimitive* primitive = floor->AddComponent(new CubePrimitive());
 		primitive->SetColor(SDL_Color(0, 1, 0, 1));
+		#endif
+		#ifdef StevEngine_PHYSICS
 		Physics::CubeCollider* collider = floor->AddComponent(new Physics::CubeCollider());
 		Physics::RigidBody* rb = floor->AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layer::GetLayerByName("Static")));
+		#endif
 	}
 	{
 		ID id = scene->CreateObject("Cube", Utilities::Vector3(0, 4, 0), Utilities::Quaternion(), Utilities::Vector3(1, 2, 1));
 		GameObject* cube = scene->GetObject(id);
+		#ifdef StevEngine_RENDERER_GL
 		CubePrimitive* primitive = cube->AddComponent(new CubePrimitive());
 		primitive->SetColor(SDL_Color(1, 0, 0, 1));
+		#endif
+		#ifdef StevEngine_PHYSICS
 		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
 		Physics::RigidBody* rb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
-		int test = (int)JPH::EShapeSubType::Box;
-		rb->SetMotionProperties(Physics::MotionProperties(1, 0.5));
+		#endif
 		cube->ExportToFile("cube");
 		/*ID id2 = scene->CreateObjectFromFile(Engine::Instance->resources.GetFile("cube.object"));
 		GameObject* cube2 = scene->GetObject(id2);
+		#ifdef StevEngine_PHYSICS
 		Physics::Collider* col = cube2->GetComponent<Physics::Collider>();
+		#endif
+		#ifdef StevEngine_RENDERER_GL
 		CubePrimitive* primitive2 = cube2->GetComponent<CubePrimitive>();
-		primitive2->SetColor(SDL_Color(1, 1, 1, 1));*/
+		primitive2->SetColor(SDL_Color(1, 1, 1, 1));
+		#endif*/
 	}
 	{
 		ID id = scene->CreateObject("Sphere", Utilities::Vector3(3, 3, 0));
 		GameObject* sphere = scene->GetObject(id);
+		#ifdef StevEngine_RENDERER_GL
 		SpherePrimitive* primitive = sphere->AddComponent(new SpherePrimitive());
 		primitive->SetColor(SDL_Color(1, 0, 0, 1));
+		#endif
+		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = sphere->AddComponent(new Physics::SphereCollider());
 		Physics::RigidBody* rb = sphere->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		#endif
 	}
 	{
 		ID id = scene->CreateObject("Cylinder", Utilities::Vector3(0, 3, 3));
 		GameObject* sphere = scene->GetObject(id);
+		#ifdef StevEngine_RENDERER_GL
 		CylinderPrimitive* primitive = sphere->AddComponent(new CylinderPrimitive());
 		primitive->SetColor(SDL_Color(0, 0, 1, 1));
+		#endif
+		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = sphere->AddComponent(new Physics::CylinderCollider());
 		Physics::RigidBody* rb = sphere->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		#endif
 	}
 	//Add Camera controller
 	GameObject* camObj = scene->GetCameraObject();
@@ -162,18 +177,29 @@ int main(int argc, char** argv) {
 	Log::Debug(std::format("Ressource \"test_2.txt\": {}", Engine::Instance->resources.GetFile("test_2.txt").GetStrData()));
 
 	//Test data manager
+	#ifdef StevEngine_PLAYER_DATA
 	Log::Debug("Before: " + engine.data.ReadData("test"));
 	engine.data.SaveData("test", "test data");
 	Log::Debug("After: " + engine.data.ReadData("test"));
+	#endif
 
 	//Play audio
+	#ifdef StevEngine_AUDIO
 	ID audioId = scene->CreateObject("Audio Player");
 	GameObject* audioPlayer = scene->GetObject(audioId);
-	Audio::Emitter* emitter = audioPlayer->AddComponent(new Audio::Emitter("audio.wav", false));*/
-	//emitter->Play();
-
+	Audio::Emitter* emitter = audioPlayer->AddComponent(new Audio::Emitter("audio.wav", false));
+	emitter->Play();
+	#endif
+	*/
 	//Export scene
-	///scene->ExportToFile();
+	#ifdef StevEngine_PLAYER_DATA
+	//scene->ExportToFile();
+	#endif
+
+	//Set background
+	#ifdef StevEngine_RENDERER_GL
+	engine.render.SetBackground(SDL_Color(0,0,0,1));
+	#endif
 
 	//Start engine
 	engine.Start();

@@ -1,4 +1,5 @@
 #pragma once
+#ifdef StevEngine_AUDIO
 #include "audio/Emitter.hpp"
 #include <SDL2/SDL.h>
 #include "vector"
@@ -23,3 +24,4 @@ namespace StevEngine {
         };
     }
 }
+#endif

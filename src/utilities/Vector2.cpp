@@ -6,6 +6,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <format>
+#include <sstream>
 
 namespace StevEngine {
 	namespace Utilities {

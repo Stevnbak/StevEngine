@@ -2,7 +2,6 @@
 #include <main/Log.hpp>
 #include <main/Engine.hpp>
 
-#include <glad/glad.h>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -169,11 +168,13 @@ namespace StevEngine {
 		doc.Print( &printer );
 		return printer.CStr();
 	}
+	#ifdef StevEngine_PLAYER_DATA
 	void GameObject::ExportToFile(std::string name) {
 		tinyxml2::XMLDocument doc;
 		doc.Parse(Export().c_str());
 		doc.SaveFile((Engine::Instance->data.GetDirectoryPath() + name + ".object").c_str());
 	}
+	#endif
 
 	//Destroy
 	GameObject::~GameObject() {

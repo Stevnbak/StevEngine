@@ -1,3 +1,4 @@
+#ifdef StevEngine_PHYSICS
 #include "RigidBody.hpp"
 #include <physics/System.hpp>
 #include <main/Log.hpp>
@@ -101,3 +102,4 @@ namespace StevEngine::Physics {
     }
     RigidBody::RigidBody(tinyxml2::XMLElement* node) : RigidBody((JPH::EMotionType)node->IntAttribute("motionType"), Layer::GetLayerByName(node->Attribute("layer")), node->FloatAttribute("mass")) {}
 }
+#endif

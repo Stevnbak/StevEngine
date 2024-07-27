@@ -1,4 +1,5 @@
 #pragma once
+#ifdef StevEngine_PHYSICS
 #include <scenes/Component.hpp>
 #include <utilities/Vector3.hpp>
 #include <utilities/Quaternion.hpp>
@@ -95,3 +96,4 @@ namespace StevEngine::Physics {
 			void MoveKinematic (Utilities::Vector3 inTargetPosition, Utilities::Quaternion inTargetRotation, float inDeltaTime) { return body->MoveKinematic(inTargetPosition, inTargetRotation, inDeltaTime); }
 	};
 }
+#endif

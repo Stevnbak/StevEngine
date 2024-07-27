@@ -1,4 +1,5 @@
 #pragma once
+#ifdef StevEngine_RENDERER_GL
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
 #include <glm/mat4x4.hpp>
@@ -14,6 +15,7 @@ namespace StevEngine {
 			public:
 				void DrawObject(Object object, glm::mat4x4 transform);
 				void DrawCustomObject(CustomObject* object, glm::mat4x4 transform);
+                void SetBackground(SDL_Color color);
 			private:
                 System();
                 void Init();
@@ -23,6 +25,8 @@ namespace StevEngine {
                 unsigned int VBO;
                 unsigned int EBO;
                 unsigned int VAO;
+                SDL_Color backgroundColor;
 		};
     }
 }
+#endif

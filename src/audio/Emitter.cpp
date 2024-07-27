@@ -1,3 +1,4 @@
+#ifdef StevEngine_AUDIO
 #include "Emitter.hpp"
 #include "audio/System.hpp"
 #include "main/Engine.hpp"
@@ -47,3 +48,4 @@ namespace StevEngine::Audio {
         }
     }
 }
+#endif

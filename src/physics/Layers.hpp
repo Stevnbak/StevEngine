@@ -1,4 +1,5 @@
 #pragma once
+#ifdef StevEngine_PHYSICS
 
 #include <map>
 #include <string>
@@ -50,3 +51,4 @@ namespace StevEngine::Physics {
 			virtual bool ShouldCollide(JPH::ObjectLayer inObject1, JPH::ObjectLayer inObject2) const override;
 	};
 }
+#endif

@@ -1,5 +1,7 @@
 #pragma once
+#ifdef StevEngine_PHYSICS
 #include <Jolt/Jolt.h>
+#endif
 #include <string>
 
 namespace StevEngine {
@@ -33,12 +35,14 @@ namespace StevEngine {
                 //Conversions
 				explicit operator Vector2();
 				explicit operator std::string();
+				#ifdef StevEngine_PHYSICS
                 operator JPH::DVec3();
                 operator JPH::Vec3();
 				Vector3& operator= (const JPH::Vec3& other);
 				Vector3& operator= (const JPH::DVec3& other);
 				Vector3(const JPH::Vec3& other);
 				Vector3(const JPH::DVec3& other);
+				#endif
                 //Static stuff
                 static Vector3 up, right, forward;
 				static double Distance(Vector3 a, Vector3 b);

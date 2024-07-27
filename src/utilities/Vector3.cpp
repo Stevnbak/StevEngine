@@ -6,6 +6,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <format>
+#include <sstream>
 
 namespace StevEngine {
 	namespace Utilities {
@@ -103,6 +104,7 @@ namespace StevEngine {
         Vector3::operator std::string() {
             return std::format("[{};{};{}]", X, Y, Z);
         }
+        #ifdef StevEngine_PHYSICS
         Vector3::operator JPH::DVec3() {
 			return JPH::DVec3(X, Y, Z);
         }
@@ -131,6 +133,7 @@ namespace StevEngine {
 			Y = other.GetY();
 			Z = other.GetZ();
         }
+        #endif
         //Static stuff
         Vector3 Vector3::up = Vector3(0,1,0);
         Vector3 Vector3::right = Vector3(1,0,0);

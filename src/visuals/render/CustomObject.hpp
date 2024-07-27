@@ -1,4 +1,5 @@
 #pragma once
+#ifdef StevEngine_RENDERER_GL
 
 #include <glm/mat4x4.hpp>
 
@@ -12,3 +13,4 @@ namespace StevEngine {
 		};
     }
 }
+#endif

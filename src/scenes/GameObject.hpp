@@ -46,7 +46,9 @@ namespace StevEngine {
 		//Main functions
 		public:
 			~GameObject();
+			#ifdef StevEngine_PLAYER_DATA
 			void ExportToFile(std::string name);
+			#endif
 		private: 
 			void Start();
 			void Deactivate();

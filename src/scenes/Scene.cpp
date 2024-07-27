@@ -68,8 +68,9 @@ namespace StevEngine {
     Scene::Scene(tinyxml2::XMLElement* node) : name(node->Attribute("name")) {}
 	Scene::Scene(std::string name) : name(name) {
         //Create main camera
-		activeCamera = GetObject(CreateObject("Main Camera"))->AddComponent(new Camera(false, 1, 16 / 9));
+		activeCamera = GetObject(CreateObject("Main Camera"))->AddComponent(new Visuals::Camera(false, 1, 16 / 9));
     }
+	#ifdef StevEngine_PLAYER_DATA
 	void Scene::ExportToFile() {
 		tinyxml2::XMLDocument doc;
 		tinyxml2::XMLElement* main = doc.NewElement("Scene");
@@ -89,6 +90,7 @@ namespace StevEngine {
 
 		doc.SaveFile((Engine::Instance->data.GetDirectoryPath() + std::regex_replace(name, std::regex(" "), "_") + ".scene").c_str());
 	}
+	#endif
 	void Scene::Activate() {
 		active = true;
 		for (ID id : GetAllObjects()) {

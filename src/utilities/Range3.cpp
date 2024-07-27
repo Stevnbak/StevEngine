@@ -1,10 +1,9 @@
 #include "Range3.hpp"
 #include "Vector3.hpp"
-
 #include <main/Log.hpp>
+
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include <Jolt/Jolt.h>
 
 namespace StevEngine {
 	namespace Utilities {
@@ -26,6 +25,7 @@ namespace StevEngine {
 			return Vector3(Low.X + ((High.X - Low.X) / 2), Low.Y + ((High.Y - Low.Y) / 2), Low.Z + ((High.Z - Low.Z) / 2));
 		}
 		//Conversions
+		#ifdef StevEngine_PHYSICS
 		Range3::operator JPH::AABox() {
 			return JPH::AABox((JPH::DVec3)Low, (JPH::DVec3)High);
 		}
@@ -38,5 +38,6 @@ namespace StevEngine {
 			Low = other.mMin;
 			High = other.mMax;
 		}
+		#endif
     }
 }

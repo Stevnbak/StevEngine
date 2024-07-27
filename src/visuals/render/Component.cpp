@@ -1,3 +1,4 @@
+#ifdef StevEngine_RENDERER_GL
 #include "Component.hpp"
 #include "scenes/GameObject.hpp"
 #include "main/Engine.hpp"
@@ -61,3 +62,4 @@ namespace StevEngine {
 		}
     }
 }
+#endif

@@ -3,6 +3,7 @@
 #include <main/Log.hpp>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <sstream>
 
 namespace StevEngine {
 	namespace Utilities {
@@ -173,11 +174,12 @@ namespace StevEngine {
             return Vector3(x, y, z);
         }
         //Conversions
-        Quaternion::operator JPH::Quat() {
-            return JPH::Quat(X, Y, Z, W);
-        }
         Quaternion::operator std::string() {
             return std::format("[{};{};{};{}]", W, X, Y, Z);
+        }
+        #ifdef StevEngine_PHYSICS
+        Quaternion::operator JPH::Quat() {
+            return JPH::Quat(X, Y, Z, W);
         }
         Quaternion& Quaternion::operator= (const JPH::Quat& other) {
             W = other.GetW();
@@ -192,6 +194,7 @@ namespace StevEngine {
             Y = other.GetY();
             Z = other.GetZ();
         }
+        #endif
         //Static methods
         Quaternion Quaternion::FromAngleAxis(double angle, Vector3 axis) {
             double s = sin(angle / 2);

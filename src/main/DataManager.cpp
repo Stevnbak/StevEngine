@@ -1,3 +1,4 @@
+#ifdef StevEngine_PLAYER_DATA
 #include "DataManager.hpp"
 #include "main/Engine.hpp"
 #include "main/Log.hpp"
@@ -57,3 +58,4 @@ namespace StevEngine {
         }
     }
 }
+#endif

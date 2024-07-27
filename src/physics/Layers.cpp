@@ -1,3 +1,4 @@
+#ifdef StevEngine_PHYSICS
 #include "Layers.hpp"
 
 namespace StevEngine::Physics {
@@ -43,3 +44,4 @@ namespace StevEngine::Physics {
         }
     }
 }
+#endif

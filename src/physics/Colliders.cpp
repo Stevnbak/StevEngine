@@ -1,3 +1,4 @@
+#ifdef StevEngine_PHYSICS
 #include "Colliders.hpp"
 #include "RigidBody.hpp"
 #include <scenes/GameObject.hpp>
@@ -137,3 +138,4 @@ namespace StevEngine::Physics {
 	}
 	FactoryBase* colfactory = GameObject::AddComponentFactory<Collider>(std::string("Collider"));
 }
+#endif

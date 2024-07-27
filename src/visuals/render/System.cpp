@@ -1,3 +1,4 @@
+#ifdef StevEngine_RENDERER_GL
 #include "System.hpp"
 
 #include "main/Log.hpp"
@@ -123,7 +124,7 @@ namespace StevEngine {
             glUseProgram(shaderProgram);
             glBindVertexArray(VAO);
             
-            Camera* camera = Engine::Instance->scenes.GetActiveScene()->GetCamera();
+            Visuals::Camera* camera = Engine::Instance->scenes.GetActiveScene()->GetCamera();
             //View matrix
             glm::mat4x4 view = camera->GetView();
             unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
@@ -132,10 +133,17 @@ namespace StevEngine {
             glm::mat4x4 proj = camera->GetProjection();
             unsigned int projLoc = glGetUniformLocation(shaderProgram, "projection");
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
+            //Set background color
+            glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
         }
 
         void System::EndFrame() {
             glBindVertexArray(0);
         }
+
+        void System::SetBackground(SDL_Color color) {
+            backgroundColor = color;
+        }
     }
 }
+#endif

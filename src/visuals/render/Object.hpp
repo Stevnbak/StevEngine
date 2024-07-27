@@ -1,4 +1,5 @@
 #pragma once
+#ifdef StevEngine_RENDERER_GL
 #include <vector>
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
@@ -32,3 +33,4 @@ namespace StevEngine {
 		};
     }
 }
+#endif

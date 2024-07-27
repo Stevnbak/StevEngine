@@ -1,7 +1,8 @@
 #pragma once
+#ifdef StevEngine_PHYSICS
 #include <Jolt/Jolt.h>
+#endif
 #include <string>
-#include <tuple>
 
 #include "Vector3.hpp"
 
@@ -40,10 +41,12 @@ namespace StevEngine {
                 //Vector operators
                 Vector3 operator*(const Vector3& other) const;
 				//Conversions
-				operator JPH::Quat();
 				explicit operator std::string();
+				#ifdef StevEngine_PHYSICS
+				operator JPH::Quat();
 				Quaternion& operator= (const JPH::Quat& other);
 				Quaternion(const JPH::Quat& other);
+				#endif
                 //Static methods
                 static Quaternion FromAngleAxis(double angle, Vector3 axis);
                 static double Angle(Quaternion a, Quaternion b);

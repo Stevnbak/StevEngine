@@ -1,3 +1,4 @@
+#ifdef StevEngine_RENDERER_GL
 #include "Primitive.hpp"
 #include <main/Log.hpp>
 #include <utilities/Vector3.hpp>
@@ -95,3 +96,4 @@ namespace StevEngine {
 		FactoryBase* capsulefactory = GameObject::AddComponentFactory<CapsulePrimitive>(std::string("CapsulePrimitive"));
 	}
 }
+#endif

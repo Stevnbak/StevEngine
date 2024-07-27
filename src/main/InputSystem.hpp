@@ -1,4 +1,5 @@
 #pragma once
+#ifdef StevEngine_INPUTS
 #include <SDL2/SDL.h>
 #include <utilities/Vector2.hpp>
 #include <functional>
@@ -23,7 +24,8 @@ namespace StevEngine::InputSystem {
 	void AddKeyDownEvent(std::function<void(SDL_Keycode)> method);
 	void AddKeyUpEvent(std::function<void(SDL_Keycode)> method);
 	void AddMouseWheelEvent(std::function<void(double)> method);
-
+	
+	#ifdef StevEngine_SHOW_WINDOW
 	//Cursor mode
 	enum CursorMode {
 		Free,
@@ -32,4 +34,6 @@ namespace StevEngine::InputSystem {
 	};
 	extern CursorMode cursorMode;
 	extern bool cursorVisible;
+	#endif
 }
+#endif

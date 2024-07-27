@@ -1,6 +1,8 @@
+#ifdef StevEngine_RENDERER_GL
 #include "Object.hpp"
 
 #include "glad/glad.h"
+#include <algorithm>
 
 namespace StevEngine {
     namespace Render {
@@ -55,3 +57,4 @@ namespace StevEngine {
         }
     }
 }
+#endif

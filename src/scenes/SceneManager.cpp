@@ -38,7 +38,7 @@ namespace StevEngine {
 			child = child->NextSiblingElement();
 		}
         //Set main camera
-		scene->activeCamera = scene->GetObject(Utilities::ID(node->Attribute("camera")))->GetComponent<Camera>();
+		scene->activeCamera = scene->GetObject(Utilities::ID(node->Attribute("camera")))->GetComponent<Visuals::Camera>();
         //Return
         return scene;
     }

@@ -1,4 +1,5 @@
 #pragma once
+#ifdef StevEngine_PHYSICS
 #include "Layers.hpp"
 
 //Jolt imports
@@ -44,3 +45,4 @@ namespace StevEngine {
 		};
 	}
 }
+#endif

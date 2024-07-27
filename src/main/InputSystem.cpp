@@ -1,4 +1,4 @@
-#include "InputSystem.hpp"
+#ifdef StevEngine_INPUTS
 #include <main/Log.hpp>
 #include <main/Engine.hpp>
 #include <scenes/GameObject.hpp>
@@ -79,11 +79,14 @@ namespace StevEngine::InputSystem {
 	}
 
 	//Cursor mode
+	#ifdef StevEngine_SHOW_WINDOW
 	CursorMode cursorMode = CursorMode::Free;
 	bool cursorVisible = true;
+	#endif
 
 	//Update
 	void Update(double deltaTime) {
+		#ifdef StevEngine_SHOW_WINDOW
 		if (cursorMode == CursorMode::Locked) {
 			SDL_SetRelativeMouseMode(SDL_TRUE);
 			cursorVisible = false;
@@ -93,6 +96,8 @@ namespace StevEngine::InputSystem {
 		}
 		SDL_SetWindowGrab(Engine::Instance->window, cursorMode == CursorMode::Confined ? SDL_TRUE : SDL_FALSE);
 		SDL_ShowCursor(cursorVisible ? SDL_ENABLE : SDL_DISABLE);
+		#endif
 	}
 }
+#endif
 

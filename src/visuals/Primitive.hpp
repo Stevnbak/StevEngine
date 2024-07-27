@@ -1,4 +1,5 @@
 #pragma once
+#ifdef StevEngine_RENDERER_GL
 #include "render/Component.hpp"
 
 namespace StevEngine {
@@ -25,3 +26,4 @@ namespace StevEngine {
 		};
 	}
 }
+#endif

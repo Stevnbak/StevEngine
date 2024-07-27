@@ -1,8 +1,10 @@
 #pragma once
 #include "Vector3.hpp"
 
+#ifdef StevEngine_PHYSICS
 #include <Jolt/Jolt.h>
 #include <Jolt/Geometry/AABox.h>
+#endif
 #include <string>
 
 namespace StevEngine {
@@ -21,9 +23,11 @@ namespace StevEngine {
 				//Functions
 				Vector3 GetCenter();
 				//Conversions
+				#ifdef StevEngine_PHYSICS
 				operator JPH::AABox();
 				Range3& operator= (const JPH::AABox& other);
 				Range3(const JPH::AABox& other);
+				#endif
 		};
     }
 }

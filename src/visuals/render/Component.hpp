@@ -1,4 +1,5 @@
 #pragma once
+#ifdef StevEngine_RENDERER_GL
 #include "Object.hpp"
 
 #include <SDL2/SDL.h>
@@ -37,3 +38,4 @@ namespace StevEngine {
 		};
     }
 }
+#endif
