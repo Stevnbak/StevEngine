@@ -104,7 +104,9 @@ namespace StevEngine {
 		//Initialize SDL
 		if (SDL_Init(
 			SDL_INIT_EVENTS 
-			| SDL_INIT_AUDIO 
+			#ifdef StevEngine_AUDIO
+			| SDL_INIT_AUDIO
+			#endif
 			| SDL_INIT_TIMER 
 			#ifdef StevEngine_SHOW_WINDOW
 			| SDL_INIT_VIDEO

@@ -189,8 +189,10 @@ int main(int argc, char** argv) {
 	#ifdef StevEngine_AUDIO
 	ID audioId = scene->CreateObject("Audio Player");
 	GameObject* audioPlayer = scene->GetObject(audioId);
-	Audio::Emitter* emitter = audioPlayer->AddComponent(new Audio::Emitter("audio.wav", false));
+	Audio::Emitter* emitter = audioPlayer->AddComponent(new Audio::Emitter("audio.wav", false, 0.5));
 	emitter->Play();
+
+	//engine.audio.PlayBackground("audio.wav", true);
 	#endif
 	
 	//Export scene

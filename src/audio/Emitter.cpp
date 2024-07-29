@@ -16,16 +16,25 @@ namespace StevEngine::Audio {
         this->volume = volume;
         this->channel = -1;
         //Load audo file
+        ChangeSource(audioPath);
+    }
+
+    void Emitter::Play() {
+        Engine::Instance->audio.Play(this);
+    }
+
+    void Emitter::ChangeSource(std::string path) {
+        if(audioData != NULL) {
+            Mix_FreeChunk(audioData);
+            audioData = NULL;
+        }
+        audioPath = path;
         SDL_RWops* data = Engine::Instance->resources.GetFile(audioPath).GetSDLData();
         audioData = Mix_LoadWAV_RW(data, 0);
         SDL_FreeRW(data);
         if (audioData == NULL) {
             Log::Error(std::format("Couldn't load {}: {}", audioPath, SDL_GetError()), true);
         }
-    }
-
-    void Emitter::Play() {
-        Engine::Instance->audio.Play(this);
     }
 
     void Emitter::Deactivate() {

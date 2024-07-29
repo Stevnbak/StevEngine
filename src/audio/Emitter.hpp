@@ -18,7 +18,7 @@ namespace StevEngine {
                 Emitter(tinyxml2::XMLElement* node);
                 Emitter(std::string audioPath, bool loop = false, double volume = 1);
                 void Play();
-                ~Emitter();
+                void ChangeSource(std::string path);
                 Mix_Chunk* GetData() { return audioData; };
                 bool isPlaying() { return channel != -1; }
             private:
@@ -27,6 +27,7 @@ namespace StevEngine {
                 void Deactivate();
                 void Update(double deltaTime) {};
                 void Draw(glm::mat4x4 transform) {};
+                ~Emitter();
         };
     }
 }

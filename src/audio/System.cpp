@@ -18,7 +18,6 @@ static void SDLCALL StaticChannelCompleted (int channel)
 namespace StevEngine::Audio {
     System::System() {
         //Initialize
-        ///activeSounds = std::vector<Emitter*>();
         activeSounds.push_back(nullptr);
         audio_rate = MIX_DEFAULT_FREQUENCY;
         audio_format = MIX_DEFAULT_FORMAT;
@@ -55,14 +54,35 @@ namespace StevEngine::Audio {
             Mix_HaltChannel(emitter->channel);
         }
         int channel = Mix_PlayChannel(-1, emitter->GetData(), emitter->loop ? -1 : 0);
+        Mix_Volume(channel, emitter->volume * MIX_MAX_VOLUME);
         emitter->channel = channel;
         if(channel != -1) {
             activeSounds.push_back(emitter);
         }
     }
 
+    void System::PlayBackground(std::string path, bool loop, double volume) {
+        if(music != NULL) {
+            Mix_FreeMusic(music);
+            music = NULL;
+        }
+        SDL_RWops* data = Engine::Instance->resources.GetFile(path).GetSDLData();
+        music = Mix_LoadMUS_RW(data, 1);
+        if (music == NULL) {
+            Log::Error(std::format("Couldn't load {}: {}", path, SDL_GetError()), true);
+        } else {
+            Mix_PlayMusic(music, loop ? -1 : 0);
+            Mix_VolumeMusic(volume * MIX_MAX_VOLUME);
+        }
+    }
+    
+
     void System::Stop(int channel) {
         Mix_HaltChannel(channel);
+    }
+
+    void System::StopBackground() {
+        Mix_FreeMusic(music);
     }
 
     void System::CleanUp() {
