@@ -41,6 +41,21 @@ namespace StevEngine {
 			pathToId.insert({resource.path, resource.id});
 		}
 
+		void System::AddFileFromHex(std::string path, const char* hex, const int size, const int hexSize) {
+			char* data = new char[size];
+			char h[hexSize+1];
+			h[hexSize] = '\0';
+			for(int i = 0; i < size; i++) {
+				for(int j = 0; j < hexSize; j++) {
+					h[j] = hex[i*hexSize + j];
+				}
+				data[i] = strtoul(h, NULL, hexSize * 8);
+			}
+			Resource resource (path, data, size);
+			resources.insert({resource.id, resource});
+			pathToId.insert({resource.path, resource.id});
+		}
+
 		ushort Resource::currentId = 0;
 		Resource::Resource() : id(Resource::currentId++), path(), size() {}
 		Resource::Resource(std::string path, const char* data, const int size) : id(Resource::currentId++), path(path), data(data), size(size) {}

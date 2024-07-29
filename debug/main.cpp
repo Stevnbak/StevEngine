@@ -6,6 +6,8 @@
 #include <physics/Layers.hpp>
 #include <main/ResourceManager.hpp>
 
+#include "assets.h"
+
 using namespace StevEngine;
 using namespace StevEngine::Utilities;
 using namespace StevEngine::Visuals;
@@ -96,11 +98,11 @@ int main(int argc, char** argv) {
 	Log::Error("Error log");
 	
 	//Add debug assets
-	/*engine.resources.AddFile("test.txt", &_binary____assets_test_txt_start[0], _binary____assets_test_txt_end - _binary____assets_test_txt_start);
-	engine.resources.AddFile("test_2.txt", &_binary____assets_test_2_txt_start[0], _binary____assets_test_2_txt_end - _binary____assets_test_2_txt_start);
-	engine.resources.AddFile("audio.wav", &_binary____assets_audio_wav_start[0], _binary____assets_audio_wav_end - _binary____assets_audio_wav_start);
-	engine.resources.AddFile("cube.object", &_binary____assets_cube_object_start[0], _binary____assets_cube_object_end - _binary____assets_cube_object_start);
-	engine.resources.AddFile("Debug_scene.scene", &_binary____assets_Debug_scene_scene_start[0], _binary____assets_Debug_scene_scene_end - _binary____assets_Debug_scene_scene_start);*/
+	engine.resources.AddFileFromHex("test.txt", test_txt_data, test_txt_size);
+	engine.resources.AddFileFromHex("test_2.txt", test_2_txt_data, test_2_txt_size);
+	engine.resources.AddFileFromHex("audio.wav", audio_wav_data, audio_wav_size);
+	engine.resources.AddFileFromHex("cube.object", cube_object_data, cube_object_size);
+	engine.resources.AddFileFromHex("Debug_scene.scene", Debug_scene_scene_data, Debug_scene_scene_size);
 
 	//Create new scene
 	//Scene* scene = engine.scenes.CreateSceneFromFile(engine.resources.GetFile("Debug_scene.scene"));
@@ -172,8 +174,8 @@ int main(int argc, char** argv) {
 	camObj->SetRotation(Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward));
 
 	//Test ressource manager
-	/*Log::Debug(std::format("Ressource 0: {}", Engine::Instance->resources.GetFile(0).path));
-	Log::Debug(std::format("Ressource \"test.txt\": {}", Resources::DataToText(Engine::Instance->resources.GetFile("test.txt").GetSDLData())));
+	Log::Debug(std::format("Ressource 0: {}", Engine::Instance->resources.GetFile(0).path));
+	Log::Debug(std::format("Ressource \"test.txt\": {}", Engine::Instance->resources.GetFile("test.txt").GetStrData()));
 	Log::Debug(std::format("Ressource \"test_2.txt\": {}", Engine::Instance->resources.GetFile("test_2.txt").GetStrData()));
 
 	//Test data manager
@@ -190,7 +192,7 @@ int main(int argc, char** argv) {
 	Audio::Emitter* emitter = audioPlayer->AddComponent(new Audio::Emitter("audio.wav", false));
 	emitter->Play();
 	#endif
-	*/
+	
 	//Export scene
 	#ifdef StevEngine_PLAYER_DATA
 	//scene->ExportToFile();

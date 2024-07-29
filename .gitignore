@@ -9,4 +9,6 @@
 
 # Project
 build/*
+debug/assets.c
+debug/assets.h
 links.txt

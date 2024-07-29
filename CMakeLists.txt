@@ -114,4 +114,32 @@ option(DEBUG_EXECUTABLE "Build the debug program for testing the engine." OFF)
 if(DEBUG_EXECUTABLE)
     add_executable(debug debug/main.cpp)
     target_link_libraries(debug PRIVATE ${PROJECT_NAME})
+    # embed resources
+    file(GLOB_RECURSE ASSETS CONFIGURE_DEPENDS "assets/*")
+    message("Assets: ${ASSETS}")
+    set(output_c "#include \"assets.h\"\n")
+    set(output_h "")
+    foreach(asset IN ITEMS ${ASSETS})
+        file(RELATIVE_PATH asset_name ${CMAKE_CURRENT_SOURCE_DIR}/assets ${asset})
+        string(REPLACE "." "_" asset_name ${asset_name})
+        message("Asset: ${asset_name}")
+        file(READ ${asset} content HEX)
+        string(LENGTH ${content} len)
+        string(APPEND output_c "
+const char* ${asset_name}_data = \"${content}\"\;
+const unsigned ${asset_name}_size = ${len}/2\;
+")
+        string(APPEND output_h "
+#ifndef ${asset_name}_H
+#define ${asset_name}_H
+#include \"stdint.h\"
+extern const char* ${asset_name}_data\;
+extern const unsigned ${asset_name}_size\;
+#endif // ${asset_name}_H
+")
+    endforeach()
+    file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/debug/assets.c ${output_c})
+    file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/debug/assets.h ${output_h})
+    target_sources(debug PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/debug/assets.c)
+    target_sources(debug PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/debug/assets.h)
 endif()

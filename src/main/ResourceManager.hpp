@@ -30,7 +30,8 @@ namespace StevEngine {
 			public:
 				Resource GetFile(ushort id) const;
 				Resource GetFile(std::string path) const;
-				void AddFile(std::string path, const char*, const int size);
+				void AddFile(std::string path, const char* data, const int size);
+				void AddFileFromHex(std::string path, const char* hex, const int size, const int hexSize = 2);
 			private:
 				System();
 				std::map<ushort, const Resource> resources;

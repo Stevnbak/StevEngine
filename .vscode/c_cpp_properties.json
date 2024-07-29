@@ -15,8 +15,8 @@
             "defines": [
                 "StevEngine_INPUTS",
                 "StevEngine_PLAYER_DATA",
-                //"StevEngine_RENDERER_GL",
-                //"StevEngine_SHOW_WINDOW",
+                "StevEngine_RENDERER_GL",
+                "StevEngine_SHOW_WINDOW",
                 "StevEngine_PHYSICS",
                 "StevEngine_AUDIO",
                 "StevEngine_DEBUGGING"
