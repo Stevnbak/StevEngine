@@ -46,6 +46,9 @@ namespace StevEngine::Physics {
 		if(scale) {
 			Utilities::Vector3 abs = latest->GetWorldScale();
 			this->shape = new JPH::ScaledShape(rawShape, Utilities::Vector3(this->scale.X * abs.X, this->scale.Y * abs.Y, this->scale.Z * abs.Z));
+		} else {
+			//Don't tell current rigidbody if it gets the same position or rotation change
+			latest = latest->GetParent();
 		}
 		//Tell all related rigidbodies to update shape
 		while(latest != 0) {
@@ -56,25 +59,34 @@ namespace StevEngine::Physics {
 			latest = latest->GetParent();
 		}
 	}
+	void Collider::LocalTransformUpdate(bool position, bool rotation, bool scale) {
+		TransformUpdate(position, rotation, scale);
+		if(!scale) {
+			RigidBody* rb = GetParent()->GetComponent<RigidBody>(false);
+			if(rb != nullptr) {
+				rb->RefreshShape();
+			}
+		}
+	}
 
 	//Update transform
 	void Collider::SetScale(Utilities::Vector3 scale) {
 		this->scale = scale;
-		TransformUpdate(false, false, true);
+		LocalTransformUpdate(false, false, true);
 	}
 	void Collider::SetRotation(Utilities::Quaternion rotation) {
 		this->rotation = rotation;
-		TransformUpdate(false, true, false);
+		LocalTransformUpdate(false, true, false);
 	}
 	void Collider::SetPosition(Utilities::Vector3 position) {
 		this->position = position;
-		TransformUpdate(true, false, false);
+		LocalTransformUpdate(true, false, false);
 	}
 	void Collider::SetTransform(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) {
 		this->scale = scale;
 		this->rotation = rotation;
 		this->position = position;
-		TransformUpdate(true, true, true);
+		LocalTransformUpdate(true, true, true);
 	}
 	//Cube collider
 	CubeCollider::CubeCollider(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) 

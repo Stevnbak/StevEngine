@@ -24,6 +24,7 @@ namespace StevEngine::Physics {
 			void Start();
 			void Export(tinyxml2::XMLElement* element);
 			void TransformUpdate(bool position, bool rotation, bool scale);
+			void LocalTransformUpdate(bool position, bool rotation, bool scale);
 		public:
 			Utilities::Vector3 GetScale()  { return scale; }
 			Utilities::Quaternion GetRotation()  { return rotation; }
