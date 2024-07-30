@@ -10,3 +10,6 @@
 [submodule "libs/uuidv7-h"]
 	path = libs/uuidv7-h
 	url = https://github.com/LiosK/uuidv7-h.git
+[submodule "libs/assimp"]
+	path = libs/assimp
+	url = https://github.com/assimp/assimp.git

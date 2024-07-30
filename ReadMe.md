@@ -64,7 +64,7 @@ Clone and update submodules by running:
 git submodule update --init
 ```
 
-Install SDL2 and SDL2_Mixer system wide:
+Install SDL2, SDL2_Image and SDL2_Mixer system wide:
 
 - SDL2:
     - Linux: `sudo apt-get install libsdl2-dev`
@@ -80,6 +80,7 @@ Build StevEngine and all other external libraries by running the following comma
 ```shell
 cd build && CXX=<compiler> cmake .. --build
 ```
+> **&#9432;** Note: This can take a few minutes on the first build, as it will be building dependencies.
 
 ## Build options
 The engine has build options for using the engine in the way you want to.

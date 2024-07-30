@@ -11,7 +11,7 @@
 namespace StevEngine {
     namespace Render {
         class System;
-        
+
         struct Vertex {
             float x, y, z;
             float texX, texY;
@@ -24,6 +24,7 @@ namespace StevEngine {
 			friend class System;
             public:
                 Object(std::vector<Vertex> vertices, SDL_Color color = SDL_Color(1, 1, 1, 1), SDL_Surface* textureData = nullptr);
+                Object(std::vector<Vertex> vertices, std::vector<unsigned int> indices, SDL_Color color = SDL_Color(1, 1, 1, 1), SDL_Surface* textureData = nullptr);
                 SDL_Color color;
             private:
                 std::vector<float> vertices;

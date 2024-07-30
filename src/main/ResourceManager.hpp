@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
+#include <cstddef>
 #include <string>
 #include <filesystem>
 #include <fstream>
@@ -17,6 +18,8 @@ namespace StevEngine {
 				const std::string path;
 				SDL_RWops* GetSDLData();
 				std::string GetStrData();
+				const char* GetRawData();
+				int GetSize();
 			private:
 				Resource();
 				Resource(std::string path, const char* data, const int size);

@@ -1,6 +1,7 @@
 #include "ResourceManager.hpp"
 #include "Engine.hpp"
 
+#include <cstddef>
 #include <filesystem>
 #include <fstream>
 #include <algorithm>
@@ -34,7 +35,7 @@ namespace StevEngine {
 		Resource System::GetFile(std::string path) const {
 			return resources.at(pathToId.at(path));
 		}
-		
+
 		void System::AddFile(std::string path, const char* data, const int size) {
 			Resource resource (path, data, size);
 			resources.insert({resource.id, resource});
@@ -60,6 +61,12 @@ namespace StevEngine {
 		Resource::Resource() : id(Resource::currentId++), path(), size() {}
 		Resource::Resource(std::string path, const char* data, const int size) : id(Resource::currentId++), path(path), data(data), size(size) {}
 
+		int Resource::GetSize() {
+		    return size;
+		}
+		const char* Resource::GetRawData() {
+		    return data;
+		}
 		SDL_RWops* Resource::GetSDLData() {
 			return SDL_RWFromConstMem(data, size);
 		};

@@ -1,12 +1,7 @@
 # VS Code files
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/c_cpp_properties.json
-*.code-workspace
+#.vscode
 
+.cache
 # Project
 build/*
 debug/assets.c

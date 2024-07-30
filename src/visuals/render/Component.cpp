@@ -8,11 +8,12 @@
 namespace StevEngine {
     namespace Render {
         //Constructor
-        RenderComponent::RenderComponent(std::vector<Vertex> vertices, std::string type) 
-            : Component(type), vertices(vertices), object(Object(vertices, color)) {}
+        RenderComponent::RenderComponent(std::vector<Vertex> vertices, std::string type)
+            : Component(type), object(Object(vertices, color)) {}
 		RenderComponent::RenderComponent(std::vector<Vertex> vertices, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, std::string type)
-            : Component(type), vertices(vertices), position(position), rotation(rotation), scale(scale), object(Object(vertices, color)) {}
-
+            : Component(type), position(position), rotation(rotation), scale(scale), object(Object(vertices, color)) {}
+        RenderComponent::RenderComponent(Object object, std::string type)
+            : Component(type), object(object) {}
 		//Main draw function
 		void RenderComponent::Draw(glm::mat4x4 transform) {
            	//Scale
@@ -30,7 +31,7 @@ namespace StevEngine {
 			this->color = color;
 			object.color = color;
 		}
-		
+
 		//Export and import
 		void RenderComponent::Export(tinyxml2::XMLElement* element) {
 			element->SetAttribute("position", ((std::string)position).c_str());
@@ -38,7 +39,7 @@ namespace StevEngine {
 			element->SetAttribute("scale", ((std::string)scale).c_str());
 			element->SetAttribute("color", std::format("[{},{},{},{}]", color.r, color.g, color.b, color.a).c_str());
 		}
-		RenderComponent::RenderComponent(tinyxml2::XMLElement* node) : Component(node->Attribute("type")), object(Object({}, {})) {
+		RenderComponent::RenderComponent(tinyxml2::XMLElement* node) : Component(node->Attribute("type")), object(Object({})) {
 			position = Utilities::Vector3(node->Attribute("position"));
 			rotation = Utilities::Quaternion(node->Attribute("rotation"));
 			scale = Utilities::Vector3(node->Attribute("scale"));

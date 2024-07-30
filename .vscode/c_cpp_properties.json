@@ -7,6 +7,9 @@
                 "${default}",
                 "${workspaceFolder}/src",
                 "${workspaceFolder}/libs/JoltPhysics",
+                "${workspaceFolder}/libs/assimp/include",
+                "${workspaceFolder}/build/libs/assimp/include",
+                "${workspaceFolder}/build/assets",
                 "${workspaceFolder}/libs/glad/include",
                 "${workspaceFolder}/libs/glm",
                 "${workspaceFolder}/libs/TinyXML2",
@@ -21,7 +24,11 @@
                 "StevEngine_AUDIO",
                 "StevEngine_DEBUGGING"
             ],
-            "compilerArgs": ["-lm", "-lSDL2", "-lSDL2_mixer"],
+            "compilerArgs": [
+                "-lm",
+                "-lSDL2",
+                "-lSDL2_mixer"
+            ],
             "cppStandard": "c++20",
             "intelliSenseMode": "linux-gcc-x64"
         }

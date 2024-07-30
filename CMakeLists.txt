@@ -4,6 +4,7 @@ project(StevEngine VERSION 0.1 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # build StevEngine as static library
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
@@ -61,6 +62,8 @@ message("Building ${build_string}")
 
 # external libraries
 
+set(BUILD_SHARED_LIBS OFF)
+
 if(USE_RENDERER_GL)
     ## GLAD
     target_sources(${PROJECT_NAME} PRIVATE libs/glad/src/glad.c)
@@ -102,6 +105,18 @@ endif()
 #find_package(SDL2_image REQUIRED)
 #target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image)
 
+## Assimp
+if(USE_RENDERER_GL)
+    message("Configurating Assimp...")
+    set(ASSIMP_NO_EXPORT ON)
+    set(ASSIMP_BUILD_TESTS OFF)
+    set(ASSIMP_INSTALL OFF)
+    set(ASSIMP_BUILD_ASSIMP_VIEW OFF)
+    add_subdirectory(libs/assimp)
+    target_link_libraries(${PROJECT_NAME} PRIVATE assimp)
+    target_include_directories(${PROJECT_NAME} PUBLIC libs/assimp/include)
+    target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/libs/assimp/include)
+endif()
 ## Tinyxml2
 target_sources(${PROJECT_NAME} PUBLIC libs/TinyXML2/tinyxml2.cpp)
 target_include_directories(${PROJECT_NAME} PUBLIC libs/TinyXML2)
@@ -115,14 +130,17 @@ if(DEBUG_EXECUTABLE)
     add_executable(debug debug/main.cpp)
     target_link_libraries(debug PRIVATE ${PROJECT_NAME})
     # embed resources
+    set(debug_asset_dir ${CMAKE_BINARY_DIR}/assets)
+    if (NOT EXISTS ${debug_asset_dir})
+        file(MAKE_DIRECTORY ${debug_asset_dir})
+    endif ()
+
     file(GLOB_RECURSE ASSETS CONFIGURE_DEPENDS "assets/*")
-    message("Assets: ${ASSETS}")
     set(output_c "#include \"assets.h\"\n")
     set(output_h "")
     foreach(asset IN ITEMS ${ASSETS})
         file(RELATIVE_PATH asset_name ${CMAKE_CURRENT_SOURCE_DIR}/assets ${asset})
         string(REPLACE "." "_" asset_name ${asset_name})
-        message("Asset: ${asset_name}")
         file(READ ${asset} content HEX)
         string(LENGTH ${content} len)
         string(APPEND output_c "
@@ -138,8 +156,8 @@ extern const unsigned ${asset_name}_size\;
 #endif // ${asset_name}_H
 ")
     endforeach()
-    file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/debug/assets.c ${output_c})
-    file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/debug/assets.h ${output_h})
-    target_sources(debug PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/debug/assets.c)
-    target_sources(debug PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/debug/assets.h)
+    file(WRITE ${debug_asset_dir}/assets.c ${output_c})
+    file(WRITE ${debug_asset_dir}/assets.h ${output_h})
+    target_sources(debug PUBLIC ${debug_asset_dir}/assets.c)
+    target_include_directories(debug PUBLIC ${debug_asset_dir})
 endif()

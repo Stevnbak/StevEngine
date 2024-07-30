@@ -6,7 +6,8 @@
 #include <physics/Layers.hpp>
 #include <main/ResourceManager.hpp>
 
-#include "assets.h"
+#include <assets.h>
+#include "visuals/Model.hpp"
 
 using namespace StevEngine;
 using namespace StevEngine::Utilities;
@@ -43,7 +44,7 @@ void CameraController::Update(double deltaTime) {
 	Utilities::Vector3 up = gameObject->rotation.Up();
 	if (InputSystem::IsKeyPressed(SDLK_w)) {
 		gameObject->SetPosition(gameObject->GetPosition() - forward * movementSpeed * deltaTime);
-	} 
+	}
 	if (InputSystem::IsKeyPressed(SDLK_s)) {
 		gameObject->position += forward * movementSpeed * deltaTime;
 	}
@@ -79,6 +80,8 @@ void CameraController::Start() {
 }
  */
 
+ID modelObject;
+
 void mainUpdate(double deltaTime) {
 	/*Utilities::Quaternion testQ(0, 0, 90);
 	Utilities::Vector3 forward = testQ.forward();
@@ -87,6 +90,8 @@ void mainUpdate(double deltaTime) {
 	Log::Normal(std::format("Right: ({};{};{})", right.X, right.Y, right.Z));
 	Utilities::Vector3 up = testQ.up();
 	Log::Normal(std::format("Up: ({};{};{})", up.X, up.Y, up.Z));*/
+	GameObject* model = Engine::Instance->scenes.GetActiveScene()->GetObject(modelObject);
+	model->SetRotation(model->GetRotation() * Quaternion::FromAngleAxis(1 * deltaTime, Vector3(0,1,0)));
 }
 
 int main(int argc, char** argv) {
@@ -96,13 +101,14 @@ int main(int argc, char** argv) {
 	Log::Debug("Debug log");
 	Log::Warning("Warning log");
 	Log::Error("Error log");
-	
+
 	//Add debug assets
 	engine.resources.AddFileFromHex("test.txt", test_txt_data, test_txt_size);
 	engine.resources.AddFileFromHex("test_2.txt", test_2_txt_data, test_2_txt_size);
 	engine.resources.AddFileFromHex("audio.wav", audio_wav_data, audio_wav_size);
 	engine.resources.AddFileFromHex("cube.object", cube_object_data, cube_object_size);
 	engine.resources.AddFileFromHex("Debug_scene.scene", Debug_scene_scene_data, Debug_scene_scene_size);
+	engine.resources.AddFileFromHex("Fox.stl", Fox_stl_data, Fox_stl_size);
 
 	//Create new scene
 	//Scene* scene = engine.scenes.CreateSceneFromFile(engine.resources.GetFile("Debug_scene.scene"));
@@ -156,6 +162,13 @@ int main(int argc, char** argv) {
 		#endif
 	}
 	{
+		modelObject = scene->CreateObject("Model", Utilities::Vector3(0, 0, 0));
+		GameObject* model = scene->GetObject(modelObject);
+		#ifdef StevEngine_RENDERER_GL
+		model->AddComponent(new ModelRenderer("Fox.stl"))->scale = Vector3(1.0 / 30.0, 1.0 / 30.0, 1.0 / 30.0);
+		#endif
+	}
+	{
 		ID id = scene->CreateObject("Cylinder", Utilities::Vector3(0, 3, 3));
 		GameObject* sphere = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
@@ -194,7 +207,7 @@ int main(int argc, char** argv) {
 
 	//engine.audio.PlayBackground("audio.wav", true);
 	#endif
-	
+
 	//Export scene
 	#ifdef StevEngine_PLAYER_DATA
 	//scene->ExportToFile();
