@@ -8,6 +8,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+using StevEngine::Utilities::Vertex;
+
 namespace StevEngine {
     namespace Render {
         const char *vertexShaderSource = "#version 330 core\n"

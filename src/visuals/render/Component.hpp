@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
 #include <utilities/Vector3.hpp>
+#include <utilities/Vertex.hpp>
 #include <utilities/Quaternion.hpp>
 #include <scenes/Component.hpp>
 
@@ -15,8 +16,8 @@ namespace StevEngine {
 
 			public:
 				RenderComponent(Object object, std::string type = "RenderComponent");
-				RenderComponent(std::vector<Vertex> vertices, std::string type = "RenderComponent");
-				RenderComponent(std::vector<Vertex> vertices, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1,1,1), std::string type = "RenderComponent");
+				RenderComponent(std::vector<Utilities::Vertex> vertices, std::string type = "RenderComponent");
+				RenderComponent(std::vector<Utilities::Vertex> vertices, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1,1,1), std::string type = "RenderComponent");
 				RenderComponent(tinyxml2::XMLElement* element);
 				//Basic properties
 				Utilities::Vector3 position = Utilities::Vector3();

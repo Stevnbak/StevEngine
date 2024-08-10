@@ -28,7 +28,12 @@ namespace StevEngine::Physics {
 		if(motionProperties.MaxAngularVelocity > 0) bodySettings.mMaxAngularVelocity = motionProperties.MaxAngularVelocity;
 		//	Set mass
 		JPH::MassProperties massProperties = bodySettings.GetMassProperties();
+		if(massProperties.mMass == 0) {
+			//If there is no default calcualted mass and inertia (from meshes) calculate as box
+			massProperties.SetMassAndInertiaOfSolidBox(shape->GetLocalBounds().GetSize(), 1000.0);
+		}
 		massProperties.ScaleToMass(mass);
+
 		bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
 		bodySettings.mMassPropertiesOverride = massProperties;
 		//	Create body from settings
@@ -61,7 +66,7 @@ namespace StevEngine::Physics {
 			colliders.insert(colliders.end(), cc.begin(), cc.end());
 		}
 		//Create new shape
-		JPH::MutableCompoundShapeSettings shapeSettings = JPH::MutableCompoundShapeSettings();
+		JPH::StaticCompoundShapeSettings shapeSettings = JPH::StaticCompoundShapeSettings();
 		for(Collider* col : colliders) {
 			if(col->GetShape())
 				shapeSettings.AddShape((col->GetParent()->GetWorldPosition() + col->GetPosition()), (col->GetParent()->GetWorldRotation() + col->GetRotation() - parent->GetWorldRotation()), col->GetShape());

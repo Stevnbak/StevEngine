@@ -45,11 +45,14 @@ if (USE_RENDERER_GL AND SHOW_WINDOW)
     set(build_string "${build_string}, RENDERER_GL")
 endif()
 
-
 option(USE_PHYSICS "Use the physics engine" ON)
 if (USE_PHYSICS)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_PHYSICS)
     set(build_string "${build_string}, PHYSICS")
+endif()
+
+if(USE_RENDERER_GL OR USE_PHYSICS)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_MODELS)
 endif()
 
 option(USE_AUDIO "Use the audio system" ON)
@@ -80,7 +83,11 @@ if(USE_PHYSICS)
     set(DEBUG_RENDERER_IN_DEBUG_AND_RELEASE OFF)
     set(PROFILER_IN_DEBUG_AND_RELEASE OFF)
     set(USE_STD_VECTOR ON)
-    set(GENERATE_DEBUG_SYMBOLS OFF)
+    if(DEBUG_EXECUTABLE)
+        set(GENERATE_DEBUG_SYMBOLS ON)
+    elseif()
+        set(GENERATE_DEBUG_SYMBOLS OFF)
+    endif()
     set(DOUBLE_PRECISION ON)
     add_subdirectory(libs/JoltPhysics/Build)
     target_link_libraries(${PROJECT_NAME} PRIVATE Jolt)
@@ -105,8 +112,8 @@ endif()
 #find_package(SDL2_image REQUIRED)
 #target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image)
 
-## Assimp
-if(USE_RENDERER_GL)
+if(USE_RENDERER_GL OR USE_PHYSICS)
+    ## Assimp
     message("Configurating Assimp...")
     set(ASSIMP_NO_EXPORT ON)
     set(ASSIMP_BUILD_TESTS OFF)
@@ -117,6 +124,7 @@ if(USE_RENDERER_GL)
     target_include_directories(${PROJECT_NAME} PUBLIC libs/assimp/include)
     target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/libs/assimp/include)
 endif()
+
 ## Tinyxml2
 target_sources(${PROJECT_NAME} PUBLIC libs/TinyXML2/tinyxml2.cpp)
 target_include_directories(${PROJECT_NAME} PUBLIC libs/TinyXML2)

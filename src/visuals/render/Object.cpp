@@ -4,18 +4,10 @@
 #include "glad/glad.h"
 #include <algorithm>
 
+using StevEngine::Utilities::Vertex;
+
 namespace StevEngine {
     namespace Render {
-        GLsizei Vertex::size = (3 + 2) * sizeof(float);
-        bool Vertex::operator== (const Vertex o) const {
-            return
-                (o.x == x) &&
-                (o.y == y) &&
-                (o.z == z) &&
-                (o.texX == texX) &&
-                (o.texY == texY);
-        }
-
         Object::Object(std::vector<Vertex> vertices, SDL_Color color, SDL_Surface* textureData) : vertices(std::vector<float>()), indices(std::vector<unsigned int>()) {
             //Create indices and filter out duplicates
             std::vector<Vertex> uniqueVertices;

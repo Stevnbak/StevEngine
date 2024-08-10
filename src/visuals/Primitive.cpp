@@ -11,10 +11,11 @@
 #include <math.h>
 
 using namespace StevEngine::Render;
+using StevEngine::Utilities::Vertex;
 
 namespace StevEngine {
 	namespace Visuals {
-		std::vector<Render::Vertex> CubeVertices() {
+		std::vector<Vertex> CubeVertices() {
 			return {
 				//Right
 				Vertex(0.5, -0.5, -0.5),
@@ -72,27 +73,24 @@ namespace StevEngine {
 				};
 		}
 		CubePrimitive::CubePrimitive(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
-			: Render::RenderComponent(
-				//Vertices
-				CubeVertices(),
-				position, rotation, scale, "CubePrimitive") {}
+			: RenderComponent(CubeVertices(), position, rotation, scale, "CubePrimitive") {}
 		CubePrimitive::CubePrimitive(tinyxml2::XMLElement* element) : RenderComponent(element) {
 			object = Object(CubeVertices(), color);
 		}
 		FactoryBase* cubefactory = GameObject::AddComponentFactory<CubePrimitive>(std::string("CubePrimitive"));
 
 		SpherePrimitive::SpherePrimitive(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
-			: Render::RenderComponent({}, position, rotation, scale, "SpherePrimitive") {}
+			: RenderComponent({}, position, rotation, scale, "SpherePrimitive") {}
 		SpherePrimitive::SpherePrimitive(tinyxml2::XMLElement* element) : RenderComponent(element) {}
 		FactoryBase* spherefactory = GameObject::AddComponentFactory<SpherePrimitive>(std::string("SpherePrimitive"));
 
 		CylinderPrimitive::CylinderPrimitive(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
-			: Render::RenderComponent({}, position, rotation, scale, "CylinderPrimitive") {}
+			: RenderComponent({}, position, rotation, scale, "CylinderPrimitive") {}
 		CylinderPrimitive::CylinderPrimitive(tinyxml2::XMLElement* element) : RenderComponent(element) {}
 		FactoryBase* cylinderfactory = GameObject::AddComponentFactory<CylinderPrimitive>(std::string("CylinderPrimitive"));
 
 		CapsulePrimitive::CapsulePrimitive(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
-			: Render::RenderComponent({}, position, rotation, scale, "CapsulePrimitive") {}
+			: RenderComponent({}, position, rotation, scale, "CapsulePrimitive") {}
 		CapsulePrimitive::CapsulePrimitive(tinyxml2::XMLElement* element) : RenderComponent(element) {}
 		FactoryBase* capsulefactory = GameObject::AddComponentFactory<CapsulePrimitive>(std::string("CapsulePrimitive"));
 	}

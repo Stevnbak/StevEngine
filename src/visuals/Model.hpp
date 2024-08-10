@@ -1,12 +1,10 @@
 #pragma once
 #ifdef StevEngine_RENDERER_GL
 #include <scenes/Component.hpp>
+#include "utilities/Model.hpp"
 
 #include "visuals/render/Component.hpp"
 #include "visuals/render/Object.hpp"
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 namespace StevEngine {
     namespace Visuals {
@@ -14,11 +12,10 @@ namespace StevEngine {
 			friend class StevEngine::GameObject;
 
             public:
-                ModelRenderer(std::string pathm);
+                ModelRenderer(Utilities::Model model);
 				ModelRenderer(tinyxml2::XMLElement* element);
             private:
-                const aiScene* scene;
-                std::string path;
+                Utilities::Model model;
 				void Export(tinyxml2::XMLElement* element);
         };
     }

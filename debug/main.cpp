@@ -90,8 +90,8 @@ void mainUpdate(double deltaTime) {
 	Log::Normal(std::format("Right: ({};{};{})", right.X, right.Y, right.Z));
 	Utilities::Vector3 up = testQ.up();
 	Log::Normal(std::format("Up: ({};{};{})", up.X, up.Y, up.Z));*/
-	GameObject* model = Engine::Instance->scenes.GetActiveScene()->GetObject(modelObject);
-	model->SetRotation(model->GetRotation() * Quaternion::FromAngleAxis(1 * deltaTime, Vector3(0,1,0)));
+	/*GameObject* model = Engine::Instance->scenes.GetActiveScene()->GetObject(modelObject);
+	model->SetRotation(model->GetRotation() * Quaternion::FromAngleAxis(1 * deltaTime, Vector3(0,1,0)));//*/
 }
 
 int main(int argc, char** argv) {
@@ -109,6 +109,7 @@ int main(int argc, char** argv) {
 	engine.resources.AddFileFromHex("cube.object", cube_object_data, cube_object_size);
 	engine.resources.AddFileFromHex("Debug_scene.scene", Debug_scene_scene_data, Debug_scene_scene_size);
 	engine.resources.AddFileFromHex("Fox.stl", Fox_stl_data, Fox_stl_size);
+	engine.resources.AddFileFromHex("cube.stl", cube_stl_data, cube_stl_size);
 
 	//Create new scene
 	//Scene* scene = engine.scenes.CreateSceneFromFile(engine.resources.GetFile("Debug_scene.scene"));
@@ -163,9 +164,17 @@ int main(int argc, char** argv) {
 	}
 	{
 		modelObject = scene->CreateObject("Model", Utilities::Vector3(0, 0, 0));
-		GameObject* model = scene->GetObject(modelObject);
+		GameObject* modelObj = scene->GetObject(modelObject);
+		#ifdef StevEngine_MODELS
+		Model model = Model(engine.resources.GetFile("Fox.stl"));
+		double modelScale = 1.0 / 30.0;
+		#endif
 		#ifdef StevEngine_RENDERER_GL
-		model->AddComponent(new ModelRenderer("Fox.stl"))->scale = Vector3(1.0 / 30.0, 1.0 / 30.0, 1.0 / 30.0);
+		modelObj->AddComponent(new ModelRenderer(model))->scale = Vector3(1.0, 1.0, 1.0) * modelScale;
+		#endif
+		#ifdef StevEngine_PHYSICS
+		modelObj->AddComponent(new Physics::ModelCollider(model, true, Vector3(), Quaternion(), Vector3(1.0, 1.0, 1.0) * modelScale));
+		modelObj->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		#endif
 	}
 	{
@@ -177,7 +186,7 @@ int main(int argc, char** argv) {
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = sphere->AddComponent(new Physics::CylinderCollider());
-		Physics::RigidBody* rb = sphere->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		//Physics::RigidBody* rb = sphere->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		#endif
 	}
 	//Add Camera controller

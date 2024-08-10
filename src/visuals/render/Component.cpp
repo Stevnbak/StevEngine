@@ -8,9 +8,9 @@
 namespace StevEngine {
     namespace Render {
         //Constructor
-        RenderComponent::RenderComponent(std::vector<Vertex> vertices, std::string type)
+        RenderComponent::RenderComponent(std::vector<Utilities::Vertex> vertices, std::string type)
             : Component(type), object(Object(vertices, color)) {}
-		RenderComponent::RenderComponent(std::vector<Vertex> vertices, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, std::string type)
+		RenderComponent::RenderComponent(std::vector<Utilities::Vertex> vertices, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, std::string type)
             : Component(type), position(position), rotation(rotation), scale(scale), object(Object(vertices, color)) {}
         RenderComponent::RenderComponent(Object object, std::string type)
             : Component(type), object(object) {}

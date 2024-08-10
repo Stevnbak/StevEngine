@@ -21,6 +21,7 @@
                 "StevEngine_RENDERER_GL",
                 "StevEngine_SHOW_WINDOW",
                 "StevEngine_PHYSICS",
+                "StevEngine_MODELS",
                 "StevEngine_AUDIO",
                 "StevEngine_DEBUGGING"
             ],

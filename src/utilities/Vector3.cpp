@@ -134,6 +134,22 @@ namespace StevEngine {
 			Z = other.GetZ();
         }
         #endif
+        #ifdef StevEngine_MODELS
+        Vector3::operator aiVector3D() {
+			return aiVector3D(X, Y, Z);
+        }
+        Vector3& Vector3::operator= (const aiVector3D& other) {
+            X = other.x;
+			Y = other.y;
+			Z = other.z;
+			return *this;
+        }
+        Vector3::Vector3(const aiVector3D& other) {
+            X = other.x;
+			Y = other.y;
+			Z = other.z;
+        }
+        #endif
         //Static stuff
         Vector3 Vector3::up = Vector3(0,1,0);
         Vector3 Vector3::right = Vector3(1,0,0);

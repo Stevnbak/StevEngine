@@ -1,5 +1,7 @@
 #pragma once
 #ifdef StevEngine_PHYSICS
+#include "main/ResourceManager.hpp"
+#include "utilities/Model.hpp"
 #include <scenes/Component.hpp>
 #include <utilities/Vector3.hpp>
 #include <utilities/Range3.hpp>
@@ -67,5 +69,11 @@ namespace StevEngine::Physics {
 		public:
 			CapsuleCollider(Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1,1,1));
 	};
+
+	//Model collider
+	class ModelCollider : public Collider {
+		public:
+			ModelCollider(Utilities::Model model, bool convex = true, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1,1,1));
+		};
 }
 #endif

@@ -30,10 +30,23 @@ namespace StevEngine {
 
 		//Get file
 		Resource System::GetFile(ushort id) const {
-			return resources.at(id);
+			if(resources.contains(id)) {
+				return resources.at(id);
+			}
+			else {
+				Log::Error(std::format("Resource {} not found.", id), true);
+				throw("Failed to find resource!");
+			}
 		}
 		Resource System::GetFile(std::string path) const {
-			return resources.at(pathToId.at(path));
+			ushort id = pathToId.at(path);
+			if(resources.contains(id)) {
+				return resources.at(id);
+			}
+			else {
+				Log::Error(std::format("Resource {} not found.", path), true);
+				throw("Failed to find resource!");
+			}
 		}
 
 		void System::AddFile(std::string path, const char* data, const int size) {

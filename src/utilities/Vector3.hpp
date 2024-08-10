@@ -2,6 +2,9 @@
 #ifdef StevEngine_PHYSICS
 #include <Jolt/Jolt.h>
 #endif
+#ifdef StevEngine_MODELS
+#include "assimp/mesh.h"
+#endif
 #include <string>
 
 namespace StevEngine {
@@ -42,6 +45,11 @@ namespace StevEngine {
 				Vector3& operator= (const JPH::DVec3& other);
 				Vector3(const JPH::Vec3& other);
 				Vector3(const JPH::DVec3& other);
+				#endif
+				#ifdef StevEngine_MODELS
+                operator aiVector3D();
+				Vector3& operator= (const aiVector3D& other);
+				Vector3(const aiVector3D& other);
 				#endif
                 //Static stuff
                 static Vector3 up, right, forward;
