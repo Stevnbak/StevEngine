@@ -26,7 +26,7 @@ namespace StevEngine {
 				void SetColor(SDL_Color color);
 			protected:
 				Object object;
-				SDL_Color color = SDL_Color(1,1,1,1);
+				SDL_Color color = (SDL_Color){1, 1, 1, 1};
 			//Main functions
 			private:
 				void Update(double deltaTime) {};

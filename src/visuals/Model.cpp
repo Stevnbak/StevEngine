@@ -1,3 +1,4 @@
+#include <SDL_pixels.h>
 #ifdef StevEngine_RENDERER_GL
 #include "Model.hpp"
 #include "main/Engine.hpp"
@@ -7,8 +8,6 @@
 #include "utilities/Model.hpp"
 
 #include <vector>
-
-Assimp::Importer importer;
 
 namespace StevEngine {
     namespace Visuals {
@@ -22,7 +21,7 @@ namespace StevEngine {
             return Render::Object(vertices, indices, color, surface);
         }
         ModelRenderer::ModelRenderer(Utilities::Model model)
-            : model(model), RenderComponent(CreateRenderObject(model, color, nullptr), "ModelRenderer") {}
+            : model(model), RenderComponent(CreateRenderObject(model, (SDL_Color){1, 1, 1, 1}, nullptr), "ModelRenderer") {}
 
         ModelRenderer::ModelRenderer(tinyxml2::XMLElement* element)
             : model(Utilities::Model(Engine::Instance->resources.GetFile(element->Attribute("file")))), RenderComponent(element)

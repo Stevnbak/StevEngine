@@ -4,6 +4,7 @@ project(StevEngine VERSION 0.1 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # build StevEngine as static library
@@ -135,20 +136,19 @@ target_include_directories(${PROJECT_NAME} PUBLIC libs/uuidv7-h)
 # build debug executable
 option(DEBUG_EXECUTABLE "Build the debug program for testing the engine." OFF)
 if(DEBUG_EXECUTABLE)
-    add_executable(debug debug/main.cpp)
-    target_link_libraries(debug PRIVATE ${PROJECT_NAME})
     # embed resources
     set(debug_asset_dir ${CMAKE_BINARY_DIR}/assets)
     if (NOT EXISTS ${debug_asset_dir})
         file(MAKE_DIRECTORY ${debug_asset_dir})
     endif ()
 
-    file(GLOB_RECURSE ASSETS CONFIGURE_DEPENDS "assets/*")
+    file(GLOB_RECURSE ASSETS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/debug/assets/*")
     set(output_c "#include \"assets.h\"\n")
     set(output_h "")
     foreach(asset IN ITEMS ${ASSETS})
-        file(RELATIVE_PATH asset_name ${CMAKE_CURRENT_SOURCE_DIR}/assets ${asset})
+        file(RELATIVE_PATH asset_name ${CMAKE_CURRENT_SOURCE_DIR}/debug/assets ${asset})
         string(REPLACE "." "_" asset_name ${asset_name})
+        string(REPLACE "/" "_" asset_name ${asset_name})
         file(READ ${asset} content HEX)
         string(LENGTH ${content} len)
         string(APPEND output_c "
@@ -166,6 +166,8 @@ extern const unsigned ${asset_name}_size\;
     endforeach()
     file(WRITE ${debug_asset_dir}/assets.c ${output_c})
     file(WRITE ${debug_asset_dir}/assets.h ${output_h})
-    target_sources(debug PUBLIC ${debug_asset_dir}/assets.c)
+    # debug executable
+    add_executable(debug debug/main.cpp ${debug_asset_dir}/assets.c)
+    target_link_libraries(debug PRIVATE ${PROJECT_NAME})
     target_include_directories(debug PUBLIC ${debug_asset_dir})
 endif()
