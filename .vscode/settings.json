@@ -70,6 +70,8 @@
 		"shared_mutex": "cpp",
 		"filesystem": "cpp",
 		"bitset": "cpp",
-		"regex": "cpp"
+		"regex": "cpp",
+		"forward_list": "cpp",
+		"valarray": "cpp"
 	}
 }

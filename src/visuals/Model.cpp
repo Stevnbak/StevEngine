@@ -1,4 +1,3 @@
-#include <SDL_pixels.h>
 #ifdef StevEngine_RENDERER_GL
 #include "Model.hpp"
 #include "main/Engine.hpp"

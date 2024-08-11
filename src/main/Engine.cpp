@@ -37,7 +37,7 @@ namespace StevEngine {
 	#ifdef StevEngine_SHOW_WINDOW
 	void Engine::Draw() {
 		#ifdef StevEngine_RENDERER_GL
-		// Clear the colorbuffer 
+		// Clear the colorbuffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Drawing
 		render.StartFrame();
@@ -68,7 +68,7 @@ namespace StevEngine {
 		,int WIDTH
 		,int HEIGHT
 		#endif
-	) : 
+	) :
 	title(title),
 	targetFPS(targetFPS),
 	mainUpdate(mainUpdate),
@@ -103,11 +103,11 @@ namespace StevEngine {
 		#endif
 		//Initialize SDL
 		if (SDL_Init(
-			SDL_INIT_EVENTS 
+			SDL_INIT_EVENTS
 			#ifdef StevEngine_AUDIO
 			| SDL_INIT_AUDIO
 			#endif
-			| SDL_INIT_TIMER 
+			| SDL_INIT_TIMER
 			#ifdef StevEngine_SHOW_WINDOW
 			| SDL_INIT_VIDEO
 			#endif
@@ -157,7 +157,7 @@ namespace StevEngine {
 		//Define the OpenGL viewport dimensions
 		GLint size = std::max(WIDTH, HEIGHT);
 		glViewport(0, 0, size, size);
-		glClearColor(1, 0.9, 1, 1);
+		glClearColor(0, 0, 0, 1);
 		glEnable(GL_DEPTH_TEST);
 		#endif
 		//Done creating engine
@@ -264,7 +264,7 @@ namespace StevEngine {
 
 		//Destroy all scenes
 		scenes.scenes.clear();
-		
+
 		//Stop logging
 		#ifdef StevEngine_PLAYER_DATA
 		Log::CloseLogging();
@@ -287,7 +287,7 @@ namespace StevEngine {
 		//Return int
 		return 0;
 	}
-	
+
 	double Engine::getFPS() {
 		return currentFPS;
 	}

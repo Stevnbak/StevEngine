@@ -117,11 +117,11 @@ int main(int argc, char** argv) {
 
 	//Create test objects
 	{
-		ID id = scene->CreateObject("Cube", Utilities::Vector3(0, -1, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(15), Utilities::Vector3::forward), Utilities::Vector3(100, 1, 100));
+		ID id = scene->CreateObject("Cube", Utilities::Vector3(0, -1, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward), Utilities::Vector3(100, 1, 100));
 		GameObject* floor = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		CubePrimitive* primitive = floor->AddComponent(new CubePrimitive());
-		primitive->SetColor(SDL_Color(0, 1, 0, 1));
+		primitive->SetColor((SDL_Color){0, 1, 0, 1});
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::CubeCollider* collider = floor->AddComponent(new Physics::CubeCollider());
@@ -133,7 +133,7 @@ int main(int argc, char** argv) {
 		GameObject* cube = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		CubePrimitive* primitive = cube->AddComponent(new CubePrimitive());
-		primitive->SetColor(SDL_Color(1, 0, 0, 1));
+		primitive->SetColor((SDL_Color){1, 0, 0, 1});
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
@@ -155,7 +155,7 @@ int main(int argc, char** argv) {
 		GameObject* sphere = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		SpherePrimitive* primitive = sphere->AddComponent(new SpherePrimitive());
-		primitive->SetColor(SDL_Color(1, 0, 0, 1));
+		primitive->SetColor((SDL_Color){1, 0, 0, 1});
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = sphere->AddComponent(new Physics::SphereCollider());
@@ -170,7 +170,9 @@ int main(int argc, char** argv) {
 		double modelScale = 1.0 / 30.0;
 		#endif
 		#ifdef StevEngine_RENDERER_GL
-		modelObj->AddComponent(new ModelRenderer(model))->scale = Vector3(1.0, 1.0, 1.0) * modelScale;
+		ModelRenderer* r = modelObj->AddComponent(new ModelRenderer(model));
+		r->scale = Vector3(1.0, 1.0, 1.0) * modelScale;
+		r->SetColor({1,1,0});
 		#endif
 		#ifdef StevEngine_PHYSICS
 		modelObj->AddComponent(new Physics::ModelCollider(model, true, Vector3(), Quaternion(), Vector3(1.0, 1.0, 1.0) * modelScale));
@@ -182,7 +184,7 @@ int main(int argc, char** argv) {
 		GameObject* sphere = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		CylinderPrimitive* primitive = sphere->AddComponent(new CylinderPrimitive());
-		primitive->SetColor(SDL_Color(0, 0, 1, 1));
+		primitive->SetColor((SDL_Color){0, 0, 1, 1});
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = sphere->AddComponent(new Physics::CylinderCollider());
@@ -224,7 +226,7 @@ int main(int argc, char** argv) {
 
 	//Set background
 	#ifdef StevEngine_RENDERER_GL
-	engine.render.SetBackground(SDL_Color(0,0,0,1));
+	engine.render.SetBackground((SDL_Color){0, 0, 0, 1});
 	#endif
 
 	//Start engine

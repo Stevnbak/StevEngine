@@ -3,44 +3,27 @@
 
 #include "main/Log.hpp"
 #include "main/Engine.hpp"
+#include "visuals/render/Object.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "glm/ext/vector_float3.hpp"
 #include <glm/gtc/type_ptr.hpp>
 
 using StevEngine::Utilities::Vertex;
 
 namespace StevEngine {
     namespace Render {
-        const char *vertexShaderSource = "#version 330 core\n"
-            "layout (location = 0) in vec3 vPos;\n"
-            "layout (location = 1) in vec2 vTex;\n"
-            "uniform mat4 model;\n"
-            "uniform mat4 view;\n"
-            "uniform mat4 projection;\n"
-            "out vec2 fTexCoord;\n"
-            "void main()\n"
-            "{\n"
-            "   gl_Position = projection * view * model * vec4(vPos, 1.0);\n"
-            "   fTexCoord = vTex;\n"
-            "}\0";
-        const char *fragmentShaderSource = "#version 330 core\n"
-            "out vec4 FragColor;\n"
-            "in vec2 fTexCoord;\n"
-            "uniform vec4 fColor;\n"
-            "uniform bool fIsTextured;\n"
-            "uniform sampler2D fTexture;\n"
-            "void main()\n"
-            "{\n"
-                "vec4 tex = vec4(1.0, 1.0, 1.0, 1.0);"
-                "if (fIsTextured) {"
-                    "tex = texture(fTexture, fTexCoord);"
-                "}"
-                "FragColor = tex * fColor;\n"
-            "}\n";
+        const char* vertexShaderSource =
+            #include "visuals/shaders/default.vert"
+        ;
+        const char* fragmentShaderSource =
+            #include "visuals/shaders/default.frag"
+        ;
 
         System::System() {}
         void System::Init() {
+            glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
             //Buffers
             glGenVertexArrays(1, &VAO);
             glBindVertexArray(VAO);
@@ -51,9 +34,12 @@ namespace StevEngine {
             // position
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, Vertex::size, (void*)0);
             glEnableVertexAttribArray(0);
-            // texture coordinates
-            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, Vertex::size, (void*)((3) * sizeof(float)));
+            // normal
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, Vertex::size, (void*)((3) * sizeof(float)));
             glEnableVertexAttribArray(1);
+            // texture coordinates
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, Vertex::size, (void*)((3 + 3) * sizeof(float)));
+            glEnableVertexAttribArray(2);
             //Shaders
             unsigned int vertexShader;
             vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -65,7 +51,7 @@ namespace StevEngine {
             if(!success)
             {
                 glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-                Log::Error("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" + std::string(infoLog));
+                Log::Error("Vertex shader failed to compile!\n" + std::string(infoLog));
             }
 
             unsigned int fragmentShader;
@@ -76,7 +62,7 @@ namespace StevEngine {
             if(!success)
             {
                 glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-                Log::Error("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" + std::string(infoLog));
+                Log::Error("Fragment shader failed to compile!\n" + std::string(infoLog));
             }
 
             shaderProgram = glCreateProgram();
@@ -86,7 +72,7 @@ namespace StevEngine {
             glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
             if(!success) {
                 glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-                Log::Error("ERROR::SHADER::PROGRAM::COMPILATION_FAILED\n" + std::string(infoLog));
+                Log::Error("Shader program failed to compile!\n" + std::string(infoLog));
             }
 
             glDeleteShader(vertexShader);
@@ -95,20 +81,25 @@ namespace StevEngine {
 
         void System::DrawObject(Object object, glm::mat4x4 transform) {
             //Update transform
-            unsigned int transformLoc = glGetUniformLocation(shaderProgram, "model");
+            unsigned int transformLoc = glGetUniformLocation(shaderProgram, "objectTransform");
             glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
             //Update texture
-            unsigned int isTexturedLoc = glGetUniformLocation(shaderProgram, "fIsTextured");
+            unsigned int isTexturedLoc = glGetUniformLocation(shaderProgram, "objectIsTextured");
             glUniform1i(isTexturedLoc, (int)object.textured);
             if(object.textured) {
-                unsigned int textureLoc = glGetUniformLocation(shaderProgram, "fTexture");
+                unsigned int textureLoc = glGetUniformLocation(shaderProgram, "objectTexture");
                 glActiveTexture(GL_TEXTURE0);
                 glBindTexture(GL_TEXTURE_2D, object.texture);
                 glUniform1i(textureLoc, 0);
             }
             //Update color
-            unsigned int colorLoc = glGetUniformLocation(shaderProgram, "fColor");
+            unsigned int colorLoc = glGetUniformLocation(shaderProgram, "objectColor");
             glUniform4fv(colorLoc, 1, glm::value_ptr(glm::vec4(object.color.r,object.color.g,object.color.b,object.color.a)));
+            //Update material
+            glUniform3fv(glGetUniformLocation(shaderProgram, "objectMaterial.ambient"), 1, glm::value_ptr((glm::vec3)object.material.ambient));
+            glUniform3fv(glGetUniformLocation(shaderProgram, "objectMaterial.diffuse"), 1, glm::value_ptr((glm::vec3)object.material.diffuse));
+            glUniform3fv(glGetUniformLocation(shaderProgram, "objectMaterial.specular"), 1, glm::value_ptr((glm::vec3)object.material.specular));
+            glUniform1f(glGetUniformLocation(shaderProgram, "objectMaterial.shininess"), object.material.shininess);
             //Draw object
             glBufferData(GL_ARRAY_BUFFER, object.vertices.size() * sizeof(float), object.vertices.data(), GL_STATIC_DRAW);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, object.indices.size() * sizeof(float), object.indices.data(), GL_STATIC_DRAW);
@@ -120,21 +111,28 @@ namespace StevEngine {
             object->Draw(transform);
             glUseProgram(shaderProgram);
         }
-        
+
         void System::StartFrame() {
-            //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Temp
             glUseProgram(shaderProgram);
             glBindVertexArray(VAO);
-            
+
             Visuals::Camera* camera = Engine::Instance->scenes.GetActiveScene()->GetCamera();
             //View matrix
             glm::mat4x4 view = camera->GetView();
-            unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
+            unsigned int viewLoc = glGetUniformLocation(shaderProgram, "viewTransform");
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+            glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "viewPosition"), 1, GL_FALSE, glm::value_ptr((glm::vec3)camera->GetParent()->GetWorldPosition()));
             //Projection matrix
             glm::mat4x4 proj = camera->GetProjection();
-            unsigned int projLoc = glGetUniformLocation(shaderProgram, "projection");
+            unsigned int projLoc = glGetUniformLocation(shaderProgram, "projectionTransform");
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
+            //Lights
+            glUniform3fv(glGetUniformLocation(shaderProgram, "directionalLights[0].basic.diffuse"), 1, glm::value_ptr(glm::vec3(0.75)));
+            glUniform3fv(glGetUniformLocation(shaderProgram, "directionalLights[0].basic.specular"), 1, glm::value_ptr(glm::vec3(0.25)));
+            glUniform3fv(glGetUniformLocation(shaderProgram, "directionalLights[0].direction"), 1, glm::value_ptr(glm::vec3(0.0, 0, 1.0)));
+            glUniform3fv(glGetUniformLocation(shaderProgram, "directionalLights[1].basic.diffuse"), 1, glm::value_ptr(glm::vec3(1)));
+            glUniform3fv(glGetUniformLocation(shaderProgram, "directionalLights[1].direction"), 1, glm::value_ptr(glm::vec3(0.0, -1, 0.0)));
+
             //Set background color
             glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
         }

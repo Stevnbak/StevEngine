@@ -2,6 +2,7 @@
 #ifdef StevEngine_PHYSICS
 #include <Jolt/Jolt.h>
 #endif
+#include "glm/ext/vector_float3.hpp"
 #ifdef StevEngine_MODELS
 #include "assimp/mesh.h"
 #endif
@@ -19,6 +20,7 @@ namespace StevEngine {
 				Vector3(double x, double y, double z);
 				Vector3(const Vector3& from);
 				Vector3(std::string str);
+				Vector3(double v);
 				Vector3();
                 //Functions
 				Vector3 Get() const;
@@ -38,6 +40,7 @@ namespace StevEngine {
                 //Conversions
 				explicit operator Vector2();
 				explicit operator std::string();
+				explicit operator glm::vec3();
 				#ifdef StevEngine_PHYSICS
                 operator JPH::DVec3();
                 operator JPH::Vec3();

@@ -1,5 +1,6 @@
 #include "Vector3.hpp"
 #include "Vector2.hpp"
+#include "glm/ext/vector_float3.hpp"
 
 #include <main/Log.hpp>
 
@@ -11,16 +12,8 @@
 namespace StevEngine {
 	namespace Utilities {
         //Constructors
-        Vector3::Vector3(double x, double y, double z) {
-            X = x;
-			Y = y;
-			Z = z;
-        }
-        Vector3::Vector3(const Vector3& from) {
-            X = from.X;
-            Y = from.Y;
-            Z = from.Z;
-        }
+        Vector3::Vector3(double x, double y, double z) : X(x), Y(y), Z(z) {}
+        Vector3::Vector3(const Vector3& from) : X(from.X), Y(from.Y), Z(from.Z) {}
         Vector3::Vector3(std::string str) {
             if(!str.starts_with("[") || !str.ends_with("]") || str.find(";") == 0) {
 				Log::Error("3D Vector string not valid.", true);
@@ -37,11 +30,8 @@ namespace StevEngine {
 			std::getline(ss, s, ';');
 			Z = stod(s);
         }
-        Vector3::Vector3() {
-            X = 0;
-			Y = 0;
-			Z = 0;
-        }
+        Vector3::Vector3(double v) : X(v), Y(v), Z(v) {}
+        Vector3::Vector3() : Vector3(0.0) {}
         //Functions
         Vector3 Vector3::Get() const {
             return *this;
@@ -104,6 +94,9 @@ namespace StevEngine {
         Vector3::operator std::string() {
             return std::format("[{};{};{}]", X, Y, Z);
         }
+        Vector3::operator glm::vec3() {
+            return glm::vec3(X, Y, Z);
+        }
         #ifdef StevEngine_PHYSICS
         Vector3::operator JPH::DVec3() {
 			return JPH::DVec3(X, Y, Z);
@@ -159,8 +152,8 @@ namespace StevEngine {
         }
         Vector3 Vector3::Cross(Vector3 a, Vector3 b) {
 			return Vector3(
-                a.Y * b.Z - a.Z * b.Y, 
-                -(a.X * b.Z - a.Z * b.X), 
+                a.Y * b.Z - a.Z * b.Y,
+                -(a.X * b.Z - a.Z * b.X),
                 a.X * b.Y - a.Y * b.X
             );
         }

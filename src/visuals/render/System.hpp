@@ -25,7 +25,7 @@ namespace StevEngine {
                 unsigned int VBO;
                 unsigned int EBO;
                 unsigned int VAO;
-                SDL_Color backgroundColor;
+                SDL_Color backgroundColor = (SDL_Color){0, 0, 0};
 		};
     }
 }

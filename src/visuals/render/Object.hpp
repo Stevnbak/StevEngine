@@ -13,12 +13,20 @@ namespace StevEngine {
     namespace Render {
         class System;
 
+        struct Material {
+            Utilities::Vector3 ambient = Utilities::Vector3(1.0);
+            Utilities::Vector3 diffuse = Utilities::Vector3(1.0);
+            Utilities::Vector3 specular = Utilities::Vector3(1.0);
+            float shininess = 1.0;
+        };
+
         class Object {
 			friend class System;
             public:
                 Object(std::vector<Utilities::Vertex> vertices, SDL_Color color = (SDL_Color){1, 1, 1, 1}, SDL_Surface* textureData = nullptr);
                 Object(std::vector<Utilities::Vertex> vertices, std::vector<unsigned int> indices, SDL_Color color = (SDL_Color){1, 1, 1, 1}, SDL_Surface* textureData = nullptr);
                 SDL_Color color;
+                Material material;
             private:
                 std::vector<float> vertices;
                 std::vector<unsigned int> indices;

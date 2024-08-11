@@ -8,7 +8,24 @@ using StevEngine::Utilities::Vertex;
 
 namespace StevEngine {
     namespace Render {
-        Object::Object(std::vector<Vertex> vertices, SDL_Color color, SDL_Surface* textureData) : vertices(std::vector<float>()), indices(std::vector<unsigned int>()) {
+        std::vector<float> ToFloatList(std::vector<Vertex> vertices) {
+            std::vector<float> result;
+            result.resize(vertices.size() * (3+3+2));
+            int j = 0;
+            for(int i = 0; i < vertices.size(); i++) {
+                Vertex vertex = vertices[i];
+                result[j++] = vertex.x;
+                result[j++] = vertex.y;
+                result[j++] = vertex.z;
+                result[j++] = vertex.nX;
+                result[j++] = vertex.nY;
+                result[j++] = vertex.nZ;
+                result[j++] = vertex.texX;
+                result[j++] = vertex.texY;
+            }
+            return result;
+        }
+        Object::Object(std::vector<Vertex> vertices, SDL_Color color, SDL_Surface* textureData) {
             //Create indices and filter out duplicates
             std::vector<Vertex> uniqueVertices;
             for (Vertex v : vertices) {
@@ -18,19 +35,8 @@ namespace StevEngine {
                 }
                 indices.push_back(index);
             }
-
             //Generate vertex array
-            this->vertices.resize(uniqueVertices.size() * 5);
-            int j = 0;
-            for(int i = 0; i < uniqueVertices.size(); i++) {
-                Vertex vertex = uniqueVertices[i];
-                this->vertices[j++] = vertex.x;
-                this->vertices[j++] = vertex.y;
-                this->vertices[j++] = vertex.z;
-                this->vertices[j++] = vertex.texX;
-                this->vertices[j++] = vertex.texY;
-            }
-
+            this->vertices = ToFloatList(uniqueVertices);
             //Bind texture
             if(textureData) {
                 textured = true;
@@ -47,20 +53,7 @@ namespace StevEngine {
                 textured = false;
             }
         }
-        Object::Object(std::vector<Vertex> vertices, std::vector<unsigned int> indices, SDL_Color color, SDL_Surface* textureData) : vertices(std::vector<float>()), indices(std::vector<unsigned int>()) {
-            //Generate vertex array
-            this->vertices.resize(vertices.size() * 5);
-            int j = 0;
-            for(int i = 0; i < vertices.size(); i++) {
-                Vertex vertex = vertices[i];
-                this->vertices[j++] = vertex.x;
-                this->vertices[j++] = vertex.y;
-                this->vertices[j++] = vertex.z;
-                this->vertices[j++] = vertex.texX;
-                this->vertices[j++] = vertex.texY;
-            }
-            //Set indices
-            this->indices = indices;
+        Object::Object(std::vector<Vertex> vertices, std::vector<unsigned int> indices, SDL_Color color, SDL_Surface* textureData) : vertices(ToFloatList(vertices)), indices(indices) {
             //Bind texture
             if(textureData) {
                 textured = true;
