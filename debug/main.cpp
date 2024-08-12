@@ -7,7 +7,11 @@
 #include <main/ResourceManager.hpp>
 
 #include <assets.h>
+#include "visuals/render/Lights.hpp"
+#include "utilities/Quaternion.hpp"
+#include "utilities/Vector3.hpp"
 #include "visuals/Model.hpp"
+#include "visuals/render/Lights.hpp"
 
 using namespace StevEngine;
 using namespace StevEngine::Utilities;
@@ -196,6 +200,15 @@ int main(int argc, char** argv) {
 	///camObj->AddComponent(CameraController());
 	camObj->SetPosition(Utilities::Vector3(0, 4, 25));
 	camObj->SetRotation(Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward));
+
+	//Add test lights
+	GameObject* light1 = scene->GetObject(scene->CreateObject("PointLight1", Utilities::Vector3(0, 3, 3)));
+	light1->AddComponent(new Render::PointLight());
+	light1->AddComponent(new CubePrimitive(Utilities::Vector3(), Utilities::Quaternion(), Utilities::Vector3(0.1)));
+	GameObject* light2 = scene->GetObject(scene->CreateObject("PointLight1", Utilities::Vector3(2, 3, 1)));
+	light2->AddComponent(new Render::PointLight());
+	light2->AddComponent(new CubePrimitive(Utilities::Vector3(), Utilities::Quaternion(), Utilities::Vector3(0.1)));
+	//scene->GetObject(scene->CreateObject("DirectionalLight", Utilities::Vector3(0, 0, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(-90), Utilities::Vector3::right)))->AddComponent(new Render::DirectionalLight());
 
 	//Test ressource manager
 	Log::Debug(std::format("Ressource 0: {}", Engine::Instance->resources.GetFile(0).path));

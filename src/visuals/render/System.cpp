@@ -4,6 +4,7 @@
 #include "main/Log.hpp"
 #include "main/Engine.hpp"
 #include "visuals/render/Object.hpp"
+#include "visuals/render/Lights.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -77,6 +78,8 @@ namespace StevEngine {
 
             glDeleteShader(vertexShader);
             glDeleteShader(fragmentShader);
+
+            Log::Debug("Renderer has been initialized!", true);
         }
 
         void System::DrawObject(Object object, glm::mat4x4 transform) {
@@ -127,24 +130,9 @@ namespace StevEngine {
             unsigned int projLoc = glGetUniformLocation(shaderProgram, "projectionTransform");
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
             //Lights
-            glUniform3fv(glGetUniformLocation(shaderProgram, "directionalLights[0].basic.diffuse"), 1, glm::value_ptr(glm::vec3(0.75)));
-            glUniform3fv(glGetUniformLocation(shaderProgram, "directionalLights[0].basic.specular"), 1, glm::value_ptr(glm::vec3(0.5)));
-            glUniform3fv(glGetUniformLocation(shaderProgram, "directionalLights[0].direction"), 1, glm::value_ptr(glm::vec3(0.0, 0, 1.0)));
-
-            glUniform3fv(glGetUniformLocation(shaderProgram, "pointLights[0].position"), 1, glm::value_ptr(glm::vec3(0.0, 3.0, 0.0)));
-            glUniform3fv(glGetUniformLocation(shaderProgram, "pointLights[0].basic.diffuse"), 1, glm::value_ptr(glm::vec3(1.0)));
-            glUniform3fv(glGetUniformLocation(shaderProgram, "pointLights[0].basic.specular"), 1, glm::value_ptr(glm::vec3(1.0)));
-            glUniform1f (glGetUniformLocation(shaderProgram, "pointLights[0].constant"), 0.1);
-            glUniform1f (glGetUniformLocation(shaderProgram, "pointLights[0].linear"), 0.2);
-            glUniform1f (glGetUniformLocation(shaderProgram, "pointLights[0].quadratic"), 0.3);
-
-            glUniform3fv(glGetUniformLocation(shaderProgram, "spotLights[0].position"), 1, glm::value_ptr(glm::vec3(0.0, 15.0, 0.0)));
-            glUniform3fv(glGetUniformLocation(shaderProgram, "spotLights[0].direction"), 1, glm::value_ptr(glm::vec3(0.0, -1.0, 0.0)));
-            glUniform3fv(glGetUniformLocation(shaderProgram, "spotLights[0].basic.diffuse"), 1, glm::value_ptr(glm::vec3(0.50)));
-            glUniform3fv(glGetUniformLocation(shaderProgram, "spotLights[0].basic.specular"), 1, glm::value_ptr(glm::vec3(0.25)));
-            glUniform1f (glGetUniformLocation(shaderProgram, "spotLights[0].cutOff"), 0.5);
-            glUniform1f (glGetUniformLocation(shaderProgram, "spotLights[0].outerCutOff"), 1.5);
-
+            for(Light* light : lights) {
+                light->UpdateShader();
+            }
             //Set background color
             glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
         }
@@ -155,6 +143,20 @@ namespace StevEngine {
 
         void System::SetBackground(SDL_Color color) {
             backgroundColor = color;
+        }
+
+        unsigned int System::GetLightID(std::string type) {
+            unsigned int next = 0;
+            for(Light* light : lights) {
+                if(light->type == type) {
+                    if(next == light->shaderLightID) {
+                        next++;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            return next;
         }
     }
 }

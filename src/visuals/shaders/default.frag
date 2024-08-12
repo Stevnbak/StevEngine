@@ -43,7 +43,7 @@ struct DirectionalLight {
 uniform DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)
 {
-    vec3 lightDir = normalize(light.direction);
+    vec3 lightDir = normalize(-light.direction);
     // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading

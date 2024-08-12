@@ -14,8 +14,9 @@ namespace StevEngine {
 		private:
 			Utilities::ID gameObject = Utilities::ID::empty;
 			std::string scene;
-			std::string type;
 			static const bool unique = false;
+		protected:
+		    std::string type;
 		//Functions
 		public:
 			Component(std::string type);

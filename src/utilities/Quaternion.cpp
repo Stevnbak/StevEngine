@@ -52,13 +52,13 @@ namespace StevEngine {
         }
         //Directions
         Vector3 Quaternion::Forward() {
-            return (*this) * Vector3::forward;
+            return Get() * Vector3::forward;
         }
         Vector3 Quaternion::Right() {
-            return (*this) * Vector3::right;
+            return Get() * Vector3::right;
         }
         Vector3 Quaternion::Up() {
-            return (*this) * Vector3::up;
+            return Get() * Vector3::up;
         }
         Quaternion& Quaternion::Conjugate() {
             X = -X;
@@ -128,9 +128,9 @@ namespace StevEngine {
         }
         Quaternion Quaternion::operator * (const Quaternion& other) const {
             return Quaternion(
-                W * other.W - X * other.X - Y * other.Y - Z * other.Z, 
-                W * other.X + X * other.W + Y * other.Z - Z * other.Y, 
-                W * other.Y - X * other.Z + Y * other.W + Z * other.X, 
+                W * other.W - X * other.X - Y * other.Y - Z * other.Z,
+                W * other.X + X * other.W + Y * other.Z - Z * other.Y,
+                W * other.Y - X * other.Z + Y * other.W + Z * other.X,
                 W * other.Z + X * other.Y - Y * other.X + Z * other.W
             );
         }
@@ -155,7 +155,7 @@ namespace StevEngine {
             double x = W * other.X + X * other.W + Y * other.Z - Z * other.Y;
             double y = W * other.Y - X * other.Z + Y * other.W + Z * other.X;
             double z = W * other.Z + X * other.Y - Y * other.X + Z * other.W;
-            
+
             W = w;
             X = x;
             Y = y;
@@ -168,10 +168,7 @@ namespace StevEngine {
         }
         //Vector operators
         Vector3 Quaternion::operator*(const Vector3& v) const {
-            double x = ((1-2*exp2(Y)-2*exp2(Z)) * 2*(X*Y+W*Z) * 2*(X*Z-W*Y)) * v.X;
-            double y = (2*(X*Y-W*Z) * (1-2*exp2(X)-2*exp2(Z)) * 2*(Y*Z+W*X)) * v.Y;
-            double z = (2*(X*Z+W*Y) * 2*(Y*Z-W*X) * (1-2*exp2(X)-2*exp2(Y))) * v.Z;
-            return Vector3(x, y, z);
+            return v + Vector3::Cross(Vector3(X, Y, Z), (v * W + Vector3::Cross(Vector3(X, Y, Z), v))) * 2;
         }
         //Conversions
         Quaternion::operator std::string() {

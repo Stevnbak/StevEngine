@@ -34,7 +34,7 @@ namespace StevEngine {
                         else sideVertices[offset + ver] = Vector3(c, b, a);
                     }
 				}
-				Vector3 normal = Vector3::Cross(sideVertices[1] - sideVertices[0], sideVertices[2] - sideVertices[0]).Normalized();
+				Vector3 normal = Vector3::Cross(sideVertices[2] - sideVertices[0], sideVertices[1] - sideVertices[0]).Normalized();
 				for(int i = 0; i < 6; i++) {
 				    vertices[side * 6 + i] = Vertex(sideVertices[i] * 0.5, normal);
 				}
