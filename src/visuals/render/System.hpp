@@ -27,7 +27,7 @@ namespace StevEngine {
 				void DrawObject(Object object, glm::mat4x4 transform);
 				void DrawCustomObject(CustomObject* object, glm::mat4x4 transform);
                 void SetBackground(SDL_Color color);
-                void SetAmbientLight(float strength, SDL_Color color = {0,0,0,1});
+                void SetAmbientLight(float strength, SDL_Color color = {255,255,255,255});
 			private:
                 System();
                 void Init();

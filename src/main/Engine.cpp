@@ -250,7 +250,7 @@ namespace StevEngine {
 			#endif
 
 			//Calculate FPS:
-			if (frameTime != 0) currentFPS = 1000 / frameTime;
+			if (frameTime != 0) currentFPS = 1000.0 / frameTime;
 			else currentFPS = INFINITY;
 			///Log::Debug(std::format("Current FPS: {}; frameTime: {}; Clock: {}", std::round(currentFPS), frameTime, newTime), true);
 

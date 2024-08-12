@@ -97,7 +97,7 @@ namespace StevEngine {
             }
             //Update color
             unsigned int colorLoc = glGetUniformLocation(shaderProgram, "objectColor");
-            glUniform4fv(colorLoc, 1, glm::value_ptr(glm::vec4(object.color.r,object.color.g,object.color.b,object.color.a)));
+            glUniform4fv(colorLoc, 1, glm::value_ptr(glm::vec4(object.color.r / 255.0f, object.color.g / 255.0f, object.color.b / 255.0f, object.color.a / 255.0f)));
             //Update material
             glUniform3fv(glGetUniformLocation(shaderProgram, "objectMaterial.ambient"), 1, glm::value_ptr((glm::vec3)object.material.ambient));
             glUniform3fv(glGetUniformLocation(shaderProgram, "objectMaterial.diffuse"), 1, glm::value_ptr((glm::vec3)object.material.diffuse));

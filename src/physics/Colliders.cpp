@@ -110,7 +110,7 @@ namespace StevEngine::Physics {
 
 	//Capsule collider
 	CapsuleCollider::CapsuleCollider(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
-		: Collider(new JPH::CapsuleShape(0.5,0.5), position, rotation, scale) {}
+		: Collider(new JPH::CapsuleShape(0.25,0.5), position, rotation, scale) {}
 
 	//Model collider
 	JPH::Ref<JPH::Shape> ModelToShape(Utilities::Model model, bool convex) {
@@ -121,9 +121,9 @@ namespace StevEngine::Physics {
 			for(Utilities::Mesh mesh : model.GetMeshes()) {
 				JPH::Array<JPH::Vec3> vertices;
 				vertices.resize(mesh.indices.size());
-				for(int i = 0; i < mesh.indices.size(); i++) { 
+				for(int i = 0; i < mesh.indices.size(); i++) {
 					Utilities::Vertex v = mesh.vertices[mesh.indices[i]];
-					vertices[i] = JPH::Vec3(v.x, v.y, v.z); 
+					vertices[i] = JPH::Vec3(v.x, v.y, v.z);
 				};
 				shapeSettings.AddShape(Utilities::Vector3(), Utilities::Quaternion(1,0,0,0), new JPH::ConvexHullShapeSettings(vertices));
 				continue;

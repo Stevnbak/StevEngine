@@ -23,8 +23,8 @@ namespace StevEngine {
         class Object {
 			friend class System;
             public:
-                Object(std::vector<Utilities::Vertex> vertices, SDL_Color color = (SDL_Color){1, 1, 1, 1}, SDL_Surface* textureData = nullptr);
-                Object(std::vector<Utilities::Vertex> vertices, std::vector<unsigned int> indices, SDL_Color color = (SDL_Color){1, 1, 1, 1}, SDL_Surface* textureData = nullptr);
+                Object(std::vector<Utilities::Vertex> vertices, SDL_Color color = {255, 255, 255, 255}, SDL_Surface* textureData = nullptr);
+                Object(std::vector<Utilities::Vertex> vertices, std::vector<unsigned int> indices, SDL_Color color = {255, 255, 255, 255}, SDL_Surface* textureData = nullptr);
                 SDL_Color color;
                 Material material;
             private:

@@ -17,7 +17,7 @@ struct Material {
     vec3 specular;
     float shininess;
 };
-uniform Material objectMaterial = Material(vec3(1.0),vec3(1.0),vec3(1.0),0.1);
+uniform Material objectMaterial = Material(vec3(1.0), vec3(1.0), vec3(1.0), 0.1);
 
 //Global ambient lighting
 uniform float ambientStrength = 0.1;
@@ -74,14 +74,12 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), objectMaterial.shininess);
     // attenuation
-    float distance    = length(light.position - fragPos);
+    float distance = length(light.position - fragPos);
     float a = (light.constant + light.linear * distance + light.quadratic * (distance * distance));
-    float attenuation = a == 0 ? 0 : 1.0 / a;
+    float attenuation = (a == 0 ? 0 : (1.0 / a));
     // combine results
-    vec3 diffuse  = light.basic.diffuse  * diff * objectMaterial.diffuse;
-    vec3 specular = light.basic.specular * spec * objectMaterial.specular;
-    diffuse  *= attenuation;
-    specular *= attenuation;
+    vec3 diffuse  = light.basic.diffuse  * diff * objectMaterial.diffuse * attenuation;
+    vec3 specular = light.basic.specular * spec * objectMaterial.specular * attenuation;
     return (diffuse + specular);
 }
 //Spot lights

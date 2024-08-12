@@ -8,6 +8,7 @@
 
 #include <assets.h>
 #include "visuals/render/Lights.hpp"
+#include "glm/ext/matrix_float4x4.hpp"
 #include "utilities/Quaternion.hpp"
 #include "utilities/Vector3.hpp"
 #include "visuals/Model.hpp"
@@ -17,14 +18,14 @@ using namespace StevEngine;
 using namespace StevEngine::Utilities;
 using namespace StevEngine::Visuals;
 
-/**
-class CameraController : public Component {
+class CameraController final : public Component {
 	public:
-		double movementSpeed = 4;
-		double sensitivity = 5;
-		void Draw() {}
+		double movementSpeed = 10;
+		double sensitivity = 2;
+		void Draw(glm::mat4x4 transform) {}
 		void Update(double deltaTime);
 		void Start();
+		void Deactivate() {};
 		void Export(tinyxml2::XMLElement* element);
 		CameraController() : Component("CameraController") {};
 		CameraController(tinyxml2::XMLElement* element) : Component("CameraController") {
@@ -32,7 +33,7 @@ class CameraController : public Component {
 			sensitivity = element->DoubleAttribute("sensitivity");
 		};
 };
-//FactoryBase* factory = GameObject::AddComponentFactory<CameraController>(std::string("CameraController"));
+FactoryBase* factory = GameObject::AddComponentFactory<CameraController>(std::string("CameraController"));
 
 void CameraController::Export(tinyxml2::XMLElement* element) {
 	element->SetAttribute("movementSpeed", movementSpeed);
@@ -40,36 +41,41 @@ void CameraController::Export(tinyxml2::XMLElement* element) {
 }
 void CameraController::Update(double deltaTime) {
 	if (InputSystem::cursorMode == InputSystem::CursorMode::Free) {
-		return;
+		//return;
 	}
+	GameObject* gameObject = GetParent();
 	//Move position
-	Utilities::Vector3 forward = gameObject->rotation.Forward();
-	Utilities::Vector3 right = gameObject->rotation.Right();
-	Utilities::Vector3 up = gameObject->rotation.Up();
+	Utilities::Quaternion rotation = gameObject->GetRotation();
+	Utilities::Vector3 position = gameObject->GetPosition();
+	Utilities::Vector3 forward = rotation.Forward();
+	Utilities::Vector3 right = rotation.Right();
+	Utilities::Vector3 up = rotation.Up();
 	if (InputSystem::IsKeyPressed(SDLK_w)) {
-		gameObject->SetPosition(gameObject->GetPosition() - forward * movementSpeed * deltaTime);
+	    position -= forward * movementSpeed * deltaTime;
 	}
 	if (InputSystem::IsKeyPressed(SDLK_s)) {
-		gameObject->position += forward * movementSpeed * deltaTime;
+		position += forward * movementSpeed * deltaTime;
 	}
 	if (InputSystem::IsKeyPressed(SDLK_d)) {
-		gameObject->position += right * movementSpeed * deltaTime;
+		position += right * movementSpeed * deltaTime;
 	}
 	if (InputSystem::IsKeyPressed(SDLK_a)) {
-		gameObject->position -= right * movementSpeed * deltaTime;
+		position -= right * movementSpeed * deltaTime;
 	}
 	if (InputSystem::IsKeyPressed(SDLK_SPACE)) {
-		gameObject->position += up * movementSpeed * deltaTime;
+		position += up * movementSpeed * deltaTime;
 	}
 	if (InputSystem::IsKeyPressed(SDLK_LSHIFT)) {
-		gameObject->position -= up * movementSpeed * deltaTime;
+		position -= up * movementSpeed * deltaTime;
 	}
+	gameObject->SetPosition(position);
 	//Look around
-	gameObject->rotation *= Quaternion::FromAngleAxis(InputSystem::mouseDelta.X * sensitivity * deltaTime, up);
-	gameObject->rotation *= Quaternion::FromAngleAxis(InputSystem::mouseDelta.Y * sensitivity * deltaTime, right);
+	rotation *= Quaternion::FromAngleAxis(-InputSystem::mouseDelta.X * sensitivity * deltaTime, up);
+	rotation *= Quaternion::FromAngleAxis(InputSystem::mouseDelta.Y * sensitivity * deltaTime, right);
+	gameObject->SetRotation(rotation);
 }
 void CameraController::Start() {
-	InputSystem::cursorMode = InputSystem::CursorMode::Locked;
+	InputSystem::cursorMode = InputSystem::CursorMode::Free;
 	InputSystem::AddKeyDownEvent([](SDL_Keycode key) {
 		if (key == SDLK_ESCAPE) {
 			if (InputSystem::cursorMode == InputSystem::CursorMode::Free) {
@@ -82,7 +88,6 @@ void CameraController::Start() {
 		}
 	});
 }
- */
 
 ID modelObject;
 
@@ -125,7 +130,7 @@ int main(int argc, char** argv) {
 		GameObject* floor = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		CubePrimitive* primitive = floor->AddComponent(new CubePrimitive());
-		primitive->SetColor((SDL_Color){0, 1, 0, 1});
+		primitive->SetColor((SDL_Color){0, 255, 0, 255});
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::CubeCollider* collider = floor->AddComponent(new Physics::CubeCollider());
@@ -137,7 +142,7 @@ int main(int argc, char** argv) {
 		GameObject* cube = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		CubePrimitive* primitive = cube->AddComponent(new CubePrimitive());
-		primitive->SetColor((SDL_Color){1, 0, 0, 1});
+		primitive->SetColor((SDL_Color){255, 0, 0, 255});
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
@@ -155,11 +160,11 @@ int main(int argc, char** argv) {
 		#endif*/
 	}
 	{
-		ID id = scene->CreateObject("Sphere", Utilities::Vector3(3, 3, 0));
+		ID id = scene->CreateObject("Sphere", Utilities::Vector3(3, 3, 0), Utilities::Quaternion(), Utilities::Vector3(2.0));
 		GameObject* sphere = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		SpherePrimitive* primitive = sphere->AddComponent(new SpherePrimitive());
-		primitive->SetColor((SDL_Color){1, 0, 0, 1});
+		primitive->SetColor((SDL_Color){255, 0, 0, 255});
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = sphere->AddComponent(new Physics::SphereCollider());
@@ -175,41 +180,54 @@ int main(int argc, char** argv) {
 		#endif
 		#ifdef StevEngine_RENDERER_GL
 		ModelRenderer* r = modelObj->AddComponent(new ModelRenderer(model));
-		r->scale = Vector3(1.0, 1.0, 1.0) * modelScale;
-		r->SetColor({1,1,0});
+		r->scale = Vector3(modelScale);
+		r->SetColor({255,255,0,255});
 		#endif
 		#ifdef StevEngine_PHYSICS
-		modelObj->AddComponent(new Physics::ModelCollider(model, true, Vector3(), Quaternion(), Vector3(1.0, 1.0, 1.0) * modelScale));
+		modelObj->AddComponent(new Physics::ModelCollider(model, true, Vector3(), Quaternion(), Vector3(modelScale)));
 		modelObj->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		#endif
 	}
 	{
-		ID id = scene->CreateObject("Cylinder", Utilities::Vector3(0, 3, 3));
-		GameObject* sphere = scene->GetObject(id);
+		ID id = scene->CreateObject("Cylinder", Utilities::Vector3(0, 3, 3), Quaternion(), Vector3(1.0, 2.0, 1.0));
+		GameObject* obj = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
-		CylinderPrimitive* primitive = sphere->AddComponent(new CylinderPrimitive());
-		primitive->SetColor((SDL_Color){0, 0, 1, 1});
+		CylinderPrimitive* primitive = obj->AddComponent(new CylinderPrimitive());
+		primitive->SetColor((SDL_Color){0, 0, 255, 255});
 		#endif
 		#ifdef StevEngine_PHYSICS
-		Physics::Collider* collider = sphere->AddComponent(new Physics::CylinderCollider());
-		//Physics::RigidBody* rb = sphere->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		Physics::Collider* collider = obj->AddComponent(new Physics::CylinderCollider());
+		Physics::RigidBody* rb = obj->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		#endif
+	}
+	{
+		ID id = scene->CreateObject("Capsule", Utilities::Vector3(0, 3, 3), Quaternion(), Vector3(1.0, 1.0, 1.0));
+		GameObject* obj = scene->GetObject(id);
+		#ifdef StevEngine_RENDERER_GL
+		CapsulePrimitive* primitive = obj->AddComponent(new CapsulePrimitive());
+		primitive->SetColor((SDL_Color){255, 0, 255, 255});
+		#endif
+		#ifdef StevEngine_PHYSICS
+		Physics::Collider* collider = obj->AddComponent(new Physics::CapsuleCollider());
+		Physics::RigidBody* rb = obj->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		#endif
 	}
 	//Add Camera controller
 	GameObject* camObj = scene->GetCameraObject();
-	///camObj->AddComponent(CameraController());
+	//camObj->AddComponent(new CameraController());
 	camObj->SetPosition(Utilities::Vector3(0, 4, 25));
 	camObj->SetRotation(Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward));
 
 	//Add test lights
+	#ifdef StevEngine_RENDERER_GL
 	GameObject* light1 = scene->GetObject(scene->CreateObject("PointLight1", Utilities::Vector3(0, 3, 3)));
 	light1->AddComponent(new Render::PointLight());
-	light1->AddComponent(new CubePrimitive(Utilities::Vector3(), Utilities::Quaternion(), Utilities::Vector3(0.1)));
-	GameObject* light2 = scene->GetObject(scene->CreateObject("PointLight1", Utilities::Vector3(2, 3, 1)));
+	light1->AddComponent(new CubePrimitive(Utilities::Vector3(), Utilities::Quaternion(), Utilities::Vector3(0.1)))->SetColor({255,255,255,255});
+	GameObject* light2 = scene->GetObject(scene->CreateObject("PointLight2", Utilities::Vector3(2, 3, 1)));
 	light2->AddComponent(new Render::PointLight());
 	light2->AddComponent(new CubePrimitive(Utilities::Vector3(), Utilities::Quaternion(), Utilities::Vector3(0.1)));
-	//scene->GetObject(scene->CreateObject("DirectionalLight", Utilities::Vector3(0, 0, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(-90), Utilities::Vector3::right)))->AddComponent(new Render::DirectionalLight());
-
+	scene->GetObject(scene->CreateObject("DirectionalLight", Utilities::Vector3(0, 0, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(-90), Utilities::Vector3::right)))->AddComponent(new Render::DirectionalLight());
+	#endif
 	//Test ressource manager
 	Log::Debug(std::format("Ressource 0: {}", Engine::Instance->resources.GetFile(0).path));
 	Log::Debug(std::format("Ressource \"test.txt\": {}", Engine::Instance->resources.GetFile("test.txt").GetStrData()));
@@ -239,7 +257,7 @@ int main(int argc, char** argv) {
 
 	//Set background
 	#ifdef StevEngine_RENDERER_GL
-	engine.render.SetBackground((SDL_Color){0, 0, 0, 1});
+	engine.render.SetBackground((SDL_Color){0, 0, 0, 255});
 	#endif
 
 	//Start engine
