@@ -128,10 +128,22 @@ namespace StevEngine {
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
             //Lights
             glUniform3fv(glGetUniformLocation(shaderProgram, "directionalLights[0].basic.diffuse"), 1, glm::value_ptr(glm::vec3(0.75)));
-            glUniform3fv(glGetUniformLocation(shaderProgram, "directionalLights[0].basic.specular"), 1, glm::value_ptr(glm::vec3(0.25)));
+            glUniform3fv(glGetUniformLocation(shaderProgram, "directionalLights[0].basic.specular"), 1, glm::value_ptr(glm::vec3(0.5)));
             glUniform3fv(glGetUniformLocation(shaderProgram, "directionalLights[0].direction"), 1, glm::value_ptr(glm::vec3(0.0, 0, 1.0)));
-            glUniform3fv(glGetUniformLocation(shaderProgram, "directionalLights[1].basic.diffuse"), 1, glm::value_ptr(glm::vec3(1)));
-            glUniform3fv(glGetUniformLocation(shaderProgram, "directionalLights[1].direction"), 1, glm::value_ptr(glm::vec3(0.0, -1, 0.0)));
+
+            glUniform3fv(glGetUniformLocation(shaderProgram, "pointLights[0].position"), 1, glm::value_ptr(glm::vec3(0.0, 3.0, 0.0)));
+            glUniform3fv(glGetUniformLocation(shaderProgram, "pointLights[0].basic.diffuse"), 1, glm::value_ptr(glm::vec3(1.0)));
+            glUniform3fv(glGetUniformLocation(shaderProgram, "pointLights[0].basic.specular"), 1, glm::value_ptr(glm::vec3(1.0)));
+            glUniform1f (glGetUniformLocation(shaderProgram, "pointLights[0].constant"), 0.1);
+            glUniform1f (glGetUniformLocation(shaderProgram, "pointLights[0].linear"), 0.2);
+            glUniform1f (glGetUniformLocation(shaderProgram, "pointLights[0].quadratic"), 0.3);
+
+            glUniform3fv(glGetUniformLocation(shaderProgram, "spotLights[0].position"), 1, glm::value_ptr(glm::vec3(0.0, 15.0, 0.0)));
+            glUniform3fv(glGetUniformLocation(shaderProgram, "spotLights[0].direction"), 1, glm::value_ptr(glm::vec3(0.0, -1.0, 0.0)));
+            glUniform3fv(glGetUniformLocation(shaderProgram, "spotLights[0].basic.diffuse"), 1, glm::value_ptr(glm::vec3(0.50)));
+            glUniform3fv(glGetUniformLocation(shaderProgram, "spotLights[0].basic.specular"), 1, glm::value_ptr(glm::vec3(0.25)));
+            glUniform1f (glGetUniformLocation(shaderProgram, "spotLights[0].cutOff"), 0.5);
+            glUniform1f (glGetUniformLocation(shaderProgram, "spotLights[0].outerCutOff"), 1.5);
 
             //Set background color
             glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);

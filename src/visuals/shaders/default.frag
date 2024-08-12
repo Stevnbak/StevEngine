@@ -75,7 +75,8 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), objectMaterial.shininess);
     // attenuation
     float distance    = length(light.position - fragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+    float a = (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+    float attenuation = a == 0 ? 0 : 1.0 / a;
     // combine results
     vec3 diffuse  = light.basic.diffuse  * diff * objectMaterial.diffuse;
     vec3 specular = light.basic.specular * spec * objectMaterial.specular;
@@ -88,7 +89,6 @@ struct SpotLight {
     vec3 position;
     vec3 direction;
 
-    float strength;
     float cutOff;
     float outerCutOff;
 
@@ -121,12 +121,11 @@ void main() {
     for(int i = 0; i < MAX_DIRECTIONAL_LIGHTS; i++)
         lights += CalculateDirectionalLight(directionalLights[i], norm, viewDir);
     // Point lights
-    /*for(int i = 0; i < MAX_POINT_LIGHTS; i++)
+    for(int i = 0; i < MAX_POINT_LIGHTS; i++)
         lights += CalculatePointLight(pointLights[i], norm, fragPosition, viewDir);
     // Spot lights
     for(int i = 0; i < MAX_SPOT_LIGHTS; i++)
         lights += CalculateSpotLight(spotLights[i], norm, fragPosition, viewDir);
-    */
     //Final color
     FragColor = vec4(lights, 1.0) * tex * objectColor;
 }
