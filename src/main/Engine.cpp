@@ -36,20 +36,18 @@ namespace StevEngine {
 
 	#ifdef StevEngine_SHOW_WINDOW
 	void Engine::Draw() {
+        // Add objects to render queues
+        if (scenes.GetActiveScene()->activeCamera != nullptr) {
+           	Scene* scene = scenes.GetActiveScene();
+           	for (Utilities::ID id : scene->GetAllObjects()) {
+          		if(!scene->GetObject(id)->parent.IsNull()) continue;
+          		scene->GetObject(id)->Draw(glm::mat4x4(1.0));
+           	}
+        }
 		#ifdef StevEngine_RENDERER_GL
 		// Clear the colorbuffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		// Drawing
-		render.StartFrame();
-		if (scenes.GetActiveScene()->activeCamera != nullptr) {
-			//Draw objects
-			Scene* scene = scenes.GetActiveScene();
-			for (Utilities::ID id : scene->GetAllObjects()) {
-				if(!scene->GetObject(id)->parent.IsNull()) continue;
-				scene->GetObject(id)->Draw(glm::mat4x4(1.0));
-			}
-		}
-		render.EndFrame();
+		render.DrawFrame();
 		// Refresh OpenGL window
 		SDL_GL_SetSwapInterval(0);
 		SDL_GL_SwapWindow(window);

@@ -32,13 +32,13 @@ namespace StevEngine {
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             glGenBuffers(1, &EBO);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-            // position
+            // position layout
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, Vertex::size, (void*)0);
             glEnableVertexAttribArray(0);
-            // normal
+            // normal layout
             glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, Vertex::size, (void*)((3) * sizeof(float)));
             glEnableVertexAttribArray(1);
-            // texture coordinates
+            // uv layout
             glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, Vertex::size, (void*)((3 + 3) * sizeof(float)));
             glEnableVertexAttribArray(2);
             //Shaders
@@ -82,7 +82,61 @@ namespace StevEngine {
             Log::Debug("Renderer has been initialized!", true);
         }
 
-        void System::DrawObject(Object object, glm::mat4x4 transform) {
+        void System::DrawObject(Object object, glm::mat4x4 transform, RenderQueue queue) {
+            queues[queue].push_back({object, transform});
+        };
+
+        void System::DrawFrame() {
+            //Use default shader program
+            glUseProgram(shaderProgram);
+
+            //Bind vertex array
+            glBindVertexArray(VAO);
+
+            //Camera matrices
+            Visuals::Camera* camera = Engine::Instance->scenes.GetActiveScene()->GetCamera();
+            //  View matrix
+            glm::mat4x4 view = camera->GetView();
+            unsigned int viewLoc = glGetUniformLocation(shaderProgram, "viewTransform");
+            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+            glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "viewPosition"), 1, GL_FALSE, glm::value_ptr((glm::vec3)camera->GetParent()->GetWorldPosition()));
+            //  Projection matrix
+            glm::mat4x4 proj = camera->GetProjection();
+            unsigned int projLoc = glGetUniformLocation(shaderProgram, "projectionTransform");
+            glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
+
+            //Lights
+            for(Light* light : lights) {
+                light->UpdateShader();
+            }
+
+            //Set background color
+            glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
+
+            //Draw objects
+            for(int i = 0; i < queues.size(); i++) {
+                for(RenderObject object : queues[i]) {
+                    Draw(object);
+                }
+                queues[i].clear();
+            }
+            
+            //Cleanup
+            glBindVertexArray(0);
+        }
+
+        void System::SetBackground(SDL_Color color) {
+            backgroundColor = color;
+        }
+
+        void System::SetAmbientLight(float strength, SDL_Color color) {
+            glUniform3fv(glGetUniformLocation(shaderProgram, "ambientColor"), 1, glm::value_ptr(glm::vec3(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f)));
+            glUniform1f(glGetUniformLocation(shaderProgram, "ambientStrength"), strength);
+        }
+
+        void System::Draw(RenderObject renderObject) {
+            Object object = renderObject.object;
+            glm::mat4x4 transform = renderObject.transform;
             //Update transform
             unsigned int transformLoc = glGetUniformLocation(shaderProgram, "objectTransform");
             glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
@@ -108,48 +162,6 @@ namespace StevEngine {
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, object.indices.size() * sizeof(float), object.indices.data(), GL_STATIC_DRAW);
             glDrawElements(GL_TRIANGLES, object.indices.size(), GL_UNSIGNED_INT, 0);
         }
-
-        void System::DrawCustomObject(CustomObject* object, glm::mat4x4 transform) {
-            glUseProgram(0);
-            object->Draw(transform);
-            glUseProgram(shaderProgram);
-        }
-
-        void System::StartFrame() {
-            glUseProgram(shaderProgram);
-            glBindVertexArray(VAO);
-
-            Visuals::Camera* camera = Engine::Instance->scenes.GetActiveScene()->GetCamera();
-            //View matrix
-            glm::mat4x4 view = camera->GetView();
-            unsigned int viewLoc = glGetUniformLocation(shaderProgram, "viewTransform");
-            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-            glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "viewPosition"), 1, GL_FALSE, glm::value_ptr((glm::vec3)camera->GetParent()->GetWorldPosition()));
-            //Projection matrix
-            glm::mat4x4 proj = camera->GetProjection();
-            unsigned int projLoc = glGetUniformLocation(shaderProgram, "projectionTransform");
-            glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
-            //Lights
-            for(Light* light : lights) {
-                light->UpdateShader();
-            }
-            //Set background color
-            glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
-        }
-
-        void System::EndFrame() {
-            glBindVertexArray(0);
-        }
-
-        void System::SetBackground(SDL_Color color) {
-            backgroundColor = color;
-        }
-
-        void System::SetAmbientLight(float strength, SDL_Color color) {
-            glUniform3fv(glGetUniformLocation(shaderProgram, "ambientColor"), 1, glm::value_ptr(glm::vec3(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f)));
-            glUniform1f(glGetUniformLocation(shaderProgram, "ambientStrength"), strength);
-        }
-
 
         unsigned int System::GetLightID(std::string type) {
             unsigned int next = 0;
