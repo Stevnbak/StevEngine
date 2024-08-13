@@ -5,12 +5,13 @@
 #include "main/ResourceManager.hpp"
 #include "visuals/render/Object.hpp"
 #include "utilities/Model.hpp"
+#include "utilities/Texture.hpp"
 
 #include <vector>
 
 namespace StevEngine {
     namespace Visuals {
-        Render::Object CreateRenderObject(Utilities::Model model, SDL_Color color, SDL_Surface* surface) {
+        Render::Object CreateRenderObject(Utilities::Model model, SDL_Color color, Utilities::Texture surface) {
             std::vector<Utilities::Vertex> vertices;
             std::vector<unsigned int> indices;
             for(Utilities::Mesh mesh : model.GetMeshes()) {

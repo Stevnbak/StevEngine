@@ -110,8 +110,8 @@ if(USE_AUDIO)
 endif()
 
 ## SDL_Image
-#find_package(SDL2_image REQUIRED)
-#target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image)
+find_package(SDL2_image REQUIRED)
+target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image)
 
 if(USE_RENDERER_GL OR USE_PHYSICS)
     ## Assimp

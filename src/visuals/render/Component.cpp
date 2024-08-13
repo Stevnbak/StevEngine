@@ -1,3 +1,4 @@
+#include "utilities/Texture.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "Component.hpp"
 #include "scenes/GameObject.hpp"
@@ -30,6 +31,9 @@ namespace StevEngine {
 		void RenderComponent::SetColor(SDL_Color color) {
 			this->color = color;
 			object.color = color;
+		}
+		void RenderComponent::SetTexture(Utilities::Texture texture) {
+			object.SetTexture(texture);
 		}
 
 		//Export and import

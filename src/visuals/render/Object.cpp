@@ -1,5 +1,6 @@
 #ifdef StevEngine_RENDERER_GL
 #include "Object.hpp"
+#include "utilities/Texture.hpp"
 
 #include "glad/glad.h"
 #include <algorithm>
@@ -25,7 +26,7 @@ namespace StevEngine {
             }
             return result;
         }
-        Object::Object(std::vector<Vertex> vertices, SDL_Color color, SDL_Surface* textureData) {
+        Object::Object(std::vector<Vertex> vertices, SDL_Color color, Utilities::Texture textureData) {
             //Create indices and filter out duplicates
             std::vector<Vertex> uniqueVertices;
             for (Vertex v : vertices) {
@@ -38,34 +39,25 @@ namespace StevEngine {
             //Generate vertex array
             this->vertices = ToFloatList(uniqueVertices);
             //Bind texture
-            if(textureData) {
-                textured = true;
-                glGenTextures(1, &texture);
-                glBindTexture(GL_TEXTURE_3D, texture);
-                //Genereate texture
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureData->w, textureData->h, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData->pixels);
-                glGenerateMipmap(GL_TEXTURE_2D);
-                //Free up the image data memory.
-                SDL_FreeSurface(textureData);
-            } else {
-                textured = false;
-            }
+            SetTexture(textureData);
         }
-        Object::Object(std::vector<Vertex> vertices, std::vector<unsigned int> indices, SDL_Color color, SDL_Surface* textureData) : vertices(ToFloatList(vertices)), indices(indices) {
-            //Bind texture
-            if(textureData) {
+        Object::Object(std::vector<Vertex> vertices, std::vector<unsigned int> indices, SDL_Color color, Utilities::Texture textureData) : vertices(ToFloatList(vertices)), indices(indices) {
+            SetTexture(textureData);
+        }
+        void Object::SetTexture(Utilities::Texture textureData) {
+            SDL_Surface* surface = textureData;
+            if(surface) {
                 textured = true;
                 glGenTextures(1, &texture);
-                glBindTexture(GL_TEXTURE_3D, texture);
+                glBindTexture(GL_TEXTURE_2D, texture);
                 //Genereate texture
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+                //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureData->w, textureData->h, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData->pixels);
-                glGenerateMipmap(GL_TEXTURE_2D);
-                //Free up the image data memory.
-                SDL_FreeSurface(textureData);
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+                //glGenerateMipmap(GL_TEXTURE_2D);
+                //Free texture data
+                textureData.Free();
             } else {
                 textured = false;
             }

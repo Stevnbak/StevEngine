@@ -14,18 +14,27 @@
 #include <vector>
 
 using namespace StevEngine::Render;
-using StevEngine::Utilities::Vertex;
-using StevEngine::Utilities::Vector3;
+using namespace StevEngine::Utilities;
 
 namespace StevEngine {
 	namespace Visuals {
-	    double r = 0.5;
+		double r = 0.5;
 	    //Cube
 		const std::vector<Vertex> CubeVertices() {
 			std::array<Vertex, 6*6> vertices;
 			for(int side = 0; side < 6; side++) {
+			    float sideEffect = side % 2;
+			    //Texture coordinates
+				Vector2 sideUV;
+				if(side < 1)      sideUV = Vector2(1, 1);
+				else if(side < 2) sideUV = Vector2(3, 1);
+				else if(side < 3) sideUV = Vector2(1, 2);
+				else if(side < 4) sideUV = Vector2(1, 0);
+				else if(side < 5) sideUV = Vector2(0, 1);
+				else              sideUV = Vector2(2, 1);
+				//Coordinates
+				int a = (sideEffect ? 1 : -1);
 				std::array<Vector3, 6> sideVertices;
-				int a = (side % 2 ? 1 : -1);
 				for(int tri = -1; tri < 2; tri += 2) {
                     for(int ver = 0; ver < 3; ver++) {
                         int b = (ver == 0 ? 1 : (ver == 1 ? tri : (-1)));
@@ -36,9 +45,17 @@ namespace StevEngine {
                         else sideVertices[offset + ver] = Vector3(c, b, a);
                     }
 				}
+				//Normal
 				Vector3 normal = Vector3::Cross(sideVertices[2] - sideVertices[0], sideVertices[1] - sideVertices[0]).Normalized();
+				//Combine to vertices
 				for(int i = 0; i < 6; i++) {
-				    vertices[side * 6 + i] = Vertex(sideVertices[i] * r, normal);
+                    float u = side < 2 ? sideVertices[i].Y : side < 4 ? sideVertices[i].X : sideVertices[i].X;
+					float v = side < 2 ? sideVertices[i].Z : side < 4 ? sideVertices[i].Z : sideVertices[i].Y;
+				    vertices[side * 6 + i] = Vertex(
+						sideVertices[i] * r,
+						normal,
+						Vector2(std::abs(sideUV.X + ((u + 1) / 2)) * 0.25, std::abs((sideEffect) - (sideUV.Y + ((v + 1) / 2)) * 0.333333333333))
+					);
 				}
 			}
 			return std::vector<Vertex>(vertices.begin(), vertices.end());

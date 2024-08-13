@@ -145,6 +145,12 @@ namespace StevEngine {
             backgroundColor = color;
         }
 
+        void System::SetAmbientLight(float strength, SDL_Color color) {
+            glUniform3fv(glGetUniformLocation(shaderProgram, "ambientColor"), 1, glm::value_ptr(glm::vec3(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f)));
+            glUniform1f(glGetUniformLocation(shaderProgram, "ambientStrength"), strength);
+        }
+
+
         unsigned int System::GetLightID(std::string type) {
             unsigned int next = 0;
             for(Light* light : lights) {

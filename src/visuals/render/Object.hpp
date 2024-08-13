@@ -8,6 +8,7 @@
 #include <utilities/Vector3.hpp>
 #include <utilities/Quaternion.hpp>
 #include "utilities/Vertex.hpp"
+#include "utilities/Texture.hpp"
 
 namespace StevEngine {
     namespace Render {
@@ -23,8 +24,9 @@ namespace StevEngine {
         class Object {
 			friend class System;
             public:
-                Object(std::vector<Utilities::Vertex> vertices, SDL_Color color = {255, 255, 255, 255}, SDL_Surface* textureData = nullptr);
-                Object(std::vector<Utilities::Vertex> vertices, std::vector<unsigned int> indices, SDL_Color color = {255, 255, 255, 255}, SDL_Surface* textureData = nullptr);
+                Object(std::vector<Utilities::Vertex> vertices, SDL_Color color = {255, 255, 255, 255}, Utilities::Texture textureData = NULL);
+                Object(std::vector<Utilities::Vertex> vertices, std::vector<unsigned int> indices, SDL_Color color = {255, 255, 255, 255}, Utilities::Texture textureData = NULL);
+                void SetTexture(Utilities::Texture textureData);
                 SDL_Color color;
                 Material material;
             private:

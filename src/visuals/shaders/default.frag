@@ -20,7 +20,7 @@ struct Material {
 uniform Material objectMaterial = Material(vec3(1.0), vec3(1.0), vec3(1.0), 0.1);
 
 //Global ambient lighting
-uniform float ambientStrength = 0.1;
+uniform float ambientStrength = 0.5;
 uniform vec3 ambientColor = vec3(1.0);
 
 //Lights

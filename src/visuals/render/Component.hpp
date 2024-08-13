@@ -4,9 +4,11 @@
 
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
+
 #include <utilities/Vector3.hpp>
 #include <utilities/Vertex.hpp>
 #include <utilities/Quaternion.hpp>
+#include "utilities/Texture.hpp"
 #include <scenes/Component.hpp>
 
 namespace StevEngine {
@@ -24,6 +26,7 @@ namespace StevEngine {
 				Utilities::Quaternion rotation = Utilities::Quaternion();
 				Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1);
 				void SetColor(SDL_Color color);
+				void SetTexture(Utilities::Texture texture);
 			protected:
 				Object object;
 				SDL_Color color = (SDL_Color){1, 1, 1, 1};

@@ -39,9 +39,8 @@ namespace StevEngine {
 			}
 		}
 		Resource System::GetFile(std::string path) const {
-			ushort id = pathToId.at(path);
-			if(resources.contains(id)) {
-				return resources.at(id);
+			if(pathToId.contains(path)) {
+				return resources.at(pathToId.at(path));
 			}
 			else {
 				Log::Error(std::format("Resource {} not found.", path), true);

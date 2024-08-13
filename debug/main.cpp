@@ -10,6 +10,7 @@
 #include "visuals/render/Lights.hpp"
 #include "glm/ext/matrix_float4x4.hpp"
 #include "utilities/Quaternion.hpp"
+#include "utilities/Texture.hpp"
 #include "utilities/Vector3.hpp"
 #include "visuals/Model.hpp"
 #include "visuals/render/Lights.hpp"
@@ -41,7 +42,7 @@ void CameraController::Export(tinyxml2::XMLElement* element) {
 }
 void CameraController::Update(double deltaTime) {
 	if (InputSystem::cursorMode == InputSystem::CursorMode::Free) {
-		//return;
+		return;
 	}
 	GameObject* gameObject = GetParent();
 	//Move position
@@ -89,6 +90,23 @@ void CameraController::Start() {
 	});
 }
 
+class Rotate final : public Component {
+	public:
+		double movementSpeed = 2;
+		Vector3 axis = Vector3::up;
+		void Draw(glm::mat4x4 transform) {}
+		void Update(double deltaTime) {
+			GameObject* gameObject = GetParent();
+			Utilities::Quaternion rotation = gameObject->GetRotation();
+			rotation *= Quaternion::FromAngleAxis(movementSpeed * deltaTime, axis);
+			gameObject->SetRotation(rotation);
+		}
+		void Start() {};
+		void Deactivate() {};
+		void Export(tinyxml2::XMLElement* element) {};
+		Rotate() : Component("Rotate") {};
+};
+
 ID modelObject;
 
 void mainUpdate(double deltaTime) {
@@ -119,6 +137,7 @@ int main(int argc, char** argv) {
 	engine.resources.AddFileFromHex("Debug_scene.scene", Debug_scene_scene_data, Debug_scene_scene_size);
 	engine.resources.AddFileFromHex("Fox.stl", Fox_stl_data, Fox_stl_size);
 	engine.resources.AddFileFromHex("cube.stl", cube_stl_data, cube_stl_size);
+	engine.resources.AddFileFromHex("box.png", box_png_data, box_png_size);
 
 	//Create new scene
 	//Scene* scene = engine.scenes.CreateSceneFromFile(engine.resources.GetFile("Debug_scene.scene"));
@@ -138,15 +157,17 @@ int main(int argc, char** argv) {
 		#endif
 	}
 	{
-		ID id = scene->CreateObject("Cube", Utilities::Vector3(0, 4, 0), Utilities::Quaternion(), Utilities::Vector3(1, 2, 1));
+		ID id = scene->CreateObject("Cube", Utilities::Vector3(0, 4, 0), Utilities::Quaternion(), Utilities::Vector3(2));
 		GameObject* cube = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		CubePrimitive* primitive = cube->AddComponent(new CubePrimitive());
-		primitive->SetColor((SDL_Color){255, 0, 0, 255});
+		primitive->SetColor((SDL_Color){255, 255, 255, 255});
+		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("box.png").GetSDLData()));
+		cube->AddComponent(new Rotate());
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
-		Physics::RigidBody* rb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		//Physics::RigidBody* rb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		#endif
 		cube->ExportToFile("cube");
 		/*ID id2 = scene->CreateObjectFromFile(Engine::Instance->resources.GetFile("cube.object"));
@@ -214,7 +235,7 @@ int main(int argc, char** argv) {
 	}
 	//Add Camera controller
 	GameObject* camObj = scene->GetCameraObject();
-	//camObj->AddComponent(new CameraController());
+	camObj->AddComponent(new CameraController());
 	camObj->SetPosition(Utilities::Vector3(0, 4, 25));
 	camObj->SetRotation(Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward));
 
