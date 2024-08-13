@@ -92,8 +92,8 @@ void CameraController::Start() {
 
 class Rotate final : public Component {
 	public:
-		double movementSpeed = 2;
-		Vector3 axis = Vector3::up;
+		double movementSpeed = 0.5;
+		Vector3 axis = Vector3::right;
 		void Draw(glm::mat4x4 transform) {}
 		void Update(double deltaTime) {
 			GameObject* gameObject = GetParent();
@@ -105,6 +105,7 @@ class Rotate final : public Component {
 		void Deactivate() {};
 		void Export(tinyxml2::XMLElement* element) {};
 		Rotate() : Component("Rotate") {};
+		Rotate(Vector3 axis, double movementSpeed = 0.5) : axis(axis), movementSpeed(movementSpeed), Component("Rotate") {};
 };
 
 ID modelObject;
@@ -157,13 +158,14 @@ int main(int argc, char** argv) {
 		#endif
 	}
 	{
-		ID id = scene->CreateObject("Cube", Utilities::Vector3(0, 4, 0), Utilities::Quaternion(), Utilities::Vector3(2));
+		ID id = scene->CreateObject("Cube", Utilities::Vector3(0, 4, 0), Utilities::Quaternion(), Utilities::Vector3(2.0));
 		GameObject* cube = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		CubePrimitive* primitive = cube->AddComponent(new CubePrimitive());
 		primitive->SetColor((SDL_Color){255, 255, 255, 255});
 		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("box.png").GetSDLData()));
-		cube->AddComponent(new Rotate());
+		cube->AddComponent(new Rotate(Vector3::up));
+		cube->AddComponent(new Rotate(Vector3::right));
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());

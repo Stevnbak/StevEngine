@@ -23,17 +23,8 @@ namespace StevEngine {
 		const std::vector<Vertex> CubeVertices() {
 			std::array<Vertex, 6*6> vertices;
 			for(int side = 0; side < 6; side++) {
-			    float sideEffect = side % 2;
-			    //Texture coordinates
-				Vector2 sideUV;
-				if(side < 1)      sideUV = Vector2(1, 1);
-				else if(side < 2) sideUV = Vector2(3, 1);
-				else if(side < 3) sideUV = Vector2(1, 2);
-				else if(side < 4) sideUV = Vector2(1, 0);
-				else if(side < 5) sideUV = Vector2(0, 1);
-				else              sideUV = Vector2(2, 1);
 				//Coordinates
-				int a = (sideEffect ? 1 : -1);
+				int a = (side % 2 ? 1 : -1);
 				std::array<Vector3, 6> sideVertices;
 				for(int tri = -1; tri < 2; tri += 2) {
                     for(int ver = 0; ver < 3; ver++) {
@@ -47,14 +38,44 @@ namespace StevEngine {
 				}
 				//Normal
 				Vector3 normal = Vector3::Cross(sideVertices[2] - sideVertices[0], sideVertices[1] - sideVertices[0]).Normalized();
+                //Texture coordinates
+               	Vector2 sideUV;
+               	Vector2 uvFlip;
+               	if(side < 1)      {
+                    sideUV = Vector2(1, 1);
+                    uvFlip = Vector2(1, -1);
+                }
+               	else if(side < 2) {
+                    sideUV = Vector2(3, 1);
+                    uvFlip = Vector2(-1, -1);
+                }
+               	else if(side < 3) {
+                    sideUV = Vector2(1, 2);
+                    uvFlip = Vector2(1, 1);
+                }
+               	else if(side < 4) {
+                    sideUV = Vector2(1, 0);
+                    uvFlip = Vector2(1, -1);
+                }
+               	else if(side < 5) {
+                    sideUV = Vector2(0, 1);
+                    uvFlip = Vector2(-1, -1);
+                }
+               	else {
+                    sideUV = Vector2(2, 1);
+                    uvFlip = Vector2(1, -1);
+                }
 				//Combine to vertices
 				for(int i = 0; i < 6; i++) {
-                    float u = side < 2 ? sideVertices[i].Y : side < 4 ? sideVertices[i].X : sideVertices[i].X;
-					float v = side < 2 ? sideVertices[i].Z : side < 4 ? sideVertices[i].Z : sideVertices[i].Y;
+                    float a = (side < 2 ? sideVertices[i].Z : side < 4 ? sideVertices[i].Z : sideVertices[i].X) * uvFlip.X;
+					float b = (side < 2 ? sideVertices[i].Y : side < 4 ? sideVertices[i].X : sideVertices[i].Y) * uvFlip.Y;
+					float u = (sideUV.X + ((a + 1) / 2)) * 0.25;
+					float v = (sideUV.Y + ((b + 1) / 2)) * 0.333333333333;
+
 				    vertices[side * 6 + i] = Vertex(
 						sideVertices[i] * r,
 						normal,
-						Vector2(std::abs(sideUV.X + ((u + 1) / 2)) * 0.25, std::abs((sideEffect) - (sideUV.Y + ((v + 1) / 2)) * 0.333333333333))
+						Vector2(u, v)
 					);
 				}
 			}
