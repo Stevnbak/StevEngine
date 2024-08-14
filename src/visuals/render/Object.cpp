@@ -21,8 +21,8 @@ namespace StevEngine {
                 result[j++] = vertex.nX;
                 result[j++] = vertex.nY;
                 result[j++] = vertex.nZ;
-                result[j++] = vertex.texX;
-                result[j++] = vertex.texY;
+                result[j++] = vertex.u;
+                result[j++] = vertex.v;
             }
             return result;
         }

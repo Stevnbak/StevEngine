@@ -28,7 +28,7 @@ namespace StevEngine::Audio {
             CleanUp();
         } else {
             Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
-            Log::Normal(std::format("Opened audio at {} Hz {} bit{} {}", audio_rate,
+            Log::Debug(std::format("Opened audio at {} Hz {} bit{} {}", audio_rate,
                 (audio_format&0xFF),
                 (SDL_AUDIO_ISFLOAT(audio_format) ? " (float)" : ""),
                 (audio_channels > 2) ? "surround" :
@@ -75,7 +75,7 @@ namespace StevEngine::Audio {
             Mix_VolumeMusic(volume * MIX_MAX_VOLUME);
         }
     }
-    
+
 
     void System::Stop(int channel) {
         Mix_HaltChannel(channel);

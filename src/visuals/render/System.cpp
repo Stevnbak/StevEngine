@@ -1,3 +1,4 @@
+#include <SDL_mutex.h>
 #ifdef StevEngine_RENDERER_GL
 #include "System.hpp"
 
@@ -24,6 +25,17 @@ namespace StevEngine {
 
         System::System() {}
         void System::Init() {
+            //Initialize GLAD:
+           	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+          		throw("Failed to initialize GLAD");
+           	}
+           	Log::Debug(std::format("OpenGL Version: {}.{}", GLVersion.major, GLVersion.minor), true);
+           	Log::Debug(std::format("OpenGL Shading Language Version: {}", (char *)glGetString(GL_SHADING_LANGUAGE_VERSION)), true);
+           	Log::Debug(std::format("OpenGL Vendor: {}", (char *)glGetString(GL_VENDOR)), true);
+           	Log::Debug(std::format("OpenGL Renderer: {}", (char *)glGetString(GL_RENDERER)), true);
+            //Enable GL options
+            glEnable(GL_DEPTH_TEST);
+            //Clear viewport
             glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
             //Buffers
             glGenVertexArrays(1, &VAO);
@@ -87,6 +99,9 @@ namespace StevEngine {
         };
 
         void System::DrawFrame() {
+            //Clear color and depth buffers
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
             //Use default shader program
             glUseProgram(shaderProgram);
 
@@ -113,14 +128,19 @@ namespace StevEngine {
             //Set background color
             glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
 
-            //Draw objects
+            //Render objects from each render queue
             for(int i = 0; i < queues.size(); i++) {
+                //Enable depth masking?
+                if(i == RenderQueue::TRANSPARENT) glDepthMask(GL_FALSE);
+                else glDepthMask(GL_TRUE);
+                //Draw objects
                 for(RenderObject object : queues[i]) {
                     Draw(object);
                 }
+                //Clear queue
                 queues[i].clear();
             }
-            
+
             //Cleanup
             glBindVertexArray(0);
         }

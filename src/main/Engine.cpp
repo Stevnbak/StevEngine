@@ -45,8 +45,7 @@ namespace StevEngine {
            	}
         }
 		#ifdef StevEngine_RENDERER_GL
-		// Clear the colorbuffer
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		// Render frame
 		render.DrawFrame();
 		// Refresh OpenGL window
 		SDL_GL_SetSwapInterval(0);
@@ -143,20 +142,11 @@ namespace StevEngine {
 			throw("Failed to create OpenGL context: " + std::string(SDL_GetError()));
 		}
 		SDL_GL_MakeCurrent(window, context);
-		//Initialize GLAD:
-		if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-			throw("Failed to initialize GLAD");
-		}
-		Log::Debug(std::format("OpenGL Version: {}.{}", GLVersion.major, GLVersion.minor));
-		Log::Debug(std::format("OpenGL Shading Language Version: {}", (char *)glGetString(GL_SHADING_LANGUAGE_VERSION)));
-		Log::Debug(std::format("OpenGL Vendor: {}", (char *)glGetString(GL_VENDOR)));
-		Log::Debug(std::format("OpenGL Renderer: {}", (char *)glGetString(GL_RENDERER)));
+		//Initialize renderer
 		render.Init();
 		//Define the OpenGL viewport dimensions
 		GLint size = std::max(WIDTH, HEIGHT);
 		glViewport(0, 0, size, size);
-		glClearColor(0, 0, 0, 1);
-		glEnable(GL_DEPTH_TEST);
 		#endif
 		//Done creating engine
 		Log::Normal("Initialized Engine", true);

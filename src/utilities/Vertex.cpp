@@ -10,7 +10,7 @@ namespace StevEngine::Utilities {
             (o.nX == nX) &&
             (o.nY == nY) &&
             (o.nZ == nZ) &&
-            (o.texX == texX) &&
-            (o.texY == texY);
+            (o.u == u) &&
+            (o.v == v);
     }
 }
