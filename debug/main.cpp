@@ -187,7 +187,8 @@ int main(int argc, char** argv) {
 		GameObject* sphere = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		SpherePrimitive* primitive = sphere->AddComponent(new SpherePrimitive());
-		primitive->SetColor((SDL_Color){255, 0, 0, 255});
+		primitive->SetColor((SDL_Color){255, 255, 255, 255});
+		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("box.png").GetSDLData()));
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = sphere->AddComponent(new Physics::SphereCollider());
@@ -212,15 +213,16 @@ int main(int argc, char** argv) {
 		#endif
 	}
 	{
-		ID id = scene->CreateObject("Cylinder", Utilities::Vector3(0, 3, 3), Quaternion(), Vector3(1.0, 2.0, 1.0));
+		ID id = scene->CreateObject("Cylinder", Utilities::Vector3(0, 3, 3), Quaternion(), Vector3(1.0, 1.0, 1.0));
 		GameObject* obj = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		CylinderPrimitive* primitive = obj->AddComponent(new CylinderPrimitive());
-		primitive->SetColor((SDL_Color){0, 0, 255, 255});
+		primitive->SetColor((SDL_Color){255, 255, 255, 255});
+		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("box.png").GetSDLData()));
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = obj->AddComponent(new Physics::CylinderCollider());
-		Physics::RigidBody* rb = obj->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		//Physics::RigidBody* rb = obj->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		#endif
 	}
 	{
@@ -228,7 +230,8 @@ int main(int argc, char** argv) {
 		GameObject* obj = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		CapsulePrimitive* primitive = obj->AddComponent(new CapsulePrimitive());
-		primitive->SetColor((SDL_Color){255, 0, 255, 255});
+		primitive->SetColor((SDL_Color){255, 255, 255, 255});
+		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("box.png").GetSDLData()));
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = obj->AddComponent(new Physics::CapsuleCollider());

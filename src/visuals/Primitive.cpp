@@ -1,3 +1,4 @@
+#include <cmath>
 #ifdef StevEngine_RENDERER_GL
 #include "Primitive.hpp"
 #include "visuals/render/Object.hpp"
@@ -18,7 +19,8 @@ using namespace StevEngine::Utilities;
 
 namespace StevEngine {
 	namespace Visuals {
-		double r = 0.5;
+		float r = 0.5;
+		float pi2 = (2*M_PI);
 	    //Cube
 		const std::vector<Vertex> CubeVertices() {
 			std::array<Vertex, 6*6> vertices;
@@ -89,8 +91,8 @@ namespace StevEngine {
 		FactoryBase* cubefactory = GameObject::AddComponentFactory<CubePrimitive>(std::string("CubePrimitive"));
 
 		//Sphere
-		const std::vector<Vertex> SphereVertices(int detail = 30, double height = r) {
-            float anglePerStep = (2 * M_PI) / detail; //In Radians
+		const std::vector<Vertex> SphereVertices(int detail = 30, float height = r) {
+            float anglePerStep = pi2 / detail; //In Radians
 			//Calculate circle layers
 			std::vector<std::vector<Utilities::Vector3>> layers;
 			for (int stack = -detail / 2; stack < detail / 2; stack++) {
@@ -112,19 +114,27 @@ namespace StevEngine {
 				std::vector<Vector3> circle2 = layers[i + 1];
 				for (int j = 0; j < circle1.size() - 1; j++) {
 					float currentAngle = (anglePerStep)*i;
+					//Vertices
 					Vector3 a(circle1[j + 0].X, circle1[j + 0].Y, circle1[j + 0].Z);
 					Vector3 b(circle1[j + 1].X, circle1[j + 1].Y, circle1[j + 1].Z);
 					Vector3 c(circle2[j + 1].X, circle2[j + 1].Y, circle2[j + 1].Z);
 					Vector3 d(circle2[j + 0].X, circle2[j + 0].Y, circle2[j + 0].Z);
+					//Normal
 					Vector3 normal = Vector3::Cross(c - a, b - a) * -1;
+					//UV
+					Vector2 aUV = Vector2(-(0.125 + std::atan2(a.Z, a.X)/pi2), -((height == r ? 0.5 : 0.75) + asin(a.Y)));
+					Vector2 bUV = Vector2(-(0.125 + std::atan2(b.Z, b.X)/pi2), -((height == r ? 0.5 : 0.75) + asin(b.Y)));
+					Vector2 cUV = Vector2(-(0.125 + std::atan2(c.Z, c.X)/pi2), -((height == r ? 0.5 : 0.75) + asin(c.Y)));
+					Vector2 dUV = Vector2(-(0.125 + std::atan2(d.Z, d.X)/pi2), -((height == r ? 0.5 : 0.75) + asin(d.Y)));
 
-					vertices.push_back(Vertex(a, normal));
-					vertices.push_back(Vertex(b, normal));
-					vertices.push_back(Vertex(c, normal));
+					//Push
+					vertices.push_back(Vertex(a, normal, aUV));
+					vertices.push_back(Vertex(b, normal, bUV));
+					vertices.push_back(Vertex(c, normal, cUV));
 
-					vertices.push_back(Vertex(a, normal));
-					vertices.push_back(Vertex(c, normal));
-					vertices.push_back(Vertex(d, normal));
+					vertices.push_back(Vertex(a, normal, aUV));
+					vertices.push_back(Vertex(c, normal, cUV));
+					vertices.push_back(Vertex(d, normal, dUV));
 				}
 			}
 			return vertices;
@@ -139,7 +149,7 @@ namespace StevEngine {
 		//Cylinder
 		const std::vector<Vertex> CylinderVertices(int detail = 50) {
 		    //Create circle
-            float anglePerStep = (2 * M_PI) / detail; //In Radians
+            float anglePerStep = pi2 / detail; //In Radians
             std::vector<Utilities::Vector2> circle;
            	for (int i = 0; i <= detail; i++)
            	{
@@ -151,22 +161,26 @@ namespace StevEngine {
 			// Bottom
 			Vector3 bottomCenter = Vector3(0, -r, 0);
 			Vector3 bottomNormal = Vector3::Cross(Vector3(circle[2].X, -r, circle[2].Y) - bottomCenter, Vector3(circle[1].X, -r, circle[1].Y) - bottomCenter).Normalized();
+			//Vector2 bottomCenterUV = Vector2(1.5 * 0.25, 2.5 * 0.33333333333);
+			Vector2 bottomCenterUV = Vector2(0.625, 2.5 * 0.33333333333);
 			for (int i = 0; i < circle.size() - 1; i++) {
 			    Utilities::Vector2 a = circle[i];
 			    Utilities::Vector2 b = circle[i + 2];
-				vertices.push_back(Vertex(Vector3(a.X, -r, a.Y), bottomNormal));
-				vertices.push_back(Vertex(Vector3(b.X, -r, b.Y), bottomNormal));
-				vertices.push_back(Vertex(bottomCenter, bottomNormal));
+				vertices.push_back(Vertex(Vector3(a.X, -r, a.Y), bottomNormal, Vector2(bottomCenterUV.X + (a.X) * 0.25, bottomCenterUV.Y - (a.Y) * 0.33333333333)));
+				vertices.push_back(Vertex(Vector3(b.X, -r, b.Y), bottomNormal, Vector2(bottomCenterUV.X + (b.X) * 0.25, bottomCenterUV.Y - (b.Y) * 0.33333333333)));
+				vertices.push_back(Vertex(bottomCenter, bottomNormal, bottomCenterUV));
 			}
 			// Top
 			Vector3 topCenter = Vector3(0, r, 0);
 			Vector3 topNormal = Vector3::Cross(Vector3(circle[2].X, r, circle[2].Y) - topCenter, Vector3(circle[1].X, r, circle[1].Y) - topCenter).Normalized();
+			//Vector2 topCenterUV = Vector2(1.5 * 0.25, 0.5 * 0.33333333333);
+			Vector2 topCenterUV = Vector2(0.625, 0.5 * 0.33333333333);
 			for (int i = 0; i < circle.size() - 1; i++) {
 			    Utilities::Vector2 a = circle[i];
 			    Utilities::Vector2 b = circle[i + 2];
-				vertices.push_back(Vertex(Vector3(a.X, r, a.Y), topNormal));
-				vertices.push_back(Vertex(Vector3(b.X, r, b.Y), topNormal));
-				vertices.push_back(Vertex(topCenter, topNormal));
+				vertices.push_back(Vertex(Vector3(a.X, r, a.Y), topNormal, Vector2(topCenterUV.X + (a.X) /* *0.25 */, topCenterUV.Y + (a.Y) * 0.33333333333)));
+				vertices.push_back(Vertex(Vector3(b.X, r, b.Y), topNormal, Vector2(topCenterUV.X + (b.X) /* *0.25 */, topCenterUV.Y + (b.Y) * 0.33333333333)));
+				vertices.push_back(Vertex(topCenter, topNormal, topCenterUV));
 			}
 			// Sides
 			for (int i = 0; i < circle.size() - 1; i++) {
@@ -175,13 +189,19 @@ namespace StevEngine {
 
 				Vector3 normal = Vector3::Cross(Vector3(b.X, r, b.Y) - Vector3(a.X, -r, a.Y), Vector3(b.X, -r, b.Y) - Vector3(a.X, -r, a.Y)).Normalized();
 
-				vertices.push_back(Vertex(Vector3(a.X, -r, a.Y), normal));
-				vertices.push_back(Vertex(Vector3(b.X, r, b.Y), normal));
-				vertices.push_back(Vertex(Vector3(b.X, -r, b.Y), normal));
+				float uA = -(std::atan2(a.Y, a.X) / pi2) - 0.125;
+				float uB = -(std::atan2(b.Y, b.X) / pi2) - 0.125;
 
-				vertices.push_back(Vertex(Vector3(a.X, r, a.Y), normal));
-				vertices.push_back(Vertex(Vector3(b.X, r, b.Y), normal));
-				vertices.push_back(Vertex(Vector3(a.X, -r, a.Y), normal));
+				float vP = 1 * 0.333333333;
+				float vN = 2 * 0.333333333;
+
+				vertices.push_back(Vertex(Vector3(a.X, -r, a.Y), normal, Vector2(uA, vN)));
+				vertices.push_back(Vertex(Vector3(b.X, r, b.Y), normal, Vector2(uB, vP)));
+				vertices.push_back(Vertex(Vector3(b.X, -r, b.Y), normal, Vector2(uB, vN)));
+
+				vertices.push_back(Vertex(Vector3(a.X, r, a.Y), normal, Vector2(uA, vP)));
+				vertices.push_back(Vertex(Vector3(b.X, r, b.Y), normal, Vector2(uB, vP)));
+				vertices.push_back(Vertex(Vector3(a.X, -r, a.Y), normal, Vector2(uA, vN)));
 			}
 			//Return
 			return vertices;
@@ -212,7 +232,7 @@ namespace StevEngine {
 				vertices.push_back(v);
 			}
 			// Sides
-			float anglePerStep = (2 * M_PI) / detail; //In Radians
+			float anglePerStep = pi2 / detail; //In Radians
 			float height = r;
             std::vector<Utilities::Vector2> circle;
            	for (int i = 0; i <= detail; i++)
@@ -226,13 +246,19 @@ namespace StevEngine {
 
 				Vector3 normal = Vector3::Cross(Vector3(b.X, height, b.Y) - Vector3(a.X, -height, a.Y), Vector3(b.X, -height, b.Y) - Vector3(a.X, -height, a.Y)).Normalized();
 
-				vertices.push_back(Vertex(Vector3(a.X, -height, a.Y), normal));
-				vertices.push_back(Vertex(Vector3(b.X, height, b.Y), normal));
-				vertices.push_back(Vertex(Vector3(b.X, -height, b.Y), normal));
+				float uA = -(std::atan2(a.Y, a.X) / pi2) - 0.125;
+				float uB = -(std::atan2(b.Y, b.X) / pi2) - 0.125;
 
-				vertices.push_back(Vertex(Vector3(a.X, height, a.Y), normal));
-				vertices.push_back(Vertex(Vector3(b.X, height, b.Y), normal));
-				vertices.push_back(Vertex(Vector3(a.X, -height, a.Y), normal));
+				float vP = 1 * 0.333333333;
+				float vN = 2 * 0.333333333;
+
+				vertices.push_back(Vertex(Vector3(a.X, -height, a.Y), normal, Vector2(uA, vN)));
+				vertices.push_back(Vertex(Vector3(b.X, height, b.Y), normal, Vector2(uB, vP)));
+				vertices.push_back(Vertex(Vector3(b.X, -height, b.Y), normal, Vector2(uB, vN)));
+
+				vertices.push_back(Vertex(Vector3(a.X, height, a.Y), normal, Vector2(uA, vP)));
+				vertices.push_back(Vertex(Vector3(b.X, height, b.Y), normal, Vector2(uB, vP)));
+				vertices.push_back(Vertex(Vector3(a.X, -height, a.Y), normal, Vector2(uA, vN)));
 			}
 			//Return
 			return vertices;
