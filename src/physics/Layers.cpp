@@ -3,7 +3,7 @@
 
 namespace StevEngine::Physics {
     JPH::ObjectLayer Layer::currentId = 0;
-    std::map<uint, Layer*> Layer::layers = std::map<uint, Layer*>();
+    std::map<unsigned int, Layer*> Layer::layers = std::map<unsigned int, Layer*>();
     std::map<std::string, Layer*> Layer::layersByName = std::map<std::string, Layer*>();
 
     // Layer class
@@ -21,7 +21,7 @@ namespace StevEngine::Physics {
 
     //Jolt implementations:
     BPLayerInterfaceImpl::BPLayerInterfaceImpl() {}
-    uint BPLayerInterfaceImpl::GetNumBroadPhaseLayers() const { 
+    unsigned int BPLayerInterfaceImpl::GetNumBroadPhaseLayers() const { 
         return 2; 
     }
     JPH::BroadPhaseLayer BPLayerInterfaceImpl::GetBroadPhaseLayer(JPH::ObjectLayer inLayer) const {

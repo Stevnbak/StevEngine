@@ -24,12 +24,12 @@ namespace StevEngine {
 	namespace Resources {
 		//Create resource system by reading all files
 		System::System() {
-			resources = std::map<ushort, const Resource>();
-			pathToId = std::map<std::string, ushort>();
+			resources = std::map<unsigned short, const Resource>();
+			pathToId = std::map<std::string, unsigned short>();
 		}
 
 		//Get file
-		Resource System::GetFile(ushort id) const {
+		Resource System::GetFile(unsigned short id) const {
 			if(resources.contains(id)) {
 				return resources.at(id);
 			}
@@ -54,7 +54,7 @@ namespace StevEngine {
 			pathToId.insert({resource.path, resource.id});
 		}
 
-		void System::AddFileFromHex(std::string path, const char* hex, const int size, const int hexSize) {
+		template<int hexSize> void System::AddFileFromHex(std::string path, const char* hex, const int size) {
 			char* data = new char[size];
 			char h[hexSize+1];
 			h[hexSize] = '\0';
@@ -69,7 +69,7 @@ namespace StevEngine {
 			pathToId.insert({resource.path, resource.id});
 		}
 
-		ushort Resource::currentId = 0;
+		unsigned short Resource::currentId = 0;
 		Resource::Resource() : id(Resource::currentId++), path(), size() {}
 		Resource::Resource(std::string path, const char* data, const int size) : id(Resource::currentId++), path(path), data(data), size(size) {}
 

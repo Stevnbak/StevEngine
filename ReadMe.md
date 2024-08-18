@@ -2,6 +2,32 @@
 
 Custom game engine written in C++
 
+Features includes:
+
+- Scenes and GameObjects
+- Rendering
+- Physics
+- Inputs
+- Audio
+- Data management
+- Loading models, images and other resources
+- And more...
+
+# Table of Contents
+
+- [Modules](#modules)
+  - [Base](#base)
+  - [Input Manager](#input-manager)
+  - [Data Manager](#data-manager)
+  - [OpenGL Renderer](#opengl-renderer)
+  - [Physics](#physics)
+  - [Audio](#audio)
+- [Setup & Building](#setup--building)
+  - [Setup project & dependencies](#setup-project--dependencies)
+  - [Linux](#linux)
+  - [Windows](#windows)
+  - [Build options](#build-options)
+
 # Modules
 The engine constists of multiple modules which can be enabled or disabled during the cmake build process.
 
@@ -43,11 +69,11 @@ Can be disabled by setting the cmake build option "USE_PLAYER_DATA" to OFF".
 
 The OpenGL renderer is the only renderer in the engine, it handles (once it's complete) rendering primitives, models, textures, lighting etc.
 
-Although not recommended it can be disabled by setting the cmake build option "USE_RENDERER_GL" to OFF.
+Can be disabled by setting the cmake build option "USE_RENDERER_GL" to OFF.
 
 ## **Physics**
 
-Physics is implemented as components but is using [Jolt Physics](https://github.com/jrouwe/JoltPhysics) as the backbone.
+Physics is implemented as components, but is using [Jolt Physics](https://github.com/jrouwe/JoltPhysics) as the backbone.
 
 Can be disabled by setting the cmake build option "USE_PHYSICS" to OFF".
 
@@ -57,9 +83,20 @@ The audio system allows playing audio through the use of [SDL_Mixer](https://git
 
 Can be disabled by setting the cmake build option "USE_AUDIO" to OFF".
 
-# Setup & Build
+# Setup & Building
 
-Clone and update submodules by running:
+This project is tested and built to be working on Linux (Ubuntu) and Windows (Using Visual Studio).
+
+And uses CMake as the build system
+
+## Setup project & dependencies
+
+Clone this repository by running:
+```shell
+git clone https://github.com/Stevnbak/StevEngine.git
+```
+
+Clone and initialize submodules by running:
 ```shell
 git submodule update --init
 ```
@@ -76,14 +113,47 @@ Install SDL2, SDL2_Image and SDL2_Mixer system wide:
     - Linux: `sudo apt-get install libsdl2-image-dev` (also see https://trenki2.github.io/blog/2017/07/04/using-sdl2-image-with-cmake/)
     - Windows: Download from https://github.com/libsdl-org/SDL_image/releases
 
-Build StevEngine and all other external libraries by running the following command (replace `<compiler>` with your c++ compiler such as g++ or clang++):
+> [!IMPORTANT] 
+> When downloading for windows make sure to download the `-devel-X.X.X-VC` option.
+
+## Linux
+
+Build StevEngine and all other external libraries by running CMake with the following command:
 ```shell
-cd build && CXX=<compiler> cmake .. --build
+cd build && CXX=<compiler> cmake .. --build -DCMAKE_BUILD_TYPE=<type>
 ```
-> **&#9432;** Note: This can take a few minutes on the first build, as it will be building dependencies.
+
+> [!IMPORTANT]
+> - Replace  `<compiler>` with your c++ compiler such as g++ or clang++.
+> - Replace `<type>` with `Release` or `Debug`.
+
+> [!NOTE] 
+> The different build options can be set by adding `-DOPTION=VALUE` to the end of the command.
+
+> [!NOTE] 
+> This can take a few minutes on the first build, as it will be building dependencies.
+
+## Windows
+
+Create a Visual Studio solution with all dependencies and build process setup by running CMake with the following command:
+```shell
+cmake -S . -B VS2022 -G "Visual Studio 17 2022" -A x64 -DCMAKE_PREFIX_PATH="<cmake_module_path>" -DCMAKE_BUILD_TYPE=<type>
+```
+
+> [!IMPORTANT]
+> - Replace `<cmake_module_path>` with the path to the previously downloaded SDL libraries.
+> - Replace `<type>` with `Release` or `Debug`.
+> - Replace `Visual Studio 17 2022` with your Visual Studio version.
+
+> [!NOTE] 
+> The different build options can be set by adding `-DOPTION=VALUE` to the end of the command.
+
+This solution can now be found in the folder `VS2022` and building the project can be done from Visual Studio.
+
 
 ## Build options
-The engine has build options for using the engine in the way you want to.
+
+The engine has build options for using the engine with the features and in the way you want to use it.
 
 These options are:
 

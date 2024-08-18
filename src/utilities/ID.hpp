@@ -1,6 +1,7 @@
 #pragma once
 #include <uuidv7.h>
 #include <string>
+#include <stdint.h>
 
 namespace StevEngine {
     namespace Utilities {

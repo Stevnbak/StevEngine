@@ -6,7 +6,7 @@
 #include <visuals/render/System.hpp>
 #include <scenes/SceneManager.hpp>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 namespace StevEngine {
 	class Engine {

@@ -1,6 +1,6 @@
 #pragma once
 #ifdef StevEngine_INPUTS
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <utilities/Vector2.hpp>
 #include <functional>
 

@@ -49,13 +49,13 @@ namespace StevEngine::Physics {
 		Factory::sInstance = new Factory();
 		RegisterTypes();
 		// This is the max amount of rigid bodies that you can add to the physics system. If you try to add more you'll get an error.
-		const uint cMaxBodies = 65536;
+		const unsigned int cMaxBodies = 65536;
 		// This determines how many mutexes to allocate to protect rigid bodies from concurrent access. Set it to 0 for the default settings.
-		const uint cNumBodyMutexes = 0;
+		const unsigned int cNumBodyMutexes = 0;
 		// This is the max amount of body pairs that can be queued at any time
-		const uint cMaxBodyPairs = 65536;
+		const unsigned int cMaxBodyPairs = 65536;
 		// This is the maximum size of the contact constraint buffer. If more contacts (collisions between bodies) are detected than this number then these contacts will be ignored and bodies will start interpenetrating / fall through the world.
-		const uint cMaxContactConstraints = 10240;
+		const unsigned int cMaxContactConstraints = 10240;
 		//Initialize job system
 		jobSystem.Init(1024);
 		// Create default layers

@@ -1,7 +1,7 @@
 #pragma once
 #ifdef StevEngine_RENDERER_GL
 #include <vector>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <glad/glad.h>
 #include <glm/mat4x4.hpp>
 
@@ -9,6 +9,7 @@
 #include <utilities/Quaternion.hpp>
 #include "utilities/Vertex.hpp"
 #include "utilities/Texture.hpp"
+#include "utilities/Color.hpp"
 
 namespace StevEngine {
     namespace Render {
@@ -24,10 +25,10 @@ namespace StevEngine {
         class Object {
 			friend class System;
             public:
-                Object(std::vector<Utilities::Vertex> vertices, SDL_Color color = {255, 255, 255, 255}, Utilities::Texture textureData = NULL);
-                Object(std::vector<Utilities::Vertex> vertices, std::vector<unsigned int> indices, SDL_Color color = {255, 255, 255, 255}, Utilities::Texture textureData = NULL);
+                Object(std::vector<Utilities::Vertex> vertices, Utilities::Color color = Utilities::Color(255, 255, 255, 255), Utilities::Texture textureData = NULL);
+                Object(std::vector<Utilities::Vertex> vertices, std::vector<unsigned int> indices, Utilities::Color color = Utilities::Color(255, 255, 255, 255), Utilities::Texture textureData = NULL);
                 void SetTexture(Utilities::Texture textureData);
-                SDL_Color color;
+                Utilities::Color color;
                 Material material;
             private:
                 std::vector<float> vertices;

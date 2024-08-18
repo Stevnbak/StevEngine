@@ -4,8 +4,8 @@
 #include "main/Engine.hpp"
 #include "scenes/GameObject.hpp"
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
+#include <SDL.h>
+#include <SDL_mixer.h>
 
 namespace StevEngine::Audio {
     Emitter::Emitter(std::string audioPath, bool loop, double volume): Component("Emitter") {

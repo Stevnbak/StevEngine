@@ -1,7 +1,8 @@
 #include "ID.hpp"
 #include <stdio.h>
-#include <sys/random.h>
-#include <time.h>
+#include <stdlib.h>
+
+#include <chrono>
 
 uint8_t last[16];
 namespace StevEngine {
@@ -10,11 +11,12 @@ namespace StevEngine {
         ID ID::empty = ID(e);
 
         ID::ID () {
+            uint64_t unix_ts_ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+
             uint8_t rand_bytes[10];
-            timespec tp;
-            clock_gettime(CLOCK_REALTIME, &tp);
-            uint64_t unix_ts_ms = (uint64_t)tp.tv_sec * 1000 + tp.tv_nsec / 1000000;
-            getentropy(rand_bytes, 10);
+            for (int i = 0; i < 10; i++) {
+                rand_bytes[i] = rand();
+            }
             
             uuidv7_generate(
                 raw,

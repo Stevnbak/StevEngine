@@ -1,7 +1,13 @@
 # VS Code files
 #.vscode
-
 .cache
+
 # Project
 build/*
+out/*
 links.txt
+
+# Visual Studio
+.vs
+VS2022
+CMakeSettings.json

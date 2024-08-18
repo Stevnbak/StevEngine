@@ -4,7 +4,6 @@ project(StevEngine VERSION 0.1 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # build StevEngine as static library
@@ -16,6 +15,14 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
 	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_DEBUGGING)
+endif()
+
+# Windows?
+if (WIN32)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC WINDOWS)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:${CMAKE_BUILD_TYPE}>:${CMAKE_BUILD_TYPE}>")
+    set(MSVC_LIBRARY "MultiThreaded$<$<CONFIG:${CMAKE_BUILD_TYPE}>:${CMAKE_BUILD_TYPE}>")
+    set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY ${MSVC_LIBRARY})
 endif()
 
 # modularity options
@@ -65,7 +72,6 @@ endif()
 message("Building ${build_string}")
 
 # external libraries
-
 set(BUILD_SHARED_LIBS OFF)
 
 if(USE_RENDERER_GL)
@@ -84,34 +90,64 @@ if(USE_PHYSICS)
     set(DEBUG_RENDERER_IN_DEBUG_AND_RELEASE OFF)
     set(PROFILER_IN_DEBUG_AND_RELEASE OFF)
     set(USE_STD_VECTOR ON)
-    if(DEBUG_EXECUTABLE)
-        set(GENERATE_DEBUG_SYMBOLS ON)
-    elseif()
-        set(GENERATE_DEBUG_SYMBOLS OFF)
-    endif()
+    set(GENERATE_DEBUG_SYMBOLS OFF)
     set(DOUBLE_PRECISION ON)
     add_subdirectory(libs/JoltPhysics/Build)
     target_link_libraries(${PROJECT_NAME} PRIVATE Jolt)
     target_include_directories(${PROJECT_NAME} PUBLIC libs/JoltPhysics)
+    if(WIN32)
+        set_property(TARGET Jolt PROPERTY MSVC_RUNTIME_LIBRARY ${MSVC_LIBRARY})
+    endif()
 endif()
 
 ## SDL2
-find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2-static)
-find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
+find_package(SDL2 REQUIRED)
 if(TARGET SDL2::SDL2main)
-    target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2main)
+    target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2main)
 endif()
-target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2-static)
+if(TARGET SDL2::SDL2-static)
+    target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2-static)
+else()
+    target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2)
+    if (WIN32)
+        add_custom_command(
+            TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2::SDL2>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+            VERBATIM
+        )
+    endif()
+endif()
 
 if(USE_AUDIO)
     ## SDL_Mixer
     find_package(SDL2_mixer REQUIRED)
     target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_mixer::SDL2_mixer)
+    if (WIN32)
+        add_custom_command(
+            TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2_mixer::SDL2_mixer>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+            VERBATIM
+        )
+    endif()
 endif()
 
-## SDL_Image
-find_package(SDL2_image REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image)
+if(USE_RENDERER_GL)
+    ## SDL_Image
+    find_package(SDL2_image REQUIRED)
+    if(TARGET SDL2_image)
+        target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image)
+    else()
+        target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image::SDL2_image)
+    endif()
+
+    if (WIN32)
+        add_custom_command(
+            TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2_image::SDL2_image>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+            VERBATIM
+        )
+    endif()
+endif()
 
 if(USE_RENDERER_GL OR USE_PHYSICS)
     ## Assimp
@@ -122,12 +158,14 @@ if(USE_RENDERER_GL OR USE_PHYSICS)
     set(ASSIMP_BUILD_ASSIMP_VIEW OFF)
     add_subdirectory(libs/assimp)
     target_link_libraries(${PROJECT_NAME} PRIVATE assimp)
-    target_include_directories(${PROJECT_NAME} PUBLIC libs/assimp/include)
-    target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/libs/assimp/include)
+    target_include_directories(${PROJECT_NAME} PUBLIC libs/assimp/include ${CMAKE_CURRENT_BINARY_DIR}/libs/assimp/include)
+    if(WIN32)
+        set_property(TARGET assimp PROPERTY MSVC_RUNTIME_LIBRARY ${MSVC_LIBRARY})
+    endif()
 endif()
 
 ## Tinyxml2
-target_sources(${PROJECT_NAME} PUBLIC libs/TinyXML2/tinyxml2.cpp)
+target_sources(${PROJECT_NAME} PRIVATE libs/TinyXML2/tinyxml2.cpp)
 target_include_directories(${PROJECT_NAME} PUBLIC libs/TinyXML2)
 
 ## uuidv7
@@ -136,38 +174,18 @@ target_include_directories(${PROJECT_NAME} PUBLIC libs/uuidv7-h)
 # build debug executable
 option(DEBUG_EXECUTABLE "Build the debug program for testing the engine." OFF)
 if(DEBUG_EXECUTABLE)
-    # embed resources
-    set(debug_asset_dir ${CMAKE_BINARY_DIR}/assets)
-    if (NOT EXISTS ${debug_asset_dir})
-        file(MAKE_DIRECTORY ${debug_asset_dir})
-    endif ()
-
-    file(GLOB_RECURSE ASSETS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/debug/assets/*")
-    set(output_c "#include \"assets.h\"\n")
-    set(output_h "")
-    foreach(asset IN ITEMS ${ASSETS})
-        file(RELATIVE_PATH asset_name ${CMAKE_CURRENT_SOURCE_DIR}/debug/assets ${asset})
-        string(REPLACE "." "_" asset_name ${asset_name})
-        string(REPLACE "/" "_" asset_name ${asset_name})
-        file(READ ${asset} content HEX)
-        string(LENGTH ${content} len)
-        string(APPEND output_c "
-const char* ${asset_name}_data = \"${content}\"\;
-const unsigned ${asset_name}_size = ${len}/2\;
-")
-        string(APPEND output_h "
-#ifndef ${asset_name}_H
-#define ${asset_name}_H
-#include \"stdint.h\"
-extern const char* ${asset_name}_data\;
-extern const unsigned ${asset_name}_size\;
-#endif // ${asset_name}_H
-")
-    endforeach()
-    file(WRITE ${debug_asset_dir}/assets.c ${output_c})
-    file(WRITE ${debug_asset_dir}/assets.h ${output_h})
     # debug executable
-    add_executable(debug debug/main.cpp ${debug_asset_dir}/assets.c)
+    add_executable(debug debug/main.cpp)
     target_link_libraries(debug PRIVATE ${PROJECT_NAME})
-    target_include_directories(debug PUBLIC ${debug_asset_dir})
+    # embed resources
+    include(${CMAKE_CURRENT_SOURCE_DIR}/libs/CMRC/CMakeRC.cmake)
+    file(GLOB_RECURSE ASSETS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/debug/assets/*")
+    cmrc_add_resource_library(debug_assets ${ASSETS})
+    target_link_libraries(debug PRIVATE debug_assets)
+    #Windows
+    if(WIN32)
+        set_property(TARGET debug_assets PROPERTY MSVC_RUNTIME_LIBRARY ${MSVC_LIBRARY})
+        set_property(TARGET debug PROPERTY MSVC_RUNTIME_LIBRARY ${MSVC_LIBRARY})
+        set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT debug)
+    endif()
 endif()

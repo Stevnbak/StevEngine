@@ -6,6 +6,7 @@
 #include "assimp/scene.h"
 
 #include "main/ResourceManager.hpp"
+#include "utilities/Color.hpp"
 
 #include <vector>
 

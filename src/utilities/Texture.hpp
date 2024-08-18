@@ -1,6 +1,6 @@
 #pragma once
 #ifdef StevEngine_RENDERER_GL
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 namespace StevEngine {
     namespace Utilities {

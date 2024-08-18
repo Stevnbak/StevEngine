@@ -6,14 +6,17 @@
 #include <physics/Layers.hpp>
 #include <main/ResourceManager.hpp>
 
-#include <assets.h>
 #include "visuals/render/Lights.hpp"
 #include "glm/ext/matrix_float4x4.hpp"
 #include "utilities/Quaternion.hpp"
 #include "utilities/Texture.hpp"
 #include "utilities/Vector3.hpp"
+#include "utilities/Color.hpp"
 #include "visuals/Model.hpp"
 #include "visuals/render/Lights.hpp"
+
+#include <cmrc/cmrc.hpp>
+CMRC_DECLARE(debug_assets);
 
 using namespace StevEngine;
 using namespace StevEngine::Utilities;
@@ -131,14 +134,11 @@ int main(int argc, char** argv) {
 	Log::Error("Error log");
 
 	//Add debug assets
-	engine.resources.AddFileFromHex("test.txt", test_txt_data, test_txt_size);
-	engine.resources.AddFileFromHex("test_2.txt", test_2_txt_data, test_2_txt_size);
-	engine.resources.AddFileFromHex("audio.wav", audio_wav_data, audio_wav_size);
-	engine.resources.AddFileFromHex("cube.object", cube_object_data, cube_object_size);
-	engine.resources.AddFileFromHex("Debug_scene.scene", Debug_scene_scene_data, Debug_scene_scene_size);
-	engine.resources.AddFileFromHex("Fox.stl", Fox_stl_data, Fox_stl_size);
-	engine.resources.AddFileFromHex("cube.stl", cube_stl_data, cube_stl_size);
-	engine.resources.AddFileFromHex("box.png", box_png_data, box_png_size);
+	auto fs = cmrc::debug_assets::get_filesystem();
+	for (std::string path : {"test.txt", "test_2.txt", "audio.wav", "cube.object", "Debug_scene.scene", "Fox.stl", "cube.stl", "box.png"}) {
+		cmrc::file file = fs.open("debug/assets/" + path);
+		engine.resources.AddFile(path, file.begin(), file.size());
+	}
 
 	//Create new scene
 	//Scene* scene = engine.scenes.CreateSceneFromFile(engine.resources.GetFile("Debug_scene.scene"));
@@ -150,7 +150,7 @@ int main(int argc, char** argv) {
 		GameObject* floor = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		CubePrimitive* primitive = floor->AddComponent(new CubePrimitive());
-		primitive->SetColor((SDL_Color){0, 255, 0, 255});
+		primitive->SetColor(Color(0, 255, 0, 255 ));
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::CubeCollider* collider = floor->AddComponent(new Physics::CubeCollider());
@@ -162,7 +162,7 @@ int main(int argc, char** argv) {
 		GameObject* cube = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		CubePrimitive* primitive = cube->AddComponent(new CubePrimitive());
-		primitive->SetColor((SDL_Color){255, 255, 255, 255});
+		primitive->SetColor(Color(255, 255, 255, 255));
 		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("box.png").GetSDLData()));
 		cube->AddComponent(new Rotate(Vector3::up));
 		cube->AddComponent(new Rotate(Vector3::right));
@@ -179,7 +179,7 @@ int main(int argc, char** argv) {
 		#endif
 		#ifdef StevEngine_RENDERER_GL
 		CubePrimitive* primitive2 = cube2->GetComponent<CubePrimitive>();
-		primitive2->SetColor(SDL_Color(1, 1, 1, 1));
+		primitive2->SetColor(Color(1, 1, 1, 1));
 		#endif*/
 	}
 	{
@@ -187,7 +187,7 @@ int main(int argc, char** argv) {
 		GameObject* sphere = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		SpherePrimitive* primitive = sphere->AddComponent(new SpherePrimitive());
-		primitive->SetColor((SDL_Color){255, 255, 255, 255});
+		primitive->SetColor(Color(255, 255, 255, 255));
 		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("box.png").GetSDLData()));
 		#endif
 		#ifdef StevEngine_PHYSICS
@@ -212,12 +212,12 @@ int main(int argc, char** argv) {
 		modelObj->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		#endif
 	}
-	{
+	{ 
 		ID id = scene->CreateObject("Cylinder", Utilities::Vector3(0, 3, 3), Quaternion(), Vector3(1.0, 1.0, 1.0));
 		GameObject* obj = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		CylinderPrimitive* primitive = obj->AddComponent(new CylinderPrimitive());
-		primitive->SetColor((SDL_Color){255, 255, 255, 255});
+		primitive->SetColor(Color(255, 255, 255, 255));
 		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("box.png").GetSDLData()));
 		#endif
 		#ifdef StevEngine_PHYSICS
@@ -230,7 +230,7 @@ int main(int argc, char** argv) {
 		GameObject* obj = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		CapsulePrimitive* primitive = obj->AddComponent(new CapsulePrimitive());
-		primitive->SetColor((SDL_Color){255, 255, 255, 255});
+		primitive->SetColor(Color(255, 255, 255, 255));
 		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("box.png").GetSDLData()));
 		#endif
 		#ifdef StevEngine_PHYSICS
@@ -283,9 +283,13 @@ int main(int argc, char** argv) {
 
 	//Set background
 	#ifdef StevEngine_RENDERER_GL
-	engine.render.SetBackground((SDL_Color){0, 0, 0, 255});
+	engine.render.SetBackground(Color(0, 0, 0, 255));
 	#endif
 
 	//Start engine
-	engine.Start();
+	return engine.Start();
+}
+
+int wmain(int argc, char** argv) {
+	return main(argc, argv);
 }

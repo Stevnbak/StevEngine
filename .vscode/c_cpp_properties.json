@@ -3,35 +3,13 @@
         {
             "name": "Linux",
             "compilerPath": "/usr/bin/g++-13",
-            "includePath": [
-                "${default}",
-                "${workspaceFolder}/src",
-                "${workspaceFolder}/libs/JoltPhysics",
-                "${workspaceFolder}/libs/assimp/include",
-                "${workspaceFolder}/build/libs/assimp/include",
-                "${workspaceFolder}/build/assets",
-                "${workspaceFolder}/libs/glad/include",
-                "${workspaceFolder}/libs/glm",
-                "${workspaceFolder}/libs/TinyXML2",
-                "${workspaceFolder}/libs/uuidv7-h"
-            ],
-            "defines": [
-                "StevEngine_INPUTS",
-                "StevEngine_PLAYER_DATA",
-                "StevEngine_RENDERER_GL",
-                "StevEngine_SHOW_WINDOW",
-                "StevEngine_PHYSICS",
-                "StevEngine_MODELS",
-                "StevEngine_AUDIO",
-                "StevEngine_DEBUGGING"
-            ],
-            "compilerArgs": [
-                "-lm",
-                "-lSDL2",
-                "-lSDL2_mixer"
-            ],
-            "cppStandard": "c++20",
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
             "intelliSenseMode": "linux-gcc-x64"
+        },
+        {
+            "name": "Win32",
+            "compileCommands": "${workspaceFolder}\\build\\compile_commands.json",
+            "intelliSenseMode": "windows-msvc-x64"
         }
     ],
     "version": 4

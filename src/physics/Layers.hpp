@@ -24,7 +24,7 @@ namespace StevEngine::Physics {
             Layer(std::string name, bool isStatic = false);
         private:
             static JPH::ObjectLayer currentId;
-            static std::map<uint, Layer*> layers;
+            static std::map<unsigned int, Layer*> layers;
             static std::map<std::string, Layer*> layersByName;
         public:
             // Get layers
@@ -35,7 +35,7 @@ namespace StevEngine::Physics {
     class BPLayerInterfaceImpl final : public JPH::BroadPhaseLayerInterface {
         public:
             BPLayerInterfaceImpl();
-            virtual uint GetNumBroadPhaseLayers() const override;
+            virtual unsigned int GetNumBroadPhaseLayers() const override;
             virtual JPH::BroadPhaseLayer GetBroadPhaseLayer(JPH::ObjectLayer inLayer) const override;
     };
     /// Class that determines if an object layer can collide with a broadphase layer

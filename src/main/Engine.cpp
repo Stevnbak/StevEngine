@@ -14,7 +14,7 @@
 #include <visuals/Camera.hpp>
 
 //Get current process time in ms
-uint GetTime() { return SDL_GetTicks(); }
+unsigned int GetTime() { return SDL_GetTicks(); }
 
 namespace StevEngine {
 	Engine* Engine::Instance = nullptr;
@@ -156,7 +156,7 @@ namespace StevEngine {
 		//Activate first scene if none has been activated
 		scenes.ActivateDefault();
 		//Main loop
-		uint lastUpdateTime = GetTime();
+		unsigned int lastUpdateTime = GetTime();
 		while (running) {
 			#ifdef StevEngine_INPUTS
 			//Reset mouse delta
@@ -223,8 +223,8 @@ namespace StevEngine {
 			}
 
 			//Calculate delta time
-			uint newTime = GetTime();
-			uint frameTime = newTime - lastUpdateTime;
+			unsigned int newTime = GetTime();
+			unsigned int frameTime = newTime - lastUpdateTime;
 			lastUpdateTime = newTime;
 
 			//Run update

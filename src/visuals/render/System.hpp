@@ -1,13 +1,15 @@
 #pragma once
 #include <cstddef>
 #ifdef StevEngine_RENDERER_GL
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <glad/glad.h>
 #include <glm/mat4x4.hpp>
 #include <vector>
+#include <array>
 #include <type_traits>
 
 #include "Object.hpp"
+#include "utilities/Color.hpp"
 
 namespace StevEngine {
     class Engine;
@@ -43,8 +45,8 @@ namespace StevEngine {
 
 			public:
 				void DrawObject(Object object, glm::mat4x4 transform, RenderQueue queue = STANDARD);
-                void SetBackground(SDL_Color color);
-                void SetAmbientLight(float strength, SDL_Color color = {255,255,255,255});
+                void SetBackground(Utilities::Color color);
+                void SetAmbientLight(float strength, Utilities::Color color = Utilities::Color(255,255,255,255));
 			private:
 			    //From Engine
                 System();
@@ -64,7 +66,7 @@ namespace StevEngine {
                 unsigned int EBO; //Element Buffer Object
                 unsigned int VAO; //Vertex Array Object
                 //Background
-                SDL_Color backgroundColor = (SDL_Color){0, 0, 0, 255};
+                Utilities::Color backgroundColor = {0, 0, 0, 255};
 		};
     }
 }

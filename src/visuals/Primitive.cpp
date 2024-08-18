@@ -8,7 +8,7 @@
 #include <utilities/Quaternion.hpp>
 #include <scenes/GameObject.hpp>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <glad/glad.h>
 #include <math.h>
 #include <array>
@@ -22,7 +22,7 @@ namespace StevEngine {
 		float r = 0.5;
 		float pi2 = (2*M_PI);
 	    //Cube
-		const std::vector<Vertex> CubeVertices() {
+		static const std::vector<Vertex> CubeVertices() {
 			std::array<Vertex, 6*6> vertices;
 			for(int side = 0; side < 6; side++) {
 				//Coordinates
@@ -91,7 +91,7 @@ namespace StevEngine {
 		FactoryBase* cubefactory = GameObject::AddComponentFactory<CubePrimitive>(std::string("CubePrimitive"));
 
 		//Sphere
-		const std::vector<Vertex> SphereVertices(int detail = 30, float height = r) {
+		static const std::vector<Vertex> SphereVertices(int detail = 30, float height = r) {
             float anglePerStep = pi2 / detail; //In Radians
 			//Calculate circle layers
 			std::vector<std::vector<Utilities::Vector3>> layers;
@@ -147,7 +147,7 @@ namespace StevEngine {
 		FactoryBase* spherefactory = GameObject::AddComponentFactory<SpherePrimitive>(std::string("SpherePrimitive"));
 
 		//Cylinder
-		const std::vector<Vertex> CylinderVertices(int detail = 50) {
+		static const std::vector<Vertex> CylinderVertices(int detail = 50) {
 		    //Create circle
             float anglePerStep = pi2 / detail; //In Radians
             std::vector<Utilities::Vector2> circle;
@@ -165,7 +165,7 @@ namespace StevEngine {
 			Vector2 bottomCenterUV = Vector2(0.625, 2.5 * 0.33333333333);
 			for (int i = 0; i < circle.size() - 1; i++) {
 			    Utilities::Vector2 a = circle[i];
-			    Utilities::Vector2 b = circle[i + 2];
+			    Utilities::Vector2 b = circle[i + 1];
 				vertices.push_back(Vertex(Vector3(a.X, -r, a.Y), bottomNormal, Vector2(bottomCenterUV.X + (a.X) * 0.25, bottomCenterUV.Y - (a.Y) * 0.33333333333)));
 				vertices.push_back(Vertex(Vector3(b.X, -r, b.Y), bottomNormal, Vector2(bottomCenterUV.X + (b.X) * 0.25, bottomCenterUV.Y - (b.Y) * 0.33333333333)));
 				vertices.push_back(Vertex(bottomCenter, bottomNormal, bottomCenterUV));
@@ -177,7 +177,7 @@ namespace StevEngine {
 			Vector2 topCenterUV = Vector2(0.625, 0.5 * 0.33333333333);
 			for (int i = 0; i < circle.size() - 1; i++) {
 			    Utilities::Vector2 a = circle[i];
-			    Utilities::Vector2 b = circle[i + 2];
+			    Utilities::Vector2 b = circle[i + 1];
 				vertices.push_back(Vertex(Vector3(a.X, r, a.Y), topNormal, Vector2(topCenterUV.X + (a.X) /* *0.25 */, topCenterUV.Y + (a.Y) * 0.33333333333)));
 				vertices.push_back(Vertex(Vector3(b.X, r, b.Y), topNormal, Vector2(topCenterUV.X + (b.X) /* *0.25 */, topCenterUV.Y + (b.Y) * 0.33333333333)));
 				vertices.push_back(Vertex(topCenter, topNormal, topCenterUV));
@@ -185,7 +185,7 @@ namespace StevEngine {
 			// Sides
 			for (int i = 0; i < circle.size() - 1; i++) {
 			    Utilities::Vector2 a = circle[i];
-			    Utilities::Vector2 b = circle[i + 2];
+			    Utilities::Vector2 b = circle[i + 1];
 
 				Vector3 normal = Vector3::Cross(Vector3(b.X, r, b.Y) - Vector3(a.X, -r, a.Y), Vector3(b.X, -r, b.Y) - Vector3(a.X, -r, a.Y)).Normalized();
 
@@ -214,7 +214,7 @@ namespace StevEngine {
 		FactoryBase* cylinderfactory = GameObject::AddComponentFactory<CylinderPrimitive>(std::string("CylinderPrimitive"));
 
 		//Capsule
-		const std::vector<Vertex> CapsuleVertices(int detail = 30) {
+		static const std::vector<Vertex> CapsuleVertices(int detail = 30) {
 			//Create triangles
 			std::vector<Vertex> vertices;
 			// Get sphere vertices
@@ -242,7 +242,7 @@ namespace StevEngine {
            	}
 			for (int i = 0; i < circle.size() - 1; i++) {
 			    Utilities::Vector2 a = circle[i];
-			    Utilities::Vector2 b = circle[i + 2];
+			    Utilities::Vector2 b = circle[i + 1];
 
 				Vector3 normal = Vector3::Cross(Vector3(b.X, height, b.Y) - Vector3(a.X, -height, a.Y), Vector3(b.X, -height, b.Y) - Vector3(a.X, -height, a.Y)).Normalized();
 

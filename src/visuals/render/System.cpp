@@ -1,4 +1,3 @@
-#include <SDL_mutex.h>
 #ifdef StevEngine_RENDERER_GL
 #include "System.hpp"
 
@@ -15,7 +14,7 @@
 using StevEngine::Utilities::Vertex;
 
 namespace StevEngine {
-    namespace Render {
+    namespace Render { 
         const char* vertexShaderSource =
             #include "visuals/shaders/default.vert"
         ;
@@ -26,10 +25,10 @@ namespace StevEngine {
         System::System() {}
         void System::Init() {
             //Initialize GLAD:
-           	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-          		throw("Failed to initialize GLAD");
-           	}
-           	Log::Debug(std::format("OpenGL Version: {}.{}", GLVersion.major, GLVersion.minor), true);
+            if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+                throw("Failed to initialize GLAD");
+            }
+            Log::Debug(std::format("OpenGL Version: {}.{}", GLVersion.major, GLVersion.minor), true);
            	Log::Debug(std::format("OpenGL Shading Language Version: {}", (char *)glGetString(GL_SHADING_LANGUAGE_VERSION)), true);
            	Log::Debug(std::format("OpenGL Vendor: {}", (char *)glGetString(GL_VENDOR)), true);
            	Log::Debug(std::format("OpenGL Renderer: {}", (char *)glGetString(GL_RENDERER)), true);
@@ -145,11 +144,11 @@ namespace StevEngine {
             glBindVertexArray(0);
         }
 
-        void System::SetBackground(SDL_Color color) {
+        void System::SetBackground(Utilities::Color color) {
             backgroundColor = color;
         }
 
-        void System::SetAmbientLight(float strength, SDL_Color color) {
+        void System::SetAmbientLight(float strength, Utilities::Color color) {
             glUniform3fv(glGetUniformLocation(shaderProgram, "ambientColor"), 1, glm::value_ptr(glm::vec3(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f)));
             glUniform1f(glGetUniformLocation(shaderProgram, "ambientStrength"), strength);
         }

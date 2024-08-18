@@ -9,9 +9,11 @@
 
 #include <vector>
 
+using StevEngine::Utilities::Color;
+
 namespace StevEngine {
     namespace Visuals {
-        Render::Object CreateRenderObject(Utilities::Model model, SDL_Color color, Utilities::Texture surface) {
+        Render::Object CreateRenderObject(Utilities::Model model, Color color, Utilities::Texture surface) {
             std::vector<Utilities::Vertex> vertices;
             std::vector<unsigned int> indices;
             for(Utilities::Mesh mesh : model.GetMeshes()) {
@@ -21,7 +23,7 @@ namespace StevEngine {
             return Render::Object(vertices, indices, color, surface);
         }
         ModelRenderer::ModelRenderer(Utilities::Model model)
-            : model(model), RenderComponent(CreateRenderObject(model, (SDL_Color){1, 1, 1, 1}, nullptr), "ModelRenderer") {}
+            : model(model), RenderComponent(CreateRenderObject(model, Color(255, 255, 255, 255), nullptr), "ModelRenderer") {}
 
         ModelRenderer::ModelRenderer(tinyxml2::XMLElement* element)
             : model(Utilities::Model(Engine::Instance->resources.GetFile(element->Attribute("file")))), RenderComponent(element)

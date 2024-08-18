@@ -3,7 +3,7 @@
 #include <main/Engine.hpp>
 #include <scenes/GameObject.hpp>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include <map>
 #include <vector>

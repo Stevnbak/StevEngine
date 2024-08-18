@@ -6,6 +6,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+using StevEngine::Utilities::Color;
+
 namespace StevEngine {
     namespace Render {
         //Constructor
@@ -28,7 +30,7 @@ namespace StevEngine {
 			//Draw
 			Engine::Instance->render.DrawObject(object, transform);
 		}
-		void RenderComponent::SetColor(SDL_Color color) {
+		void RenderComponent::SetColor(Color color) {
 			this->color = color;
 			object.color = color;
 		}

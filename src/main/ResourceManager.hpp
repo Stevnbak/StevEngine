@@ -1,5 +1,5 @@
 #pragma once
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <cstddef>
 #include <string>
 #include <filesystem>
@@ -14,7 +14,7 @@ namespace StevEngine {
 		class Resource {
 			friend class System;
 			public:
-				const ushort id;
+				const unsigned short id;
 				const std::string path;
 				SDL_RWops* GetSDLData();
 				std::string GetStrData();
@@ -25,20 +25,20 @@ namespace StevEngine {
 				Resource(std::string path, const char* data, const int size);
 				const char* data;
 				const int size;
-				static ushort currentId;
+				static unsigned short currentId;
 		};
 
 		class System {
 			friend class StevEngine::Engine;
 			public:
-				Resource GetFile(ushort id) const;
+				Resource GetFile(unsigned short id) const;
 				Resource GetFile(std::string path) const;
 				void AddFile(std::string path, const char* data, const int size);
-				void AddFileFromHex(std::string path, const char* hex, const int size, const int hexSize = 2);
+				template<int hexSize = 2> void AddFileFromHex(std::string path, const char* hex, const int size);
 			private:
 				System();
-				std::map<ushort, const Resource> resources;
-				std::map<std::string, ushort> pathToId;
+				std::map<unsigned short, const Resource> resources;
+				std::map<std::string, unsigned short> pathToId;
 		};
 	}
 }

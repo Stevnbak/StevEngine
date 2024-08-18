@@ -1,7 +1,11 @@
 #ifdef StevEngine_RENDERER_GL
 #include "Texture.hpp"
+#ifdef WINDOWS
+#include <SDL_image.h>
+#else
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL.h>
+#endif
+#include <SDL.h>
 
 namespace StevEngine {
     namespace Utilities {
