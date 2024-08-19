@@ -1,12 +1,12 @@
 #pragma once
 #include "main/ResourceManager.hpp"
-#include <visuals/Camera.hpp>
+#include "visuals/Camera.hpp"
 #include "scenes/GameObject.hpp"
 
 namespace StevEngine {
     class Engine;
     class SceneManager;
-    
+
     class Scene {
         friend class Engine;
         friend class SceneManager;

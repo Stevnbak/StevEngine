@@ -5,8 +5,8 @@
 #include <glad/glad.h>
 #include <glm/mat4x4.hpp>
 
-#include <utilities/Vector3.hpp>
-#include <utilities/Quaternion.hpp>
+#include "utilities/Vector3.hpp"
+#include "utilities/Quaternion.hpp"
 #include "utilities/Vertex.hpp"
 #include "utilities/Texture.hpp"
 #include "utilities/Color.hpp"

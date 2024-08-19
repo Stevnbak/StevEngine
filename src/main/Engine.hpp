@@ -1,10 +1,10 @@
 #pragma once
-#include <physics/System.hpp>
-#include <main/ResourceManager.hpp>
-#include <main/DataManager.hpp>
-#include <audio/System.hpp>
-#include <visuals/render/System.hpp>
-#include <scenes/SceneManager.hpp>
+#include "physics/System.hpp"
+#include "main/ResourceManager.hpp"
+#include "main/DataManager.hpp"
+#include "audio/System.hpp"
+#include "visuals/render/System.hpp"
+#include "scenes/SceneManager.hpp"
 
 #include <SDL.h>
 

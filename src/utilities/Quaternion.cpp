@@ -1,6 +1,6 @@
 #include "Quaternion.hpp"
 
-#include <main/Log.hpp>
+#include "main/Log.hpp"
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <sstream>

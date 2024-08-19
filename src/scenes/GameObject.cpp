@@ -1,6 +1,6 @@
 #include "GameObject.hpp"
-#include <main/Log.hpp>
-#include <main/Engine.hpp>
+#include "main/Log.hpp"
+#include "main/Engine.hpp"
 
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>

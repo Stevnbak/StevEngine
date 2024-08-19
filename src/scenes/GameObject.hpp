@@ -1,10 +1,10 @@
 #pragma once
-#include <utilities/Vector3.hpp>
-#include <utilities/Quaternion.hpp>
-#include <main/Log.hpp>
-#include <main/InputSystem.hpp>
-#include <main/ResourceManager.hpp>
-#include <scenes/Component.hpp>
+#include "utilities/Vector3.hpp"
+#include "utilities/Quaternion.hpp"
+#include "main/Log.hpp"
+#include "main/InputSystem.hpp"
+#include "main/ResourceManager.hpp"
+#include "scenes/Component.hpp"
 
 #include <map>
 #include <vector>
@@ -49,7 +49,7 @@ namespace StevEngine {
 			#ifdef StevEngine_PLAYER_DATA
 			void ExportToFile(std::string name);
 			#endif
-		private: 
+		private:
 			void Start();
 			void Deactivate();
 			void Update(double deltaTime);

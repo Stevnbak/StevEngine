@@ -1,7 +1,7 @@
 #ifdef StevEngine_PHYSICS
 #include "System.hpp"
-#include <main/Log.hpp>
-#include <utilities/Vector3.hpp>
+#include "main/Log.hpp"
+#include "utilities/Vector3.hpp"
 
 #include <math.h>
 #include <iostream>

@@ -1,9 +1,9 @@
 #include "Camera.hpp"
-#include <main/Engine.hpp>
-#include <utilities/Vector3.hpp>
-#include <utilities/Quaternion.hpp>
-#include <main/Log.hpp>
-#include <scenes/GameObject.hpp>
+#include "main/Engine.hpp"
+#include "utilities/Vector3.hpp"
+#include "utilities/Quaternion.hpp"
+#include "main/Log.hpp"
+#include "scenes/GameObject.hpp"
 
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>

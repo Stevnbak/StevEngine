@@ -1,6 +1,5 @@
 #ifdef StevEngine_RENDERER_GL
 #include "System.hpp"
-
 #include "main/Log.hpp"
 #include "main/Engine.hpp"
 #include "visuals/render/Object.hpp"
@@ -14,7 +13,7 @@
 using StevEngine::Utilities::Vertex;
 
 namespace StevEngine {
-    namespace Render { 
+    namespace Render {
         const char* vertexShaderSource =
             #include "visuals/shaders/default.vert"
         ;

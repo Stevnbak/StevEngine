@@ -1,7 +1,7 @@
 #ifdef StevEngine_INPUTS
-#include <main/Log.hpp>
-#include <main/Engine.hpp>
-#include <scenes/GameObject.hpp>
+#include "main/Log.hpp"
+#include "main/Engine.hpp"
+#include "scenes/GameObject.hpp"
 
 #include <SDL.h>
 
@@ -100,4 +100,3 @@ namespace StevEngine::InputSystem {
 	}
 }
 #endif
-

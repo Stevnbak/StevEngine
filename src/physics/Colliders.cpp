@@ -1,7 +1,7 @@
 #ifdef StevEngine_PHYSICS
 #include "Colliders.hpp"
 #include "RigidBody.hpp"
-#include <scenes/GameObject.hpp>
+#include "scenes/GameObject.hpp"
 #include "scenes/Scene.hpp"
 #include "main/Engine.hpp"
 #include "main/ResourceManager.hpp"

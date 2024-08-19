@@ -1,5 +1,4 @@
 #pragma once
-#include <cstddef>
 #ifdef StevEngine_RENDERER_GL
 #include <SDL.h>
 #include <glad/glad.h>
@@ -7,6 +6,7 @@
 #include <vector>
 #include <array>
 #include <type_traits>
+#include <cstddef>
 
 #include "Object.hpp"
 #include "utilities/Color.hpp"

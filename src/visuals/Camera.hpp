@@ -1,11 +1,11 @@
 #pragma once
-#include <scenes/Component.hpp>
+#include "scenes/Component.hpp"
 
 namespace StevEngine {
 	class GameObject;
 	class Engine;
-	namespace Render { 
-		class System; 
+	namespace Render {
+		class System;
 	}
 
 	namespace Visuals {
@@ -13,7 +13,7 @@ namespace StevEngine {
 			friend class StevEngine::GameObject;
 			friend class StevEngine::Engine;
 			friend class Render::System;
-			
+
 			public:
 				bool isOrthographic;
 				double zoom, aspect, nearClip = 1, farClip = 100;

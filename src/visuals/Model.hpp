@@ -1,6 +1,6 @@
 #pragma once
 #ifdef StevEngine_RENDERER_GL
-#include <scenes/Component.hpp>
+#include "scenes/Component.hpp"
 #include "utilities/Model.hpp"
 
 #include "visuals/render/Component.hpp"

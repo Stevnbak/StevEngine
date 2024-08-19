@@ -5,12 +5,12 @@
 #include <SDL.h>
 #include <glad/glad.h>
 
-#include <utilities/Vector3.hpp>
-#include <utilities/Vertex.hpp>
-#include <utilities/Quaternion.hpp>
+#include "utilities/Vector3.hpp"
+#include "utilities/Vertex.hpp"
+#include "utilities/Quaternion.hpp"
 #include "utilities/Texture.hpp"
 #include "utilities/Color.hpp"
-#include <scenes/Component.hpp>
+#include "scenes/Component.hpp"
 
 namespace StevEngine {
     namespace Render {

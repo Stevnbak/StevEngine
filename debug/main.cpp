@@ -1,20 +1,18 @@
-#include <main/Engine.hpp>
-#include <scenes/GameObject.hpp>
-#include <visuals/Primitive.hpp>
-#include <physics/RigidBody.hpp>
-#include <physics/Colliders.hpp>
-#include <physics/Layers.hpp>
-#include <main/ResourceManager.hpp>
-
+#include "main/Engine.hpp"
+#include "main/ResourceManager.hpp"
+#include "scenes/GameObject.hpp"
+#include "physics/RigidBody.hpp"
+#include "physics/Colliders.hpp"
+#include "physics/Layers.hpp"
+#include "visuals/Primitive.hpp"
+#include "visuals/Model.hpp"
 #include "visuals/render/Lights.hpp"
-#include "glm/ext/matrix_float4x4.hpp"
 #include "utilities/Quaternion.hpp"
 #include "utilities/Texture.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Color.hpp"
-#include "visuals/Model.hpp"
-#include "visuals/render/Lights.hpp"
 
+#include <glm/ext/matrix_float4x4.hpp>
 #include <cmrc/cmrc.hpp>
 CMRC_DECLARE(debug_assets);
 
@@ -212,7 +210,7 @@ int main(int argc, char** argv) {
 		modelObj->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		#endif
 	}
-	{ 
+	{
 		ID id = scene->CreateObject("Cylinder", Utilities::Vector3(0, 3, 3), Quaternion(), Vector3(1.0, 1.0, 1.0));
 		GameObject* obj = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL

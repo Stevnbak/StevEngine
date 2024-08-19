@@ -2,11 +2,11 @@
 #ifdef StevEngine_RENDERER_GL
 #include "Primitive.hpp"
 #include "visuals/render/Object.hpp"
-#include <main/Log.hpp>
-#include <utilities/Vector3.hpp>
+#include "main/Log.hpp"
+#include "utilities/Vector3.hpp"
 #include "utilities/Vertex.hpp"
-#include <utilities/Quaternion.hpp>
-#include <scenes/GameObject.hpp>
+#include "utilities/Quaternion.hpp"
+#include "scenes/GameObject.hpp"
 
 #include <SDL.h>
 #include <glad/glad.h>

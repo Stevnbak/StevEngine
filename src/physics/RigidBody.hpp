@@ -1,10 +1,10 @@
 #pragma once
 #ifdef StevEngine_PHYSICS
-#include <scenes/Component.hpp>
-#include <utilities/Vector3.hpp>
-#include <utilities/Quaternion.hpp>
-#include <physics/Colliders.hpp>
-#include <physics/Layers.hpp>
+#include "scenes/Component.hpp"
+#include "utilities/Vector3.hpp"
+#include "utilities/Quaternion.hpp"
+#include "physics/Colliders.hpp"
+#include "physics/Layers.hpp"
 
 //Jolt imports
 #include <Jolt/Jolt.h>
@@ -22,10 +22,10 @@ namespace StevEngine::Physics {
 		JPH::EAllowedDOFs AllowedDOFs;
 		MotionProperties(
 			double gravityFactor = 1.0,
-			double linearDamping = 0.0, 
-			double angularDamping = 0.0, 
+			double linearDamping = 0.0,
+			double angularDamping = 0.0,
 			JPH::EAllowedDOFs allowedDOFs = JPH::EAllowedDOFs::All,
-			double maxLinearVelocity = 0.0, 
+			double maxLinearVelocity = 0.0,
 			double maxAngularVelocity = 0.0
 		) {
 			this->LinearDamping = linearDamping;

@@ -8,10 +8,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 //Engine
-#include <main/InputSystem.hpp>
-#include <scenes/GameObject.hpp>
-#include <main/Log.hpp>
-#include <visuals/Camera.hpp>
+#include "main/InputSystem.hpp"
+#include "scenes/GameObject.hpp"
+#include "main/Log.hpp"
+#include "visuals/Camera.hpp"
 
 //Get current process time in ms
 unsigned int GetTime() { return SDL_GetTicks(); }

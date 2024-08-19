@@ -1,6 +1,6 @@
 #pragma once
-#include <main/Log.hpp>
-#include <utilities/ID.hpp>
+#include "main/Log.hpp"
+#include "utilities/ID.hpp"
 #include <tinyxml2.h>
 #include <glm/mat4x4.hpp>
 
