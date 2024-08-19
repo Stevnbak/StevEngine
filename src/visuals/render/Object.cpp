@@ -46,21 +46,17 @@ namespace StevEngine {
             SetTexture(textureData);
         }
         void Object::SetTexture(Utilities::Texture textureData) {
-            SDL_Surface* surface = textureData;
-            if(surface) {
+            texture = textureData.BindTexture();
+            if(texture) {
                 textured = true;
-                glGenTextures(1, &texture);
-                glBindTexture(GL_TEXTURE_2D, texture);
-                //Genereate texture
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
-                glGenerateMipmap(GL_TEXTURE_2D);
-                //Free texture data
-                textureData.Free();
+                
             } else {
                 textured = false;
             }
+        }
+        void Object::FreeTexture() {
+            glDeleteTextures(1, &texture);
+            texture = 0;
         }
     }
 }

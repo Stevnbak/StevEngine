@@ -28,6 +28,7 @@ namespace StevEngine {
 				Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1);
 				void SetColor(Utilities::Color color);
 				void SetTexture(Utilities::Texture texture);
+				~RenderComponent();
 			protected:
 				Object object;
 				Utilities::Color color = Utilities::Color(255, 255, 255, 255);

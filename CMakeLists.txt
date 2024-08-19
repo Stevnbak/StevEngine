@@ -74,8 +74,8 @@ message("Building ${build_string}")
 # external libraries
 set(BUILD_SHARED_LIBS OFF)
 
+## GLAD
 if(USE_RENDERER_GL)
-    ## GLAD
     target_sources(${PROJECT_NAME} PRIVATE libs/glad/src/glad.c)
     target_include_directories(${PROJECT_NAME} PUBLIC libs/glad/include)
 endif()
@@ -83,8 +83,8 @@ endif()
 ## glm
 target_include_directories(${PROJECT_NAME} PUBLIC libs/glm)
 
+## Jolt
 if(USE_PHYSICS)
-    ## Jolt
     set(ENABLE_OBJECT_STREAM OFF)
     set(USE_ASSERTS OFF)
     set(DEBUG_RENDERER_IN_DEBUG_AND_RELEASE OFF)
@@ -118,8 +118,8 @@ else()
     endif()
 endif()
 
+## SDL_Mixer
 if(USE_AUDIO)
-    ## SDL_Mixer
     find_package(SDL2_mixer REQUIRED)
     target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_mixer::SDL2_mixer)
     if (WIN32)
@@ -131,26 +131,25 @@ if(USE_AUDIO)
     endif()
 endif()
 
+## SDL_Image
 if(USE_RENDERER_GL)
-    ## SDL_Image
     find_package(SDL2_image REQUIRED)
-    if(TARGET SDL2_image)
-        target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image)
-    else()
-        target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image::SDL2_image)
-    endif()
 
     if (WIN32)
+        target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image::SDL2_image)
+
         add_custom_command(
             TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2_image::SDL2_image>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
             VERBATIM
         )
+    else()
+        target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image)
     endif()
 endif()
 
+## Assimp
 if(USE_RENDERER_GL OR USE_PHYSICS)
-    ## Assimp
     message("Configurating Assimp...")
     set(ASSIMP_NO_EXPORT ON)
     set(ASSIMP_BUILD_TESTS OFF)
@@ -171,7 +170,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC libs/TinyXML2)
 ## uuidv7
 target_include_directories(${PROJECT_NAME} PUBLIC libs/uuidv7-h)
 
-# build debug executable
+# Debug executable
 option(DEBUG_EXECUTABLE "Build the debug program for testing the engine." OFF)
 if(DEBUG_EXECUTABLE)
     # debug executable

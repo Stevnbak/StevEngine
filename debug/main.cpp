@@ -133,7 +133,7 @@ int main(int argc, char** argv) {
 
 	//Add debug assets
 	auto fs = cmrc::debug_assets::get_filesystem();
-	for (std::string path : {"test.txt", "test_2.txt", "audio.wav", "cube.object", "Debug_scene.scene", "Fox.stl", "cube.stl", "box.png"}) {
+	for (std::string path : {"test.txt", "test_2.txt", "audio.wav", "cube.object", "Debug_scene.scene", "Fox.stl", "cube.stl", "box.png", "prototype.png"}) {
 		cmrc::file file = fs.open("debug/assets/" + path);
 		engine.resources.AddFile(path, file.begin(), file.size());
 	}
@@ -161,7 +161,7 @@ int main(int argc, char** argv) {
 		#ifdef StevEngine_RENDERER_GL
 		CubePrimitive* primitive = cube->AddComponent(new CubePrimitive());
 		primitive->SetColor(Color(255, 255, 255, 255));
-		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("box.png").GetSDLData()));
+		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("prototype.png")));
 		cube->AddComponent(new Rotate(Vector3::up));
 		cube->AddComponent(new Rotate(Vector3::right));
 		#endif
@@ -186,7 +186,7 @@ int main(int argc, char** argv) {
 		#ifdef StevEngine_RENDERER_GL
 		SpherePrimitive* primitive = sphere->AddComponent(new SpherePrimitive());
 		primitive->SetColor(Color(255, 255, 255, 255));
-		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("box.png").GetSDLData()));
+		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("prototype.png")));
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = sphere->AddComponent(new Physics::SphereCollider());
@@ -216,11 +216,11 @@ int main(int argc, char** argv) {
 		#ifdef StevEngine_RENDERER_GL
 		CylinderPrimitive* primitive = obj->AddComponent(new CylinderPrimitive());
 		primitive->SetColor(Color(255, 255, 255, 255));
-		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("box.png").GetSDLData()));
+		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("box.png")));
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = obj->AddComponent(new Physics::CylinderCollider());
-		//Physics::RigidBody* rb = obj->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		Physics::RigidBody* rb = obj->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		#endif
 	}
 	{
@@ -229,7 +229,7 @@ int main(int argc, char** argv) {
 		#ifdef StevEngine_RENDERER_GL
 		CapsulePrimitive* primitive = obj->AddComponent(new CapsulePrimitive());
 		primitive->SetColor(Color(255, 255, 255, 255));
-		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("box.png").GetSDLData()));
+		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("box.png")));
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = obj->AddComponent(new Physics::CapsuleCollider());

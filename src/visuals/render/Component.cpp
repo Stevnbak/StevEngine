@@ -17,6 +17,11 @@ namespace StevEngine {
             : Component(type), position(position), rotation(rotation), scale(scale), object(Object(vertices)) {}
         RenderComponent::RenderComponent(Object object, std::string type)
             : Component(type), object(object) {}
+
+		//Destructor
+		RenderComponent::~RenderComponent() {
+			object.FreeTexture();
+		}
 		//Main draw function
 		void RenderComponent::Draw(glm::mat4x4 transform) {
            	//Scale

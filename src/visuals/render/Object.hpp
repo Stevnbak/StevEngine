@@ -25,9 +25,10 @@ namespace StevEngine {
         class Object {
 			friend class System;
             public:
-                Object(std::vector<Utilities::Vertex> vertices, Utilities::Color color = Utilities::Color(255, 255, 255, 255), Utilities::Texture textureData = NULL);
-                Object(std::vector<Utilities::Vertex> vertices, std::vector<unsigned int> indices, Utilities::Color color = Utilities::Color(255, 255, 255, 255), Utilities::Texture textureData = NULL);
+                Object(std::vector<Utilities::Vertex> vertices, Utilities::Color color = Utilities::Color(255, 255, 255, 255), Utilities::Texture textureData = Utilities::Texture::empty);
+                Object(std::vector<Utilities::Vertex> vertices, std::vector<unsigned int> indices, Utilities::Color color = Utilities::Color(255, 255, 255, 255), Utilities::Texture textureData = Utilities::Texture::empty);
                 void SetTexture(Utilities::Texture textureData);
+                void FreeTexture();
                 Utilities::Color color;
                 Material material;
             private:

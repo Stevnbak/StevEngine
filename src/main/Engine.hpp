@@ -35,6 +35,7 @@ namespace StevEngine {
 			Resources::System resources;
 			#ifdef StevEngine_RENDERER_GL
 			Render::System render;
+			SDL_GLContext context;
 			#endif
 			#ifdef StevEngine_PHYSICS
 			Physics::System physics;
@@ -52,9 +53,6 @@ namespace StevEngine {
 			int targetFPS;
 			double currentFPS;
 			SDL_Event ev;
-			#ifdef StevEngine_RENDERER_GL
-			SDL_GLContext context;
-			#endif
 			#ifdef StevEngine_SHOW_WINDOW
 			bool fullScreen;
 			int WIDTH;

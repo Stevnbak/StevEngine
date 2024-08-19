@@ -1,17 +1,19 @@
 #pragma once
 #ifdef StevEngine_RENDERER_GL
-#include <SDL.h>
+#include "main/ResourceManager.hpp"
 
 namespace StevEngine {
     namespace Utilities {
         class Texture {
             public:
-                Texture(SDL_RWops* data);
+                Texture(Resources::Resource file);
                 ~Texture();
-                void Free();
-                operator SDL_Surface*() { return surface; }
+                int BindTexture();
+                const static Texture empty;
             private:
+                Texture() {};
                 SDL_Surface* surface;
+                unsigned int GLLocation;
         };
     }
 }

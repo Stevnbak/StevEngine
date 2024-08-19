@@ -23,12 +23,12 @@ namespace StevEngine {
             return Render::Object(vertices, indices, color, surface);
         }
         ModelRenderer::ModelRenderer(Utilities::Model model)
-            : model(model), RenderComponent(CreateRenderObject(model, Color(255, 255, 255, 255), nullptr), "ModelRenderer") {}
+            : model(model), RenderComponent(CreateRenderObject(model, Color(255, 255, 255, 255), Utilities::Texture::empty), "ModelRenderer") {}
 
         ModelRenderer::ModelRenderer(tinyxml2::XMLElement* element)
             : model(Utilities::Model(Engine::Instance->resources.GetFile(element->Attribute("file")))), RenderComponent(element)
         {
-            object = CreateRenderObject(model, color, nullptr);
+            object = CreateRenderObject(model, color, Utilities::Texture::empty);
         }
         void ModelRenderer::Export(tinyxml2::XMLElement* element) {
             RenderComponent::Export(element);
