@@ -159,7 +159,7 @@ int main(int argc, char** argv) {
 		ID id = scene->CreateObject("Cube", Utilities::Vector3(0, 4, 0), Utilities::Quaternion(), Utilities::Vector3(2.0));
 		GameObject* cube = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
-		CubePrimitive* primitive = cube->AddComponent(new CubePrimitive());
+		CubePrimitive* primitive = cube->AddComponent(new CubePrimitive(Vector3(), Quaternion(), Vector3(1.0), TextureType::REPEAT));
 		primitive->SetColor(Color(255, 255, 255, 255));
 		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("prototype.png")));
 		cube->AddComponent(new Rotate(Vector3::up));
@@ -227,7 +227,7 @@ int main(int argc, char** argv) {
 		ID id = scene->CreateObject("Capsule", Utilities::Vector3(0, 3, 3), Quaternion(), Vector3(1.0, 1.0, 1.0));
 		GameObject* obj = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
-		CapsulePrimitive* primitive = obj->AddComponent(new CapsulePrimitive());
+		CapsulePrimitive* primitive = obj->AddComponent(new CapsulePrimitive(Vector3(), Quaternion(), Vector3(1.0), TextureType::REPEAT));
 		primitive->SetColor(Color(255, 255, 255, 255));
 		primitive->SetTexture(Texture(Engine::Instance->resources.GetFile("box.png")));
 		#endif

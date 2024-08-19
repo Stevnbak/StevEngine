@@ -22,7 +22,7 @@ namespace StevEngine {
 		float r = 0.5;
 		float pi2 = (2*M_PI);
 	    //Cube
-		static const std::vector<Vertex> CubeVertices() {
+		static const std::vector<Vertex> CubeVertices(TextureType textureType) {
 			std::array<Vertex, 6*6> vertices;
 			for(int side = 0; side < 6; side++) {
 				//Coordinates
@@ -43,6 +43,7 @@ namespace StevEngine {
                 //Texture coordinates
                	Vector2 sideUV;
                	Vector2 uvFlip;
+
                	if(side < 1)      {
                     sideUV = Vector2(1, 1);
                     uvFlip = Vector2(1, -1);
@@ -67,12 +68,16 @@ namespace StevEngine {
                     sideUV = Vector2(2, 1);
                     uvFlip = Vector2(1, -1);
                 }
+
+                if(textureType == REPEAT) {
+                    sideUV = Vector2(0, 1);
+                }
 				//Combine to vertices
 				for(int i = 0; i < 6; i++) {
                     float a = (side < 2 ? sideVertices[i].Z : side < 4 ? sideVertices[i].Z : sideVertices[i].X) * uvFlip.X;
 					float b = (side < 2 ? sideVertices[i].Y : side < 4 ? sideVertices[i].X : sideVertices[i].Y) * uvFlip.Y;
-					float u = (sideUV.X + ((a + 1) / 2)) * 0.25;
-					float v = (sideUV.Y + ((b + 1) / 2)) * 0.333333333333;
+					float u = (sideUV.X + ((a + 1) / 2)) * (textureType == COVER ? 0.25 : 1);
+					float v = (sideUV.Y + ((b + 1) / 2)) * (textureType == COVER ? 0.333333333333 : 1);
 
 				    vertices[side * 6 + i] = Vertex(
 						sideVertices[i] * r,
@@ -83,16 +88,20 @@ namespace StevEngine {
 			}
 			return std::vector<Vertex>(vertices.begin(), vertices.end());
 		}
-		CubePrimitive::CubePrimitive(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
-			: RenderComponent(CubeVertices(), position, rotation, scale, "CubePrimitive") {}
+		CubePrimitive::CubePrimitive(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, TextureType textureType)
+			: RenderComponent(CubeVertices(textureType), position, rotation, scale, "CubePrimitive") {}
 		CubePrimitive::CubePrimitive(tinyxml2::XMLElement* element) : RenderComponent(element) {
-			object = Object(CubeVertices(), color);
+			object = Object(CubeVertices(COVER), color);
 		}
 		FactoryBase* cubefactory = GameObject::AddComponentFactory<CubePrimitive>(std::string("CubePrimitive"));
 
 		//Sphere
-		static const std::vector<Vertex> SphereVertices(int detail = 30, float height = r) {
+		static const std::vector<Vertex> SphereVertices(TextureType textureType, int detail = 30, float height = r) {
             float anglePerStep = pi2 / detail; //In Radians
+            float divide = pi2;
+			if(textureType == REPEAT) {
+			    divide /= 4;
+			}
 			//Calculate circle layers
 			std::vector<std::vector<Utilities::Vector3>> layers;
 			for (int stack = -detail / 2; stack < detail / 2; stack++) {
@@ -122,10 +131,10 @@ namespace StevEngine {
 					//Normal
 					Vector3 normal = Vector3::Cross(c - a, b - a) * -1;
 					//UV
-					Vector2 aUV = Vector2(-(0.125 + std::atan2(a.Z, a.X)/pi2), -((height == r ? 0.5 : 0.75) + asin(a.Y)));
-					Vector2 bUV = Vector2(-(0.125 + std::atan2(b.Z, b.X)/pi2), -((height == r ? 0.5 : 0.75) + asin(b.Y)));
-					Vector2 cUV = Vector2(-(0.125 + std::atan2(c.Z, c.X)/pi2), -((height == r ? 0.5 : 0.75) + asin(c.Y)));
-					Vector2 dUV = Vector2(-(0.125 + std::atan2(d.Z, d.X)/pi2), -((height == r ? 0.5 : 0.75) + asin(d.Y)));
+					Vector2 aUV = Vector2(-(0.125 + std::atan2(a.Z, a.X)/divide), -((height == r ? 0.5 : 0.75) + asin(a.Y)));
+					Vector2 bUV = Vector2(-(0.125 + std::atan2(b.Z, b.X)/divide), -((height == r ? 0.5 : 0.75) + asin(b.Y)));
+					Vector2 cUV = Vector2(-(0.125 + std::atan2(c.Z, c.X)/divide), -((height == r ? 0.5 : 0.75) + asin(c.Y)));
+					Vector2 dUV = Vector2(-(0.125 + std::atan2(d.Z, d.X)/divide), -((height == r ? 0.5 : 0.75) + asin(d.Y)));
 
 					//Push
 					vertices.push_back(Vertex(a, normal, aUV));
@@ -139,15 +148,21 @@ namespace StevEngine {
 			}
 			return vertices;
 		}
-		SpherePrimitive::SpherePrimitive(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
-			: RenderComponent(SphereVertices(), position, rotation, scale, "SpherePrimitive") {}
+		SpherePrimitive::SpherePrimitive(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, TextureType textureType)
+			: RenderComponent(SphereVertices(textureType), position, rotation, scale, "SpherePrimitive") {}
 		SpherePrimitive::SpherePrimitive(tinyxml2::XMLElement* element) : RenderComponent(element) {
-		    object = Object(SphereVertices(), color);
+		    object = Object(SphereVertices(COVER), color);
 		}
 		FactoryBase* spherefactory = GameObject::AddComponentFactory<SpherePrimitive>(std::string("SpherePrimitive"));
 
 		//Cylinder
-		static const std::vector<Vertex> CylinderVertices(int detail = 50) {
+		static const std::vector<Vertex> CylinderVertices(TextureType textureType, int detail = 50) {
+		    float third = 0.33333333333;
+			float quarter = 0.25;
+			if(textureType == REPEAT) {
+			    third = 1;
+				quarter = 1;
+			}
 		    //Create circle
             float anglePerStep = pi2 / detail; //In Radians
             std::vector<Utilities::Vector2> circle;
@@ -161,39 +176,41 @@ namespace StevEngine {
 			// Bottom
 			Vector3 bottomCenter = Vector3(0, -r, 0);
 			Vector3 bottomNormal = Vector3::Cross(Vector3(circle[2].X, -r, circle[2].Y) - bottomCenter, Vector3(circle[1].X, -r, circle[1].Y) - bottomCenter).Normalized();
-			//Vector2 bottomCenterUV = Vector2(1.5 * 0.25, 2.5 * 0.33333333333);
-			Vector2 bottomCenterUV = Vector2(0.625, 2.5 * 0.33333333333);
+			Vector2 bottomCenterUV = Vector2(0.625, 2.5 * third);
 			for (int i = 0; i < circle.size() - 1; i++) {
 			    Utilities::Vector2 a = circle[i];
 			    Utilities::Vector2 b = circle[i + 1];
-				vertices.push_back(Vertex(Vector3(a.X, -r, a.Y), bottomNormal, Vector2(bottomCenterUV.X + (a.X) * 0.25, bottomCenterUV.Y - (a.Y) * 0.33333333333)));
-				vertices.push_back(Vertex(Vector3(b.X, -r, b.Y), bottomNormal, Vector2(bottomCenterUV.X + (b.X) * 0.25, bottomCenterUV.Y - (b.Y) * 0.33333333333)));
+				vertices.push_back(Vertex(Vector3(a.X, -r, a.Y), bottomNormal, Vector2(bottomCenterUV.X + (a.X) * quarter, bottomCenterUV.Y - (a.Y) * third)));
+				vertices.push_back(Vertex(Vector3(b.X, -r, b.Y), bottomNormal, Vector2(bottomCenterUV.X + (b.X) * quarter, bottomCenterUV.Y - (b.Y) * third)));
 				vertices.push_back(Vertex(bottomCenter, bottomNormal, bottomCenterUV));
 			}
 			// Top
 			Vector3 topCenter = Vector3(0, r, 0);
 			Vector3 topNormal = Vector3::Cross(Vector3(circle[2].X, r, circle[2].Y) - topCenter, Vector3(circle[1].X, r, circle[1].Y) - topCenter).Normalized();
-			//Vector2 topCenterUV = Vector2(1.5 * 0.25, 0.5 * 0.33333333333);
-			Vector2 topCenterUV = Vector2(0.625, 0.5 * 0.33333333333);
+			Vector2 topCenterUV = Vector2(0.625, 0.5 * third);
 			for (int i = 0; i < circle.size() - 1; i++) {
 			    Utilities::Vector2 a = circle[i];
 			    Utilities::Vector2 b = circle[i + 1];
-				vertices.push_back(Vertex(Vector3(a.X, r, a.Y), topNormal, Vector2(topCenterUV.X + (a.X) /* *0.25 */, topCenterUV.Y + (a.Y) * 0.33333333333)));
-				vertices.push_back(Vertex(Vector3(b.X, r, b.Y), topNormal, Vector2(topCenterUV.X + (b.X) /* *0.25 */, topCenterUV.Y + (b.Y) * 0.33333333333)));
+				vertices.push_back(Vertex(Vector3(a.X, r, a.Y), topNormal, Vector2(topCenterUV.X + (a.X) * quarter, topCenterUV.Y + (a.Y) * third)));
+				vertices.push_back(Vertex(Vector3(b.X, r, b.Y), topNormal, Vector2(topCenterUV.X + (b.X) * quarter, topCenterUV.Y + (b.Y) * third)));
 				vertices.push_back(Vertex(topCenter, topNormal, topCenterUV));
 			}
 			// Sides
+			float divide = pi2;
+			if(textureType == REPEAT) {
+			    divide /= 4;
+			}
 			for (int i = 0; i < circle.size() - 1; i++) {
 			    Utilities::Vector2 a = circle[i];
 			    Utilities::Vector2 b = circle[i + 1];
 
 				Vector3 normal = Vector3::Cross(Vector3(b.X, r, b.Y) - Vector3(a.X, -r, a.Y), Vector3(b.X, -r, b.Y) - Vector3(a.X, -r, a.Y)).Normalized();
 
-				float uA = -(std::atan2(a.Y, a.X) / pi2) - 0.125;
-				float uB = -(std::atan2(b.Y, b.X) / pi2) - 0.125;
+				float uA = -(std::atan2(a.Y, a.X) / divide) - 0.125;
+				float uB = -(std::atan2(b.Y, b.X) / divide) - 0.125;
 
-				float vP = 1 * 0.333333333;
-				float vN = 2 * 0.333333333;
+				float vP = 1 * third;
+				float vN = 2 * third;
 
 				vertices.push_back(Vertex(Vector3(a.X, -r, a.Y), normal, Vector2(uA, vN)));
 				vertices.push_back(Vertex(Vector3(b.X, r, b.Y), normal, Vector2(uB, vP)));
@@ -206,19 +223,27 @@ namespace StevEngine {
 			//Return
 			return vertices;
 		}
-		CylinderPrimitive::CylinderPrimitive(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
-			: RenderComponent(CylinderVertices(), position, rotation, scale, "CylinderPrimitive") {}
+		CylinderPrimitive::CylinderPrimitive(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, TextureType textureType)
+			: RenderComponent(CylinderVertices(textureType), position, rotation, scale, "CylinderPrimitive") {}
 		CylinderPrimitive::CylinderPrimitive(tinyxml2::XMLElement* element) : RenderComponent(element) {
-		    object = Object(CylinderVertices(), color);
+		    object = Object(CylinderVertices(COVER), color);
 		}
 		FactoryBase* cylinderfactory = GameObject::AddComponentFactory<CylinderPrimitive>(std::string("CylinderPrimitive"));
 
 		//Capsule
-		static const std::vector<Vertex> CapsuleVertices(int detail = 30) {
+		static const std::vector<Vertex> CapsuleVertices(TextureType textureType, int detail = 30) {
+    		float divide = pi2;
+            float third = 0.33333333333;
+			float quarter = 0.25;
+    		if(textureType == REPEAT) {
+    		    divide /= 4;
+                third = 1;
+				quarter = 1;
+    		}
 			//Create triangles
 			std::vector<Vertex> vertices;
 			// Get sphere vertices
-			std::vector<Vertex> sphere = SphereVertices(detail, r/2);
+			std::vector<Vertex> sphere = SphereVertices(textureType, detail, r/2);
 			// Bottom sphere
 			for(int i = 0; i < sphere.size() / 2; i++) {
 			    Vertex v = sphere[i];
@@ -246,11 +271,11 @@ namespace StevEngine {
 
 				Vector3 normal = Vector3::Cross(Vector3(b.X, height, b.Y) - Vector3(a.X, -height, a.Y), Vector3(b.X, -height, b.Y) - Vector3(a.X, -height, a.Y)).Normalized();
 
-				float uA = -(std::atan2(a.Y, a.X) / pi2) - 0.125;
-				float uB = -(std::atan2(b.Y, b.X) / pi2) - 0.125;
+				float uA = -(std::atan2(a.Y, a.X) / divide) - 0.125;
+				float uB = -(std::atan2(b.Y, b.X) / divide) - 0.125;
 
-				float vP = 1 * 0.333333333;
-				float vN = 2 * 0.333333333;
+				float vP = 1 * third;
+				float vN = 2 * third;
 
 				vertices.push_back(Vertex(Vector3(a.X, -height, a.Y), normal, Vector2(uA, vN)));
 				vertices.push_back(Vertex(Vector3(b.X, height, b.Y), normal, Vector2(uB, vP)));
@@ -263,10 +288,10 @@ namespace StevEngine {
 			//Return
 			return vertices;
 		}
-		CapsulePrimitive::CapsulePrimitive(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
-			: RenderComponent(CapsuleVertices(), position, rotation, scale, "CapsulePrimitive") {}
+		CapsulePrimitive::CapsulePrimitive(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, TextureType textureType)
+			: RenderComponent(CapsuleVertices(textureType), position, rotation, scale, "CapsulePrimitive") {}
 		CapsulePrimitive::CapsulePrimitive(tinyxml2::XMLElement* element) : RenderComponent(element) {
-		    object = Object(CapsuleVertices(), color);
+		    object = Object(CapsuleVertices(COVER), color);
 		}
 		FactoryBase* capsulefactory = GameObject::AddComponentFactory<CapsulePrimitive>(std::string("CapsulePrimitive"));
 	}
