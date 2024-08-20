@@ -12,6 +12,7 @@
 #include "visuals/Texture.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Color.hpp"
+#include "visuals/shaders/Shader.hpp"
 
 #include <glm/ext/matrix_float4x4.hpp>
 #include <cmrc/cmrc.hpp>
@@ -134,7 +135,7 @@ int main(int argc, char** argv) {
 
 	//Add debug assets
 	auto fs = cmrc::debug_assets::get_filesystem();
-	for (std::string path : {"test.txt", "test_2.txt", "audio.wav", "cube.object", "Debug_scene.scene", "Fox.stl", "cube.stl", "box.png", "prototype.png"}) {
+	for (std::string path : {"test.txt", "test_2.txt", "audio.wav", "cube.object", "Debug_scene.scene", "Fox.stl", "cube.stl", "box.png", "prototype.png", "test_shader.frag"}) {
 		cmrc::file file = fs.open("debug/assets/" + path);
 		engine.resources.AddFile(path, file.begin(), file.size());
 	}
@@ -257,6 +258,9 @@ int main(int argc, char** argv) {
 	Log::Debug(std::format("Ressource 0: {}", Engine::Instance->resources.GetFile(0).path));
 	Log::Debug(std::format("Ressource \"test.txt\": {}", Engine::Instance->resources.GetFile("test.txt").GetStrData()));
 	Log::Debug(std::format("Ressource \"test_2.txt\": {}", Engine::Instance->resources.GetFile("test_2.txt").GetStrData()));
+
+	//Use test shader
+	Render::Shader shader = Render::Shader(engine.resources.GetFile("test_shader.frag").GetRawData(), GL_FRAGMENT_SHADER);
 
 	//Test data manager
 	#ifdef StevEngine_PLAYER_DATA

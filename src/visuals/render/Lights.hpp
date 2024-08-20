@@ -16,7 +16,6 @@ namespace StevEngine {
 			protected:
 			    Light(unsigned int shaderID, Utilities::Vector3 diffuse, Utilities::Vector3 specular, std::string type);
 				const unsigned int shaderLightID;
-				const unsigned int shaderProgram;
 				virtual void Export(tinyxml2::XMLElement* element) = 0;
 				virtual void UpdateShader() = 0;
 				virtual ~Light();

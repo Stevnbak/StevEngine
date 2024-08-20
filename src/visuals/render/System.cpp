@@ -9,6 +9,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "glm/ext/vector_float3.hpp"
 #include <glm/gtc/type_ptr.hpp>
+#include <glad/glad.h>
 
 using StevEngine::Utilities::Vertex;
 
@@ -52,42 +53,14 @@ namespace StevEngine {
             glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, Vertex::size, (void*)((3 + 3) * sizeof(float)));
             glEnableVertexAttribArray(2);
             //Shaders
-            unsigned int vertexShader;
-            vertexShader = glCreateShader(GL_VERTEX_SHADER);
-            glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-            glCompileShader(vertexShader);
-            int  success;
-            char infoLog[512];
-            glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-            if(!success)
-            {
-                glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-                Log::Error("Vertex shader failed to compile!\n" + std::string(infoLog));
-            }
+            vertexShader = Shader(vertexShaderSource, GL_VERTEX_SHADER);
+            fragmentShader = Shader(fragmentShaderSource, GL_FRAGMENT_SHADER);
 
-            unsigned int fragmentShader;
-            fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-            glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-            glCompileShader(fragmentShader);
-            glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-            if(!success)
-            {
-                glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-                Log::Error("Fragment shader failed to compile!\n" + std::string(infoLog));
-            }
+            defaultShaderProgram = glCreateProgram();
+            vertexShader.AddToProgram(defaultShaderProgram);
+            fragmentShader.AddToProgram(defaultShaderProgram);
 
-            shaderProgram = glCreateProgram();
-            glAttachShader(shaderProgram, vertexShader);
-            glAttachShader(shaderProgram, fragmentShader);
-            glLinkProgram(shaderProgram);
-            glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-            if(!success) {
-                glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-                Log::Error("Shader program failed to compile!\n" + std::string(infoLog));
-            }
-
-            glDeleteShader(vertexShader);
-            glDeleteShader(fragmentShader);
+            //shaderPipeline = glCreatePipeline();
 
             Log::Debug("Renderer has been initialized!", true);
         }
@@ -101,7 +74,7 @@ namespace StevEngine {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             //Use default shader program
-            glUseProgram(shaderProgram);
+            glUseProgram(defaultShaderProgram);
 
             //Bind vertex array
             glBindVertexArray(VAO);
@@ -109,15 +82,10 @@ namespace StevEngine {
             //Camera matrices
             Visuals::Camera* camera = Engine::Instance->scenes.GetActiveScene()->GetCamera();
             //  View matrix
-            glm::mat4x4 view = camera->GetView();
-            unsigned int viewLoc = glGetUniformLocation(shaderProgram, "viewTransform");
-            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-            glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "viewPosition"), 1, GL_FALSE, glm::value_ptr((glm::vec3)camera->GetParent()->GetWorldPosition()));
+            SetShaderUniform("viewTransform", camera->GetView());
+            SetShaderUniform("viewPosition", (glm::vec3)camera->GetParent()->GetWorldPosition());
             //  Projection matrix
-            glm::mat4x4 proj = camera->GetProjection();
-            unsigned int projLoc = glGetUniformLocation(shaderProgram, "projectionTransform");
-            glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
-
+            SetShaderUniform("projectionTransform", camera->GetProjection());
             //Lights
             for(Light* light : lights) {
                 light->UpdateShader();
@@ -148,33 +116,29 @@ namespace StevEngine {
         }
 
         void System::SetAmbientLight(float strength, Utilities::Color color) {
-            glUniform3fv(glGetUniformLocation(shaderProgram, "ambientColor"), 1, glm::value_ptr(glm::vec3(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f)));
-            glUniform1f(glGetUniformLocation(shaderProgram, "ambientStrength"), strength);
+            SetShaderUniform("ambientColor", glm::vec3(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f));
+            SetShaderUniform("ambientStrength", strength);
         }
 
         void System::Draw(RenderObject renderObject) {
             Object object = renderObject.object;
             glm::mat4x4 transform = renderObject.transform;
             //Update transform
-            unsigned int transformLoc = glGetUniformLocation(shaderProgram, "objectTransform");
-            glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+            SetShaderUniform("objectTransform", transform);
             //Update texture
-            unsigned int isTexturedLoc = glGetUniformLocation(shaderProgram, "objectIsTextured");
-            glUniform1i(isTexturedLoc, (int)object.textured);
+            SetShaderUniform("objectIsTextured", object.textured);
             if(object.textured) {
-                unsigned int textureLoc = glGetUniformLocation(shaderProgram, "objectTexture");
                 glActiveTexture(GL_TEXTURE0);
                 glBindTexture(GL_TEXTURE_2D, object.texture);
-                glUniform1i(textureLoc, 0);
+                SetShaderUniform("objectTexture", 0);
             }
             //Update color
-            unsigned int colorLoc = glGetUniformLocation(shaderProgram, "objectColor");
-            glUniform4fv(colorLoc, 1, glm::value_ptr(glm::vec4(object.color.r / 255.0f, object.color.g / 255.0f, object.color.b / 255.0f, object.color.a / 255.0f)));
+            SetShaderUniform("objectColor", glm::vec4(object.color.r / 255.0f, object.color.g / 255.0f, object.color.b / 255.0f, object.color.a / 255.0f));
             //Update material
-            glUniform3fv(glGetUniformLocation(shaderProgram, "objectMaterial.ambient"), 1, glm::value_ptr((glm::vec3)object.material.ambient));
-            glUniform3fv(glGetUniformLocation(shaderProgram, "objectMaterial.diffuse"), 1, glm::value_ptr((glm::vec3)object.material.diffuse));
-            glUniform3fv(glGetUniformLocation(shaderProgram, "objectMaterial.specular"), 1, glm::value_ptr((glm::vec3)object.material.specular));
-            glUniform1f(glGetUniformLocation(shaderProgram, "objectMaterial.shininess"), object.material.shininess);
+            SetShaderUniform("objectMaterial.ambient", (glm::vec3)object.material.ambient);
+            SetShaderUniform("objectMaterial.diffuse", (glm::vec3)object.material.diffuse);
+            SetShaderUniform("objectMaterial.specular", (glm::vec3)object.material.specular);
+            SetShaderUniform("objectMaterial.shininess", object.material.shininess);
             //Draw object
             glBufferData(GL_ARRAY_BUFFER, object.vertices.size() * sizeof(float), object.vertices.data(), GL_STATIC_DRAW);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, object.indices.size() * sizeof(float), object.indices.data(), GL_STATIC_DRAW);
