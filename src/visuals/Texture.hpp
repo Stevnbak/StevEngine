@@ -3,7 +3,7 @@
 #include "main/ResourceManager.hpp"
 
 namespace StevEngine {
-    namespace Utilities {
+    namespace Visuals {
         class Texture {
             public:
                 Texture(Resources::Resource file);

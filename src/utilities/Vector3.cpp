@@ -66,6 +66,9 @@ namespace StevEngine {
         Vector3 Vector3::operator - (const Vector3& other) const {
 			return Vector3(X - other.X, Y - other.Y, Z - other.Z);
         }
+        Vector3 Vector3::operator - () const {
+			return Vector3(-X, -Y, -Z);
+        }
         Vector3& Vector3::operator += (const Vector3& other) {
             X += other.X;
 			Y += other.Y;

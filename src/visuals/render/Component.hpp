@@ -8,7 +8,7 @@
 #include "utilities/Vector3.hpp"
 #include "utilities/Vertex.hpp"
 #include "utilities/Quaternion.hpp"
-#include "utilities/Texture.hpp"
+#include "visuals/Texture.hpp"
 #include "utilities/Color.hpp"
 #include "scenes/Component.hpp"
 
@@ -27,7 +27,7 @@ namespace StevEngine {
 				Utilities::Quaternion rotation = Utilities::Quaternion();
 				Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1);
 				void SetColor(Utilities::Color color);
-				void SetTexture(Utilities::Texture texture);
+				void SetTexture(Visuals::Texture texture);
 				~RenderComponent();
 			protected:
 				Object object;

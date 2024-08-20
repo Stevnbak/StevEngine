@@ -43,7 +43,7 @@ struct DirectionalLight {
 uniform DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)
 {
-    vec3 lightDir = normalize(-light.direction);
+    vec3 lightDir = normalize(light.direction);
     // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
@@ -67,7 +67,7 @@ struct PointLight {
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
-    vec3 lightDir = normalize(light.position - fragPos);
+    vec3 lightDir = normalize(fragPos - light.position);
     // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
@@ -95,7 +95,7 @@ struct SpotLight {
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
 vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
-    float theta     = dot(viewDir, normalize(-light.direction));
+    float theta     = dot(viewDir, normalize(light.direction));
     float epsilon   = light.cutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
     // combine results

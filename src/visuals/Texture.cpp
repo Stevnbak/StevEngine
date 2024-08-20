@@ -10,7 +10,7 @@
 #include <SDL.h>
 
 namespace StevEngine {
-    namespace Utilities {
+    namespace Visuals {
         const Texture Texture::empty = Texture();
 
         Texture::Texture(Resources::Resource file) {

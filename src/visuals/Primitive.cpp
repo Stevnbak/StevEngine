@@ -137,13 +137,13 @@ namespace StevEngine {
 					Vector2 dUV = Vector2(-(0.125 + std::atan2(d.Z, d.X)/divide), -((height == r ? 0.5 : 0.75) + asin(d.Y)));
 
 					//Push
-					vertices.push_back(Vertex(a, normal, aUV));
-					vertices.push_back(Vertex(b, normal, bUV));
-					vertices.push_back(Vertex(c, normal, cUV));
+					vertices.push_back(Vertex(a, a.Normalized(), aUV));
+					vertices.push_back(Vertex(b, b.Normalized(), bUV));
+					vertices.push_back(Vertex(c, c.Normalized(), cUV));
 
-					vertices.push_back(Vertex(a, normal, aUV));
-					vertices.push_back(Vertex(c, normal, cUV));
-					vertices.push_back(Vertex(d, normal, dUV));
+					vertices.push_back(Vertex(a, a.Normalized(), aUV));
+					vertices.push_back(Vertex(c, c.Normalized(), cUV));
+					vertices.push_back(Vertex(d, d.Normalized(), dUV));
 				}
 			}
 			return vertices;
@@ -175,7 +175,7 @@ namespace StevEngine {
 			std::vector<Vertex> vertices;
 			// Bottom
 			Vector3 bottomCenter = Vector3(0, -r, 0);
-			Vector3 bottomNormal = Vector3::Cross(Vector3(circle[2].X, -r, circle[2].Y) - bottomCenter, Vector3(circle[1].X, -r, circle[1].Y) - bottomCenter).Normalized();
+			Vector3 bottomNormal = -Vector3::up;
 			Vector2 bottomCenterUV = Vector2(0.625, 2.5 * third);
 			for (int i = 0; i < circle.size() - 1; i++) {
 			    Utilities::Vector2 a = circle[i];
@@ -186,7 +186,7 @@ namespace StevEngine {
 			}
 			// Top
 			Vector3 topCenter = Vector3(0, r, 0);
-			Vector3 topNormal = Vector3::Cross(Vector3(circle[2].X, r, circle[2].Y) - topCenter, Vector3(circle[1].X, r, circle[1].Y) - topCenter).Normalized();
+			Vector3 topNormal = Vector3::up;
 			Vector2 topCenterUV = Vector2(0.625, 0.5 * third);
 			for (int i = 0; i < circle.size() - 1; i++) {
 			    Utilities::Vector2 a = circle[i];
@@ -204,7 +204,8 @@ namespace StevEngine {
 			    Utilities::Vector2 a = circle[i];
 			    Utilities::Vector2 b = circle[i + 1];
 
-				Vector3 normal = Vector3::Cross(Vector3(b.X, r, b.Y) - Vector3(a.X, -r, a.Y), Vector3(b.X, -r, b.Y) - Vector3(a.X, -r, a.Y)).Normalized();
+				Vector3 aN = Vector3(a.X, 0, a.Y).Normalized();
+				Vector3 bN = Vector3(b.X, 0, b.Y).Normalized();
 
 				float uA = -(std::atan2(a.Y, a.X) / divide) - 0.125;
 				float uB = -(std::atan2(b.Y, b.X) / divide) - 0.125;
@@ -212,13 +213,13 @@ namespace StevEngine {
 				float vP = 1 * third;
 				float vN = 2 * third;
 
-				vertices.push_back(Vertex(Vector3(a.X, -r, a.Y), normal, Vector2(uA, vN)));
-				vertices.push_back(Vertex(Vector3(b.X, r, b.Y), normal, Vector2(uB, vP)));
-				vertices.push_back(Vertex(Vector3(b.X, -r, b.Y), normal, Vector2(uB, vN)));
+				vertices.push_back(Vertex(Vector3(a.X, -r, a.Y), aN, Vector2(uA, vN)));
+				vertices.push_back(Vertex(Vector3(b.X, r, b.Y), bN, Vector2(uB, vP)));
+				vertices.push_back(Vertex(Vector3(b.X, -r, b.Y), bN, Vector2(uB, vN)));
 
-				vertices.push_back(Vertex(Vector3(a.X, r, a.Y), normal, Vector2(uA, vP)));
-				vertices.push_back(Vertex(Vector3(b.X, r, b.Y), normal, Vector2(uB, vP)));
-				vertices.push_back(Vertex(Vector3(a.X, -r, a.Y), normal, Vector2(uA, vN)));
+				vertices.push_back(Vertex(Vector3(a.X, r, a.Y), aN, Vector2(uA, vP)));
+				vertices.push_back(Vertex(Vector3(b.X, r, b.Y), bN, Vector2(uB, vP)));
+				vertices.push_back(Vertex(Vector3(a.X, -r, a.Y), aN, Vector2(uA, vN)));
 			}
 			//Return
 			return vertices;
@@ -269,7 +270,8 @@ namespace StevEngine {
 			    Utilities::Vector2 a = circle[i];
 			    Utilities::Vector2 b = circle[i + 1];
 
-				Vector3 normal = Vector3::Cross(Vector3(b.X, height, b.Y) - Vector3(a.X, -height, a.Y), Vector3(b.X, -height, b.Y) - Vector3(a.X, -height, a.Y)).Normalized();
+				Vector3 aN = Vector3(a.X, 0, a.Y).Normalized();
+				Vector3 bN = Vector3(b.X, 0, b.Y).Normalized();
 
 				float uA = -(std::atan2(a.Y, a.X) / divide) - 0.125;
 				float uB = -(std::atan2(b.Y, b.X) / divide) - 0.125;
@@ -277,13 +279,13 @@ namespace StevEngine {
 				float vP = 1 * third;
 				float vN = 2 * third;
 
-				vertices.push_back(Vertex(Vector3(a.X, -height, a.Y), normal, Vector2(uA, vN)));
-				vertices.push_back(Vertex(Vector3(b.X, height, b.Y), normal, Vector2(uB, vP)));
-				vertices.push_back(Vertex(Vector3(b.X, -height, b.Y), normal, Vector2(uB, vN)));
+				vertices.push_back(Vertex(Vector3(a.X, -height, a.Y), aN, Vector2(uA, vN)));
+				vertices.push_back(Vertex(Vector3(b.X, height, b.Y), bN, Vector2(uB, vP)));
+				vertices.push_back(Vertex(Vector3(b.X, -height, b.Y), bN, Vector2(uB, vN)));
 
-				vertices.push_back(Vertex(Vector3(a.X, height, a.Y), normal, Vector2(uA, vP)));
-				vertices.push_back(Vertex(Vector3(b.X, height, b.Y), normal, Vector2(uB, vP)));
-				vertices.push_back(Vertex(Vector3(a.X, -height, a.Y), normal, Vector2(uA, vN)));
+				vertices.push_back(Vertex(Vector3(a.X, height, a.Y), aN, Vector2(uA, vP)));
+				vertices.push_back(Vertex(Vector3(b.X, height, b.Y), bN, Vector2(uB, vP)));
+				vertices.push_back(Vertex(Vector3(a.X, -height, a.Y), aN, Vector2(uA, vN)));
 			}
 			//Return
 			return vertices;

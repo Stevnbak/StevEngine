@@ -1,4 +1,4 @@
-#include "utilities/Texture.hpp"
+#include "visuals/Texture.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "Component.hpp"
 #include "scenes/GameObject.hpp"
@@ -39,7 +39,7 @@ namespace StevEngine {
 			this->color = color;
 			object.color = color;
 		}
-		void RenderComponent::SetTexture(Utilities::Texture texture) {
+		void RenderComponent::SetTexture(Visuals::Texture texture) {
 			object.SetTexture(texture);
 		}
 

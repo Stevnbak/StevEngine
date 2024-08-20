@@ -1,6 +1,6 @@
 #ifdef StevEngine_RENDERER_GL
 #include "Object.hpp"
-#include "utilities/Texture.hpp"
+#include "visuals/Texture.hpp"
 
 #include "glad/glad.h"
 #include <algorithm>
@@ -27,7 +27,7 @@ namespace StevEngine {
             }
             return result;
         }
-        Object::Object(std::vector<Vertex> vertices, Color color, Utilities::Texture textureData) {
+        Object::Object(std::vector<Vertex> vertices, Color color, Visuals::Texture textureData) {
             //Create indices and filter out duplicates
             std::vector<Vertex> uniqueVertices;
             for (Vertex v : vertices) {
@@ -42,14 +42,14 @@ namespace StevEngine {
             //Bind texture
             SetTexture(textureData);
         }
-        Object::Object(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Color color, Utilities::Texture textureData) : vertices(ToFloatList(vertices)), indices(indices) {
+        Object::Object(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Color color, Visuals::Texture textureData) : vertices(ToFloatList(vertices)), indices(indices) {
             SetTexture(textureData);
         }
-        void Object::SetTexture(Utilities::Texture textureData) {
+        void Object::SetTexture(Visuals::Texture textureData) {
             texture = textureData.BindTexture();
             if(texture) {
                 textured = true;
-                
+
             } else {
                 textured = false;
             }
