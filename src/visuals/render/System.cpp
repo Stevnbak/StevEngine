@@ -11,7 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "glm/ext/vector_float3.hpp"
 #include <glm/gtc/type_ptr.hpp>
-#include <glad/glad.h>
+#include <glad/gl.h>
 
 using StevEngine::Utilities::Vertex;
 
@@ -27,10 +27,11 @@ namespace StevEngine {
         System::System() {}
         void System::Init() {
             //Initialize GLAD:
-            if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+            int version = gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress);
+            if (!version) {
                 throw("Failed to initialize GLAD");
             }
-            Log::Debug(std::format("OpenGL Version: {}.{}", GLVersion.major, GLVersion.minor), true);
+            Log::Debug(std::format("OpenGL Version: {}.{}", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version)), true);
            	Log::Debug(std::format("OpenGL Shading Language Version: {}", (char *)glGetString(GL_SHADING_LANGUAGE_VERSION)), true);
            	Log::Debug(std::format("OpenGL Vendor: {}", (char *)glGetString(GL_VENDOR)), true);
            	Log::Debug(std::format("OpenGL Renderer: {}", (char *)glGetString(GL_RENDERER)), true);

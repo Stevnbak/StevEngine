@@ -3,7 +3,7 @@
 #include "visuals/render/System.hpp"
 #include "visuals/render/Object.hpp"
 #include "main/Log.hpp"
-#include "glad/glad.h"
+#include "glad/gl.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
 

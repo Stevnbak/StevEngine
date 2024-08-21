@@ -9,7 +9,7 @@
 #include "scenes/GameObject.hpp"
 
 #include <SDL.h>
-#include <glad/glad.h>
+#include <glad/gl.h>
 #include <math.h>
 #include <array>
 #include <vector>

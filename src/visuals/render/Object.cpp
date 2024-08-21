@@ -2,7 +2,7 @@
 #include "Object.hpp"
 #include "visuals/Texture.hpp"
 
-#include "glad/glad.h"
+#include "glad/gl.h"
 #include <algorithm>
 
 using StevEngine::Utilities::Vertex;

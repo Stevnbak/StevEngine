@@ -3,7 +3,7 @@
 #include "Object.hpp"
 
 #include <SDL.h>
-#include <glad/glad.h>
+#include <glad/gl.h>
 
 #include "utilities/Vector3.hpp"
 #include "utilities/Vertex.hpp"

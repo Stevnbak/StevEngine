@@ -2,7 +2,7 @@
 #ifdef StevEngine_RENDERER_GL
 #include <vector>
 #include <SDL.h>
-#include <glad/glad.h>
+#include <glad/gl.h>
 #include <glm/mat4x4.hpp>
 
 #include "utilities/Vector3.hpp"

@@ -76,8 +76,9 @@ set(BUILD_SHARED_LIBS OFF)
 
 ## GLAD
 if(USE_RENDERER_GL)
-    target_sources(${PROJECT_NAME} PRIVATE libs/glad/src/glad.c)
-    target_include_directories(${PROJECT_NAME} PUBLIC libs/glad/include)
+    add_subdirectory(libs/glad/cmake)
+    glad_add_library(glad STATIC QUIET REPRODUCIBLE API gl:core=4.4)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad)
 endif()
 
 ## glm
