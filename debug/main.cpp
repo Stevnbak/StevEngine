@@ -260,7 +260,9 @@ int main(int argc, char** argv) {
 	Log::Debug(std::format("Ressource \"test_2.txt\": {}", Engine::Instance->resources.GetFile("test_2.txt").GetStrData()));
 
 	//Use test shader
-	Render::Shader shader = Render::Shader(engine.resources.GetFile("test_shader.frag").GetRawData(), GL_FRAGMENT_SHADER);
+	Render::ShaderProgram shader = Render::ShaderProgram(Render::FRAGMENT);
+	shader.AddShader(Render::Shader(engine.resources.GetFile("test_shader.frag").GetRawData(), Render::FRAGMENT));
+	//engine.render.AddShader(shader);
 
 	//Test data manager
 	#ifdef StevEngine_PLAYER_DATA

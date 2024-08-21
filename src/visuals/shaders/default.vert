@@ -1,21 +1,31 @@
 R"(
-#version 330 core
-layout(location = 0) in vec3 vertexPosition;
-layout(location = 1) in vec3 vertexNormal;
-layout(location = 2) in vec2 vertexTexture;
+#version 440 core
 
-uniform mat4 objectTransform;
-uniform mat4 viewTransform;
-uniform mat4 projectionTransform;
+struct Vertex {
+    vec3 position;
+    vec3 normal;
+    vec2 uv;
+};
+Vertex getVertex();
 
-out vec3 fragPosition;
-out vec2 fragTexture;
-out vec3 fragNormal;
+mat4 getObjectTransform();
+mat4 getViewTransform();
+mat4 getProjectionTransform();
+
+void setFragInfo(Vertex info);
+
+out gl_PerVertex
+{
+	vec4 gl_Position;
+};
 
 void main() {
-    gl_Position = projectionTransform * viewTransform * objectTransform * vec4(vertexPosition, 1.0);
-    fragPosition = vec3(objectTransform * vec4(vertexPosition, 1.0));
-    fragTexture = vertexTexture;
-    fragNormal = mat3(transpose(inverse(objectTransform))) * vertexNormal;
+    Vertex v = getVertex();
+    gl_Position = getProjectionTransform() * getViewTransform() * getObjectTransform() * vec4(v.position, 1.0);
+    setFragInfo(Vertex(
+        vec3(getObjectTransform() * vec4(v.position, 1.0)),
+        mat3(transpose(inverse(getObjectTransform()))) * v.normal,
+        v.uv
+    ));
 }
 )"

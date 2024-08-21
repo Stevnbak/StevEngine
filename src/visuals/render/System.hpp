@@ -1,5 +1,6 @@
 #pragma once
 #include "visuals/shaders/Shader.hpp"
+#include "visuals/shaders/ShaderProgram.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include <glm/mat4x4.hpp>
 #include <vector>
@@ -46,14 +47,8 @@ namespace StevEngine {
 				void DrawObject(Object object, glm::mat4x4 transform, RenderQueue queue = STANDARD);
                 void SetBackground(Utilities::Color color);
                 void SetAmbientLight(float strength, Utilities::Color color = Utilities::Color(255,255,255,255));
-                //Set shader uniforms
-                void SetShaderUniform(const char* name, glm::mat4 value);
-                void SetShaderUniform(const char* name, glm::vec4 value);
-                void SetShaderUniform(const char* name, glm::vec3 value);
-                void SetShaderUniform(const char* name, glm::vec2 value);
-                void SetShaderUniform(const char* name, bool value);
-                void SetShaderUniform(const char* name, int value);
-                void SetShaderUniform(const char* name, float value);
+                void AddShader(ShaderProgram shader);
+                void ResetShader(ShaderType type);
             protected:
 			    //From Engine
                 System();
@@ -67,9 +62,8 @@ namespace StevEngine {
                 std::array<std::vector<RenderObject>, RenderQueue::MUST_BE_LAST> queues;
                 void Draw(RenderObject object);
                 //Shader program
-                Shader vertexShader;
-                Shader fragmentShader;
-                unsigned int defaultShaderProgram;
+                ShaderProgram vertexShaderProgram;
+                ShaderProgram fragmentShaderProgram;
                 unsigned int shaderPipeline;
                 //GPU Buffers
                 unsigned int VBO; //Vertex Buffer Object

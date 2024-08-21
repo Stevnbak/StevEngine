@@ -4,6 +4,8 @@
 #include "main/Engine.hpp"
 #include "visuals/render/Object.hpp"
 #include "visuals/render/Lights.hpp"
+#include "visuals/shaders/Shader.hpp"
+#include "visuals/shaders/ShaderProgram.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -52,17 +54,46 @@ namespace StevEngine {
             // uv layout
             glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, Vertex::size, (void*)((3 + 3) * sizeof(float)));
             glEnableVertexAttribArray(2);
+
             //Shaders
-            vertexShader = Shader(vertexShaderSource, GL_VERTEX_SHADER);
-            fragmentShader = Shader(fragmentShaderSource, GL_FRAGMENT_SHADER);
-
-            defaultShaderProgram = glCreateProgram();
-            vertexShader.AddToProgram(defaultShaderProgram);
-            fragmentShader.AddToProgram(defaultShaderProgram);
-
-            //shaderPipeline = glCreatePipeline();
+            ResetShader(VERTEX);
+            ResetShader(FRAGMENT);
 
             Log::Debug("Renderer has been initialized!", true);
+        }
+
+        void System::ResetShader(ShaderType type) {
+            if(type == VERTEX) {
+                vertexShaderProgram = ShaderProgram(VERTEX);
+                vertexShaderProgram.AddShader(Shader(vertexShaderSource, VERTEX));
+                vertexShaderProgram.RelinkProgram();
+            } else {
+                fragmentShaderProgram = ShaderProgram(FRAGMENT);
+                fragmentShaderProgram.AddShader(Shader(fragmentShaderSource, FRAGMENT));
+                fragmentShaderProgram.RelinkProgram();
+            }
+            glDeleteProgramPipelines(1, &shaderPipeline);
+            glGenProgramPipelines(1, &shaderPipeline);
+            glBindProgramPipeline(shaderPipeline);
+            glUseProgramStages(shaderPipeline, GL_VERTEX_SHADER_BIT, vertexShaderProgram.location);
+            glUseProgramStages(shaderPipeline, GL_FRAGMENT_SHADER_BIT, fragmentShaderProgram.location);
+        }
+
+        void System::AddShader(ShaderProgram shader) {
+            shader.RelinkProgram();
+            if(shader.shaderType == VERTEX) {
+                glDeleteProgram(vertexShaderProgram.location);
+                vertexShaderProgram = shader;
+            }
+            else {
+                glDeleteProgram(fragmentShaderProgram.location);
+                fragmentShaderProgram = shader;
+            }
+            glDeleteProgramPipelines(1, &shaderPipeline);
+            glGenProgramPipelines(1, &shaderPipeline);
+            glBindProgramPipeline(shaderPipeline);
+            glUseProgramStages(shaderPipeline, GL_VERTEX_SHADER_BIT, vertexShaderProgram.location);
+            glUseProgramStages(shaderPipeline, GL_FRAGMENT_SHADER_BIT, fragmentShaderProgram.location);
         }
 
         void System::DrawObject(Object object, glm::mat4x4 transform, RenderQueue queue) {
@@ -73,19 +104,16 @@ namespace StevEngine {
             //Clear color and depth buffers
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            //Use default shader program
-            glUseProgram(defaultShaderProgram);
-
             //Bind vertex array
             glBindVertexArray(VAO);
 
             //Camera matrices
             Visuals::Camera* camera = Engine::Instance->scenes.GetActiveScene()->GetCamera();
             //  View matrix
-            SetShaderUniform("viewTransform", camera->GetView());
-            SetShaderUniform("viewPosition", (glm::vec3)camera->GetParent()->GetWorldPosition());
+            vertexShaderProgram.SetShaderUniform("viewTransform", camera->GetView());
+            fragmentShaderProgram.SetShaderUniform("viewPosition", (glm::vec3)camera->GetParent()->GetWorldPosition());
             //  Projection matrix
-            SetShaderUniform("projectionTransform", camera->GetProjection());
+            vertexShaderProgram.SetShaderUniform("projectionTransform", camera->GetProjection());
             //Lights
             for(Light* light : lights) {
                 light->UpdateShader();
@@ -116,29 +144,29 @@ namespace StevEngine {
         }
 
         void System::SetAmbientLight(float strength, Utilities::Color color) {
-            SetShaderUniform("ambientColor", glm::vec3(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f));
-            SetShaderUniform("ambientStrength", strength);
+            fragmentShaderProgram.SetShaderUniform("ambientColor", glm::vec3(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f));
+            fragmentShaderProgram.SetShaderUniform("ambientStrength", strength);
         }
 
         void System::Draw(RenderObject renderObject) {
             Object object = renderObject.object;
             glm::mat4x4 transform = renderObject.transform;
             //Update transform
-            SetShaderUniform("objectTransform", transform);
+            vertexShaderProgram.SetShaderUniform("objectTransform", transform);
             //Update texture
-            SetShaderUniform("objectIsTextured", object.textured);
+            fragmentShaderProgram.SetShaderUniform("objectIsTextured", object.textured);
             if(object.textured) {
                 glActiveTexture(GL_TEXTURE0);
                 glBindTexture(GL_TEXTURE_2D, object.texture);
-                SetShaderUniform("objectTexture", 0);
+                fragmentShaderProgram.SetShaderUniform("objectTexture", 0);
             }
             //Update color
-            SetShaderUniform("objectColor", glm::vec4(object.color.r / 255.0f, object.color.g / 255.0f, object.color.b / 255.0f, object.color.a / 255.0f));
+            fragmentShaderProgram.SetShaderUniform("objectColor", glm::vec4(object.color.r / 255.0f, object.color.g / 255.0f, object.color.b / 255.0f, object.color.a / 255.0f));
             //Update material
-            SetShaderUniform("objectMaterial.ambient", (glm::vec3)object.material.ambient);
-            SetShaderUniform("objectMaterial.diffuse", (glm::vec3)object.material.diffuse);
-            SetShaderUniform("objectMaterial.specular", (glm::vec3)object.material.specular);
-            SetShaderUniform("objectMaterial.shininess", object.material.shininess);
+            fragmentShaderProgram.SetShaderUniform("objectMaterial.ambient", (glm::vec3)object.material.ambient);
+            fragmentShaderProgram.SetShaderUniform("objectMaterial.diffuse", (glm::vec3)object.material.diffuse);
+            fragmentShaderProgram.SetShaderUniform("objectMaterial.specular", (glm::vec3)object.material.specular);
+            fragmentShaderProgram.SetShaderUniform("objectMaterial.shininess", object.material.shininess);
             //Draw object
             glBufferData(GL_ARRAY_BUFFER, object.vertices.size() * sizeof(float), object.vertices.data(), GL_STATIC_DRAW);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, object.indices.size() * sizeof(float), object.indices.data(), GL_STATIC_DRAW);
