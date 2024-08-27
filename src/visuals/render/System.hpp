@@ -1,6 +1,5 @@
 #pragma once
-#include "visuals/shaders/Shader.hpp"
-#include "visuals/shaders/ShaderProgram.hpp"
+#include <SDL_video.h>
 #ifdef StevEngine_RENDERER_GL
 #include <glm/mat4x4.hpp>
 #include <vector>
@@ -10,6 +9,10 @@
 
 #include "Object.hpp"
 #include "utilities/Color.hpp"
+#include "visuals/shaders/Shader.hpp"
+#include "visuals/shaders/ShaderProgram.hpp"
+
+#include <SDL.h>
 
 namespace StevEngine {
     class Engine;
@@ -52,8 +55,10 @@ namespace StevEngine {
             protected:
 			    //From Engine
                 System();
-                void Init();
+                SDL_GLContext Init(SDL_Window* window);
+                Uint32 WindowType();
                 void DrawFrame();
+                void SetWindowSize(int WIDTH, int HEIGHT);
                 //From Lights
                 std::vector<Light*> lights;
                 unsigned int GetLightID(std::string type);

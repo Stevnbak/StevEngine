@@ -25,11 +25,36 @@ namespace StevEngine {
         ;
 
         System::System() {}
-        void System::Init() {
+        Uint32 System::WindowType() {
+            int context_flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG;
+      		#ifdef StevEngine_DEBUGGING
+      		context_flags |= SDL_GL_CONTEXT_DEBUG_FLAG;
+      		#endif
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, context_flags);
+      		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+      		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 4 );
+      		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+            SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+            SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+            SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+            SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+            SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+            SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+            return SDL_WINDOW_OPENGL;
+        }
+        SDL_GLContext System::Init(SDL_Window* window) {
+            //Create SDL OpenGL context
+
+            SDL_GLContext context = SDL_GL_CreateContext(window);
+    		if (!context) {
+    			throw std::runtime_error("Failed to create OpenGL context: " + std::string(SDL_GetError()));
+    		}
+    		SDL_GL_MakeCurrent(window, context);
             //Initialize GLAD:
             int version = gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress);
             if (!version) {
-                throw("Failed to initialize GLAD");
+                throw std::runtime_error("Failed to initialize GLAD");
             }
             Log::Debug(std::format("OpenGL Version: {}.{}", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version)), true);
            	Log::Debug(std::format("OpenGL Shading Language Version: {}", (char *)glGetString(GL_SHADING_LANGUAGE_VERSION)), true);
@@ -61,6 +86,13 @@ namespace StevEngine {
             ResetGlobalShader(FRAGMENT);
 
             Log::Debug("Renderer has been initialized!", true);
+
+            return context;
+        }
+
+        void System::SetWindowSize(int WIDTH, int HEIGHT) {
+            int size = std::max(WIDTH, HEIGHT);
+            glViewport(0, 0, size, size);
         }
 
         void System::ResetGlobalShader(ShaderType type) {

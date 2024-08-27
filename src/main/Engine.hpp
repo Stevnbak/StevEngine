@@ -23,19 +23,13 @@ namespace StevEngine {
 				#endif
 			);
 			int Start();
-		private:
-			#ifdef StevEngine_SHOW_WINDOW
-			void Draw();
-			#endif
-			void Update(double deltaTime);
-		public:
 			#ifdef StevEngine_SHOW_WINDOW
 			SDL_Window* window;
+			void SetWindowSize(int width, int height);
 			#endif
 			Resources::System resources;
 			#ifdef StevEngine_RENDERER_GL
 			Render::System render;
-			SDL_GLContext context;
 			#endif
 			#ifdef StevEngine_PHYSICS
 			Physics::System physics;
@@ -50,6 +44,10 @@ namespace StevEngine {
 			double getFPS();
 			const char * title;
 		private:
+			#ifdef StevEngine_SHOW_WINDOW
+			void Draw();
+			#endif
+			void Update(double deltaTime);
 			int targetFPS;
 			double currentFPS;
 			SDL_Event ev;
@@ -57,6 +55,9 @@ namespace StevEngine {
 			bool fullScreen;
 			int WIDTH;
 			int HEIGHT;
+			#endif
+			#ifdef StevEngine_RENDERER_GL
+			SDL_GLContext context;
 			#endif
 			void (*mainUpdate)(double deltaTime);
 	};

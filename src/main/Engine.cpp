@@ -1,5 +1,6 @@
 #include "Engine.hpp"
 //STD
+#include <SDL_video.h>
 #include <iostream>
 #include <map>
 #include <chrono>
@@ -90,7 +91,7 @@ namespace StevEngine {
 	{
 		//Create instance
 		if(Instance != nullptr) {
-			throw("Engine has already been initialized.");
+			throw std::runtime_error("Engine has already been initialized.");
 		}
 		Instance = this;
 		//Initialize logging
@@ -108,44 +109,25 @@ namespace StevEngine {
 			| SDL_INIT_VIDEO
 			#endif
 			) < 0) {
-			throw("Failed initializing SDL: " + std::string(SDL_GetError()));
+			throw std::runtime_error("Failed initializing SDL: " + std::string(SDL_GetError()));
 		}
-		#ifdef StevEngine_RENDERER_GL
-		//OpenGL properties
-		int context_flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG;
-		#ifdef StevEngine_DEBUGGING
-		context_flags |= SDL_GL_CONTEXT_DEBUG_FLAG; //Debug flags
-		#endif
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, context_flags);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 4 );
-		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-        SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-        SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-        SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-        SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-		#endif
 		#ifdef StevEngine_SHOW_WINDOW
+		Uint32 SDL_WINDOW_TYPE;
+		#endif
 		//Create SDL window
-		window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | ( fullScreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE ));
+		#ifdef StevEngine_SHOW_WINDOW
+		#ifdef StevEngine_RENDERER_GL
+		SDL_WINDOW_TYPE = render.WindowType();
+		#endif
+		window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_TYPE | ( fullScreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE ));
 		if (!window) {
-			throw("Failed to create window: " + std::string(SDL_GetError()));
+			throw std::runtime_error("Failed to create window: " + std::string(SDL_GetError()));
 		}
 		#endif
-		#ifdef StevEngine_RENDERER_GL
-		context = SDL_GL_CreateContext(window);
-		if (!context) {
-			throw("Failed to create OpenGL context: " + std::string(SDL_GetError()));
-		}
-		SDL_GL_MakeCurrent(window, context);
 		//Initialize renderer
-		render.Init();
-		//Define the OpenGL viewport dimensions
-		GLint size = std::max(WIDTH, HEIGHT);
-		glViewport(0, 0, size, size);
+		#ifdef StevEngine_RENDERER_GL
+		context = render.Init(window);
+		render.SetWindowSize(WIDTH, HEIGHT);
 		#endif
 		//Done creating engine
 		Log::Normal("Initialized Engine", true);
@@ -173,14 +155,8 @@ namespace StevEngine {
 					case SDL_WINDOWEVENT:
 						switch (ev.window.event) {
 							case SDL_WINDOWEVENT_SIZE_CHANGED:
-								//Resized window
-								Log::Normal("Resizing window", true);
-								WIDTH = ev.window.data1;
-								HEIGHT = ev.window.data2;
-								SDL_SetWindowSize(window, WIDTH, HEIGHT);
-								#ifdef StevEngine_RENDERER_GL
-								glViewport(0, 0, std::max(WIDTH, HEIGHT), std::max(WIDTH, HEIGHT));
-								#endif
+								Log::Debug("Resizing window", true);
+								SetWindowSize(ev.window.data1, ev.window.data2);
 								Draw();
 								break;
 							#ifdef StevEngine_INPUTS
@@ -274,6 +250,17 @@ namespace StevEngine {
 		//Return int
 		return 0;
 	}
+
+	#ifdef StevEngine_SHOW_WINDOW
+	void Engine::SetWindowSize(int width, int height) {
+	    WIDTH = width;
+		HEIGHT = height;
+    	SDL_SetWindowSize(window, WIDTH, HEIGHT);
+    	#ifdef StevEngine_RENDERER_GL
+    	render.SetWindowSize(WIDTH, HEIGHT);
+    	#endif
+	}
+	#endif
 
 	double Engine::getFPS() {
 		return currentFPS;

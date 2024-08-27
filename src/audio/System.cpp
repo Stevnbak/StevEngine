@@ -1,3 +1,4 @@
+#include <stdexcept>
 #ifdef StevEngine_AUDIO
 #include "System.hpp"
 #include "main/Log.hpp"
@@ -24,7 +25,7 @@ namespace StevEngine::Audio {
         audio_channels = MIX_DEFAULT_CHANNELS;
         // Open the audio device
         if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, 4096) < 0) {
-            throw std::format("Couldn't open audio: %s\n", SDL_GetError());
+            throw std::runtime_error(std::format("Couldn't open audio: %s\n", SDL_GetError()));
             CleanUp();
         } else {
             Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);

@@ -35,7 +35,7 @@ namespace StevEngine {
 			}
 			else {
 				Log::Error(std::format("Resource {} not found.", id), true);
-				throw("Failed to find resource!");
+				throw std::runtime_error("Failed to find resource!");
 			}
 		}
 		Resource System::GetFile(std::string path) const {
@@ -44,7 +44,7 @@ namespace StevEngine {
 			}
 			else {
 				Log::Error(std::format("Resource {} not found.", path), true);
-				throw("Failed to find resource!");
+				throw std::runtime_error("Failed to find resource!");
 			}
 		}
 
