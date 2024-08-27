@@ -47,8 +47,8 @@ namespace StevEngine {
 				void DrawObject(Object object, glm::mat4x4 transform, RenderQueue queue = STANDARD);
                 void SetBackground(Utilities::Color color);
                 void SetAmbientLight(float strength, Utilities::Color color = Utilities::Color(255,255,255,255));
-                void AddShader(ShaderProgram shader);
-                void ResetShader(ShaderType type);
+                void AddGlobalShader(ShaderProgram shader);
+                void ResetGlobalShader(ShaderType type);
             protected:
 			    //From Engine
                 System();

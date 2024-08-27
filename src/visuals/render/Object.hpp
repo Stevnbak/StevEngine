@@ -8,8 +8,9 @@
 #include "utilities/Vector3.hpp"
 #include "utilities/Quaternion.hpp"
 #include "utilities/Vertex.hpp"
-#include "visuals/Texture.hpp"
 #include "utilities/Color.hpp"
+#include "visuals/Texture.hpp"
+#include "visuals/shaders/ShaderProgram.hpp"
 
 namespace StevEngine {
     namespace Render {
@@ -31,9 +32,12 @@ namespace StevEngine {
                 void FreeTexture();
                 Utilities::Color color;
                 Material material;
+                void AddShader(Render::ShaderProgram program);
+                void RemoveShader(Render::ShaderType type);
             private:
                 std::vector<float> vertices;
                 std::vector<unsigned int> indices;
+                std::map<Render::ShaderType, Render::ShaderProgram> shaders;
                 GLuint texture;
                 bool textured;
 		};

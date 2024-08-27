@@ -39,9 +39,6 @@ namespace StevEngine {
 			this->color = color;
 			object.color = color;
 		}
-		void RenderComponent::SetTexture(Visuals::Texture texture) {
-			object.SetTexture(texture);
-		}
 
 		//Export and import
 		void RenderComponent::Export(tinyxml2::XMLElement* element) {

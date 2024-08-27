@@ -57,13 +57,13 @@ namespace StevEngine {
             glEnableVertexAttribArray(2);
 
             //Shaders
-            ResetShader(VERTEX);
-            ResetShader(FRAGMENT);
+            ResetGlobalShader(VERTEX);
+            ResetGlobalShader(FRAGMENT);
 
             Log::Debug("Renderer has been initialized!", true);
         }
 
-        void System::ResetShader(ShaderType type) {
+        void System::ResetGlobalShader(ShaderType type) {
             if(type == VERTEX) {
                 vertexShaderProgram = ShaderProgram(VERTEX);
                 vertexShaderProgram.AddShader(Shader(vertexShaderSource, VERTEX));
@@ -80,7 +80,7 @@ namespace StevEngine {
             glUseProgramStages(shaderPipeline, GL_FRAGMENT_SHADER_BIT, fragmentShaderProgram.location);
         }
 
-        void System::AddShader(ShaderProgram shader) {
+        void System::AddGlobalShader(ShaderProgram shader) {
             shader.RelinkProgram();
             if(shader.shaderType == VERTEX) {
                 glDeleteProgram(vertexShaderProgram.location);
@@ -152,6 +152,17 @@ namespace StevEngine {
         void System::Draw(RenderObject renderObject) {
             Object object = renderObject.object;
             glm::mat4x4 transform = renderObject.transform;
+            //Object specific shaders
+            unsigned int pipeline;
+            bool usingCustomShaders = object.shaders.size() > 0;
+            if(usingCustomShaders) {
+                glGenProgramPipelines(1, &pipeline);
+                glBindProgramPipeline(pipeline);
+                if(object.shaders.contains(VERTEX)) glUseProgramStages(pipeline, GL_VERTEX_SHADER_BIT, object.shaders[VERTEX].location);
+                else glUseProgramStages(pipeline, GL_VERTEX_SHADER_BIT, vertexShaderProgram.location);
+                if(object.shaders.contains(FRAGMENT)) glUseProgramStages(pipeline, GL_FRAGMENT_SHADER_BIT, object.shaders[FRAGMENT].location);
+                else glUseProgramStages(pipeline, GL_FRAGMENT_SHADER_BIT, vertexShaderProgram.location);
+            }
             //Update transform
             vertexShaderProgram.SetShaderUniform("objectTransform", transform);
             //Update texture
@@ -172,6 +183,11 @@ namespace StevEngine {
             glBufferData(GL_ARRAY_BUFFER, object.vertices.size() * sizeof(float), object.vertices.data(), GL_STATIC_DRAW);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, object.indices.size() * sizeof(float), object.indices.data(), GL_STATIC_DRAW);
             glDrawElements(GL_TRIANGLES, object.indices.size(), GL_UNSIGNED_INT, 0);
+            //Remove custom pipeline
+            if(usingCustomShaders) {
+                glBindProgramPipeline(shaderPipeline);
+                glDeleteProgramPipelines(1, &pipeline);
+            }
         }
 
         unsigned int System::GetLightID(std::string type) {

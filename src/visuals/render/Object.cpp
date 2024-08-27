@@ -58,6 +58,14 @@ namespace StevEngine {
             glDeleteTextures(1, &texture);
             texture = 0;
         }
+        void Object::AddShader(Render::ShaderProgram program) {
+            if(shaders.contains(program.GetType())) RemoveShader(program.GetType());
+            program.RelinkProgram();
+            shaders.insert({ program.GetType(), program });
+        }
+        void Object::RemoveShader(Render::ShaderType type) {
+            shaders.erase(shaders.find(type));
+        }
     }
 }
 #endif

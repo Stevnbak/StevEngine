@@ -12,6 +12,7 @@
 #include "visuals/Texture.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Color.hpp"
+#include "visuals/render/System.hpp"
 #include "visuals/shaders/Shader.hpp"
 
 #include <glm/ext/matrix_float4x4.hpp>
@@ -262,7 +263,8 @@ int main(int argc, char** argv) {
 	//Use test shader
 	Render::ShaderProgram shader = Render::ShaderProgram(Render::FRAGMENT);
 	shader.AddShader(Render::Shader(engine.resources.GetFile("test_shader.frag").GetRawData(), Render::FRAGMENT));
-	//engine.render.AddShader(shader);
+	//engine.render.AddGlobalShader(shader);
+	scene->GetObject(modelObject)->GetComponent<Render::RenderComponent>()->AddShader(shader);
 
 	//Test data manager
 	#ifdef StevEngine_PLAYER_DATA

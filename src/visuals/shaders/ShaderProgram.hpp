@@ -16,9 +16,11 @@ namespace StevEngine {
             friend class System;
             public:
                 ShaderProgram(ShaderType shaderType);
+                ShaderProgram() {};
                 //Set shaders
                 unsigned int AddShader(Shader shader);
                 void RemoveShader(unsigned int location);
+                void RelinkProgram();
                 //Set shader uniforms
                 void SetShaderUniform(const char* name, glm::mat4 value);
                 void SetShaderUniform(const char* name, glm::vec4 value);
@@ -27,12 +29,12 @@ namespace StevEngine {
                 void SetShaderUniform(const char* name, bool value);
                 void SetShaderUniform(const char* name, int value);
                 void SetShaderUniform(const char* name, float value);
+                //Shader type
+                ShaderType GetType() { return shaderType; };
             private:
-                ShaderProgram() {};
                 unsigned int location;
                 ShaderType shaderType;
                 bool modified;
-                void RelinkProgram();
         };
     }
 }
