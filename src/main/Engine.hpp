@@ -11,7 +11,7 @@
 namespace StevEngine {
 	class Engine {
 		public:
-			static Engine* Instance;
+			static inline Engine* Instance = nullptr;
 			Engine(
 				const char * title = "Game"
 				,int targetFPS = 60

@@ -17,7 +17,6 @@
 unsigned int GetTime() { return SDL_GetTicks(); }
 
 namespace StevEngine {
-	Engine* Engine::Instance = nullptr;
 	void Engine::Update(double deltaTime) {
 		#ifdef StevEngine_PHYSICS
 		//Run Jolt physics step
