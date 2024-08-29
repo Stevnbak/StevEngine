@@ -1,0 +1,503 @@
+name: Debug scene
+camera: 01919ef2-bb2c-7aab-b2fb-e3467cc254f8
+objects:
+  - id: 01919ef2-bb2c-799a-a632-0db73158a35a
+    name: Cube
+    position:
+      - 0
+      - 4
+      - 0
+    rotation:
+      - 1
+      - 0
+      - 0
+      - 0
+    scale:
+      - 2
+      - 2
+      - 2
+    components:
+      - type: SpherePrimitive
+        position:
+          - 0
+          - 0
+          - 0
+        rotation:
+          - 1
+          - 0
+          - 0
+          - 0
+        scale:
+          - 1
+          - 1
+          - 1
+        color:
+          - 255
+          - 255
+          - 255
+          - 255
+        texture: prototype.png
+        textureType: 0
+      - type: Rotate
+      - type: Rotate
+      - type: Collider
+        position:
+          - 0
+          - 0
+          - 0
+        rotation:
+          - 1
+          - 0
+          - 0
+          - 0
+        scale:
+          - 1
+          - 1
+          - 1
+        shape: AAAAAAEAAAAAAAAAAAAAekQAAAA/AAAAPwAAAD/NzEw9AAAAAAEAAAD/////
+  - id: 01919ef2-bb2c-7aab-b2fb-e3467cc254f8
+    name: Main Camera
+    position:
+      - 0
+      - 4
+      - 25
+    rotation:
+      - 1
+      - 0
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+      - 1
+    components:
+      - type: Camera
+        orthographic: false
+        zoom: 1
+        aspect: 1
+        farClip: 100
+        nearClip: 1
+      - type: CameraController
+  - id: 01919ef2-bb2c-7be8-a78d-765a2e63339f
+    name: Cube
+    position:
+      - 0
+      - -1
+      - 0
+    rotation:
+      - 1
+      - 0
+      - 0
+      - 0
+    scale:
+      - 100
+      - 1
+      - 100
+    components:
+      - type: CubePrimitive
+        position:
+          - 0
+          - 0
+          - 0
+        rotation:
+          - 1
+          - 0
+          - 0
+          - 0
+        scale:
+          - 1
+          - 1
+          - 1
+        color:
+          - 0
+          - 255
+          - 0
+          - 255
+        texture: ""
+        textureType: 1
+      - type: Collider
+        position:
+          - 0
+          - 0
+          - 0
+        rotation:
+          - 1
+          - 0
+          - 0
+          - 0
+        scale:
+          - 1
+          - 1
+          - 1
+        shape: AAAAAAEAAAAAAAAAAAAAekQAAAA/AAAAPwAAAD/NzEw9AAAAAAEAAAD/////
+      - type: RigidBody
+        mass: 1000
+        motionType: 0
+        layer: 1
+  - id: 01919ef2-bb3e-755d-8517-58e95ed4abb2
+    name: Sphere
+    position:
+      - 3
+      - 3
+      - 0
+    rotation:
+      - 1
+      - 0
+      - 0
+      - 0
+    scale:
+      - 2
+      - 2
+      - 2
+    components:
+      - type: SpherePrimitive
+        position:
+          - 0
+          - 0
+          - 0
+        rotation:
+          - 1
+          - 0
+          - 0
+          - 0
+        scale:
+          - 1
+          - 1
+          - 1
+        color:
+          - 255
+          - 255
+          - 255
+          - 255
+        texture: prototype.png
+        textureType: 1
+      - type: Collider
+        position:
+          - 0
+          - 0
+          - 0
+        rotation:
+          - 1
+          - 0
+          - 0
+          - 0
+        scale:
+          - 1
+          - 1
+          - 1
+        shape: AAAAAAAAAAAAAAAAAAAAekQAAAA/AAAAAAEAAAD/////
+      - type: RigidBody
+        mass: 1000
+        motionType: 2
+        layer: 0
+  - id: 01919ef2-bb4e-7dc6-9bb4-54110e827441
+    name: Model
+    position:
+      - 0
+      - 0
+      - 0
+    rotation:
+      - 1
+      - 0
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+      - 1
+    components:
+      - type: ModelRenderer
+        position:
+          - 0
+          - 0
+          - 0
+        rotation:
+          - 1
+          - 0
+          - 0
+          - 0
+        scale:
+          - 0.033333333333333333
+          - 0.033333333333333333
+          - 0.033333333333333333
+        color:
+          - 255
+          - 255
+          - 0
+          - 255
+        texture: ""
+        model: Fox.stl
+      - type: Collider
+        position:
+          - 0
+          - 0
+          - 0
+        rotation:
+          - 1
+          - 0
+          - 0
+          - 0
+        scale:
+          - 0.033333333333333333
+          - 0.033333333333333333
+          - 0.033333333333333333
+        shape: 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
+      - type: RigidBody
+        mass: 1000
+        motionType: 2
+        layer: 0
+  - id: 01919ef2-bb57-713d-9c87-70e93ea141e1
+    name: Cylinder
+    position:
+      - 0
+      - 3
+      - 3
+    rotation:
+      - 1
+      - 0
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+      - 1
+    components:
+      - type: CylinderPrimitive
+        position:
+          - 0
+          - 0
+          - 0
+        rotation:
+          - 1
+          - 0
+          - 0
+          - 0
+        scale:
+          - 1
+          - 1
+          - 1
+        color:
+          - 255
+          - 255
+          - 255
+          - 255
+        texture: box.png
+        textureType: 1
+      - type: Collider
+        position:
+          - 0
+          - 0
+          - 0
+        rotation:
+          - 1
+          - 0
+          - 0
+          - 0
+        scale:
+          - 1
+          - 1
+          - 1
+        shape: AAAAAAUAAAAAAAAAAAAAekQAAAA/AAAAP83MTD0AAAAAAQAAAP////8=
+      - type: RigidBody
+        mass: 1000
+        motionType: 2
+        layer: 0
+  - id: 01919ef2-bb5e-7c67-be01-7e97eadc6b96
+    name: Capsule
+    position:
+      - 0
+      - 3
+      - 3
+    rotation:
+      - 1
+      - 0
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+      - 1
+    components:
+      - type: CapsulePrimitive
+        position:
+          - 0
+          - 0
+          - 0
+        rotation:
+          - 1
+          - 0
+          - 0
+          - 0
+        scale:
+          - 1
+          - 1
+          - 1
+        color:
+          - 255
+          - 255
+          - 255
+          - 255
+        texture: box.png
+        textureType: 1
+      - type: Collider
+        position:
+          - 0
+          - 0
+          - 0
+        rotation:
+          - 1
+          - 0
+          - 0
+          - 0
+        scale:
+          - 1
+          - 1
+          - 1
+        shape: AAAAAAMAAAAAAAAAAAAAekQAAAA/AACAPgAAAAABAAAA/////w==
+      - type: RigidBody
+        mass: 1000
+        motionType: 2
+        layer: 0
+  - id: 01919ef2-bb73-7bfa-aa3a-fb29d1e6053c
+    name: DirectionalLight
+    position:
+      - 0
+      - 0
+      - 0
+    rotation:
+      - 0.70710678118654757
+      - -0.70710678118654746
+      - -0
+      - -0
+    scale:
+      - 1
+      - 1
+      - 1
+    components:
+      - type: DirectionalLight
+        diffuse:
+          - 0.33000000000000002
+          - 0.33000000000000002
+          - 0.33000000000000002
+        specular:
+          - 0.25
+          - 0.25
+          - 0.25
+  - id: 01919ef2-bb73-7c54-ac18-db5c021afe43
+    name: PointLight2
+    position:
+      - 2
+      - 5
+      - 1
+    rotation:
+      - 1
+      - 0
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+      - 1
+    components:
+      - type: PointLight
+        diffuse:
+          - 1
+          - 0.5
+          - 0
+        specular:
+          - 0.5
+          - 0.25
+          - 0
+        constant: 1
+        linear: 0.0199999996
+        quadratic: 0.00170000002
+      - type: CubePrimitive
+        position:
+          - 0
+          - 0
+          - 0
+        rotation:
+          - 1
+          - 0
+          - 0
+          - 0
+        scale:
+          - 0.10000000000000001
+          - 0.10000000000000001
+          - 0.10000000000000001
+        color:
+          - 255
+          - 255
+          - 255
+          - 255
+        texture: ""
+        textureType: 1
+  - id: 01919ef2-bb73-7f38-9c2a-ecb03bfb32af
+    name: PointLight1
+    position:
+      - 0
+      - 8
+      - 3
+    rotation:
+      - 1
+      - 0
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+      - 1
+    components:
+      - type: PointLight
+        diffuse:
+          - 0
+          - 1
+          - 1
+        specular:
+          - 0
+          - 0.5
+          - 0.5
+        constant: 1
+        linear: 0.0199999996
+        quadratic: 0.00170000002
+      - type: CubePrimitive
+        position:
+          - 0
+          - 0
+          - 0
+        rotation:
+          - 1
+          - 0
+          - 0
+          - 0
+        scale:
+          - 0.10000000000000001
+          - 0.10000000000000001
+          - 0.10000000000000001
+        color:
+          - 255
+          - 255
+          - 255
+          - 255
+        texture: ""
+        textureType: 1
+  - id: 01919ef2-bb74-7c94-b5d8-be6189f95cbb
+    name: Audio Player
+    position:
+      - 0
+      - 0
+      - 0
+    rotation:
+      - 1
+      - 0
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+      - 1
+    components:
+      - type: Emitter
+        file: audio.wav
+        loop: false
+        volume: 0.5

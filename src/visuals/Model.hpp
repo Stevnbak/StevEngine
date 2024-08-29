@@ -7,17 +7,18 @@
 #include "visuals/render/Object.hpp"
 
 namespace StevEngine {
-    namespace Visuals {
-        class ModelRenderer : public Render::RenderComponent {
+	namespace Visuals {
+		class ModelRenderer : public Render::RenderComponent {
 			friend class StevEngine::GameObject;
 
-            public:
-                ModelRenderer(Utilities::Model model);
-				ModelRenderer(tinyxml2::XMLElement* element);
-            private:
-                Utilities::Model model;
-				void Export(tinyxml2::XMLElement* element);
-        };
-    }
+			public:
+				ModelRenderer(Utilities::Model model);
+				ModelRenderer(YAML::Node node);
+				YAML::Node Export(YAML::Node node) const;
+			private:
+				Utilities::Model model;
+		};
+		inline bool modelRenderer = CreateComponents::RegisterComponentType<ModelRenderer>("ModelRenderer");
+	}
 }
 #endif

@@ -2,14 +2,17 @@
 #include <format>
 #include <regex>
 #include "main/Engine.hpp"
+#include "scenes/Component.hpp"
 #include "utilities/ID.hpp"
+#include "yaml-cpp/node/node.h"
+#include "yaml-cpp/node/parse.h"
 
 using namespace StevEngine::Utilities;
 
 namespace StevEngine {
 	ID Scene::CreateObject() {
 		ID id;
-		gameObjects.insert(std::make_pair(id, GameObject(id, "GameObject", this->name)));
+		gameObjects.insert(std::make_pair(id, GameObject(id, "GameObject", name)));
 		if(active) gameObjects.at(id).Start();
 		return id;
 	}
@@ -23,37 +26,17 @@ namespace StevEngine {
 		if(active) object->Start();
 		return id;
 	}
-	ID Scene::CreateObjectFromFile(Resources::Resource file) {
-		tinyxml2::XMLDocument doc;
-		doc.Parse(file.GetStrData().c_str());
-		tinyxml2::XMLElement* elem = doc.FirstChildElement();
-		return CreateObjectFromXML(doc.FirstChildElement());
+	Utilities::ID Scene::CreateObject(Resources::Resource file) {
+		YAML::Node node = YAML::Load(file.GetRawData());
+		return CreateObject(node);
 	}
-	ID Scene::CreateObjectFromXML(tinyxml2::XMLElement* node) {
-		//Create base object:
-		ID id = ID(node->Attribute("id"));
-		gameObjects.insert(std::make_pair(id, GameObject(id, node->Attribute("name"), this->name)));
-		GameObject* object = GetObject(id);
-		object->position = Utilities::Vector3(node->Attribute("position"));
-		object->rotation = Utilities::Quaternion(node->Attribute("rotation"));
-		object->scale = Utilities::Vector3(node->Attribute("scale"));
-		//Add child objects & components
-		tinyxml2::XMLElement* child = node->FirstChildElement();
-		for(int i = 0; i < node->ChildElementCount(); i++) {
-			std::string name = child->Name();
-			if(name == "GameObject") {
-				object->AddChild(CreateObjectFromXML(child));
-			} else if(name == "Component") {
-				std::string test = child->Attribute("type");
-				FactoryBase* factory = GameObject::componentFactories.at(test);
-				object->AddComponent(factory->create(child));
-			}
-			child = child->NextSiblingElement();
-		}
-		//Run start
+	Utilities::ID Scene::CreateObject(YAML::Node node) {
+		Utilities::ID id = node["id"] ? node["id"].as<Utilities::ID>() : Utilities::ID();
+		gameObjects.insert(std::make_pair(id, GameObject(id, "GameObject", name)));
+		GameObject* object = &gameObjects.at(id);
+		object->Import(node);
 		if(active) object->Start();
-		//Return
-		return object->id;
+		return id;
 	}
 	std::vector<ID> Scene::GetAllObjects() {
 		std::vector<ID> keys;
@@ -65,30 +48,35 @@ namespace StevEngine {
 	void Scene::DestroyObject(ID id) {
 		gameObjects.erase(id);
 	}
-    Scene::Scene(tinyxml2::XMLElement* node) : name(node->Attribute("name")) {}
 	Scene::Scene(std::string name) : name(name) {
-        //Create main camera
-		activeCamera = GetObject(CreateObject("Main Camera"))->AddComponent(new Visuals::Camera(false, 1, 16 / 9));
-    }
+		//Create main camera
+		activeCamera = GetObject(CreateObject("Main Camera"))->AddComponent(new Visuals::Camera(false, 1));
+	}
+	Scene::Scene(YAML::Node node) : name(node["name"].as<std::string>()) {
+		//Create objects
+		for(YAML::Node obj : node["objects"]) {
+			CreateObject(obj);
+		}
+		//Set camera
+		activeCamera = GetObject(node["camera"].as<Utilities::ID>())->GetComponent<Visuals::Camera>();
+	}
 	#ifdef StevEngine_PLAYER_DATA
 	void Scene::ExportToFile() {
-		tinyxml2::XMLDocument doc;
-		tinyxml2::XMLElement* main = doc.NewElement("Scene");
-		doc.InsertFirstChild(main);
-		main->SetAttribute("name", name.c_str());
-		main->SetAttribute("camera", activeCamera->GetParent()->Id().GetString().c_str());
+		YAML::Node node;
+		node["name"] = name;
+		node["camera"] = activeCamera->GetParent()->Id();
 
 		for (ID id : GetAllObjects()) {
 			GameObject* object = &gameObjects.at(id);
-			bool test = object->parent.IsNull();
 			if(!object->parent.IsNull()) continue;
-			tinyxml2::XMLDocument xml;
-			xml.Parse(object->Export().c_str());
-			tinyxml2::XMLElement* element = xml.FirstChild()->ToElement();
-			main->InsertEndChild(element->DeepClone(&doc));
+			node["objects"].push_back(object->Export());
 		}
 
-		doc.SaveFile((Engine::Instance->data.GetDirectoryPath() + std::regex_replace(name, std::regex(" "), "_") + ".scene").c_str());
+		YAML::Emitter out;
+		out << node;
+		std::ofstream file;
+		file.open(Engine::Instance->data.GetDirectoryPath() + name + ".scene");
+		file << out.c_str();
 	}
 	#endif
 	void Scene::Activate() {

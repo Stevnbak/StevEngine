@@ -14,7 +14,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC src)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
-	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_DEBUGGING)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_DEBUGGING)
 endif()
 
 # Windows?
@@ -31,41 +31,41 @@ set(build_string "StevEngine with BASE")
 
 option(USE_INPUTS "Use the input manager" ON)
 if (USE_INPUTS)
-	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_INPUTS)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_INPUTS)
     set(build_string "${build_string}, INPUTS")
 endif()
 
 option(USE_PLAYER_DATA "Use the data manager" ON)
 if (USE_PLAYER_DATA)
-	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_PLAYER_DATA)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_PLAYER_DATA)
     set(build_string "${build_string}, PLAYER_DATA")
 endif()
 
 option(SHOW_WINDOW "Show the game window" ON)
 if (SHOW_WINDOW)
-	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_SHOW_WINDOW)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_SHOW_WINDOW)
     set(build_string "${build_string}, WINDOW")
 endif()
 
 option(USE_RENDERER_GL "Use the OpenGL renderer" ON)
 if (USE_RENDERER_GL AND SHOW_WINDOW)
-	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_RENDERER_GL)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_RENDERER_GL)
     set(build_string "${build_string}, RENDERER_GL")
 endif()
 
 option(USE_PHYSICS "Use the physics engine" ON)
 if (USE_PHYSICS)
-	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_PHYSICS)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_PHYSICS)
     set(build_string "${build_string}, PHYSICS")
 endif()
 
 if(USE_RENDERER_GL OR USE_PHYSICS)
-	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_MODELS)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_MODELS)
 endif()
 
 option(USE_AUDIO "Use the audio system" ON)
 if (USE_AUDIO)
-	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_AUDIO)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_AUDIO)
     set(build_string "${build_string}, AUDIO")
 endif()
 
@@ -74,17 +74,17 @@ message("Building ${build_string}")
 # external libraries
 set(BUILD_SHARED_LIBS OFF)
 
-## GLAD
+# # GLAD
 if(USE_RENDERER_GL)
     add_subdirectory(libs/glad/cmake)
     glad_add_library(glad STATIC QUIET REPRODUCIBLE API gl:core=4.4)
     target_link_libraries(${PROJECT_NAME} PUBLIC glad)
 endif()
 
-## glm
+# # glm
 target_include_directories(${PROJECT_NAME} PUBLIC libs/glm)
 
-## Jolt
+# # Jolt
 if(USE_PHYSICS)
     set(ENABLE_OBJECT_STREAM OFF)
     set(USE_ASSERTS OFF)
@@ -101,7 +101,7 @@ if(USE_PHYSICS)
     endif()
 endif()
 
-## SDL2
+# # SDL2
 find_package(SDL2 REQUIRED)
 if(TARGET SDL2::SDL2main)
     target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2main)
@@ -119,7 +119,7 @@ else()
     endif()
 endif()
 
-## SDL_Mixer
+# # SDL_Mixer
 if(USE_AUDIO)
     find_package(SDL2_mixer REQUIRED)
     target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_mixer::SDL2_mixer)
@@ -132,7 +132,7 @@ if(USE_AUDIO)
     endif()
 endif()
 
-## SDL_Image
+# # SDL_Image
 if(USE_RENDERER_GL)
     find_package(SDL2_image REQUIRED)
 
@@ -149,7 +149,7 @@ if(USE_RENDERER_GL)
     endif()
 endif()
 
-## Assimp
+# # Assimp
 if(USE_RENDERER_GL OR USE_PHYSICS)
     message("Configurating Assimp...")
     set(ASSIMP_NO_EXPORT ON)
@@ -164,11 +164,11 @@ if(USE_RENDERER_GL OR USE_PHYSICS)
     endif()
 endif()
 
-## Tinyxml2
-target_sources(${PROJECT_NAME} PRIVATE libs/TinyXML2/tinyxml2.cpp)
-target_include_directories(${PROJECT_NAME} PUBLIC libs/TinyXML2)
+# # YAML
+add_subdirectory(libs/yaml-cpp)
+target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
 
-## uuidv7
+# # uuidv7
 target_include_directories(${PROJECT_NAME} PUBLIC libs/uuidv7-h)
 
 # Debug executable

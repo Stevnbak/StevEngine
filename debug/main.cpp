@@ -1,5 +1,6 @@
 #include "main/Engine.hpp"
 #include "main/ResourceManager.hpp"
+#include "scenes/Component.hpp"
 #include "scenes/GameObject.hpp"
 #include "physics/RigidBody.hpp"
 #include "physics/Colliders.hpp"
@@ -15,6 +16,7 @@
 #include "visuals/render/System.hpp"
 #include "visuals/shaders/Shader.hpp"
 
+#include "yaml-cpp/node/node.h"
 #include <glm/ext/matrix_float4x4.hpp>
 #include <cmrc/cmrc.hpp>
 CMRC_DECLARE(debug_assets);
@@ -31,19 +33,11 @@ class CameraController final : public Component {
 		void Update(double deltaTime);
 		void Start();
 		void Deactivate() {};
-		void Export(tinyxml2::XMLElement* element);
 		CameraController() : Component("CameraController") {};
-		CameraController(tinyxml2::XMLElement* element) : Component("CameraController") {
-			movementSpeed = element->DoubleAttribute("movementSpeed");
-			sensitivity = element->DoubleAttribute("sensitivity");
-		};
+		CameraController(YAML::Node node) : Component(node) {};
 };
-FactoryBase* factory = GameObject::AddComponentFactory<CameraController>(std::string("CameraController"));
+bool camController = CreateComponents::RegisterComponentType<CameraController>("CameraController");
 
-void CameraController::Export(tinyxml2::XMLElement* element) {
-	element->SetAttribute("movementSpeed", movementSpeed);
-	element->SetAttribute("sensitivity", sensitivity);
-}
 void CameraController::Update(double deltaTime) {
 	if (InputSystem::cursorMode == InputSystem::CursorMode::Free) {
 		return;
@@ -56,7 +50,7 @@ void CameraController::Update(double deltaTime) {
 	Utilities::Vector3 right = rotation.Right();
 	Utilities::Vector3 up = rotation.Up();
 	if (InputSystem::IsKeyPressed(SDLK_w)) {
-	    position -= forward * movementSpeed * deltaTime;
+		position -= forward * movementSpeed * deltaTime;
 	}
 	if (InputSystem::IsKeyPressed(SDLK_s)) {
 		position += forward * movementSpeed * deltaTime;
@@ -107,10 +101,11 @@ class Rotate final : public Component {
 		}
 		void Start() {};
 		void Deactivate() {};
-		void Export(tinyxml2::XMLElement* element) {};
 		Rotate() : Component("Rotate") {};
 		Rotate(Vector3 axis, double movementSpeed = 0.5) : axis(axis), movementSpeed(movementSpeed), Component("Rotate") {};
+		Rotate(YAML::Node node) : Component(node) {};
 };
+bool rotate = CreateComponents::RegisterComponentType<Rotate>("Rotate");
 
 ID modelObject;
 
@@ -136,14 +131,17 @@ int main(int argc, char** argv) {
 
 	//Add debug assets
 	auto fs = cmrc::debug_assets::get_filesystem();
-	for (std::string path : {"test.txt", "test_2.txt", "audio.wav", "cube.object", "Debug_scene.scene", "Fox.stl", "cube.stl", "box.png", "prototype.png", "test_shader.frag"}) {
+	for (std::string path : {"test.txt", "test_2.txt", "audio.wav", "cube.object", "Debug scene.scene", "Fox.stl", "cube.stl", "box.png", "prototype.png", "test_shader.frag"}) {
 		cmrc::file file = fs.open("debug/assets/" + path);
 		engine.resources.AddFile(path, file.begin(), file.size());
 	}
 
 	//Create new scene
-	//Scene* scene = engine.scenes.CreateSceneFromFile(engine.resources.GetFile("Debug_scene.scene"));
+	//Scene* importedscene = engine.scenes.CreateSceneFromFile(engine.resources.GetFile("Debug scene.scene"));
+	///*
 	Scene* scene = engine.scenes.CreateScene("Debug scene");
+
+	//engine.scenes.SetActiveScene("Debug imported scene");
 
 	//Create test objects
 	{
@@ -172,16 +170,6 @@ int main(int argc, char** argv) {
 		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
 		//Physics::RigidBody* rb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		#endif
-		cube->ExportToFile("cube");
-		/*ID id2 = scene->CreateObjectFromFile(Engine::Instance->resources.GetFile("cube.object"));
-		GameObject* cube2 = scene->GetObject(id2);
-		#ifdef StevEngine_PHYSICS
-		Physics::Collider* col = cube2->GetComponent<Physics::Collider>();
-		#endif
-		#ifdef StevEngine_RENDERER_GL
-		CubePrimitive* primitive2 = cube2->GetComponent<CubePrimitive>();
-		primitive2->SetColor(Color(1, 1, 1, 1));
-		#endif*/
 	}
 	{
 		ID id = scene->CreateObject("Sphere", Utilities::Vector3(3, 3, 0), Utilities::Quaternion(), Utilities::Vector3(2.0));
@@ -285,8 +273,9 @@ int main(int argc, char** argv) {
 
 	//Export scene
 	#ifdef StevEngine_PLAYER_DATA
-	//scene->ExportToFile();
+	scene->ExportToFile();
 	#endif
+	//*/
 
 	//Set background
 	#ifdef StevEngine_RENDERER_GL

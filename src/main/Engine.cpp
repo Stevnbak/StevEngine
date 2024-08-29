@@ -36,14 +36,14 @@ namespace StevEngine {
 
 	#ifdef StevEngine_SHOW_WINDOW
 	void Engine::Draw() {
-        // Add objects to render queues
-        if (scenes.GetActiveScene()->activeCamera != nullptr) {
+		// Add objects to render queues
+		if (scenes.GetActiveScene()->activeCamera != nullptr) {
 			Scene* scene = scenes.GetActiveScene();
 			for (Utilities::ID id : scene->GetAllObjects()) {
 				if(!scene->GetObject(id)->parent.IsNull()) continue;
 				scene->GetObject(id)->Draw(glm::mat4x4(1.0));
 			}
-        }
+		}
 		#ifdef StevEngine_RENDERER_GL
 		// Render frame
 		render.DrawFrame();
@@ -157,7 +157,6 @@ namespace StevEngine {
 							case SDL_WINDOWEVENT_SIZE_CHANGED:
 								Log::Debug("Resizing window", true);
 								SetWindowSize(ev.window.data1, ev.window.data2);
-								Draw();
 								break;
 							#ifdef StevEngine_INPUTS
 							case SDL_WINDOWEVENT_ENTER:
@@ -253,12 +252,12 @@ namespace StevEngine {
 
 	#ifdef StevEngine_SHOW_WINDOW
 	void Engine::SetWindowSize(int width, int height) {
-	    WIDTH = width;
+		WIDTH = width;
 		HEIGHT = height;
-    	SDL_SetWindowSize(window, WIDTH, HEIGHT);
-    	#ifdef StevEngine_RENDERER_GL
-    	render.SetWindowSize(WIDTH, HEIGHT);
-    	#endif
+		SDL_SetWindowSize(window, WIDTH, HEIGHT);
+		#ifdef StevEngine_RENDERER_GL
+		render.SetWindowSize(WIDTH, HEIGHT);
+		#endif
 	}
 	#endif
 

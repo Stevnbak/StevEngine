@@ -5,21 +5,21 @@
 #include "main/InputSystem.hpp"
 #include "main/ResourceManager.hpp"
 #include "scenes/Component.hpp"
+#include "yaml-cpp/node/node.h"
 
 #include <map>
 #include <vector>
 #include <array>
 #include <type_traits>
-#include <tinyxml2.h>
 #include <glm/mat4x4.hpp>
 
 namespace StevEngine {
-	class GameObject {
+	class GameObject final {
 		friend class Engine;
 		friend class Scene;
 		//Basic properties
 		public:
-			const std::string name;
+			std::string name;
 			Utilities::ID Id() { return id; }
 		private:
 			Utilities::ID id;
@@ -47,35 +47,27 @@ namespace StevEngine {
 		public:
 			~GameObject();
 			#ifdef StevEngine_PLAYER_DATA
-			void ExportToFile(std::string name);
+			void ExportToFile(std::string name) const;
 			#endif
+			YAML::Node Export() const;
+			void Import(YAML::Node node);
 		private:
 			void Start();
 			void Deactivate();
 			void Update(double deltaTime);
 			void Draw(glm::mat4x4 transform);
-			std::string Export();
 			GameObject();
 			GameObject(Utilities::ID id, std::string name, std::string scene);
 		//Children functions
 		public:
 			int AddChild(Utilities::ID gameObjectID);
 			void RemoveChild(int index);
-			GameObject* GetChild(int index);
-			int GetChildCount();
-			GameObject* GetParent();
+			GameObject* GetChild(int index) const;
+			int GetChildCount() const;
+			GameObject* GetParent() const;
 		private:
 			Utilities::ID parent = Utilities::ID::empty;
 			std::vector<Utilities::ID> children;
-		//Static:
-		public:
-			template<typename T> static ComponentFactory<T>* AddComponentFactory(std::string type) {
-				ComponentFactory<T>* component = new ComponentFactory<T>();
-				componentFactories.insert(std::make_pair(type, component));
-				return component;
-			};
-		private:
-			static inline std::map<std::string, FactoryBase*> componentFactories = std::map<std::string, FactoryBase*>();
 		//Component functions
 		private:
 			std::vector<Component*> components;
@@ -128,6 +120,7 @@ namespace StevEngine {
 			template <class T>
 			typename std::enable_if<std::is_base_of<Component,T>::value, T* >::type
 			AddComponent(T* component) {
+			    if(!component) return nullptr;
 				//If unique check uniqueness
 				if (component->unique) {
 					if (GetComponent<T>(false) != nullptr) {

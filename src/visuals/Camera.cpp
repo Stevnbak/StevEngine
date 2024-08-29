@@ -1,5 +1,6 @@
 #include "Camera.hpp"
 #include "main/Engine.hpp"
+#include "scenes/Component.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Quaternion.hpp"
 #include "main/Log.hpp"
@@ -18,14 +19,23 @@ namespace StevEngine::Visuals {
 		aspect = aspectRatio;
 	}
 
-	void Camera::Export(tinyxml2::XMLElement* element) {
-		element->SetAttribute("orthographic", isOrthographic);
-		element->SetAttribute("zoom", zoom);
-		element->SetAttribute("aspect", aspect);
-	}
-	Camera::Camera(tinyxml2::XMLElement* node) : Camera(node->BoolAttribute("orthographic"), node->DoubleAttribute("zoom"), node->DoubleAttribute("aspect")) {}
-	FactoryBase* factory = GameObject::AddComponentFactory<Camera>(std::string("Camera"));
+	Camera::Camera(YAML::Node node)
+		: Component(node),
+		isOrthographic(node["orthographic"].as<bool>()),
+		zoom(node["zoom"].as<double>()),
+		aspect(node["aspect"].as<double>()),
+		farClip(node["farClip"].as<double>()),
+		nearClip(node["nearClip"].as<double>())
+	{}
 
+	YAML::Node Camera::Export(YAML::Node node) const {
+		node["orthographic"] = isOrthographic;
+		node["zoom"] = zoom;
+		node["aspect"] = aspect;
+		node["farClip"] = farClip;
+		node["nearClip"] = nearClip;
+		return node;
+	}
 
 	glm::mat4x4 Camera::GetView() {
 		glm::mat4x4 transform = glm::mat4(1.0f);

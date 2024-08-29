@@ -1,6 +1,12 @@
 #include "GameObject.hpp"
 #include "main/Log.hpp"
 #include "main/Engine.hpp"
+#include "scenes/Component.hpp"
+#include "utilities/ID.hpp"
+#include "utilities/Quaternion.hpp"
+#include "utilities/Vector3.hpp"
+#include "yaml-cpp/emitter.h"
+#include "yaml-cpp/node/node.h"
 
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -122,60 +128,69 @@ namespace StevEngine {
 		GetChild(index)->parent = Utilities::ID::empty;
 		children.erase(children.begin() + index);
 	}
-	GameObject* GameObject::GetChild(int index) {
+	GameObject* GameObject::GetChild(int index) const {
 		return Engine::Instance->scenes.GetScene(scene)->GetObject(children[index]);
 	}
-	int GameObject::GetChildCount() {
+	int GameObject::GetChildCount() const {
 		return children.size();
 	}
-	GameObject* GameObject::GetParent() {
+	GameObject* GameObject::GetParent() const {
 		if(!parent.IsNull()) return Engine::Instance->scenes.GetScene(scene)->GetObject(parent);
 		else return nullptr;
 	}
 
 	//Export
-	std::string GameObject::Export() {
-		//Create xml document
-		tinyxml2::XMLDocument doc;
-		tinyxml2::XMLElement* main = doc.NewElement("GameObject");
-		doc.InsertFirstChild(main);
-
-		//Add basic info
-		main->SetAttribute("name", 		name.c_str());
-		main->SetAttribute("id", 		id.GetString().c_str());
-		main->SetAttribute("position", 	((std::string)position).c_str());
-		main->SetAttribute("rotation", 	((std::string)rotation).c_str());
-		main->SetAttribute("scale", 	((std::string)scale).c_str());
-
-		//Add components
+	YAML::Node GameObject::Export() const {
+		YAML::Node node;
+		//Basic info
+		node["id"] = id;
+		node["name"] = name;
+		//Transform info
+		node["position"] = position;
+		node["rotation"] = rotation;
+		node["scale"] = scale;
+		//Components
 		for(Component* component : components) {
-			tinyxml2::XMLDocument xml;
-			xml.Parse(component->Export().c_str());
-			tinyxml2::XMLElement* element = xml.FirstChild()->ToElement();
-			main->InsertEndChild(element->DeepClone(&doc));
+			node["components"].push_back(component->Export());
 		}
-
-		//Add children
-		for(Utilities::ID child : children) {
-			tinyxml2::XMLDocument xml;
-			xml.Parse(Engine::Instance->scenes.GetScene(scene)->GetObject(child)->Export().c_str());
-			tinyxml2::XMLElement* element = xml.FirstChild()->ToElement();
-			main->InsertEndChild(element->DeepClone(&doc));
+		//Children
+		for(int i = 0; i < children.size(); i++) {
+			node["children"].push_back(GetChild(i)->Export());
 		}
-
-		//Return xml as string
-		tinyxml2::XMLPrinter printer;
-		doc.Print( &printer );
-		return printer.CStr();
+		return node;
 	}
 	#ifdef StevEngine_PLAYER_DATA
-	void GameObject::ExportToFile(std::string name) {
-		tinyxml2::XMLDocument doc;
-		doc.Parse(Export().c_str());
-		doc.SaveFile((Engine::Instance->data.GetDirectoryPath() + name + ".object").c_str());
+	void GameObject::ExportToFile(std::string name) const {
+		YAML::Node node = Export();
+		YAML::Emitter out;
+		out << node;
+		std::ofstream file;
+		file.open(Engine::Instance->data.GetDirectoryPath() + name + ".object");
+		file << out.c_str();
 	}
 	#endif
-
+	//Import from yaml
+	void GameObject::Import(YAML::Node node)
+	{
+    	//Basic info
+		name = node["name"].as<std::string>();
+    	//Transform info
+		position = node["position"].as<Utilities::Vector3>();
+		rotation = node["rotation"].as<Utilities::Quaternion>();
+		scale = node["scale"].as<Utilities::Vector3>();
+		//Components
+		if(node["components"]) {
+			for(YAML::Node component : node["components"]) {
+				AddComponent(CreateComponents::Create(component));
+			}
+		}
+		//Children
+		if(node["children"]) {
+			for(YAML::Node childNode : node["children"]) {
+				AddChild(Engine::Instance->scenes.GetScene(scene)->CreateObject(childNode));
+			}
+		}
+	}
 	//Destroy
 	GameObject::~GameObject() {
 		///Log::Normal(std::format("Destroying object with id {}", id), true);

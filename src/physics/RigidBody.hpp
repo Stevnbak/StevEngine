@@ -1,4 +1,5 @@
 #pragma once
+#include "yaml-cpp/node/node.h"
 #ifdef StevEngine_PHYSICS
 #include "scenes/Component.hpp"
 #include "utilities/Vector3.hpp"
@@ -37,7 +38,7 @@ namespace StevEngine::Physics {
 		}
 	};
 
-	class RigidBody : public Component {
+	class RigidBody final : public Component {
 		friend class Collider;
 		friend class StevEngine::GameObject;
 		//Information
@@ -63,14 +64,13 @@ namespace StevEngine::Physics {
 			~RigidBody();
 			//Constructor
 			RigidBody(JPH::EMotionType motionType, Layer* layer, float mass = 1000);
-			RigidBody(tinyxml2::XMLElement* element);
+			RigidBody(YAML::Node node);
 			//Other functions
+			YAML::Node Export(YAML::Node node) const;
 			void SetMotionProperties(MotionProperties properties);
 		private:
 			void RefreshShape();
 			void TransformUpdate(bool position, bool rotation, bool scale);
-			//Export
-			void Export(tinyxml2::XMLElement* element);
 		//Jolt Wrappers
 		public:
 			bool IsActive () const { return body->IsActive(); }
@@ -95,5 +95,7 @@ namespace StevEngine::Physics {
 			void AddAngularImpulse (Utilities::Vector3 inAngularImpulse) { return body->AddAngularImpulse(inAngularImpulse); }
 			void MoveKinematic (Utilities::Vector3 inTargetPosition, Utilities::Quaternion inTargetRotation, float inDeltaTime) { return body->MoveKinematic(inTargetPosition, inTargetRotation, inDeltaTime); }
 	};
+
+	inline bool body = CreateComponents::RegisterComponentType<RigidBody>("RigidBody");
 }
 #endif

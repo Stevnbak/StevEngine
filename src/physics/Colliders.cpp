@@ -1,11 +1,18 @@
+#include <sstream>
 #ifdef StevEngine_PHYSICS
 #include "Colliders.hpp"
 #include "RigidBody.hpp"
-#include "scenes/GameObject.hpp"
 #include "scenes/Scene.hpp"
+#include "scenes/GameObject.hpp"
+#include "scenes/Component.hpp"
 #include "main/Engine.hpp"
 #include "main/ResourceManager.hpp"
 #include "utilities/Model.hpp"
+#include "utilities/Quaternion.hpp"
+#include "utilities/Vector3.hpp"
+
+#include "yaml-cpp/binary.h"
+
 
 #include <stdexcept>
 #include <algorithm>
@@ -171,10 +178,10 @@ namespace StevEngine::Physics {
 		: Collider(ModelToShape(model, convex), position, rotation, scale) {}
 
 	//Export colliders
-	void Collider::Export(tinyxml2::XMLElement* element) {
-        element->SetAttribute("position", ((std::string)position).c_str());
-		element->SetAttribute("rotation", ((std::string)rotation).c_str());
-		element->SetAttribute("scale", ((std::string)scale).c_str());
+	YAML::Node Collider::Export(YAML::Node node) const {
+		node["position"] = position;
+		node["rotation"] = rotation;
+		node["scale"] = scale;
 
 		//Export shape to STL string
 		std::stringstream data;
@@ -183,13 +190,14 @@ namespace StevEngine::Physics {
 		JPH::Shape::MaterialToIDMap material_to_id;
 		rawShape->SaveWithChildren(stream_out, shape_to_id, material_to_id);
 		std::string shapeString = data.str();
-		std::stringstream out;
+		/*std::stringstream out;
 		for(size_t i = 0; i < shapeString.size(); i++) out << std::setw(4) << std::setfill('0') << std::hex << (short)shapeString[i];
-		std::string test = out.str();
-		element->SetAttribute("shape", out.str().c_str());
-    }
-	JPH::Ref<JPH::Shape> ImportShape(tinyxml2::XMLElement* node) {
-		std::string raw = node->Attribute("shape");
+		node["shape"] = out.str();*/
+		node["shape"] = YAML::Binary((const unsigned char*)shapeString.c_str(), shapeString.size());
+		return node;
+	}
+	JPH::Ref<JPH::Shape> ImportShape(YAML::Node node) {
+		/*std::string raw = node["shape"].as<std::string>();
 		std::stringstream data;
 		for (size_t i = 0; i < raw.length(); i += 4)
 		{
@@ -197,8 +205,19 @@ namespace StevEngine::Physics {
 			char out = strtoul(sz, NULL, 16);
 			data << out;
 		}
-		std::string test = data.str();
 		JPH::StreamInWrapper stream_in(data);
+		JPH::Shape::IDToShapeMap id_to_shape;
+		JPH::Shape::IDToMaterialMap id_to_material;
+		JPH::Shape::ShapeResult result = JPH::Shape::sRestoreWithChildren(stream_in, id_to_shape, id_to_material);
+		if (result.IsValid())
+			return result.Get();
+		else {
+			Log::Error(std::format("Collider failed to import shape. Error: {}", result.GetError()), true);
+			return NULL;
+		}*/
+		YAML::Binary bin = node["shape"].as<YAML::Binary>();
+        std::stringstream data(std::string((const char*)bin.data(), bin.size()));
+        JPH::StreamInWrapper stream_in = JPH::StreamInWrapper(data);
 		JPH::Shape::IDToShapeMap id_to_shape;
 		JPH::Shape::IDToMaterialMap id_to_material;
 		JPH::Shape::ShapeResult result = JPH::Shape::sRestoreWithChildren(stream_in, id_to_shape, id_to_material);
@@ -209,11 +228,10 @@ namespace StevEngine::Physics {
 			return NULL;
 		}
 	}
-	Collider::Collider(tinyxml2::XMLElement* node) : rawShape(ImportShape(node)), Component(node) {
-		position = Utilities::Vector3(node->Attribute("position"));
-		rotation = Utilities::Quaternion(node->Attribute("rotation"));
-		scale = Utilities::Vector3(node->Attribute("scale"));
+	Collider::Collider(YAML::Node node) : rawShape(ImportShape(node)), Component(node) {
+		position = node["position"].as<Utilities::Vector3>();
+		rotation = node["rotation"].as<Utilities::Quaternion>();
+		scale = node["scale"].as<Utilities::Vector3>();
 	}
-	FactoryBase* colfactory = GameObject::AddComponentFactory<Collider>(std::string("Collider"));
 }
 #endif

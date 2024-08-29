@@ -8,7 +8,6 @@
 #include <string>
 #include <stdio.h>
 #include <string.h>
-namespace fs = std::filesystem;
 
 static std::vector<char> ReadAllBytes(char const* filename)
 {
@@ -34,8 +33,8 @@ namespace StevEngine {
 				return resources.at(id);
 			}
 			else {
-				Log::Error(std::format("Resource {} not found.", id), true);
-				throw std::runtime_error("Failed to find resource!");
+				Log::Error(std::format("Resource \"{}\" not found.", id), true);
+				throw std::runtime_error(std::format("Resource {} not found.", id));
 			}
 		}
 		Resource System::GetFile(std::string path) const {
@@ -43,7 +42,7 @@ namespace StevEngine {
 				return resources.at(pathToId.at(path));
 			}
 			else {
-				Log::Error(std::format("Resource {} not found.", path), true);
+				Log::Error(std::format("Resource \"{}\" not found.", path), true);
 				throw std::runtime_error("Failed to find resource!");
 			}
 		}
@@ -74,10 +73,10 @@ namespace StevEngine {
 		Resource::Resource(std::string path, const char* data, const int size) : id(Resource::currentId++), path(path), data(data), size(size) {}
 
 		int Resource::GetSize() {
-		    return size;
+			return size;
 		}
 		const char* Resource::GetRawData() {
-		    return data;
+			return data;
 		}
 		SDL_RWops* Resource::GetSDLData() {
 			return SDL_RWFromConstMem(data, size);

@@ -10,8 +10,8 @@
 namespace StevEngine {
 	namespace Utilities {
 		class Vector3;
-        
-        class Range3 {
+
+		class Range3 {
 			public:
 				//Values
 				Vector3 Low;
@@ -29,5 +29,13 @@ namespace StevEngine {
 				Range3(const JPH::AABox& other);
 				#endif
 		};
-    }
+	}
+}
+
+#include <yaml-cpp/yaml.h>
+namespace YAML {
+	template<> struct convert<StevEngine::Utilities::Range3> {
+		static Node encode(const StevEngine::Utilities::Range3& rhs);
+		static bool decode(const Node& node, StevEngine::Utilities::Range3& rhs);
+	};
 }

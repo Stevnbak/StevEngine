@@ -15,31 +15,31 @@
 #include <SDL.h>
 
 namespace StevEngine {
-    class Engine;
-    namespace Render {
-        //Lights
-        class Light;
-        class DirectionalLight;
-        class PointLight;
-        class SpotLight;
+	class Engine;
+	namespace Render {
+		//Lights
+		class Light;
+		class DirectionalLight;
+		class PointLight;
+		class SpotLight;
 
-        //Object structs
-        struct RenderObject {
-            Object object;
-            glm::mat4x4 transform;
-        };
+		//Object structs
+		struct RenderObject {
+			Object object;
+			glm::mat4x4 transform;
+		};
 
-        //Render queues
-        enum RenderQueue {
-            STANDARD,
-            TRANSPARENT,
-            OVERLAY,
+		//Render queues
+		enum RenderQueue {
+			STANDARD,
+			TRANSPARENT,
+			OVERLAY,
 
-            MUST_BE_LAST
-        };
+			MUST_BE_LAST
+		};
 
-        //System
-        class System {
+		//System
+		class System {
 			friend class StevEngine::Engine;
 			friend class StevEngine::Render::Light;
 			friend class StevEngine::Render::DirectionalLight;
@@ -48,35 +48,35 @@ namespace StevEngine {
 
 			public:
 				void DrawObject(Object object, glm::mat4x4 transform, RenderQueue queue = STANDARD);
-                void SetBackground(Utilities::Color color);
-                void SetAmbientLight(float strength, Utilities::Color color = Utilities::Color(255,255,255,255));
-                void AddGlobalShader(ShaderProgram shader);
-                void ResetGlobalShader(ShaderType type);
-            protected:
-			    //From Engine
-                System();
-                SDL_GLContext Init(SDL_Window* window);
-                Uint32 WindowType();
-                void DrawFrame();
-                void SetWindowSize(int WIDTH, int HEIGHT);
-                //From Lights
-                std::vector<Light*> lights;
-                unsigned int GetLightID(std::string type);
-            private:
-                //Queues
-                std::array<std::vector<RenderObject>, RenderQueue::MUST_BE_LAST> queues;
-                void Draw(RenderObject object);
-                //Shader program
-                ShaderProgram vertexShaderProgram;
-                ShaderProgram fragmentShaderProgram;
-                unsigned int shaderPipeline;
-                //GPU Buffers
-                unsigned int VBO; //Vertex Buffer Object
-                unsigned int EBO; //Element Buffer Object
-                unsigned int VAO; //Vertex Array Object
-                //Background
-                Utilities::Color backgroundColor = {0, 0, 0, 255};
+				void SetBackground(Utilities::Color color);
+				void SetAmbientLight(float strength, Utilities::Color color = Utilities::Color(255,255,255,255));
+				void AddGlobalShader(ShaderProgram shader);
+				void ResetGlobalShader(ShaderType type);
+			protected:
+				//From Engine
+				System();
+				SDL_GLContext Init(SDL_Window* window);
+				Uint32 WindowType();
+				void DrawFrame();
+				void SetWindowSize(int WIDTH, int HEIGHT);
+				//From Lights
+				std::vector<Light*> lights;
+				unsigned int GetLightID(std::string type);
+			private:
+				//Queues
+				std::array<std::vector<RenderObject>, RenderQueue::MUST_BE_LAST> queues;
+				void Draw(RenderObject object);
+				//Shader program
+				ShaderProgram vertexShaderProgram;
+				ShaderProgram fragmentShaderProgram;
+				unsigned int shaderPipeline;
+				//GPU Buffers
+				unsigned int VBO; //Vertex Buffer Object
+				unsigned int EBO; //Element Buffer Object
+				unsigned int VAO; //Vertex Array Object
+				//Background
+				Utilities::Color backgroundColor = {0, 0, 0, 255};
 		};
-    }
+	}
 }
 #endif

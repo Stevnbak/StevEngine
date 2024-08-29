@@ -6,6 +6,7 @@
 #include "utilities/Vector3.hpp"
 #include "utilities/Range3.hpp"
 #include "utilities/Quaternion.hpp"
+#include "yaml-cpp/yaml.h"
 //Jolt:
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Collision/Shape/Shape.h>
@@ -17,17 +18,17 @@ namespace StevEngine::Physics {
 		friend class StevEngine::GameObject;
 		public:
 			Collider(JPH::Ref<JPH::Shape> shape, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1,1,1));
-			Collider(tinyxml2::XMLElement* element);
+			Collider(YAML::Node);
 			~Collider();
 		private:
 			void Draw(glm::mat4x4 transform);
 			void Deactivate();
 			void Update(double deltaTime) {};
 			void Start();
-			void Export(tinyxml2::XMLElement* element);
 			void TransformUpdate(bool position, bool rotation, bool scale);
 			void LocalTransformUpdate(bool position, bool rotation, bool scale);
 		public:
+			YAML::Node Export(YAML::Node node) const;
 			Utilities::Vector3 GetScale()  { return scale; }
 			Utilities::Quaternion GetRotation()  { return rotation; }
 			Utilities::Vector3 GetPosition() { return position; }
@@ -45,6 +46,7 @@ namespace StevEngine::Physics {
 			const JPH::Ref<JPH::Shape> rawShape;
 			JPH::Ref<JPH::Shape> shape;
 	};
+	inline bool collider = CreateComponents::RegisterComponentType<Collider>("Collider");
 
 	//Cube collider
 	class CubeCollider : public Collider {

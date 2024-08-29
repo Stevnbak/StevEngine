@@ -8,7 +8,7 @@
 namespace StevEngine {
 	namespace Utilities {
 		//Constructors
-        Range3::Range3() {
+		Range3::Range3() {
 			Low = Vector3(0, 0, 0);
 			High = Vector3(0, 0, 0);
 		}
@@ -39,5 +39,22 @@ namespace StevEngine {
 			High = other.mMax;
 		}
 		#endif
-    }
+	}
+}
+
+namespace YAML {
+	Node convert<StevEngine::Utilities::Range3>::encode(const StevEngine::Utilities::Range3& rhs) {
+		Node node;
+		node.push_back(rhs.Low);
+		node.push_back(rhs.High);
+		return node;
+	}
+	bool convert<StevEngine::Utilities::Range3>::decode(const Node& node, StevEngine::Utilities::Range3& rhs) {
+		if(!node.IsSequence() || node.size() != 2) {
+			return false;
+		}
+		rhs.Low = node[0].as<StevEngine::Utilities::Vector3>();
+		rhs.High = node[1].as<StevEngine::Utilities::Vector3>();
+		return true;
+	}
 }

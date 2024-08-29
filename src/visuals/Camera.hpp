@@ -17,8 +17,9 @@ namespace StevEngine {
 			public:
 				bool isOrthographic;
 				double zoom, aspect, nearClip = 1, farClip = 100;
-				Camera(bool orthographic, double zoomValue, double aspectRatio);
-				Camera(tinyxml2::XMLElement* element);
+				Camera(bool orthographic, double zoomValue, double aspectRatio = 1);
+				Camera(YAML::Node node);
+				YAML::Node Export(YAML::Node node) const;
 			private:
 				static const bool unique = true;
 				glm::mat4x4 GetView();
@@ -28,7 +29,7 @@ namespace StevEngine {
 				void Deactivate() {};
 				void Update(double deltaTime) {};
 				void Draw(glm::mat4x4 transform) {};
-				void Export(tinyxml2::XMLElement* element);
 		};
+		inline bool camera = CreateComponents::RegisterComponentType<Camera>("Camera");
 	}
 }

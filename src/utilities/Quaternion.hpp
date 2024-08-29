@@ -8,22 +8,22 @@
 
 namespace StevEngine {
 	namespace Utilities {
-        class Quaternion {
+		class Quaternion {
 			public:
-                //Values
+				//Values
 				double W, X, Y, Z;
-                //Constructors
+				//Constructors
 				Quaternion(double w, double x, double y, double z);
 				Quaternion(double w, Vector3 vector);
 				Quaternion(const Quaternion& from);
 				Quaternion(std::string str);
 				Quaternion();
-                //Directions
+				//Directions
 				Vector3 Forward();
 				Vector3 Right();
 				Vector3 Up();
-                Quaternion& Conjugate();
-                Quaternion& Inverse();
+				Quaternion& Conjugate();
+				Quaternion& Inverse();
 				//Functions
 				Quaternion Get() const;
 				double Magnitude() const;
@@ -31,15 +31,15 @@ namespace StevEngine {
 				Quaternion Normalized() const;
 				std::tuple<double, Vector3> GetAngleAxis() const;
 				//Operators
-				Quaternion  operator    +   (const Quaternion& other) const;
-				Quaternion  operator    -   (const Quaternion& other) const;
-				Quaternion  operator    *   (const Quaternion& other) const;
-				Quaternion  operator    *   (const double& other) const;
-				Quaternion  operator    /   (const double& other) const;
-				Quaternion& operator    *=  (const Quaternion& other);
-				bool        operator    ==  (const Quaternion& other) const;
-                //Vector operators
-                Vector3 operator*(const Vector3& other) const;
+				Quaternion  operator	+   (const Quaternion& other) const;
+				Quaternion  operator	-   (const Quaternion& other) const;
+				Quaternion  operator	*   (const Quaternion& other) const;
+				Quaternion  operator	*   (const double& other) const;
+				Quaternion  operator	/   (const double& other) const;
+				Quaternion& operator	*=  (const Quaternion& other);
+				bool		operator	==  (const Quaternion& other) const;
+				//Vector operators
+				Vector3 operator*(const Vector3& other) const;
 				//Conversions
 				explicit operator std::string();
 				#ifdef StevEngine_PHYSICS
@@ -47,18 +47,27 @@ namespace StevEngine {
 				Quaternion& operator= (const JPH::Quat& other);
 				Quaternion(const JPH::Quat& other);
 				#endif
-                //Static methods
-                static Quaternion FromAngleAxis(double angle, Vector3 axis);
-                static double Angle(Quaternion a, Quaternion b);
-                static Quaternion Lerp(Quaternion a, Quaternion b, double t);
-                static Quaternion Slerp(Quaternion a, Quaternion b, double t);
-                static Quaternion FromToRotation(Vector3 fromDirection, Vector3 toDirection);
-                static Quaternion LookRotation(Vector3 forward, Vector3 upwards = Vector3::up);
+				//Static methods
+				static Quaternion FromAngleAxis(double angle, Vector3 axis);
+				static double Angle(Quaternion a, Quaternion b);
+				static Quaternion Lerp(Quaternion a, Quaternion b, double t);
+				static Quaternion Slerp(Quaternion a, Quaternion b, double t);
+				static Quaternion FromToRotation(Vector3 fromDirection, Vector3 toDirection);
+				static Quaternion LookRotation(Vector3 forward, Vector3 upwards = Vector3::up);
 				static Quaternion Conjugate(Quaternion q);
 				static Quaternion Inverse(Quaternion q);
 				static double Dot(Quaternion a, Quaternion b);
 				static double DegreesToRadians(double degrees);
 				static double RadiansToDegrees(double radians);
 		};
-    }
+	}
+}
+
+
+#include <yaml-cpp/yaml.h>
+namespace YAML {
+	template<> struct convert<StevEngine::Utilities::Quaternion> {
+		static Node encode(const StevEngine::Utilities::Quaternion& rhs);
+		static bool decode(const Node& node, StevEngine::Utilities::Quaternion& rhs);
+	};
 }

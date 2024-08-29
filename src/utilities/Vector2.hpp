@@ -1,21 +1,20 @@
 #pragma once
 #include <string>
 
-
 namespace StevEngine {
 	namespace Utilities {
-        class Vector3;
+		class Vector3;
 
-        class Vector2 {
+		class Vector2 {
 			public:
-                //Values
+				//Values
 				double X, Y;
-                //Constructors
+				//Constructors
 				Vector2(double x, double y);
 				Vector2(const Vector2& from);
 				Vector2(std::string str);
 				Vector2();
-                //Functions
+				//Functions
 				Vector2 Get() const;
 				double Magnitude() const;
 				Vector2& Normalize();
@@ -29,14 +28,22 @@ namespace StevEngine {
 				Vector2& operator   -=  (const Vector2& other);
 				Vector2  operator   *   (const double& other) const;
 				Vector2  operator   /   (const double& other) const;
-				bool     operator   ==  (const Vector2& other) const;
+				bool	 operator   ==  (const Vector2& other) const;
 				//Conversions
 				explicit operator Vector3();
 				explicit operator std::string();
-                //Static stuff
-                static Vector2 up, right;
+				//Static stuff
+				static Vector2 up, right;
 				static double Distance(Vector2 a, Vector2 b);
 				static double Dot(Vector2 a, Vector2 b);
 		};
-    }
+	}
+}
+
+#include <yaml-cpp/yaml.h>
+namespace YAML {
+	template<> struct convert<StevEngine::Utilities::Vector2> {
+		static Node encode(const StevEngine::Utilities::Vector2& rhs);
+		static bool decode(const Node& node, StevEngine::Utilities::Vector2& rhs);
+	};
 }

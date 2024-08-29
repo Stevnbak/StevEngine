@@ -7,22 +7,22 @@
 #include "glm/ext/vector_float2.hpp"
 
 namespace StevEngine {
-    namespace Render {
-        class ShaderProgram;
+	namespace Render {
+		class ShaderProgram;
 
-        enum ShaderType {
-            VERTEX,
-            FRAGMENT
-        };
+		enum ShaderType {
+			VERTEX,
+			FRAGMENT
+		};
 
-        class Shader {
-            friend class ShaderProgram;
-            public:
-                Shader(const char* source, ShaderType shaderType);
-                const ShaderType shaderType;
-            private:
-                unsigned int location;
-        };
-    }
+		class Shader {
+			friend class ShaderProgram;
+			public:
+				Shader(const char* source, ShaderType shaderType);
+				const ShaderType shaderType;
+			private:
+				unsigned int location;
+		};
+	}
 }
 #endif

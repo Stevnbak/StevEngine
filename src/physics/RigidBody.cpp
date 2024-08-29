@@ -1,15 +1,16 @@
 #ifdef StevEngine_PHYSICS
 #include "RigidBody.hpp"
 #include "physics/System.hpp"
+#include "physics/Layers.hpp"
 #include "main/Log.hpp"
 #include "main/Engine.hpp"
 #include "scenes/GameObject.hpp"
+#include "scenes/Component.hpp"
 
 #include <math.h>
 #include <iostream>
 
 namespace StevEngine::Physics {
-	FactoryBase* bodyfactory = GameObject::AddComponentFactory<RigidBody>(std::string("RigidBody"));
 	//Constructor
 	RigidBody::RigidBody(JPH::EMotionType motionType, Layer* layer, float mass)
 		: Component("RigidBody"), motionType(motionType), layer(layer), mass(mass), body(nullptr) {};
@@ -100,11 +101,13 @@ namespace StevEngine::Physics {
 		if(shape) shape->Release();
 	}
 
-	void RigidBody::Export(tinyxml2::XMLElement* element) {
-        element->SetAttribute("motionType", (JPH::uint8)motionType);
-        element->SetAttribute("layer", layer->name.c_str());
-        element->SetAttribute("mass", mass);
-    }
-    RigidBody::RigidBody(tinyxml2::XMLElement* node) : RigidBody((JPH::EMotionType)node->IntAttribute("motionType"), Layer::GetLayerByName(node->Attribute("layer")), node->FloatAttribute("mass")) {}
+	YAML::Node RigidBody::Export(YAML::Node node) const {
+		node["mass"] = mass;
+		node["motionType"] = (unsigned int)motionType;
+		node["layer"] = layer->id;
+		return node;
+	}
+	RigidBody::RigidBody(YAML::Node node)
+	  : Component(node), mass(node["mass"].as<double>()), motionType((JPH::EMotionType)node["motionType"].as<unsigned int>()), layer(StevEngine::Physics::Layer::GetLayerById(node["layer"].as<int>())), body(nullptr) {}
 }
 #endif
