@@ -11,15 +11,15 @@
 namespace Log {
 	//Engine log?
 	bool engineLogEnabled = true;
-	
+
 	//Create log stream
 	#ifdef StevEngine_PLAYER_DATA
 	std::ofstream logFile;
 	void StartLogging(std::string path) {
-		std::filesystem::create_directories(path + "logs");
+		std::filesystem::create_directories(path);
 		std::time_t t = std::time(0);
 		std::tm* now = std::localtime(&t);
-		std::string logFilePath = std::format("{}logs/{}.log", path, std::format("{}.{}.{}-{}.{}.{}", now->tm_year + 1900, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec));
+		std::string logFilePath = path + std::format("log_{}.{}.{}-{}.{}.{}.log", now->tm_year + 1900, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec);
 		logFile.open(logFilePath);
 		Normal("Created log file at path: " + logFilePath, true);
 	}

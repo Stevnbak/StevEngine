@@ -165,7 +165,7 @@ namespace StevEngine {
 		YAML::Emitter out;
 		out << node;
 		std::ofstream file;
-		file.open(Engine::Instance->data.GetDirectoryPath() + name + ".object");
+		file.open(Engine::Instance->data.GetAppdataPath() + name + ".object");
 		file << out.c_str();
 	}
 	#endif

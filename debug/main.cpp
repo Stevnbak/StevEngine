@@ -256,9 +256,9 @@ int main(int argc, char** argv) {
 
 	//Test data manager
 	#ifdef StevEngine_PLAYER_DATA
-	Log::Debug("Before: " + engine.data.ReadData("test"));
-	engine.data.SaveData("test", "test data");
-	Log::Debug("After: " + engine.data.ReadData("test"));
+	Log::Debug("Before: " + engine.data.Read<std::string>("test"));
+	engine.data.Save("test", std::string("test data"));
+	Log::Debug("After: " + engine.data.Read<std::string>("test"));
 	#endif
 
 	//Play audio

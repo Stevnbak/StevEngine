@@ -2,6 +2,7 @@
 #include "physics/System.hpp"
 #include "main/ResourceManager.hpp"
 #include "main/DataManager.hpp"
+#include "main/Settings.hpp"
 #include "audio/System.hpp"
 #include "visuals/render/System.hpp"
 #include "scenes/SceneManager.hpp"
@@ -35,7 +36,8 @@ namespace StevEngine {
 			Physics::System physics;
 			#endif
 			#ifdef StevEngine_PLAYER_DATA
-			GameData::System data;
+			GameData data;
+			Settings settings;
 			#endif
 			#ifdef StevEngine_AUDIO
 			Audio::System audio;

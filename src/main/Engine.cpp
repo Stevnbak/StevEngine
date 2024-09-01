@@ -10,6 +10,7 @@
 
 //Engine
 #include "main/InputSystem.hpp"
+#include "main/Settings.hpp"
 #include "scenes/GameObject.hpp"
 #include "main/Log.hpp"
 #include "visuals/Camera.hpp"
@@ -74,20 +75,21 @@ namespace StevEngine {
 	WIDTH(WIDTH),
 	HEIGHT(HEIGHT),
 	#endif
-	resources(Resources::System()),
+	resources(),
 	#ifdef StevEngine_RENDERER_GL
-	render(Render::System()),
+	render(),
 	#endif
 	#ifdef StevEngine_PHYSICS
-	physics(Physics::System()),
+	physics(),
 	#endif
 	#ifdef StevEngine_PLAYER_DATA
-	data(GameData::System(title)),
+	data(title),
+	settings(title),
 	#endif
 	#ifdef StevEngine_AUDIO
-	audio(Audio::System()),
+	audio(),
 	#endif
-	scenes(SceneManager())
+	scenes()
 	{
 		//Create instance
 		if(Instance != nullptr) {
@@ -96,7 +98,7 @@ namespace StevEngine {
 		Instance = this;
 		//Initialize logging
 		#ifdef StevEngine_PLAYER_DATA
-		Log::StartLogging(data.directoryPath);
+		Log::StartLogging(data.GetLogPath());
 		#endif
 		//Initialize SDL
 		if (SDL_Init(

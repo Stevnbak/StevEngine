@@ -8,22 +8,18 @@
 namespace StevEngine {
 	class Engine;
 
-	class GameData {
+	class Settings {
 		friend class StevEngine::Engine;
 		public:
 			template<typename T> T Read(std::string name);
-			template<typename T> void Save(std::string name, T data);
+			void Save(std::string name, YAML::Node data);
 			void Delete(std::string name);
-			std::string GetAppdataPath() { return appdataPath; }
-			std::string GetLogPath() { return logPath; }
+			std::string GetConfigPath() { return configPath; }
 		private:
-			GameData(std::string title);
-			std::string appdataPath;
-			std::string logPath;
-			YAML::Node data;
+			Settings(std::string title);
+			std::string configPath;
+			YAML::Node settings;
 			void SaveToFile();
 	};
-
-	extern std::string GetHomePath();
 }
 #endif
