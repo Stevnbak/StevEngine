@@ -172,9 +172,9 @@ namespace StevEngine {
 	//Import from yaml
 	void GameObject::Import(YAML::Node node)
 	{
-    	//Basic info
+		//Basic info
 		name = node["name"].as<std::string>();
-    	//Transform info
+		//Transform info
 		position = node["position"].as<Utilities::Vector3>();
 		rotation = node["rotation"].as<Utilities::Quaternion>();
 		scale = node["scale"].as<Utilities::Vector3>();

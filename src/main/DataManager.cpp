@@ -8,34 +8,34 @@
 #include <algorithm>
 
 namespace StevEngine {
-    	std::string GetHomePath() {
-            const char* homePath = std::getenv("HOME");
-            const char* userPath = std::getenv("USERPROFILE");
-            const char* homeDrive = std::getenv("HOMEDRIVE");
-            const char* homePath2 = std::getenv("HOMEPATH");
+		std::string GetHomePath() {
+			const char* homePath = std::getenv("HOME");
+			const char* userPath = std::getenv("USERPROFILE");
+			const char* homeDrive = std::getenv("HOMEDRIVE");
+			const char* homePath2 = std::getenv("HOMEPATH");
 
-            if (homePath != nullptr) {
-                return homePath;
-            }
-           	else if (userPath != nullptr) {
-                return userPath;
-            }
-            else if (homeDrive != nullptr && homePath2 != nullptr) {
-                return std::string(homeDrive) + std::string(homePath2);
-            }
-            else {
-                Log::Error("Could not find home path! Using program path instead.");
-                return "appdata";
-            }
-        }
-        std::string GetDataPath() {
-            if(std::getenv("HOME")) {
-                return std::format("{}/.local/", GetHomePath());
-            }
-            else {
-                return GetHomePath();
-            }
-        }
+			if (homePath != nullptr) {
+				return homePath;
+			}
+		   	else if (userPath != nullptr) {
+				return userPath;
+			}
+			else if (homeDrive != nullptr && homePath2 != nullptr) {
+				return std::string(homeDrive) + std::string(homePath2);
+			}
+			else {
+				Log::Error("Could not find home path! Using program path instead.");
+				return "appdata";
+			}
+		}
+		std::string GetDataPath() {
+			if(std::getenv("HOME")) {
+				return std::format("{}/.local/", GetHomePath());
+			}
+			else {
+				return GetHomePath();
+			}
+		}
 
 		GameData::GameData(std::string title) {
 			//Get and create data folder
@@ -67,7 +67,7 @@ namespace StevEngine {
 		template float GameData::Read(std::string name);
 
 		template<typename T> void GameData::Save(std::string name, T input) {
-		    data[name] = input;
+			data[name] = input;
 			SaveToFile();
 		}
 		template void GameData::Save(std::string name, YAML::Node input);
@@ -80,7 +80,7 @@ namespace StevEngine {
 
 
 		void GameData::Delete(std::string name) {
-		    data.remove(name);
+			data.remove(name);
 		}
 		void GameData::SaveToFile() {
 			std::ofstream file;

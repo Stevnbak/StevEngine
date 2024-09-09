@@ -1,4 +1,5 @@
 #include "main/Engine.hpp"
+#include "main/InputSystem.hpp"
 #include "main/ResourceManager.hpp"
 #include "scenes/Component.hpp"
 #include "scenes/GameObject.hpp"
@@ -17,6 +18,7 @@
 #include "visuals/shaders/Shader.hpp"
 
 #include "yaml-cpp/node/node.h"
+#include <SDL_keycode.h>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <cmrc/cmrc.hpp>
 CMRC_DECLARE(debug_assets);
@@ -123,7 +125,7 @@ void mainUpdate(double deltaTime) {
 
 int main(int argc, char** argv) {
 	//Create engine
-	Engine engine = Engine("Debug", 60, mainUpdate);
+	Engine engine = Engine("Debug", {  .vsync = true, .fullscreen = false, .targetFPS = 100 }, mainUpdate);
 	//Debug logging:
 	Log::Debug("Debug log");
 	Log::Warning("Warning log");
@@ -270,6 +272,16 @@ int main(int argc, char** argv) {
 
 	//engine.audio.PlayBackground("audio.wav", true);
 	#endif
+
+	//Test graphics settings
+	InputSystem::AddKeyDownEvent([](SDL_Keycode key) {
+		if (key == SDLK_f) {
+			Engine::Instance->SetFullscreen(!Engine::Instance->GetGameSettings().fullscreen);
+		}
+		else if (key == SDLK_v) {
+			Engine::Instance->SetVSync(!Engine::Instance->GetGameSettings().vsync);
+		}
+	});
 
 	//Export scene
 	#ifdef StevEngine_PLAYER_DATA

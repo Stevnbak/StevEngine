@@ -13,17 +13,15 @@ using namespace StevEngine;
 using namespace StevEngine::Utilities;
 
 namespace StevEngine::Visuals {
-	Camera::Camera(bool orthographic, double zoomValue, double aspectRatio) : Component("Camera") {
+	Camera::Camera(bool orthographic, double zoomValue) : Component("Camera") {
 		isOrthographic = orthographic;
 		zoom = zoomValue;
-		aspect = aspectRatio;
 	}
 
 	Camera::Camera(YAML::Node node)
 		: Component(node),
 		isOrthographic(node["orthographic"].as<bool>()),
 		zoom(node["zoom"].as<double>()),
-		aspect(node["aspect"].as<double>()),
 		farClip(node["farClip"].as<double>()),
 		nearClip(node["nearClip"].as<double>())
 	{}
@@ -31,7 +29,6 @@ namespace StevEngine::Visuals {
 	YAML::Node Camera::Export(YAML::Node node) const {
 		node["orthographic"] = isOrthographic;
 		node["zoom"] = zoom;
-		node["aspect"] = aspect;
 		node["farClip"] = farClip;
 		node["nearClip"] = nearClip;
 		return node;
@@ -51,18 +48,20 @@ namespace StevEngine::Visuals {
 	}
 
 	glm::mat4x4 Camera::GetProjection() {
+		GameSettings s = Engine::Instance->GetGameSettings();
+		double aspect = (double)s.WIDTH / s.HEIGHT;
 		if (isOrthographic)
 		{
 			Vector3 position = GetParent()->GetWorldPosition();
-			double width = (1 / aspect) / (zoom / position.Z);
-			double height = (1 * aspect) / (zoom / position.Z);
+			double width = (1 * aspect) / (zoom / position.Z);
+			double height = (1) / (zoom / position.Z);
 			//Set up an orthographic projection with the same near clip plane
 			return glm::ortho(-width, width, -height, height, nearClip, farClip);
 		}
 		else
 		{
-			double width = (1 / aspect) / zoom;
-			double height = (1 * aspect) / zoom;
+			double width = (1 * aspect) / zoom;
+			double height = (1) / zoom;
 			//Set the perspective with the appropriate aspect ratio
 			return glm::perspective(glm::radians(45.0), width/height, nearClip, farClip);
 		}

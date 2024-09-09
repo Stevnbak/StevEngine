@@ -51,7 +51,7 @@ namespace StevEngine {
 			node["scale"] = scale;
 			node["color"] = color;
 			node["texture"] = texturePath;
-            return node;
+			return node;
 		}
 	}
 }

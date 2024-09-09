@@ -100,8 +100,8 @@ namespace StevEngine {
 			}
 		YAML::Node CubePrimitive::Export(YAML::Node node) const {
 			YAML::Node n = RenderComponent::Export(node);
-            n["textureType"] = (unsigned int)textureType;
-            return n;
+			n["textureType"] = (unsigned int)textureType;
+			return n;
 		}
 
 		//Sphere
@@ -248,8 +248,8 @@ namespace StevEngine {
 			}
 		YAML::Node CylinderPrimitive::Export(YAML::Node node) const {
 			YAML::Node n = RenderComponent::Export(node);
-            n["textureType"] = (unsigned int)textureType;
-            return n;
+			n["textureType"] = (unsigned int)textureType;
+			return n;
 		}
 
 		//Capsule
@@ -320,8 +320,8 @@ namespace StevEngine {
 			}
 		YAML::Node CapsulePrimitive::Export(YAML::Node node) const {
 			YAML::Node n = RenderComponent::Export(node);
-            n["textureType"] = (unsigned int)textureType;
-            return n;
+			n["textureType"] = (unsigned int)textureType;
+			return n;
 		}
 	}
 }

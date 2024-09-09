@@ -1,5 +1,4 @@
 #pragma once
-#include <SDL_video.h>
 #ifdef StevEngine_RENDERER_GL
 #include <glm/mat4x4.hpp>
 #include <vector>
@@ -59,6 +58,7 @@ namespace StevEngine {
 				Uint32 WindowType();
 				void DrawFrame();
 				void SetWindowSize(int WIDTH, int HEIGHT);
+				void SetVSync(bool vsync);
 				//From Lights
 				std::vector<Light*> lights;
 				unsigned int GetLightID(std::string type);

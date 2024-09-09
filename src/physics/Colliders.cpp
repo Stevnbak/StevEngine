@@ -216,8 +216,8 @@ namespace StevEngine::Physics {
 			return NULL;
 		}*/
 		YAML::Binary bin = node["shape"].as<YAML::Binary>();
-        std::stringstream data(std::string((const char*)bin.data(), bin.size()));
-        JPH::StreamInWrapper stream_in = JPH::StreamInWrapper(data);
+		std::stringstream data(std::string((const char*)bin.data(), bin.size()));
+		JPH::StreamInWrapper stream_in = JPH::StreamInWrapper(data);
 		JPH::Shape::IDToShapeMap id_to_shape;
 		JPH::Shape::IDToMaterialMap id_to_material;
 		JPH::Shape::ShapeResult result = JPH::Shape::sRestoreWithChildren(stream_in, id_to_shape, id_to_material);

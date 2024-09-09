@@ -45,7 +45,6 @@ namespace StevEngine {
 		}
 		SDL_GLContext System::Init(SDL_Window* window) {
 			//Create SDL OpenGL context
-
 			SDL_GLContext context = SDL_GL_CreateContext(window);
 			if (!context) {
 				throw std::runtime_error("Failed to create OpenGL context: " + std::string(SDL_GetError()));
@@ -90,9 +89,12 @@ namespace StevEngine {
 			return context;
 		}
 
-		void System::SetWindowSize(int WIDTH, int HEIGHT) {
-			int size = std::max(WIDTH, HEIGHT);
-			glViewport(0, 0, size, size);
+		void System::SetWindowSize(int width, int height) {
+			glViewport(0, 0, width, height);
+		}
+
+		void System::SetVSync(bool vsync) {
+			SDL_GL_SetSwapInterval(vsync);
 		}
 
 		void System::ResetGlobalShader(ShaderType type) {
@@ -170,6 +172,8 @@ namespace StevEngine {
 
 			//Cleanup
 			glBindVertexArray(0);
+			// Refresh OpenGL window
+			SDL_GL_SwapWindow(Engine::Instance->window);
 		}
 
 		void System::SetBackground(Utilities::Color color) {

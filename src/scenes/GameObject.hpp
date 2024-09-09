@@ -120,7 +120,7 @@ namespace StevEngine {
 			template <class T>
 			typename std::enable_if<std::is_base_of<Component,T>::value, T* >::type
 			AddComponent(T* component) {
-			    if(!component) return nullptr;
+				if(!component) return nullptr;
 				//If unique check uniqueness
 				if (component->unique) {
 					if (GetComponent<T>(false) != nullptr) {
