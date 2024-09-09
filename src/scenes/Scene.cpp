@@ -50,7 +50,7 @@ namespace StevEngine {
 	}
 	Scene::Scene(std::string name) : name(name) {
 		//Create main camera
-		activeCamera = GetObject(CreateObject("Main Camera"))->AddComponent(new Visuals::Camera(false, 1));
+		activeCamera = GetObject(CreateObject("Main Camera"))->AddComponent(new Visuals::Camera());
 	}
 	Scene::Scene(YAML::Node node) : name(node["name"].as<std::string>()) {
 		//Create objects

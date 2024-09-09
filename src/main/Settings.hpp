@@ -23,6 +23,10 @@ namespace StevEngine {
 				return settings[name].as<T>();
 			}
 			bool HasValue(std::string name);
+			template<typename T> void Save(std::string name, T data) {
+				settings[name] = data;
+				SaveToFile();
+			}
 			void Save(std::string name, YAML::Node data);
 			void Delete(std::string name);
 			std::string GetConfigPath() { return configPath; }

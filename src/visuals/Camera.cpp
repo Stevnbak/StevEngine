@@ -13,10 +13,8 @@ using namespace StevEngine;
 using namespace StevEngine::Utilities;
 
 namespace StevEngine::Visuals {
-	Camera::Camera(bool orthographic, double zoomValue) : Component("Camera") {
-		isOrthographic = orthographic;
-		zoom = zoomValue;
-	}
+	Camera::Camera(bool orthographic, double fov, double zoomValue)
+		: Component("Camera"), isOrthographic(orthographic), fov(fov), zoom(zoomValue) {}
 
 	Camera::Camera(YAML::Node node)
 		: Component(node),
@@ -28,6 +26,7 @@ namespace StevEngine::Visuals {
 
 	YAML::Node Camera::Export(YAML::Node node) const {
 		node["orthographic"] = isOrthographic;
+		node["fov"] = fov;
 		node["zoom"] = zoom;
 		node["farClip"] = farClip;
 		node["nearClip"] = nearClip;
@@ -60,10 +59,8 @@ namespace StevEngine::Visuals {
 		}
 		else
 		{
-			double width = (1 * aspect) / zoom;
-			double height = (1) / zoom;
 			//Set the perspective with the appropriate aspect ratio
-			return glm::perspective(glm::radians(45.0), width/height, nearClip, farClip);
+			return glm::perspective(glm::radians(fov / aspect), aspect, nearClip, farClip);
 		}
 	}
 }
