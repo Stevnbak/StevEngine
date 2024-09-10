@@ -1,4 +1,5 @@
-
+#include <algorithm>
+#include <string>
 #ifdef StevEngine_RENDERER_GL
 #include "ShaderProgram.hpp"
 #include "visuals/shaders/Shader.hpp"
@@ -29,12 +30,14 @@ namespace StevEngine::Render {
 
 	unsigned int ShaderProgram::AddShader(Shader shader) {
 		glAttachShader(location, shader.location);
+		shaders.insert({shader.location, shader});
 		modified = true;
 		return shader.location;
 	}
 
 	void ShaderProgram::RemoveShader(unsigned int location) {
 		glDetachShader(this->location, location);
+		shaders.erase(location);
 		glDeleteShader(location);
 		modified = true;
 	}
@@ -50,6 +53,20 @@ namespace StevEngine::Render {
 			Log::Error("Shader program failed to compile!\n" + std::string(infoLog));
 		}
 		modified = false;
+	}
+
+	YAML::Node ShaderProgram::Export() const {
+		YAML::Node node;
+		node["type"] = (int)shaderType;
+		for(std::pair<unsigned int, Shader> shader : shaders) node["shaders"].push_back(std::string(shader.second.source));
+		return node;
+	}
+	ShaderProgram::ShaderProgram(YAML::Node node) : shaderType((ShaderType)node["type"].as<int>()), modified(true), location(glCreateProgram()) {
+		glProgramParameteri(location, GL_PROGRAM_SEPARABLE, GL_TRUE);
+		if(node["shaders"].IsSequence()) {
+			for(int i = 0; i < node["shaders"].size(); i++)
+				AddShader(Shader(node["shaders"][i].as<std::string>().c_str(), shaderType));
+		}
 	}
 
 	//Set uniforms

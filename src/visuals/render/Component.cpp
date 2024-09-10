@@ -1,4 +1,7 @@
+#include "utilities/Color.hpp"
 #include "visuals/Texture.hpp"
+#include "visuals/shaders/Shader.hpp"
+#include "yaml-cpp/node/node.h"
 #ifdef StevEngine_RENDERER_GL
 #include "Component.hpp"
 #include "scenes/GameObject.hpp"
@@ -19,7 +22,16 @@ namespace StevEngine {
 			: Component(type), object(object) {}
 		RenderComponent::RenderComponent(Object object, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, std::string type)
 			: Component(type), position(position), rotation(rotation), scale(scale), object(object) {}
-
+		RenderComponent::RenderComponent(Object object, YAML::Node node)
+			: Component(node), object(object), position(node["position"].as<Utilities::Vector3>()), rotation(node["rotation"].as<Utilities::Quaternion>()), scale(node["scale"].as<Utilities::Vector3>())
+		{
+			if(node["shaders"].IsSequence()) {
+				for(int i = 0; i < node["shaders"].size(); i++)
+					AddShader(ShaderProgram(node["shaders"][i]));
+			}
+			if(node["color"]) SetColor(node["color"].as<Color>());
+			if(node["texture"] && node["texture"].as<std::string>() != "") SetTexture(Visuals::Texture(Engine::Instance->resources.GetFile(node["texture"].as<std::string>())));
+		}
 		//Destructor
 		RenderComponent::~RenderComponent() {
 			object.FreeTexture();
@@ -45,12 +57,23 @@ namespace StevEngine {
 			object.SetTexture(texture);
 			texturePath = texture.path;
 		}
+		void RenderComponent::AddShader(ShaderProgram program) {
+			object.AddShader(program);
+			if(shaders.contains(program.GetType())) shaders[program.GetType()] = program;
+			else shaders.insert({program.GetType(), program});
+		}
+		void RenderComponent::RemoveShader(ShaderType type) {
+			object.RemoveShader(type);
+			if(shaders.contains(type)) shaders.erase(type);
+		}
 		YAML::Node RenderComponent::Export(YAML::Node node) const {
 			node["position"] = position;
 			node["rotation"] = rotation;
 			node["scale"] = scale;
 			node["color"] = color;
 			node["texture"] = texturePath;
+			for(std::pair<ShaderType, ShaderProgram> p : shaders)
+				node["shaders"].push_back(p.second.Export());
 			return node;
 		}
 	}

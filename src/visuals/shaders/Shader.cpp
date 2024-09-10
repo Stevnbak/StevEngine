@@ -8,7 +8,7 @@
 #include <string>
 
 namespace StevEngine::Render {
-	Shader::Shader(const char* source, ShaderType shaderType) : shaderType(shaderType) {
+	Shader::Shader(const char* source, ShaderType shaderType) : shaderType(shaderType), source(source) {
 		//Create
 		location = glCreateShader(shaderType == VERTEX ? GL_VERTEX_SHADER : GL_FRAGMENT_SHADER);
 		//Compile

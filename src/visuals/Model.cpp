@@ -28,17 +28,10 @@ namespace StevEngine {
 		ModelRenderer::ModelRenderer(Utilities::Model model)
 			: model(model), RenderComponent(CreateRenderObject(model, Color(255, 255, 255, 255), Visuals::Texture::empty), "ModelRenderer") {}
 		ModelRenderer::ModelRenderer(YAML::Node node)
-			: model(Utilities::Model(Engine::Instance->resources.GetFile(node["model"].as<std::string>()))), RenderComponent({}, node["position"].as<Utilities::Vector3>(), node["rotation"].as<Utilities::Quaternion>(), node["scale"].as<Utilities::Vector3>(), "ModelRenderer")
-		{
-			object = CreateRenderObject(model, Color(255, 255, 255, 255), Visuals::Texture::empty);
-			if(node["color"]) SetColor(node["color"].as<Utilities::Color>());
-			if(node["texture"] && node["texture"].as<std::string>() != "") SetTexture(Visuals::Texture(Engine::Instance->resources.GetFile(node["texture"].as<std::string>())));
-		}
+			: model(Utilities::Model(Engine::Instance->resources.GetFile(node["model"].as<std::string>()))), RenderComponent(CreateRenderObject(Utilities::Model(Engine::Instance->resources.GetFile(node["model"].as<std::string>())), Utilities::Color(), Visuals::Texture::empty), node) {}
 		YAML::Node ModelRenderer::Export(YAML::Node node) const {
 			YAML::Node n = RenderComponent::Export(node);
 			n["model"] = model.path;
-			n["color"] = color;
-			n["texture"] = texturePath;
 			return n;
 		}
 	}

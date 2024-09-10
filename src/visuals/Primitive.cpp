@@ -94,10 +94,7 @@ namespace StevEngine {
 		CubePrimitive::CubePrimitive(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, TextureType textureType)
 			: RenderComponent(CubeVertices(textureType), position, rotation, scale, "CubePrimitive"), textureType(textureType) {}
 		CubePrimitive::CubePrimitive(YAML::Node node)
-			: RenderComponent(CubeVertices((TextureType)node["textureType"].as<unsigned int>()), node["position"].as<Vector3>(), node["rotation"].as<Quaternion>(), node["scale"].as<Vector3>(), "CubePrimitive") {
-				if(node["color"]) SetColor(node["color"].as<Utilities::Color>());
-				if(node["texture"] && node["texture"].as<std::string>() != "") SetTexture(Visuals::Texture(Engine::Instance->resources.GetFile(node["texture"].as<std::string>())));
-			}
+			: RenderComponent(CubeVertices((TextureType)node["textureType"].as<unsigned int>()), node) {}
 		YAML::Node CubePrimitive::Export(YAML::Node node) const {
 			YAML::Node n = RenderComponent::Export(node);
 			n["textureType"] = (unsigned int)textureType;
@@ -160,10 +157,7 @@ namespace StevEngine {
 		SpherePrimitive::SpherePrimitive(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, TextureType textureType)
 			: RenderComponent(SphereVertices(textureType), position, rotation, scale, "SpherePrimitive"), textureType(textureType) {}
 		SpherePrimitive::SpherePrimitive(YAML::Node node)
-			: RenderComponent(SphereVertices((TextureType)node["textureType"].as<unsigned int>()), node["position"].as<Vector3>(), node["rotation"].as<Quaternion>(), node["scale"].as<Vector3>(), "CubePrimitive") {
-				if(node["color"]) SetColor(node["color"].as<Utilities::Color>());
-				if(node["texture"] && node["texture"].as<std::string>() != "") SetTexture(Visuals::Texture(Engine::Instance->resources.GetFile(node["texture"].as<std::string>())));
-			}
+			: RenderComponent(SphereVertices((TextureType)node["textureType"].as<unsigned int>()), node) {}
 		YAML::Node SpherePrimitive::Export(YAML::Node node) const {
 			YAML::Node n = RenderComponent::Export(node);
 			n["textureType"] = (unsigned int)textureType;
@@ -242,10 +236,7 @@ namespace StevEngine {
 		CylinderPrimitive::CylinderPrimitive(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, TextureType textureType)
 			: RenderComponent(CylinderVertices(textureType), position, rotation, scale, "CylinderPrimitive"), textureType(textureType) {}
 		CylinderPrimitive::CylinderPrimitive(YAML::Node node)
-			: RenderComponent(CylinderVertices((TextureType)node["textureType"].as<unsigned int>()), node["position"].as<Vector3>(), node["rotation"].as<Quaternion>(), node["scale"].as<Vector3>(), "CubePrimitive") {
-				if(node["color"]) SetColor(node["color"].as<Utilities::Color>());
-				if(node["texture"] && node["texture"].as<std::string>() != "") SetTexture(Visuals::Texture(Engine::Instance->resources.GetFile(node["texture"].as<std::string>())));
-			}
+			: RenderComponent(CylinderVertices((TextureType)node["textureType"].as<unsigned int>()), node) {}
 		YAML::Node CylinderPrimitive::Export(YAML::Node node) const {
 			YAML::Node n = RenderComponent::Export(node);
 			n["textureType"] = (unsigned int)textureType;
@@ -314,10 +305,7 @@ namespace StevEngine {
 		CapsulePrimitive::CapsulePrimitive(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, TextureType textureType)
 			: RenderComponent(CapsuleVertices(textureType), position, rotation, scale, "CapsulePrimitive"), textureType(textureType) {}
 		CapsulePrimitive::CapsulePrimitive(YAML::Node node)
-			: RenderComponent(CapsuleVertices((TextureType)node["textureType"].as<unsigned int>()), node["position"].as<Vector3>(), node["rotation"].as<Quaternion>(), node["scale"].as<Vector3>(), "CubePrimitive") {
-				if(node["color"]) SetColor(node["color"].as<Utilities::Color>());
-				if(node["texture"] && node["texture"].as<std::string>() != "") SetTexture(Visuals::Texture(Engine::Instance->resources.GetFile(node["texture"].as<std::string>())));
-			}
+			: RenderComponent(CapsuleVertices((TextureType)node["textureType"].as<unsigned int>()), node) {}
 		YAML::Node CapsulePrimitive::Export(YAML::Node node) const {
 			YAML::Node n = RenderComponent::Export(node);
 			n["textureType"] = (unsigned int)textureType;

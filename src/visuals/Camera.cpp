@@ -20,6 +20,7 @@ namespace StevEngine::Visuals {
 		: Component(node),
 		isOrthographic(node["orthographic"].as<bool>()),
 		zoom(node["zoom"].as<double>()),
+		fov(node["fov"].as<double>()),
 		farClip(node["farClip"].as<double>()),
 		nearClip(node["nearClip"].as<double>())
 	{}

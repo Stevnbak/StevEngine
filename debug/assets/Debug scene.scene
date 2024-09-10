@@ -1,7 +1,7 @@
 name: Debug scene
-camera: 01919ef2-bb2c-7aab-b2fb-e3467cc254f8
+camera: 0191dc49-ad6b-7aab-b2fb-e3467cc254f8
 objects:
-  - id: 01919ef2-bb2c-799a-a632-0db73158a35a
+  - id: 0191dc49-ad6b-799a-a632-0db73158a35a
     name: Cube
     position:
       - 0
@@ -55,7 +55,7 @@ objects:
           - 1
           - 1
         shape: AAAAAAEAAAAAAAAAAAAAekQAAAA/AAAAPwAAAD/NzEw9AAAAAAEAAAD/////
-  - id: 01919ef2-bb2c-7aab-b2fb-e3467cc254f8
+  - id: 0191dc49-ad6b-7aab-b2fb-e3467cc254f8
     name: Main Camera
     position:
       - 0
@@ -73,12 +73,12 @@ objects:
     components:
       - type: Camera
         orthographic: false
+        fov: 70
         zoom: 1
-        aspect: 1
         farClip: 100
         nearClip: 1
       - type: CameraController
-  - id: 01919ef2-bb2c-7be8-a78d-765a2e63339f
+  - id: 0191dc49-ad6b-7be8-a78d-765a2e63339f
     name: Cube
     position:
       - 0
@@ -134,7 +134,7 @@ objects:
         mass: 1000
         motionType: 0
         layer: 1
-  - id: 01919ef2-bb3e-755d-8517-58e95ed4abb2
+  - id: 0191dc49-ad7e-755d-8517-58e95ed4abb2
     name: Sphere
     position:
       - 3
@@ -190,7 +190,7 @@ objects:
         mass: 1000
         motionType: 2
         layer: 0
-  - id: 01919ef2-bb4e-7dc6-9bb4-54110e827441
+  - id: 0191dc49-ad8f-7dc6-9bb4-54110e827441
     name: Model
     position:
       - 0
@@ -226,6 +226,12 @@ objects:
           - 0
           - 255
         texture: ""
+        shaders:
+          - type: 1
+            shaders:
+              - "\n#version 440 core\n\nin vec3 fragPosition;\nvec3 GetFragPosition() { return fragPosition; }\nin vec2 fragUV;\nvec2 GetFragUV() { return fragUV; }\nin vec3 fragNormal;\nvec3 GetFragNormal() { return fragNormal; }\n\nuniform vec4 objectColor;\nvec4 GetObjectColor() { return objectColor; }\nuniform bool objectIsTextured;\nuniform sampler2D objectTexture;\nvec4 GetObjectTexture(vec2 uv) {\n    vec4 tex = vec4(1.0);\n    if(objectIsTextured) {\n        tex = texture(objectTexture, uv);\n    }\n    return tex;\n}\n\nout vec4 FragColor;\nvoid SetFragColor(vec4 color) {\n    FragColor = color;\n}\n"
+              - "\n#version 440 core\n\nvec3 GetFragPosition();\nvec3 GetFragNormal();\n\n//Material\nstruct Material {\n    vec3 ambient;\n    vec3 diffuse;\n    vec3 specular;\n    float shininess;\n};\nuniform Material objectMaterial = Material(vec3(1.0), vec3(1.0), vec3(1.0), 0.1);\n\n//Global ambient lighting\nuniform float ambientStrength = 0.5;\nuniform vec3 ambientColor = vec3(1.0);\n\n//Lights\nuniform vec3 viewPosition;\nstruct Light {\n    vec3 diffuse;\n    vec3 specular;\n};\n\n#define MAX_DIRECTIONAL_LIGHTS 10\n#define MAX_POINT_LIGHTS 50\n#define MAX_SPOT_LIGHTS 50\n\n//Directional lights\nstruct DirectionalLight {\n    vec3 direction;\n\n    Light basic;\n};\nuniform DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];\nvec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)\n{\n    vec3 lightDir = normalize(light.direction);\n    // diffuse shading\n    float diff = max(dot(normal, lightDir), 0.0);\n    // specular shading\n    vec3 reflectDir = reflect(-lightDir, normal);\n    float spec = pow(max(dot(viewDir, reflectDir), 0.0), objectMaterial.shininess);\n    // combine results\n    vec3 diffuse  = light.basic.diffuse  * diff * objectMaterial.diffuse;\n    vec3 specular = light.basic.specular * spec * objectMaterial.specular;\n    return (diffuse + specular);\n}\n//Point lights\nstruct PointLight {\n    vec3 position;\n\n    float constant;\n    float linear;\n    float quadratic;\n\n    Light basic;\n};\nuniform PointLight pointLights[MAX_POINT_LIGHTS];\nvec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)\n{\n    vec3 lightDir = normalize(fragPos - light.position);\n    // diffuse shading\n    float diff = max(dot(normal, lightDir), 0.0);\n    // specular shading\n    vec3 reflectDir = reflect(-lightDir, normal);\n    float spec = pow(max(dot(viewDir, reflectDir), 0.0), objectMaterial.shininess);\n    // attenuation\n    float distance = length(light.position - fragPos);\n    float a = (light.constant + light.linear * distance + light.quadratic * (distance * distance));\n    float attenuation = (a == 0 ? 0 : (1.0 / a));\n    // combine results\n    vec3 diffuse  = light.basic.diffuse  * diff * objectMaterial.diffuse * attenuation;\n    vec3 specular = light.basic.specular * spec * objectMaterial.specular * attenuation;\n    return (diffuse + specular);\n}\n//Spot lights\nstruct SpotLight {\n    vec3 position;\n    vec3 direction;\n\n    float cutOff;\n    float outerCutOff;\n\n    Light basic;\n};\nuniform SpotLight spotLights[MAX_SPOT_LIGHTS];\nvec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)\n{\n    float theta     = dot(viewDir, normalize(light.direction));\n    float epsilon   = light.cutOff - light.outerCutOff;\n    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);\n    // combine results\n    vec3 diffuse  = light.basic.diffuse  * intensity * objectMaterial.diffuse;\n    vec3 specular = light.basic.specular * intensity * objectMaterial.specular;\n    return (diffuse + specular);\n}\n\nvec3 GetLights()\n{\n    //Lights\n    vec3 norm = normalize(-GetFragNormal());\n    vec3 viewDir = normalize(viewPosition - GetFragPosition());\n    vec3 lights = objectMaterial.ambient * ambientColor * ambientStrength;\n    // Directional lights\n    for(int i = 0; i < MAX_DIRECTIONAL_LIGHTS; i++)\n        lights += CalculateDirectionalLight(directionalLights[i], norm, viewDir);\n    // Point lights\n    for(int i = 0; i < MAX_POINT_LIGHTS; i++)\n        lights += CalculatePointLight(pointLights[i], norm, GetFragPosition(), viewDir);\n    // Spot lights\n    for(int i = 0; i < MAX_SPOT_LIGHTS; i++)\n        lights += CalculateSpotLight(spotLights[i], norm, GetFragPosition(), viewDir);\n    // Return combined lights\n    return lights;\n}\n"
+              - "#version 440 core\n\nvoid SetFragColor(vec4 color);\n\nvoid main() {\n    SetFragColor(vec4(0.5, 0.5, 0.5, 1.0));\n}\n"
         model: Fox.stl
       - type: Collider
         position:
@@ -246,7 +252,7 @@ objects:
         mass: 1000
         motionType: 2
         layer: 0
-  - id: 01919ef2-bb57-713d-9c87-70e93ea141e1
+  - id: 0191dc49-ad97-713d-9c87-70e93ea141e1
     name: Cylinder
     position:
       - 0
@@ -302,7 +308,7 @@ objects:
         mass: 1000
         motionType: 2
         layer: 0
-  - id: 01919ef2-bb5e-7c67-be01-7e97eadc6b96
+  - id: 0191dc49-ada1-7c67-be01-7e97eadc6b96
     name: Capsule
     position:
       - 0
@@ -358,7 +364,7 @@ objects:
         mass: 1000
         motionType: 2
         layer: 0
-  - id: 01919ef2-bb73-7bfa-aa3a-fb29d1e6053c
+  - id: 0191dc49-adb7-7bfa-aa3a-fb29d1e6053c
     name: DirectionalLight
     position:
       - 0
@@ -383,7 +389,7 @@ objects:
           - 0.25
           - 0.25
           - 0.25
-  - id: 01919ef2-bb73-7c54-ac18-db5c021afe43
+  - id: 0191dc49-adb7-7c54-ac18-db5c021afe43
     name: PointLight2
     position:
       - 2
@@ -432,7 +438,27 @@ objects:
           - 255
         texture: ""
         textureType: 1
-  - id: 01919ef2-bb73-7f38-9c2a-ecb03bfb32af
+  - id: 0191dc49-adb7-7c94-b5d8-be6189f95cbb
+    name: Audio Player
+    position:
+      - 0
+      - 0
+      - 0
+    rotation:
+      - 1
+      - 0
+      - 0
+      - 0
+    scale:
+      - 1
+      - 1
+      - 1
+    components:
+      - type: Emitter
+        file: audio.wav
+        loop: false
+        volume: 0.5
+  - id: 0191dc49-adb7-7f38-9c2a-ecb03bfb32af
     name: PointLight1
     position:
       - 0
@@ -481,23 +507,3 @@ objects:
           - 255
         texture: ""
         textureType: 1
-  - id: 01919ef2-bb74-7c94-b5d8-be6189f95cbb
-    name: Audio Player
-    position:
-      - 0
-      - 0
-      - 0
-    rotation:
-      - 1
-      - 0
-      - 0
-      - 0
-    scale:
-      - 1
-      - 1
-      - 1
-    components:
-      - type: Emitter
-        file: audio.wav
-        loop: false
-        volume: 0.5

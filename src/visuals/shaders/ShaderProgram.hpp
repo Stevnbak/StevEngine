@@ -1,8 +1,9 @@
 #pragma once
 #ifdef StevEngine_RENDERER_GL
 #include "Shader.hpp"
-#include <vector>
+#include <map>
 #include <glad/gl.h>
+#include <yaml-cpp/yaml.h>
 #include "glm/ext/matrix_float4x4.hpp"
 #include "glm/ext/vector_float4.hpp"
 #include "glm/ext/vector_float3.hpp"
@@ -16,6 +17,7 @@ namespace StevEngine {
 			friend class System;
 			public:
 				ShaderProgram(ShaderType shaderType);
+				ShaderProgram(YAML::Node node);
 				ShaderProgram() {};
 				//Set shaders
 				unsigned int AddShader(Shader shader);
@@ -31,10 +33,13 @@ namespace StevEngine {
 				void SetShaderUniform(const char* name, float value);
 				//Shader type
 				ShaderType GetType() { return shaderType; };
+				//Export
+				YAML::Node Export() const;
 			private:
 				unsigned int location;
 				ShaderType shaderType;
 				bool modified;
+				std::map<unsigned int, Shader> shaders;
 		};
 	}
 }

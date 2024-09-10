@@ -139,8 +139,8 @@ int main(int argc, char** argv) {
 	}
 
 	//Create new scene
-	//Scene* importedscene = engine.scenes.CreateSceneFromFile(engine.resources.GetFile("Debug scene.scene"));
-	///*
+	Scene* importedscene = engine.scenes.CreateSceneFromFile(engine.resources.GetFile("Debug scene.scene"));
+	/*
 	Scene* scene = engine.scenes.CreateScene("Debug scene");
 
 	//engine.scenes.SetActiveScene("Debug imported scene");
