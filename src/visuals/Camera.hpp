@@ -17,7 +17,7 @@ namespace StevEngine {
 			public:
 				bool isOrthographic;
 				double zoom, fov, nearClip = 1, farClip = 100;
-				Camera(bool orthographic = false, double fov = 100, double zoomValue = 1);
+				Camera(bool orthographic = false, double fov = 70, double zoomValue = 1);
 				Camera(YAML::Node node);
 				YAML::Node Export(YAML::Node node) const;
 			private:

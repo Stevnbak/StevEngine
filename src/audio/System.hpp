@@ -2,7 +2,7 @@
 #ifdef StevEngine_AUDIO
 #include "audio/Emitter.hpp"
 #include <SDL.h>
-#include "vector"
+#include <vector>
 
 namespace StevEngine {
 	class Engine;
@@ -15,13 +15,24 @@ namespace StevEngine {
 				void Stop(int channel);
 				void StopBackground();
 				void SDLCALL ChannelCompleted(int channel);
+				//Settings
+				void SetSoundsVolume(double volume);
+				double GetSoundsVolume() { return volumeSounds; }
+				void SetMusicVolume(double volume);
+				double GetMusicVolume() { return volumeMusic; }
+				std::vector<const char*> GetAudioDevices();
+				void SetAudioDevice(const char* device);
+				const char* GetActiveAudioDevice() { return audioDevice; }
 			private:
 				System();
 				void CleanUp();
-				int audio_rate;
-				Uint16 audio_format;
-				int audio_channels;
-				int audio_open = 0;
+				double volumeSounds;
+				double volumeMusic;
+				const char* audioDevice;
+				int audioRate;
+				uint16_t audioFormat;
+				int audioChannels;
+				bool audioOpen = false;
 				std::vector<Emitter*> activeSounds;
 				Mix_Music* music = NULL;
 		};

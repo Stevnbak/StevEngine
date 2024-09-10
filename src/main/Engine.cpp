@@ -267,6 +267,10 @@ namespace StevEngine {
 		if(settings.HasValue("WindowWidth")) gameSettings.WIDTH = settings.Read<int>("WindowWidth");
 		if(settings.HasValue("WindowHeight")) gameSettings.HEIGHT = settings.Read<int>("WindowHeight");
 		if(settings.HasValue("TargetFPS")) gameSettings.targetFPS = settings.Read<int>("TargetFPS");
+		//Audio
+		if(settings.HasValue("audio.device")) audio.SetAudioDevice(settings.Read<std::string>("audio.device").c_str());
+		if(settings.HasValue("audio.soundVolume")) audio.SetSoundsVolume(settings.Read<double>("audio.soundVolume"));
+		if(settings.HasValue("audio.musicVolume")) audio.SetMusicVolume(settings.Read<double>("audio.musicVolume"));
 	}
 	void Engine::SetSettings(GameSettings newSettings) {
 		#ifdef StevEngine_SHOW_WINDOW
