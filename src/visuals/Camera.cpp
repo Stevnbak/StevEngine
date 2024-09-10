@@ -48,7 +48,7 @@ namespace StevEngine::Visuals {
 	}
 
 	glm::mat4x4 Camera::GetProjection() {
-		GameSettings s = Engine::Instance->GetGameSettings();
+		GameSettings s = engine->GetGameSettings();
 		double aspect = (double)s.WIDTH / s.HEIGHT;
 		if (isOrthographic)
 		{

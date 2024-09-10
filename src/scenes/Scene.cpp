@@ -75,7 +75,7 @@ namespace StevEngine {
 		YAML::Emitter out;
 		out << node;
 		std::ofstream file;
-		file.open(Engine::Instance->data.GetAppdataPath() + name + ".scene");
+		file.open(engine->data.GetAppdataPath() + name + ".scene");
 		file << out.c_str();
 	}
 	#endif

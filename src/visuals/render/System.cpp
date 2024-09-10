@@ -143,7 +143,7 @@ namespace StevEngine {
 			glBindVertexArray(VAO);
 
 			//Camera matrices
-			Visuals::Camera* camera = Engine::Instance->scenes.GetActiveScene()->GetCamera();
+			Visuals::Camera* camera = engine->scenes.GetActiveScene()->GetCamera();
 			//  View matrix
 			vertexShaderProgram.SetShaderUniform("viewTransform", camera->GetView());
 			fragmentShaderProgram.SetShaderUniform("viewPosition", (glm::vec3)camera->GetParent()->GetWorldPosition());
@@ -173,7 +173,7 @@ namespace StevEngine {
 			//Cleanup
 			glBindVertexArray(0);
 			// Refresh OpenGL window
-			SDL_GL_SwapWindow(Engine::Instance->window);
+			SDL_GL_SwapWindow(engine->window);
 		}
 
 		void System::SetBackground(Utilities::Color color) {

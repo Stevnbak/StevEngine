@@ -205,7 +205,7 @@ The StevEngine::Engine object is created through it's constructor, that takes a 
 Example of creating the engine object inside the main function:
 ```c++
 int main(int argc, char** argv) {
-    StevEngine::Engine engine = StevEngine::Engine("Game title", 60);
+    StevEngine::engine = new StevEngine::Engine("Game title");
     //Rest of the main function...
 }
 ```
@@ -216,13 +216,13 @@ After creating the engine, and any GameObjects used by the project.
 The main loop of the engine can be started by simply calling the Start method of the engine object:
 ```c++
 int main(int argc, char** argv) {
-    StevEngine::Engine engine = StevEngine::Engine("Game title", 60);
+    StevEngine::engine = new StevEngine::Engine("Game title");
     //Rest of the main function...
-    return engine.Start();
+    return StevEngine::engine->Start();
 }
 ```
 > [!NOTE]
-> The engine object can also be accessed through `StevEngine::Engine::Instance`
+> The engine object can always be accessed through `StevEngine::engine`
 
 > [!IMPORTANT]
 > This function will run the entire engine, and will only return a status code once the game is closed by the user or the program.

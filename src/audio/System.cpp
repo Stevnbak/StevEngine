@@ -17,7 +17,7 @@
 
 static void SDLCALL StaticChannelCompleted (int channel)
 {
-	StevEngine::Engine::Instance->audio.ChannelCompleted(channel);
+	StevEngine::engine->audio.ChannelCompleted(channel);
 }
 
 namespace StevEngine::Audio {
@@ -68,7 +68,7 @@ namespace StevEngine::Audio {
 			Mix_FreeMusic(music);
 			music = NULL;
 		}
-		SDL_RWops* data = Engine::Instance->resources.GetFile(path).GetSDLData();
+		SDL_RWops* data = engine->resources.GetFile(path).GetSDLData();
 		music = Mix_LoadMUS_RW(data, 1);
 		if (music == NULL) {
 			Log::Error(std::format("Couldn't load {}: {}", path, SDL_GetError()), true);
@@ -90,12 +90,12 @@ namespace StevEngine::Audio {
 
 	void System::SetSoundsVolume(double volume) {
 		volumeSounds = volume;
-		Engine::Instance->settings.Save("audio.soundVolume", volume);
+		engine->settings.Save("audio.soundVolume", volume);
 	}
 
 	void System::SetMusicVolume(double volume) {
 		volumeMusic = volume;
-		Engine::Instance->settings.Save("audio.musicVolume", volume);
+		engine->settings.Save("audio.musicVolume", volume);
 	}
 
 	std::vector<const char*> System::GetAudioDevices() {
@@ -112,7 +112,7 @@ namespace StevEngine::Audio {
 	void System::SetAudioDevice(const char *device) {
 		CleanUp();
 		audioDevice = device;
-		if(device != NULL) Engine::Instance->settings.Save("audio.device", std::string(device));
+		if(device != NULL) engine->settings.Save("audio.device", std::string(device));
 		if (Mix_OpenAudioDevice(audioRate, audioFormat, audioChannels, 4096, audioDevice, SDL_AUDIO_ALLOW_CHANNELS_CHANGE | SDL_AUDIO_ALLOW_FREQUENCY_CHANGE) < 0) {
 			throw std::runtime_error(std::format("Couldn't open audio device: %s\n", SDL_GetError()));
 			CleanUp();

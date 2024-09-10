@@ -21,7 +21,6 @@ namespace StevEngine {
 	};
 	class Engine {
 		public:
-			static inline Engine* Instance = nullptr;
 			Engine(const char * title = "Game", GameSettings gameSettings = GameSettings(), void (*mainUpdate)(double deltaTime) = nullptr);
 			int Start();
 			#ifdef StevEngine_SHOW_WINDOW
@@ -68,4 +67,6 @@ namespace StevEngine {
 			#endif
 			void (*mainUpdate)(double deltaTime);
 	};
+
+	extern Engine* engine;
 }

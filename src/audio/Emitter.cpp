@@ -21,7 +21,7 @@ namespace StevEngine::Audio {
 	}
 
 	void Emitter::Play() {
-		Engine::Instance->audio.Play(this);
+		engine->audio.Play(this);
 	}
 
 	void Emitter::ChangeSource(std::string path) {
@@ -30,7 +30,7 @@ namespace StevEngine::Audio {
 			audioData = NULL;
 		}
 		audioPath = path;
-		SDL_RWops* data = Engine::Instance->resources.GetFile(audioPath).GetSDLData();
+		SDL_RWops* data = engine->resources.GetFile(audioPath).GetSDLData();
 		audioData = Mix_LoadWAV_RW(data, 0);
 		SDL_FreeRW(data);
 		if (audioData == NULL) {
@@ -39,7 +39,7 @@ namespace StevEngine::Audio {
 	}
 
 	void Emitter::Deactivate() {
-		if(channel != -1) Engine::Instance->audio.Stop(channel);
+		if(channel != -1) engine->audio.Stop(channel);
 	}
 
 	Emitter::Emitter(YAML::Node node) : Component(node) {

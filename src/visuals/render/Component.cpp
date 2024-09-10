@@ -30,7 +30,7 @@ namespace StevEngine {
 					AddShader(ShaderProgram(node["shaders"][i]));
 			}
 			if(node["color"]) SetColor(node["color"].as<Color>());
-			if(node["texture"] && node["texture"].as<std::string>() != "") SetTexture(Visuals::Texture(Engine::Instance->resources.GetFile(node["texture"].as<std::string>())));
+			if(node["texture"] && node["texture"].as<std::string>() != "") SetTexture(Visuals::Texture(engine->resources.GetFile(node["texture"].as<std::string>())));
 		}
 		//Destructor
 		RenderComponent::~RenderComponent() {
@@ -47,7 +47,7 @@ namespace StevEngine {
 			Utilities::Vector3 v = std::get<1>(angleAxis);
 			transform = glm::rotate(transform, (float)std::get<0>(angleAxis), glm::vec3(v.X, v.Y, v.Z));
 			//Draw
-			Engine::Instance->render.DrawObject(object, transform);
+			engine->render.DrawObject(object, transform);
 		}
 		void RenderComponent::SetColor(Color color) {
 			this->color = color;
@@ -72,8 +72,8 @@ namespace StevEngine {
 			node["scale"] = scale;
 			node["color"] = color;
 			node["texture"] = texturePath;
-			for(std::pair<ShaderType, ShaderProgram> p : shaders)
-				node["shaders"].push_back(p.second.Export());
+			for(auto&[type, program] : shaders)
+				node["shaders"].push_back(program.Export());
 			return node;
 		}
 	}

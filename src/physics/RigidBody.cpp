@@ -38,11 +38,11 @@ namespace StevEngine::Physics {
 		bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
 		bodySettings.mMassPropertiesOverride = massProperties;
 		//	Create body from settings
-		body = Engine::Instance->physics.GetBodyInterface()->CreateBody(bodySettings);
-		Engine::Instance->physics.GetBodyInterface()->AddBody(body->GetID(), JPH::EActivation::Activate);
+		body = engine->physics.GetBodyInterface()->CreateBody(bodySettings);
+		engine->physics.GetBodyInterface()->AddBody(body->GetID(), JPH::EActivation::Activate);
 	}
 	void RigidBody::Deactivate() {
-		if(body) Engine::Instance->physics.GetBodyInterface()->DestroyBody(body->GetID());
+		if(body) engine->physics.GetBodyInterface()->DestroyBody(body->GetID());
 		if(shape) shape->Release();
 	}
 	void RigidBody::Update(double deltaTime) {
@@ -97,7 +97,7 @@ namespace StevEngine::Physics {
 	}
 
 	RigidBody::~RigidBody() {
-		if(body) Engine::Instance->physics.GetBodyInterface()->DestroyBody(body->GetID());
+		if(body) engine->physics.GetBodyInterface()->DestroyBody(body->GetID());
 		if(shape) shape->Release();
 	}
 

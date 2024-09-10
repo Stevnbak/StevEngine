@@ -16,7 +16,7 @@ namespace StevEngine {
 		return GetScene()->GetObject(gameObject);
 	}
 	Scene* Component::GetScene() {
-		return Engine::Instance->scenes.GetScene(scene);
+		return engine->scenes.GetScene(scene);
 	}
 	Component::~Component() {
 

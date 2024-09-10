@@ -23,6 +23,7 @@ uint64_t GetTime() {
 }
 
 namespace StevEngine {
+	Engine* engine = nullptr;
 	bool running = true;
 	Engine::Engine(const char * title, GameSettings gameSettings, void (*mainUpdate)(double deltaTime)) :
 	title(title),
@@ -44,11 +45,6 @@ namespace StevEngine {
 	#endif
 	scenes()
 	{
-		//Create instance
-		if(Instance != nullptr) {
-			throw std::runtime_error("Engine has already been initialized.");
-		}
-		Instance = this;
 		//Initialize logging
 		#ifdef StevEngine_PLAYER_DATA
 		Log::StartLogging(data.GetLogPath());
@@ -57,11 +53,10 @@ namespace StevEngine {
 		SetGameSettingsFromFile();
 		//Initialize SDL
 		if (SDL_Init(
-			SDL_INIT_EVENTS
+			SDL_INIT_EVENTS | SDL_INIT_TIMER
 			#ifdef StevEngine_AUDIO
 			| SDL_INIT_AUDIO
 			#endif
-			| SDL_INIT_TIMER
 			#ifdef StevEngine_SHOW_WINDOW
 			| SDL_INIT_VIDEO
 			#endif

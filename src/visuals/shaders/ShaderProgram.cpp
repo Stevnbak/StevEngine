@@ -58,7 +58,7 @@ namespace StevEngine::Render {
 	YAML::Node ShaderProgram::Export() const {
 		YAML::Node node;
 		node["type"] = (int)shaderType;
-		for(std::pair<unsigned int, Shader> shader : shaders) node["shaders"].push_back(std::string(shader.second.source));
+		for(auto&[loc, shader] : shaders) node["shaders"].push_back(std::string(shader.source));
 		return node;
 	}
 	ShaderProgram::ShaderProgram(YAML::Node node) : shaderType((ShaderType)node["type"].as<int>()), modified(true), location(glCreateProgram()) {
