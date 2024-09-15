@@ -77,10 +77,6 @@ namespace StevEngine {
 		uint64_t lastUpdateTime = GetTime();
 		running = true;
 		while (running) {
-			#ifdef StevEngine_INPUTS
-			//Reset mouse delta
-			InputSystem::ResetMouseDelta();
-			#endif
 			//Event loop
 			while (SDL_PollEvent(&ev) != 0) {
 				events.Publish(SDLEvent(ev));
@@ -253,6 +249,6 @@ namespace StevEngine {
 		#ifdef StevEngine_AUDIO
 			Audio::audio.Init();
 		#endif
-		InputSystem::Init();
+		inputManager.Init();
 	}
 }

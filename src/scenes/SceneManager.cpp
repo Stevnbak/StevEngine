@@ -20,9 +20,9 @@ namespace StevEngine {
 	}
 
 	void SceneManager::Init() {
-		engine->events.Subscribe<EngineStartEvent>([this] (EngineStartEvent) { this->ActivateDefault(); });
-		engine->events.Subscribe<EngineUpdateEvent>([this] (EngineUpdateEvent e) { this->Update(e.deltaTime); });
-		engine->events.Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { this->Draw(); });
+		engine->GetEvents()->Subscribe<EngineStartEvent>([this] (EngineStartEvent) { this->ActivateDefault(); });
+		engine->GetEvents()->Subscribe<EngineUpdateEvent>([this] (EngineUpdateEvent e) { this->Update(e.deltaTime); });
+		engine->GetEvents()->Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { this->Draw(); });
 	}
 
 	void SceneManager::Update(double deltaTime) {

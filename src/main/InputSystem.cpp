@@ -1,3 +1,4 @@
+#include "main/InputSystem.hpp"
 #ifdef StevEngine_INPUTS
 #include "main/Log.hpp"
 #include "main/Engine.hpp"
@@ -9,115 +10,75 @@
 #include <map>
 #include <vector>
 
-namespace StevEngine::InputSystem {
-	void HandleSDLEvent(const SDLEvent event) {
+namespace StevEngine {
+	InputManager inputManager = InputManager();
+	void InputManager::HandleSDLEvent(const SDLEvent event) {
+		ResetMouseDelta();
 		SDL_Event ev = event.event;
 		switch(ev.type) {
 			//Input system
 			case SDL_KEYDOWN:
-				engine->events.Publish(InputKeyDownEvent(ev.key.keysym.sym));
+				inputMap[ev.key.keysym.sym] = true;
+				engine->GetEvents()->Publish(InputKeyDownEvent(ev.key.keysym.sym));
 				break;
 			case SDL_KEYUP:
-				engine->events.Publish(InputKeyUpEvent(ev.key.keysym.sym));
+				inputMap[ev.key.keysym.sym] = false;
+				engine->GetEvents()->Publish(InputKeyUpEvent(ev.key.keysym.sym));
 				break;
 			case SDL_MOUSEMOTION:
-				engine->events.Publish(InputMouseMoveEvent(ev.motion.x, ev.motion.y, ev.motion.xrel, ev.motion.yrel));
+				mousePosition = Utilities::Vector2(ev.motion.x, ev.motion.y);
+				///Log::Debug(std::format("Recieved mouse movement. X: {} Y: {}", mousePosition.X, mousePosition.Y), true);
+				mouseDelta = Utilities::Vector2(ev.motion.xrel, ev.motion.yrel);
+				///Log::Debug(std::format("Mouse delta X: {} Mouse delta Y: {}", mouseDelta.X, mouseDelta.Y), true);
+				engine->GetEvents()->Publish(InputMouseMoveEvent(mousePosition.X, mousePosition.Y, mouseDelta.X, mouseDelta.Y));
 				break;
 			case SDL_MOUSEWHEEL:
-				engine->events.Publish(InputMouseWheelEvent(ev.wheel.preciseY));
+				mouseWheelDelta = ev.wheel.preciseY;
+				engine->GetEvents()->Publish(InputMouseWheelEvent(mouseWheelDelta));
 				break;
 			case SDL_MOUSEBUTTONDOWN:
-				engine->events.Publish(InputMouseButtonDownEvent(ev.button.button));
+				mouseInputMap[ev.button.button] = true;
+				engine->GetEvents()->Publish(InputMouseButtonDownEvent(ev.button.button));
 				break;
 			case SDL_MOUSEBUTTONUP:
-				engine->events.Publish(InputMouseButtonUpEvent(ev.button.button));
-				break;
-			case SDL_WINDOW_MOUSE_CAPTURE:
-				Log::Debug(std::format("Mouse capture: {}, {}", ev.motion.x, ev.motion.y), true);
+				mouseInputMap[ev.button.button] = false;
+				engine->GetEvents()->Publish(InputMouseButtonUpEvent(ev.button.button));
 				break;
 		}
 	}
-
-	void Init() {
-		engine->events.Subscribe<SDLEvent>(HandleSDLEvent);
+	void InputManager::Init() {
+		engine->GetEvents()->Subscribe<SDLEvent>([this] (SDLEvent e) { this->HandleSDLEvent(e); });
+		engine->GetEvents()->Subscribe<EngineUpdateEvent>([this] (EngineUpdateEvent e) { this->Update(e.deltaTime); });
 	}
-	//Input events
-	std::vector<std::function<void(SDL_Keycode)>> KeyDownEvents;
-	std::vector<std::function<void(SDL_Keycode)>> KeyUpEvents;
-	std::vector<std::function<void(double)>> MouseWheelEvents;
-	void AddKeyDownEvent(std::function<void(SDL_Keycode)> method) {
-		KeyDownEvents.push_back(method);
-	}
-	void AddKeyUpEvent(std::function<void(SDL_Keycode)> method) {
-		KeyUpEvents.push_back(method);
-	}
-	void AddMouseWheelEvent(std::function<void(double)> method) {
-		MouseWheelEvents.push_back(method);
-	}
-
 	//Key Inputs:
-	std::map<SDL_Keycode, bool> inputMap;
-	bool IsKeyPressed(SDL_Keycode key) {
+	bool InputManager::IsKeyPressed(SDL_Keycode key) {
 		bool pressed = false;
 		if (inputMap.contains(key)) {
 			pressed = inputMap[key];
 		}
-
 		///Log::Debug(std::format("Key ({}) has pressed value of {}", SDL_GetKeyName(key), pressed), true);
 		return pressed;
 	}
-	void ForcePressKey(SDL_Keycode key, bool value) {
+	void InputManager::ForcePressKey(SDL_Keycode key, bool value) {
 		///Log::Debug(std::format("Changed pressed status of key ({}) to {}", SDL_GetKeyName(key), value), true);
 		inputMap[key] = value;
+		if(value) events.Publish(InputKeyDownEvent(key));
+		else events.Publish(InputKeyUpEvent(key));
 	}
-	void KeyDown(SDL_Keycode key) {
-		///Log::Debug(std::format("Recieved input event ({}) for key down: {}", key, SDL_GetKeyName(key)), true);
-		inputMap[key] = true;
-		//Call input event functions
-		for (std::function<void(SDL_Keycode)> method : KeyDownEvents) {
-			method(key);
+	bool InputManager::IsMouseButtonPressed(Uint8 button) {
+		bool pressed = false;
+		if (mouseInputMap.contains(button)) {
+			pressed = inputMap[button];
 		}
+		///Log::Debug(std::format("Mouse button ({}) has pressed value of {}", button, pressed), true);
+		return pressed;
 	}
-	void KeyUp(SDL_Keycode key) {
-		///Log::Debug(std::format("Recieved input event ({}) for key up: {}", key, SDL_GetKeyName(key)), true);
-		inputMap[key] = false;
-		//Call input event functions
-		for (std::function<void(SDL_Keycode)> method : KeyUpEvents) {
-			method(key);
-		}
-	}
-	//Mouse inputs:
-	Utilities::Vector2 mousePosition = Utilities::Vector2();
-	Utilities::Vector2 mouseDelta = Utilities::Vector2();
-	double mouseWheelDelta = 0;
-	void MouseMotion(double X, double Y, double DeltaX, double DeltaY) {
-		mousePosition = Utilities::Vector2(X, Y);
-		///Log::Debug(std::format("Recieved mouse movement. X: {} Y: {}", mousePosition.X, mousePosition.Y), true);
-		//Calculate delta movements
-		mouseDelta = Utilities::Vector2(DeltaX, DeltaY);
-		///Log::Debug(std::format("Mouse delta X: {} Mouse delta Y: {}", mouseDelta.X, mouseDelta.Y), true);
-	}
-	void MouseWheel(double value) {
-		mouseWheelDelta = value;
-		///Log::Debug(std::format("Mouse wheel: {}", mouseWheelDelta), true);
-		//Call input event functions
-		for (std::function<void(double)> method : MouseWheelEvents) {
-			method(value);
-		}
-	}
-	void ResetMouseDelta() {
+	void InputManager::ResetMouseDelta() {
 		mouseDelta = Utilities::Vector2();
 		///Log::Debug(std::format("Mouse delta X: {} Mouse delta Y: {}", mouseDelta.X, mouseDelta.Y), true);
 	}
-
-	//Cursor mode
-	#ifdef StevEngine_SHOW_WINDOW
-	CursorMode cursorMode = CursorMode::Free;
-	bool cursorVisible = true;
-	#endif
-
 	//Update
-	void Update(double deltaTime) {
+	void InputManager::Update(double deltaTime) {
 		#ifdef StevEngine_SHOW_WINDOW
 		if (cursorMode == CursorMode::Locked) {
 			SDL_SetRelativeMouseMode(SDL_TRUE);

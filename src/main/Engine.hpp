@@ -20,7 +20,7 @@ namespace StevEngine {
 			#ifdef StevEngine_SHOW_WINDOW
 			SDL_Window* window;
 			#endif
-			EventManager events;
+			EventManager* GetEvents() { return &events; };
 			double getFPS();
 			bool running;
 			//Engine settings
@@ -34,6 +34,7 @@ namespace StevEngine {
 			void SetWindowSize(int width, int height);
 			#endif
 		private:
+			EventManager events;
 			double currentFPS;
 			SDL_Event ev;
 			GameSettings gameSettings;

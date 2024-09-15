@@ -45,7 +45,7 @@ class CameraController final : public Component {
 bool camController = CreateComponents::RegisterComponentType<CameraController>("CameraController");
 
 void CameraController::Update(double deltaTime) {
-	if (InputSystem::cursorMode == InputSystem::CursorMode::Free) {
+	if (inputManager.cursorMode == CursorMode::Free) {
 		return;
 	}
 	GameObject* gameObject = GetParent();
@@ -55,40 +55,40 @@ void CameraController::Update(double deltaTime) {
 	Utilities::Vector3 forward = rotation.Forward();
 	Utilities::Vector3 right = rotation.Right();
 	Utilities::Vector3 up = rotation.Up();
-	if (InputSystem::IsKeyPressed(SDLK_w)) {
+	if (inputManager.IsKeyPressed(SDLK_w)) {
 		position -= forward * movementSpeed * deltaTime;
 	}
-	if (InputSystem::IsKeyPressed(SDLK_s)) {
+	if (inputManager.IsKeyPressed(SDLK_s)) {
 		position += forward * movementSpeed * deltaTime;
 	}
-	if (InputSystem::IsKeyPressed(SDLK_d)) {
+	if (inputManager.IsKeyPressed(SDLK_d)) {
 		position += right * movementSpeed * deltaTime;
 	}
-	if (InputSystem::IsKeyPressed(SDLK_a)) {
+	if (inputManager.IsKeyPressed(SDLK_a)) {
 		position -= right * movementSpeed * deltaTime;
 	}
-	if (InputSystem::IsKeyPressed(SDLK_SPACE)) {
+	if (inputManager.IsKeyPressed(SDLK_SPACE)) {
 		position += up * movementSpeed * deltaTime;
 	}
-	if (InputSystem::IsKeyPressed(SDLK_LSHIFT)) {
+	if (inputManager.IsKeyPressed(SDLK_LSHIFT)) {
 		position -= up * movementSpeed * deltaTime;
 	}
 	gameObject->SetPosition(position);
 	//Look around
-	rotation *= Quaternion::FromAngleAxis(-InputSystem::mouseDelta.X * sensitivity * deltaTime, up);
-	rotation *= Quaternion::FromAngleAxis(InputSystem::mouseDelta.Y * sensitivity * deltaTime, right);
+	rotation *= Quaternion::FromAngleAxis(-inputManager.GetMouseDelta().X * sensitivity * deltaTime, up);
+	rotation *= Quaternion::FromAngleAxis(inputManager.GetMouseDelta().Y * sensitivity * deltaTime, right);
 	gameObject->SetRotation(rotation);
 }
 void CameraController::Start() {
-	InputSystem::cursorMode = InputSystem::CursorMode::Free;
-	InputSystem::AddKeyDownEvent([](SDL_Keycode key) {
-		if (key == SDLK_ESCAPE) {
-			if (InputSystem::cursorMode == InputSystem::CursorMode::Free) {
-				InputSystem::cursorMode = InputSystem::CursorMode::Locked;
+	inputManager.cursorMode = CursorMode::Free;
+	inputManager.GetEvents()->Subscribe<InputKeyDownEvent>([](InputKeyDownEvent event) {
+		if (event.key == SDLK_ESCAPE) {
+			if (inputManager.cursorMode == CursorMode::Free) {
+				inputManager.cursorMode = CursorMode::Locked;
 			}
 			else {
-				InputSystem::cursorMode = InputSystem::CursorMode::Free;
-				InputSystem::cursorVisible = true;
+				inputManager.cursorMode = CursorMode::Free;
+				inputManager.cursorVisible = true;
 			}
 		}
 	});
@@ -134,14 +134,14 @@ void eventTest(const StevEngine::WindowResizeEvent event) {
 //Create engine
 int main(int argc, char** argv) {
 	CreateEngine("Debug", {  .vsync = true, .fullscreen = false, .targetFPS = 100 });
-	engine->events.Subscribe<EngineUpdateEvent>(mainUpdate);
+	engine->GetEvents()->Subscribe<EngineUpdateEvent>(mainUpdate);
 	//Debug logging:
 	Log::Debug("Debug log");
 	Log::Warning("Warning log");
 	Log::Error("Error log");
 
 	//Event system
-	engine->events.Subscribe<WindowResizeEvent>(eventTest);
+	engine->GetEvents()->Subscribe<WindowResizeEvent>(eventTest);
 
 	//Add debug assets
 	auto fs = cmrc::debug_assets::get_filesystem();
@@ -286,11 +286,11 @@ int main(int argc, char** argv) {
 	#endif
 
 	//Test graphics settings
-	InputSystem::AddKeyDownEvent([](SDL_Keycode key) {
-		if (key == SDLK_f) {
+	inputManager.GetEvents()->Subscribe<InputKeyDownEvent>([](InputKeyDownEvent event) {
+		if (event.key == SDLK_f) {
 			StevEngine::engine->SetFullscreen(!engine->GetGameSettings().fullscreen);
 		}
-		else if (key == SDLK_v) {
+		else if (event.key == SDLK_v) {
 			StevEngine::engine->SetVSync(!engine->GetGameSettings().vsync);
 		}
 	});

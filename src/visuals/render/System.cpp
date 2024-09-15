@@ -94,9 +94,9 @@ namespace StevEngine {
 			SetVSync(gameSettings.vsync);
 
 			//Events
-			engine->events.Subscribe<WindowResizeEvent>([this] (WindowResizeEvent i) { return this->SetViewSize (i.width, i.height); });
-			engine->events.Subscribe<WindowVSyncEvent>([this] (WindowVSyncEvent i) { return this->SetVSync(i.value); });
-			engine->events.Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { return this->DrawFrame(); });
+			engine->GetEvents()->Subscribe<WindowResizeEvent>([this] (WindowResizeEvent i) { return this->SetViewSize (i.width, i.height); });
+			engine->GetEvents()->Subscribe<WindowVSyncEvent>([this] (WindowVSyncEvent i) { return this->SetVSync(i.value); });
+			engine->GetEvents()->Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { return this->DrawFrame(); });
 
 			Log::Debug("Renderer has been initialized!", true);
 		}

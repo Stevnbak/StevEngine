@@ -1,43 +1,49 @@
 #pragma once
 #ifdef StevEngine_INPUTS
 #include "main/EventSystem.hpp"
+#include "main/EngineEvents.hpp"
 #include "utilities/Vector2.hpp"
 
 #include <SDL.h>
 
 #include <functional>
 
-namespace StevEngine::InputSystem {
-	void Init();
-	void Update(double deltaTime);
-
-	//Key inputs
-	bool IsKeyPressed(SDL_Keycode key);
-	void ForcePressKey(SDL_Keycode key, bool value);
-	void KeyDown(SDL_Keycode key);
-	void KeyUp(SDL_Keycode key);
-	//Mouse inputs
-	extern Utilities::Vector2 mousePosition;
-	extern Utilities::Vector2 mouseDelta;
-	extern double mouseWheelDelta;
-	void MouseMotion(double X, double Y, double DeltaX, double DeltaY);
-	void MouseWheel(double value);
-	void ResetMouseDelta();
-	//Input events
-	void AddKeyDownEvent(std::function<void(SDL_Keycode)> method);
-	void AddKeyUpEvent(std::function<void(SDL_Keycode)> method);
-	void AddMouseWheelEvent(std::function<void(double)> method);
-
-	#ifdef StevEngine_SHOW_WINDOW
-	//Cursor mode
+namespace StevEngine {
 	enum CursorMode {
 		Free,
 		Confined,
 		Locked
 	};
-	extern CursorMode cursorMode;
-	extern bool cursorVisible;
-	#endif
+
+	class InputManager {
+		public:
+			void Init();
+			//Input events
+			EventManager* GetEvents() { return &events; };
+			//Key functions
+			bool IsKeyPressed(SDL_Keycode key);
+			void ForcePressKey(SDL_Keycode key, bool value);
+			bool IsMouseButtonPressed(Uint8 button);
+			Utilities::Vector2 GetMousePosition() { return mousePosition; }
+			Utilities::Vector2 GetMouseDelta() { return mouseDelta; }
+			//Cursor
+			#ifdef StevEngine_SHOW_WINDOW
+			CursorMode cursorMode;
+			bool cursorVisible;
+			#endif
+		private:
+			EventManager events;
+			std::unordered_map<SDL_Keycode, bool> inputMap;
+			std::unordered_map<Uint8, bool> mouseInputMap;
+			Utilities::Vector2 mousePosition;
+			Utilities::Vector2 mouseDelta;
+			double mouseWheelDelta;
+			void HandleSDLEvent(const SDLEvent event);
+			void Update(double deltaTime);
+			void ResetMouseDelta();
+	};
+	extern InputManager inputManager;
+
 
 	//Input events
 	#ifdef StevEngine_INPUTS
