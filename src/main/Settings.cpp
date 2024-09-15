@@ -1,6 +1,6 @@
+#include "main/Engine.hpp"
 #ifdef StevEngine_PLAYER_DATA
 #include "Settings.hpp"
-#include "main/Engine.hpp"
 #include "DataManager.hpp"
 
 #include <string>
@@ -8,6 +8,7 @@
 #include <algorithm>
 
 namespace StevEngine {
+		Settings settings = Settings();
 		std::string GetConfPath() {
 			if(std::getenv("HOME")) {
 				return std::format("{}/.config/", GetHomePath());
@@ -16,7 +17,7 @@ namespace StevEngine {
 				return GetHomePath();
 			}
 		}
-		Settings::Settings(std::string title) {
+		void Settings::Init(std::string title) {
 			configPath = std::format("{}{}/", GetConfPath(), title);
 			std::filesystem::create_directories(configPath);
 			//Read or create data file
@@ -27,15 +28,10 @@ namespace StevEngine {
 		bool Settings::HasValue(std::string name) {
 			return settings[name].IsDefined();
 		}
-		void Settings::Save(std::string name, YAML::Node input) {
-			settings[name] = input;
-			SaveToFile();
-		}
 		void Settings::Delete(std::string name) {
 			settings.remove(name);
-			SaveToFile();
 		}
-		void Settings::SaveToFile() {
+		void Settings::SaveToFile() const {
 			std::ofstream file;
 			file.open(configPath + "game.settings");
 			file.clear();

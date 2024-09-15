@@ -1,5 +1,6 @@
 #include "Engine.hpp"
 //STD
+#include <SDL.h>
 #include <SDL_stdinc.h>
 #include <SDL_timer.h>
 #include <SDL_video.h>
@@ -11,11 +12,20 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 //Engine
+#include "audio/System.hpp"
+#include "main/DataManager.hpp"
+#include "main/EventSystem.hpp"
+#include "main/EngineEvents.hpp"
 #include "main/InputSystem.hpp"
+#include "main/ResourceManager.hpp"
 #include "main/Settings.hpp"
+#include "physics/System.hpp"
 #include "scenes/GameObject.hpp"
 #include "main/Log.hpp"
+#include "scenes/Scene.hpp"
+#include "scenes/SceneManager.hpp"
 #include "visuals/Camera.hpp"
+#include "visuals/render/System.hpp"
 
 //Get current process time in ms
 uint64_t GetTime() {
@@ -24,26 +34,8 @@ uint64_t GetTime() {
 
 namespace StevEngine {
 	Engine* engine = nullptr;
-	bool running = true;
-	Engine::Engine(const char * title, GameSettings gameSettings, void (*mainUpdate)(double deltaTime)) :
-	title(title),
-	gameSettings(gameSettings),
-	mainUpdate(mainUpdate),
-	resources(),
-	#ifdef StevEngine_RENDERER_GL
-	render(),
-	#endif
-	#ifdef StevEngine_PHYSICS
-	physics(),
-	#endif
-	#ifdef StevEngine_PLAYER_DATA
-	data(title),
-	settings(title),
-	#endif
-	#ifdef StevEngine_AUDIO
-	audio(),
-	#endif
-	scenes()
+	Engine::Engine(std::string title, GameSettings gameSettings)
+		: title(title), running(false),gameSettings(gameSettings), events(EventManager())
 	{
 		//Initialize logging
 		#ifdef StevEngine_PLAYER_DATA
@@ -63,35 +55,27 @@ namespace StevEngine {
 			) < 0) {
 			throw std::runtime_error("Failed initializing SDL: " + std::string(SDL_GetError()));
 		}
-		#ifdef StevEngine_SHOW_WINDOW
-		Uint32 SDL_WINDOW_TYPE;
-		#endif
 		//Create SDL window
 		#ifdef StevEngine_SHOW_WINDOW
+		Uint32 SDL_WINDOW_TYPE;
 		#ifdef StevEngine_RENDERER_GL
-		SDL_WINDOW_TYPE = render.WindowType();
+		SDL_WINDOW_TYPE = Render::RenderSystem::WindowType();
 		#endif
-		window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gameSettings.WIDTH, gameSettings.HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_TYPE );
+		window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gameSettings.WIDTH, gameSettings.HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_TYPE );
 		if (!window) {
 			throw std::runtime_error("Failed to create window: " + std::string(SDL_GetError()));
 		}
-		#endif
-		//Initialize renderer
-		#ifdef StevEngine_RENDERER_GL
-		context = render.Init(window);
-		render.SetWindowSize(gameSettings.WIDTH, gameSettings.HEIGHT);
 		SetFullscreen(gameSettings.fullscreen);
-		render.SetVSync(gameSettings.vsync);
 		#endif
 		//Done creating engine
 		Log::Normal("Initialized Engine", true);
 	}
 
 	int Engine::Start() {
-		//Activate first scene if none has been activated
-		scenes.ActivateDefault();
+		events.Publish(EngineStartEvent());
 		//Main loop
 		uint64_t lastUpdateTime = GetTime();
+		running = true;
 		while (running) {
 			#ifdef StevEngine_INPUTS
 			//Reset mouse delta
@@ -99,6 +83,7 @@ namespace StevEngine {
 			#endif
 			//Event loop
 			while (SDL_PollEvent(&ev) != 0) {
+				events.Publish(SDLEvent(ev));
 				// check event type
 				switch (ev.type) {
 					case SDL_QUIT:
@@ -111,16 +96,15 @@ namespace StevEngine {
 							case SDL_WINDOWEVENT_RESIZED:
 								if(gameSettings.fullscreen) break;
 								//Log::Debug(std::format("Resizing window to {},{}", ev.window.data1, ev.window.data2), true);
-								#ifdef StevEngine_RENDERER_GL
-								render.SetWindowSize(ev.window.data1, ev.window.data2);
-								#endif
-								gameSettings.WIDTH = ev.window.data1;
+								events.Publish(WindowResizeEvent(ev.window.data1, ev.window.data2));
+								gameSettings.WIDTH  = ev.window.data1;
 								gameSettings.HEIGHT = ev.window.data2;
-								settings.settings["WindowWidth"] = gameSettings.WIDTH;
-								settings.settings["WindowHeight"] = gameSettings.HEIGHT;
+								settings.Save("WindowWidth",  gameSettings.WIDTH);
+								settings.Save("WindowHeight", gameSettings.HEIGHT);
 								break;
 							case SDL_WINDOWEVENT_MOVED:
 								//Log::Debug(std::format("Moving window to {},{}", ev.window.data1, ev.window.data2), true);
+								events.Publish(WindowMoveEvent(ev.window.data1, ev.window.data2));
 								break;
 							case SDL_WINDOWEVENT_DISPLAY_CHANGED:
 								if(!gameSettings.fullscreen) break;
@@ -128,7 +112,7 @@ namespace StevEngine {
 								SDL_Rect bounds;
 								SDL_GetDisplayBounds(ev.window.data1, &bounds);
 								SDL_SetWindowPosition(window, bounds.x, bounds.y);
-								SetSDLWindowSize(bounds.w, bounds.h);
+								SetWindowSize(bounds.w, bounds.h);
 								break;
 							#ifdef StevEngine_INPUTS
 							case SDL_WINDOWEVENT_ENTER:
@@ -139,30 +123,6 @@ namespace StevEngine {
 								break;
 							#endif
 						}
-						break;
-					#endif
-					#ifdef StevEngine_INPUTS
-					//Input system
-					case SDL_KEYDOWN:
-						InputSystem::KeyDown(ev.key.keysym.sym);
-						break;
-					case SDL_KEYUP:
-						InputSystem::KeyUp(ev.key.keysym.sym);
-						break;
-					case SDL_MOUSEMOTION:
-						InputSystem::MouseMotion(ev.motion.x, ev.motion.y, ev.motion.xrel, ev.motion.yrel);
-						break;
-					case SDL_MOUSEWHEEL:
-						InputSystem::MouseWheel(ev.wheel.preciseY);
-						break;
-					case SDL_MOUSEBUTTONDOWN:
-						InputSystem::KeyDown(ev.button.button);
-						break;
-					case SDL_MOUSEBUTTONUP:
-						InputSystem::KeyUp(ev.button.button);
-						break;
-					case SDL_WINDOW_MOUSE_CAPTURE:
-						Log::Debug(std::format("Mouse capture: {}, {}", ev.motion.x, ev.motion.y), true);
 						break;
 					#endif
 				}
@@ -176,12 +136,11 @@ namespace StevEngine {
 
 			//Run update
 			double frameSeconds = frameMs / 1000.0;
-			Update(frameSeconds);
-			if(mainUpdate) mainUpdate(frameSeconds);
+			events.Publish(EngineUpdateEvent(frameSeconds));
 
 			//Draw the frame
 			#ifdef StevEngine_SHOW_WINDOW
-			Draw();
+			events.Publish(EngineDrawEvent());
 			#endif
 
 			//Calculate FPS:
@@ -193,68 +152,24 @@ namespace StevEngine {
 			if (gameSettings.targetFPS != -1 && !gameSettings.vsync) {
 				double target = (1000.0 / gameSettings.targetFPS);
 				if(frameMs < target) SDL_Delay(target - frameMs);
-				/*int sleepDuration = std::clamp((1000.0 / (double)gameSettings.targetFPS) - (double)frameTime, 0.0, (double)INFINITY);
-				if (sleepDuration < 0) sleepDuration = 0;
-				SDL_Delay(sleepDuration);*/
 			}
 		}
 
-		//Destroy all scenes
-		scenes.scenes.clear();
+		events.Publish(EngineQuitEvent());
 
 		//Stop logging
 		#ifdef StevEngine_PLAYER_DATA
 		Log::CloseLogging();
 		#endif
-
 		// Destroy the window
-		#ifdef StevEngine_RENDERER_GL
-		SDL_GL_DeleteContext(context);
-		#endif
 		#ifdef StevEngine_SHOW_WINDOW
 		SDL_DestroyWindow(window);
 		window = NULL;
-		#endif
-		#ifdef StevEngine_AUDIO
-		audio.CleanUp();
 		#endif
 		// Quit SDL
 		SDL_Quit();
 		return 0;
 	}
-
-	void Engine::Update(double deltaTime) {
-		#ifdef StevEngine_PHYSICS
-		//Run Jolt physics step
-		physics.Update(deltaTime);
-		#endif
-		#ifdef StevEngine_INPUTS
-		//Input?
-		InputSystem::Update(deltaTime);
-		#endif
-		//Update GameObjects
-		Scene* scene = scenes.GetScene(scenes.active);
-		for (Utilities::ID id : scene->GetAllObjects()) {
-			scene->GetObject(id)->Update(deltaTime);
-		}
-	}
-
-	#ifdef StevEngine_SHOW_WINDOW
-	void Engine::Draw() {
-		// Add objects to render queues
-		if (scenes.GetActiveScene()->activeCamera != nullptr) {
-			Scene* scene = scenes.GetActiveScene();
-			for (Utilities::ID id : scene->GetAllObjects()) {
-				if(!scene->GetObject(id)->parent.IsNull()) continue;
-				scene->GetObject(id)->Draw(glm::mat4x4(1.0));
-			}
-		}
-		#ifdef StevEngine_RENDERER_GL
-		// Render frame
-		render.DrawFrame();
-		#endif
-	}
-	#endif
 
 	void Engine::SetGameSettingsFromFile() {
 		if(settings.HasValue("VSync")) gameSettings.vsync = settings.Read<bool>("VSync");
@@ -263,9 +178,9 @@ namespace StevEngine {
 		if(settings.HasValue("WindowHeight")) gameSettings.HEIGHT = settings.Read<int>("WindowHeight");
 		if(settings.HasValue("TargetFPS")) gameSettings.targetFPS = settings.Read<int>("TargetFPS");
 		//Audio
-		if(settings.HasValue("audio.device")) audio.SetAudioDevice(settings.Read<std::string>("audio.device").c_str());
-		if(settings.HasValue("audio.soundVolume")) audio.SetSoundsVolume(settings.Read<double>("audio.soundVolume"));
-		if(settings.HasValue("audio.musicVolume")) audio.SetMusicVolume(settings.Read<double>("audio.musicVolume"));
+		if(settings.HasValue("audio.device")) Audio::audio.SetAudioDevice(settings.Read<std::string>("audio.device").c_str());
+		if(settings.HasValue("audio.soundVolume")) Audio::audio.SetSoundsVolume(settings.Read<double>("audio.soundVolume"));
+		if(settings.HasValue("audio.musicVolume")) Audio::audio.SetMusicVolume(settings.Read<double>("audio.musicVolume"));
 	}
 	void Engine::SetSettings(GameSettings newSettings) {
 		#ifdef StevEngine_SHOW_WINDOW
@@ -274,16 +189,19 @@ namespace StevEngine {
 		SetWindowSize(newSettings.WIDTH, newSettings.HEIGHT);
 		#endif
 		SetTargetFPS(newSettings.targetFPS);
+		settings.SaveToFile();
 	}
 	void Engine::SetTargetFPS(int targetFPS) {
 		gameSettings.targetFPS = targetFPS;
-		settings.settings["TargetFPS"] = targetFPS;
+		settings.Save("TargetFPS", targetFPS);
+		settings.SaveToFile();
 	}
 	#ifdef StevEngine_SHOW_WINDOW
 	void Engine::SetVSync(bool vsync) {
 		gameSettings.vsync = vsync;
-		render.SetVSync(vsync);
-		settings.settings["VSync"] = vsync;
+		settings.Save("VSync", vsync);
+		settings.SaveToFile();
+		events.Publish(WindowVSyncEvent(vsync));
 	}
 	void Engine::SetFullscreen(bool fullscreen) {
 		gameSettings.fullscreen = fullscreen;
@@ -292,29 +210,49 @@ namespace StevEngine {
 			SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 			SDL_DisplayMode DM;
 			SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(window), &DM);
-			SetSDLWindowSize(DM.w, DM.h);
+			SDL_SetWindowSize(window, DM.w, DM.h);
+			events.Publish(WindowResizeEvent(DM.w, DM.h));
 		} else {
 			SDL_SetWindowFullscreen(window, 0);
-			SetSDLWindowSize(gameSettings.WIDTH, gameSettings.HEIGHT);
+			SDL_SetWindowSize(window, gameSettings.WIDTH, gameSettings.HEIGHT);
+			events.Publish(WindowResizeEvent(gameSettings.WIDTH, gameSettings.HEIGHT));
 		}
-		settings.settings["Fullscreen"] = fullscreen;
+		events.Publish(WindowFullscreenEvent(fullscreen));
+		settings.Save("Fullscreen", fullscreen);
+		settings.SaveToFile();
 	}
 	void Engine::SetWindowSize(int width, int height) {
 		gameSettings.WIDTH = width;
 		gameSettings.HEIGHT = height;
-		SetSDLWindowSize(width, height);
-		settings.settings["WindowWidth"] = width;
-		settings.settings["WindowHeight"] = height;
-	}
-	void Engine::SetSDLWindowSize(int width, int height) {
 		SDL_SetWindowSize(window, width, height);
-		#ifdef StevEngine_RENDERER_GL
-		render.SetWindowSize(width, height);
-		#endif
+		events.Publish(WindowResizeEvent(width, height));
+		settings.Save("WindowWidth", width);
+		settings.Save("WindowHeight", height);
+		settings.SaveToFile();
 	}
 	#endif
 
 	double Engine::getFPS() {
 		return currentFPS;
+	}
+
+	//Create engine and subsystems function
+	void CreateEngine(std::string title, GameSettings gameSettings) {
+		#ifdef StevEngine_PLAYER_DATA
+			data.Init(title);
+		#endif
+		settings.Init(title);
+		engine = new Engine(title, gameSettings);
+		#ifdef StevEngine_PHYSICS
+			Physics::physics.Init(JPH::PhysicsSettings());
+		#endif
+		sceneManager.Init();
+		#ifdef StevEngine_RENDERER_GL
+			Render::render.Init(engine->window);
+		#endif
+		#ifdef StevEngine_AUDIO
+			Audio::audio.Init();
+		#endif
+		InputSystem::Init();
 	}
 }

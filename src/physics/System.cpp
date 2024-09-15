@@ -1,6 +1,8 @@
 #ifdef StevEngine_PHYSICS
 #include "System.hpp"
 #include "main/Log.hpp"
+#include "main/Engine.hpp"
+#include "main/EngineEvents.hpp"
 #include "utilities/Vector3.hpp"
 
 #include <math.h>
@@ -34,13 +36,14 @@ namespace StevEngine::Physics {
 	using namespace JPH;
 	using namespace std;
 
+	PhysicsSystem physics = PhysicsSystem();
 	//Tick
-	void System::Update(double deltaTime) {
+	void PhysicsSystem::Update(double deltaTime) {
 		joltSystem.Update(deltaTime, 1, &tempAllocator, &jobSystem);
 	}
 
 	//Start
-	System::System(JPH::PhysicsSettings settings) {
+	void PhysicsSystem::Init(JPH::PhysicsSettings settings) {
 		// Register allocation hook.
 		RegisterDefaultAllocator();
 		// Install trace and assert callbacks
@@ -68,6 +71,8 @@ namespace StevEngine::Physics {
 		joltSystem.SetGravity(Utilities::Vector3::up * (-9.815));
 		//Get The body interface
 		bodyInterface = &joltSystem.GetBodyInterface();
+		//Events
+		engine->events.Subscribe<EngineUpdateEvent>([this] (EngineUpdateEvent e) { this->Update(e.deltaTime); });
 	}
 }
 #endif

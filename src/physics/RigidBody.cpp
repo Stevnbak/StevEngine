@@ -1,9 +1,9 @@
+#include "main/Engine.hpp"
 #ifdef StevEngine_PHYSICS
 #include "RigidBody.hpp"
 #include "physics/System.hpp"
 #include "physics/Layers.hpp"
 #include "main/Log.hpp"
-#include "main/Engine.hpp"
 #include "scenes/GameObject.hpp"
 #include "scenes/Component.hpp"
 
@@ -38,11 +38,11 @@ namespace StevEngine::Physics {
 		bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
 		bodySettings.mMassPropertiesOverride = massProperties;
 		//	Create body from settings
-		body = engine->physics.GetBodyInterface()->CreateBody(bodySettings);
-		engine->physics.GetBodyInterface()->AddBody(body->GetID(), JPH::EActivation::Activate);
+		body = physics.GetBodyInterface()->CreateBody(bodySettings);
+		physics.GetBodyInterface()->AddBody(body->GetID(), JPH::EActivation::Activate);
 	}
 	void RigidBody::Deactivate() {
-		if(body) engine->physics.GetBodyInterface()->DestroyBody(body->GetID());
+		if(body) physics.GetBodyInterface()->DestroyBody(body->GetID());
 		if(shape) shape->Release();
 	}
 	void RigidBody::Update(double deltaTime) {
@@ -87,7 +87,7 @@ namespace StevEngine::Physics {
 	void RigidBody::SetMotionProperties(MotionProperties properties) {
 		this->motionProperties = properties;
 		if(body != nullptr && motionType != JPH::EMotionType::Static) {
-			JPH::MotionProperties * setter = body->GetMotionProperties();
+			JPH::MotionProperties* setter = body->GetMotionProperties();
 			setter->SetGravityFactor(properties.GravityFactor);
 			setter->SetLinearDamping(properties.LinearDamping);
 			setter->SetAngularDamping(properties.AngularDamping);
@@ -97,7 +97,7 @@ namespace StevEngine::Physics {
 	}
 
 	RigidBody::~RigidBody() {
-		if(body) engine->physics.GetBodyInterface()->DestroyBody(body->GetID());
+		if(body) physics.GetBodyInterface()->DestroyBody(body->GetID());
 		if(shape) shape->Release();
 	}
 
@@ -107,7 +107,6 @@ namespace StevEngine::Physics {
 		node["layer"] = layer->id;
 		return node;
 	}
-	RigidBody::RigidBody(YAML::Node node)
-	  : Component(node), mass(node["mass"].as<double>()), motionType((JPH::EMotionType)node["motionType"].as<unsigned int>()), layer(StevEngine::Physics::Layer::GetLayerById(node["layer"].as<int>())), body(nullptr) {}
+	RigidBody::RigidBody(YAML::Node node) : Component(node), mass(node["mass"].as<double>()), motionType((JPH::EMotionType)node["motionType"].as<unsigned int>()), layer(StevEngine::Physics::Layer::GetLayerById(node["layer"].as<int>())), body(nullptr) {}
 }
 #endif

@@ -1,35 +1,35 @@
 [
-  {
-    "label": "debug",
-    "type": "shell",
-    "command": "CXX=g++-13 cmake .. -DCMAKE_BUILD_TYPE=Debug -DDEBUG_EXECUTABLE=ON",
-    "cwd": "$ZED_WORKTREE_ROOT/build",
-    "reveal": "always"
-  },
-  {
-    "label": "release",
-    "type": "shell",
-    "command": "CXX=g++-13 cmake .. -DCMAKE_BUILD_TYPE=Release -DDEBUG_EXECUTABLE=OFF",
-    "options": {
-      "cwd": "$ZED_WORKTREE_ROOT/build"
-    },
-    "reveal": "always"
-  },
-  {
-    "label": "build",
-    "type": "shell",
-    "command": "make",
-    "cwd": "$ZED_WORKTREE_ROOT/build",
-    "reveal": "never",
-    "hide": "on_success"
-  },
-  {
-    "label": "start",
-    "type": "shell",
-    "command": "make && ./debug",
-    "cwd": "$ZED_WORKTREE_ROOT/build",
-    "reveal": "never",
-    "hide": "on_success",
-    "allow_concurrent_runs": true
-  }
+	{
+		"label": "debug",
+		"type": "shell",
+		"command": "CXX=clang cmake .. -DCMAKE_BUILD_TYPE=Debug -DDEBUG_EXECUTABLE=ON",
+		"cwd": "$ZED_WORKTREE_ROOT/build",
+		"reveal": "always"
+	},
+	{
+		"label": "release",
+		"type": "shell",
+		"command": "CXX=clang cmake .. -DCMAKE_BUILD_TYPE=Release -DDEBUG_EXECUTABLE=OFF",
+		"options": {
+			"cwd": "$ZED_WORKTREE_ROOT/build"
+		},
+		"reveal": "always"
+	},
+	{
+		"label": "build",
+		"type": "shell",
+		"command": "make",
+		"cwd": "$ZED_WORKTREE_ROOT/build",
+		"reveal": "never",
+		"hide": "on_success"
+	},
+	{
+		"label": "start",
+		"type": "shell",
+		"command": "make && ./debug",
+		"cwd": "$ZED_WORKTREE_ROOT/build",
+		"reveal": "never",
+		"hide": "never",
+		"allow_concurrent_runs": true
+	}
 ]

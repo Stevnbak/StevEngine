@@ -8,11 +8,9 @@
 #include "main/Log.hpp"
 
 namespace StevEngine {
-	class Engine;
-
 	class Settings {
-		friend class StevEngine::Engine;
 		public:
+			void Init(std::string title);
 			template<typename T> T Read(std::string name)  {
 				//Get line if key exists
 				if(!settings[name]) {
@@ -25,16 +23,15 @@ namespace StevEngine {
 			bool HasValue(std::string name);
 			template<typename T> void Save(std::string name, T data) {
 				settings[name] = data;
-				SaveToFile();
 			}
-			void Save(std::string name, YAML::Node data);
 			void Delete(std::string name);
 			std::string GetConfigPath() { return configPath; }
+			void SaveToFile() const;
 		private:
-			Settings(std::string title);
 			std::string configPath;
 			YAML::Node settings;
-			void SaveToFile();
 	};
+
+	extern Settings settings;
 }
 #endif

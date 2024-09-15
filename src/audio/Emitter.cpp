@@ -1,8 +1,7 @@
-#include "scenes/Component.hpp"
 #ifdef StevEngine_AUDIO
 #include "Emitter.hpp"
 #include "audio/System.hpp"
-#include "main/Engine.hpp"
+#include "scenes/Component.hpp"
 #include "scenes/GameObject.hpp"
 
 #include <SDL.h>
@@ -21,7 +20,7 @@ namespace StevEngine::Audio {
 	}
 
 	void Emitter::Play() {
-		engine->audio.Play(this);
+		audio.Play(this);
 	}
 
 	void Emitter::ChangeSource(std::string path) {
@@ -30,7 +29,7 @@ namespace StevEngine::Audio {
 			audioData = NULL;
 		}
 		audioPath = path;
-		SDL_RWops* data = engine->resources.GetFile(audioPath).GetSDLData();
+		SDL_RWops* data = Resources::resourceManager.GetFile(audioPath).GetSDLData();
 		audioData = Mix_LoadWAV_RW(data, 0);
 		SDL_FreeRW(data);
 		if (audioData == NULL) {
@@ -39,7 +38,7 @@ namespace StevEngine::Audio {
 	}
 
 	void Emitter::Deactivate() {
-		if(channel != -1) engine->audio.Stop(channel);
+		if(channel != -1) audio.Stop(channel);
 	}
 
 	Emitter::Emitter(YAML::Node node) : Component(node) {

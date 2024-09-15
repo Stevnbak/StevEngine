@@ -1,4 +1,7 @@
+#include "audio/Emitter.hpp"
+#include "main/DataManager.hpp"
 #include "main/Engine.hpp"
+#include "main/EngineEvents.hpp"
 #include "main/InputSystem.hpp"
 #include "main/ResourceManager.hpp"
 #include "scenes/Component.hpp"
@@ -6,6 +9,7 @@
 #include "physics/RigidBody.hpp"
 #include "physics/Colliders.hpp"
 #include "physics/Layers.hpp"
+#include "scenes/SceneManager.hpp"
 #include "visuals/Primitive.hpp"
 #include "visuals/Model.hpp"
 #include "visuals/render/Component.hpp"
@@ -17,7 +21,7 @@
 #include "visuals/render/System.hpp"
 #include "visuals/shaders/Shader.hpp"
 
-#include "yaml-cpp/node/node.h"
+#include <yaml-cpp/yaml.h>
 #include <SDL_keycode.h>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <cmrc/cmrc.hpp>
@@ -111,7 +115,7 @@ bool rotate = CreateComponents::RegisterComponentType<Rotate>("Rotate");
 
 ID modelObject;
 
-void mainUpdate(double deltaTime) {
+void mainUpdate(EngineUpdateEvent event) {
 	/*Utilities::Quaternion testQ(0, 0, 90);
 	Utilities::Vector3 forward = testQ.forward();
 	Log::Normal(std::format("Forward: ({};{};{})", forward.X, forward.Y, forward.Z));
@@ -119,31 +123,39 @@ void mainUpdate(double deltaTime) {
 	Log::Normal(std::format("Right: ({};{};{})", right.X, right.Y, right.Z));
 	Utilities::Vector3 up = testQ.up();
 	Log::Normal(std::format("Up: ({};{};{})", up.X, up.Y, up.Z));*/
-	/*GameObject* model = engine->scenes.GetActiveScene()->GetObject(modelObject);
+	/*GameObject* model = sceneManager.GetActiveScene()->GetObject(modelObject);
 	model->SetRotation(model->GetRotation() * Quaternion::FromAngleAxis(1 * deltaTime, Vector3(0,1,0)));//*/
+}
+
+void eventTest(const StevEngine::WindowResizeEvent event) {
+	Log::Debug("Recieved window resize event with data: (w: " + std::to_string(event.width) + "; h: " + std::to_string(event.height) + ");");
 }
 
 //Create engine
 int main(int argc, char** argv) {
-	StevEngine::engine = new Engine("Debug", {  .vsync = true, .fullscreen = false, .targetFPS = 100 }, mainUpdate);
+	CreateEngine("Debug", {  .vsync = true, .fullscreen = false, .targetFPS = 100 });
+	engine->events.Subscribe<EngineUpdateEvent>(mainUpdate);
 	//Debug logging:
 	Log::Debug("Debug log");
 	Log::Warning("Warning log");
 	Log::Error("Error log");
 
+	//Event system
+	engine->events.Subscribe<WindowResizeEvent>(eventTest);
+
 	//Add debug assets
 	auto fs = cmrc::debug_assets::get_filesystem();
 	for (std::string path : {"test.txt", "test_2.txt", "audio.wav", "cube.object", "Debug scene.scene", "Fox.stl", "cube.stl", "box.png", "prototype.png", "test_shader.frag"}) {
 		cmrc::file file = fs.open("debug/assets/" + path);
-		engine->resources.AddFile(path, file.begin(), file.size());
+		Resources::resourceManager.AddFile(path, file.begin(), file.size());
 	}
 
 	//Create new scene
-	//Scene* importedscene = engine->scenes.CreateSceneFromFile(engine->resources.GetFile("Debug scene.scene"));
+	//Scene* importedscene = sceneManager.CreateSceneFromFile(Resources::resourceManager.GetFile("Debug scene.scene"));
 	///*
-	Scene* scene = engine->scenes.CreateScene("Debug scene");
+	Scene* scene = sceneManager.CreateScene("Debug scene");
 
-	//engine->scenes.SetActiveScene("Debug imported scene");
+	//sceneManager.SetActiveScene("Debug imported scene");
 
 	//Create test objects
 	{
@@ -164,7 +176,7 @@ int main(int argc, char** argv) {
 		#ifdef StevEngine_RENDERER_GL
 		Render::RenderComponent* primitive = cube->AddComponent(new SpherePrimitive(Vector3(), Quaternion(), Vector3(1.0), TextureType::REPEAT));
 		primitive->SetColor(Color(255, 255, 255, 255));
-		primitive->SetTexture(Texture(engine->resources.GetFile("prototype.png")));
+		primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
 		cube->AddComponent(new Rotate(Vector3::up));
 		cube->AddComponent(new Rotate(Vector3::right));
 		#endif
@@ -179,7 +191,7 @@ int main(int argc, char** argv) {
 		#ifdef StevEngine_RENDERER_GL
 		SpherePrimitive* primitive = sphere->AddComponent(new SpherePrimitive());
 		primitive->SetColor(Color(255, 255, 255, 255));
-		primitive->SetTexture(Texture(engine->resources.GetFile("prototype.png")));
+		primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = sphere->AddComponent(new Physics::SphereCollider());
@@ -190,7 +202,7 @@ int main(int argc, char** argv) {
 		modelObject = scene->CreateObject("Model", Utilities::Vector3(0, 0, 0));
 		GameObject* modelObj = scene->GetObject(modelObject);
 		#ifdef StevEngine_MODELS
-		Model model = Model(engine->resources.GetFile("Fox.stl"));
+		Model model = Model(Resources::resourceManager.GetFile("Fox.stl"));
 		double modelScale = 1.0 / 30.0;
 		#endif
 		#ifdef StevEngine_RENDERER_GL
@@ -209,7 +221,7 @@ int main(int argc, char** argv) {
 		#ifdef StevEngine_RENDERER_GL
 		CylinderPrimitive* primitive = obj->AddComponent(new CylinderPrimitive());
 		primitive->SetColor(Color(255, 255, 255, 255));
-		primitive->SetTexture(Texture(engine->resources.GetFile("box.png")));
+		primitive->SetTexture(Texture(Resources::resourceManager.GetFile("box.png")));
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = obj->AddComponent(new Physics::CylinderCollider());
@@ -222,7 +234,7 @@ int main(int argc, char** argv) {
 		#ifdef StevEngine_RENDERER_GL
 		CapsulePrimitive* primitive = obj->AddComponent(new CapsulePrimitive(Vector3(), Quaternion(), Vector3(1.0), TextureType::COVER));
 		primitive->SetColor(Color(255, 255, 255, 255));
-		primitive->SetTexture(Texture(engine->resources.GetFile("box.png")));
+		primitive->SetTexture(Texture(Resources::resourceManager.GetFile("box.png")));
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = obj->AddComponent(new Physics::CapsuleCollider());
@@ -246,21 +258,21 @@ int main(int argc, char** argv) {
 	scene->GetObject(scene->CreateObject("DirectionalLight", Utilities::Vector3(0, 0, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(-90), Utilities::Vector3::right)))->AddComponent(new Render::DirectionalLight(Vector3(0.33), Vector3(0.25)));
 	#endif
 	//Test ressource manager
-	Log::Debug(std::format("Ressource 0: {}", engine->resources.GetFile(0).path));
-	Log::Debug(std::format("Ressource \"test.txt\": {}", engine->resources.GetFile("test.txt").GetStrData()));
-	Log::Debug(std::format("Ressource \"test_2.txt\": {}", engine->resources.GetFile("test_2.txt").GetStrData()));
+	Log::Debug(std::format("Ressource 0: {}", Resources::resourceManager.GetFile(0).path));
+	Log::Debug(std::format("Ressource \"test.txt\": {}", Resources::resourceManager.GetFile("test.txt").GetStrData()));
+	Log::Debug(std::format("Ressource \"test_2.txt\": {}", Resources::resourceManager.GetFile("test_2.txt").GetStrData()));
 
 	//Use test shader
 	Render::ShaderProgram shader = Render::ShaderProgram(Render::FRAGMENT);
-	shader.AddShader(Render::Shader(engine->resources.GetFile("test_shader.frag").GetRawData(), Render::FRAGMENT));
-	//engine->render.AddGlobalShader(shader);
+	shader.AddShader(Render::Shader(Resources::resourceManager.GetFile("test_shader.frag").GetRawData(), Render::FRAGMENT));
+	//Render::render.AddGlobalShader(shader);
 	scene->GetObject(modelObject)->GetComponent<Render::RenderComponent>()->AddShader(shader);
 
 	//Test data manager
 	#ifdef StevEngine_PLAYER_DATA
-	Log::Debug("Before: " + engine->data.Read<std::string>("test"));
-	engine->data.Save("test", std::string("test data"));
-	Log::Debug("After: " + engine->data.Read<std::string>("test"));
+	Log::Debug("Before: " + data.Read<std::string>("test"));
+	data.Save("test", std::string("test data"));
+	Log::Debug("After: " + data.Read<std::string>("test"));
 	#endif
 
 	//Play audio
@@ -291,7 +303,7 @@ int main(int argc, char** argv) {
 
 	//Set background
 	#ifdef StevEngine_RENDERER_GL
-	engine->render.SetBackground(Color(0, 0, 0, 255));
+	Render::render.SetBackground(Color(0, 0, 0, 255));
 	#endif
 
 	//Start engine

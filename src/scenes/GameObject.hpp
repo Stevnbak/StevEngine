@@ -5,17 +5,18 @@
 #include "main/InputSystem.hpp"
 #include "main/ResourceManager.hpp"
 #include "scenes/Component.hpp"
-#include "yaml-cpp/node/node.h"
+
+#include <yaml-cpp/yaml.h>
+#include <glm/mat4x4.hpp>
 
 #include <map>
 #include <vector>
 #include <array>
 #include <type_traits>
-#include <glm/mat4x4.hpp>
 
 namespace StevEngine {
 	class GameObject final {
-		friend class Engine;
+		friend class SceneManager;
 		friend class Scene;
 		//Basic properties
 		public:

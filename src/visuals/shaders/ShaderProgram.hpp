@@ -11,10 +11,10 @@
 
 namespace StevEngine {
 	namespace Render {
+		class RenderSystem;
 
-		class System;
 		class ShaderProgram {
-			friend class System;
+			friend class RenderSystem;
 			public:
 				ShaderProgram(ShaderType shaderType);
 				ShaderProgram(YAML::Node node);

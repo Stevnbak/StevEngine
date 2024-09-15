@@ -1,12 +1,6 @@
 #pragma once
-#include "physics/System.hpp"
-#include "main/ResourceManager.hpp"
-#include "main/DataManager.hpp"
-#include "main/Settings.hpp"
-#include "audio/System.hpp"
-#include "visuals/render/System.hpp"
-#include "scenes/SceneManager.hpp"
-
+#include "EventSystem.hpp"
+#include "Log.hpp"
 #include <SDL.h>
 
 namespace StevEngine {
@@ -21,29 +15,16 @@ namespace StevEngine {
 	};
 	class Engine {
 		public:
-			Engine(const char * title = "Game", GameSettings gameSettings = GameSettings(), void (*mainUpdate)(double deltaTime) = nullptr);
+			Engine(std::string title, GameSettings gameSettings);
 			int Start();
 			#ifdef StevEngine_SHOW_WINDOW
 			SDL_Window* window;
 			#endif
-			Resources::System resources;
-			#ifdef StevEngine_RENDERER_GL
-			Render::System render;
-			#endif
-			#ifdef StevEngine_PHYSICS
-			Physics::System physics;
-			#endif
-			#ifdef StevEngine_PLAYER_DATA
-			GameData data;
-			Settings settings;
-			#endif
-			#ifdef StevEngine_AUDIO
-			Audio::System audio;
-			#endif
-			SceneManager scenes;
+			EventManager events;
 			double getFPS();
+			bool running;
 			//Engine settings
-			const char * title;
+			const std::string title;
 			GameSettings GetGameSettings() { return gameSettings; }
 			void SetSettings(GameSettings gameSettings);
 			void SetTargetFPS(int targetFPS);
@@ -53,20 +34,12 @@ namespace StevEngine {
 			void SetWindowSize(int width, int height);
 			#endif
 		private:
-			#ifdef StevEngine_SHOW_WINDOW
-			void Draw();
-			void SetSDLWindowSize(int width, int height);
-			#endif
-			void Update(double deltaTime);
 			double currentFPS;
 			SDL_Event ev;
 			GameSettings gameSettings;
 			void SetGameSettingsFromFile();
-			#ifdef StevEngine_RENDERER_GL
-			SDL_GLContext context;
-			#endif
-			void (*mainUpdate)(double deltaTime);
 	};
 
 	extern Engine* engine;
+	void CreateEngine(std::string title = "Game", GameSettings gameSettings = GameSettings());
 }

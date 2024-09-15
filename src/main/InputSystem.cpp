@@ -1,6 +1,7 @@
 #ifdef StevEngine_INPUTS
 #include "main/Log.hpp"
 #include "main/Engine.hpp"
+#include "main/EngineEvents.hpp"
 #include "scenes/GameObject.hpp"
 
 #include <SDL.h>
@@ -9,6 +10,37 @@
 #include <vector>
 
 namespace StevEngine::InputSystem {
+	void HandleSDLEvent(const SDLEvent event) {
+		SDL_Event ev = event.event;
+		switch(ev.type) {
+			//Input system
+			case SDL_KEYDOWN:
+				engine->events.Publish(InputKeyDownEvent(ev.key.keysym.sym));
+				break;
+			case SDL_KEYUP:
+				engine->events.Publish(InputKeyUpEvent(ev.key.keysym.sym));
+				break;
+			case SDL_MOUSEMOTION:
+				engine->events.Publish(InputMouseMoveEvent(ev.motion.x, ev.motion.y, ev.motion.xrel, ev.motion.yrel));
+				break;
+			case SDL_MOUSEWHEEL:
+				engine->events.Publish(InputMouseWheelEvent(ev.wheel.preciseY));
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+				engine->events.Publish(InputMouseButtonDownEvent(ev.button.button));
+				break;
+			case SDL_MOUSEBUTTONUP:
+				engine->events.Publish(InputMouseButtonUpEvent(ev.button.button));
+				break;
+			case SDL_WINDOW_MOUSE_CAPTURE:
+				Log::Debug(std::format("Mouse capture: {}, {}", ev.motion.x, ev.motion.y), true);
+				break;
+		}
+	}
+
+	void Init() {
+		engine->events.Subscribe<SDLEvent>(HandleSDLEvent);
+	}
 	//Input events
 	std::vector<std::function<void(SDL_Keycode)>> KeyDownEvents;
 	std::vector<std::function<void(SDL_Keycode)>> KeyUpEvents;

@@ -1,5 +1,5 @@
 #include "Component.hpp"
-#include "main/Engine.hpp"
+#include "scenes/SceneManager.hpp"
 #include "main/Log.hpp"
 #include <cstddef>
 #include <stdexcept>
@@ -16,7 +16,7 @@ namespace StevEngine {
 		return GetScene()->GetObject(gameObject);
 	}
 	Scene* Component::GetScene() {
-		return engine->scenes.GetScene(scene);
+		return sceneManager.GetScene(scene);
 	}
 	Component::~Component() {
 

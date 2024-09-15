@@ -1,20 +1,20 @@
 #pragma once
 #ifdef StevEngine_RENDERER_GL
+#include "Object.hpp"
+#include "utilities/Color.hpp"
+#include "visuals/shaders/Shader.hpp"
+#include "visuals/shaders/ShaderProgram.hpp"
+#include "main/EventSystem.hpp"
+
+#include <SDL.h>
 #include <glm/mat4x4.hpp>
+
 #include <vector>
 #include <array>
 #include <type_traits>
 #include <cstddef>
 
-#include "Object.hpp"
-#include "utilities/Color.hpp"
-#include "visuals/shaders/Shader.hpp"
-#include "visuals/shaders/ShaderProgram.hpp"
-
-#include <SDL.h>
-
 namespace StevEngine {
-	class Engine;
 	namespace Render {
 		//Lights
 		class Light;
@@ -38,31 +38,30 @@ namespace StevEngine {
 		};
 
 		//System
-		class System {
-			friend class StevEngine::Engine;
+		class RenderSystem {
 			friend class StevEngine::Render::Light;
 			friend class StevEngine::Render::DirectionalLight;
 			friend class StevEngine::Render::PointLight;
 			friend class StevEngine::Render::SpotLight;
 
 			public:
+				void Init(SDL_Window* window);
 				void DrawObject(Object object, glm::mat4x4 transform, RenderQueue queue = STANDARD);
 				void SetBackground(Utilities::Color color);
 				void SetAmbientLight(float strength, Utilities::Color color = Utilities::Color(255,255,255,255));
 				void AddGlobalShader(ShaderProgram shader);
 				void ResetGlobalShader(ShaderType type);
-			protected:
-				//From Engine
-				System();
-				SDL_GLContext Init(SDL_Window* window);
-				Uint32 WindowType();
+			public:
+				//For Engine
+				static const Uint32 WindowType();
 				void DrawFrame();
-				void SetWindowSize(int WIDTH, int HEIGHT);
+				void SetViewSize(int WIDTH, int HEIGHT);
 				void SetVSync(bool vsync);
 				//From Lights
 				std::vector<Light*> lights;
 				unsigned int GetLightID(std::string type);
 			private:
+				SDL_GLContext context;
 				//Queues
 				std::array<std::vector<RenderObject>, RenderQueue::MUST_BE_LAST> queues;
 				void Draw(RenderObject object);
@@ -77,6 +76,8 @@ namespace StevEngine {
 				//Background
 				Utilities::Color backgroundColor = {0, 0, 0, 255};
 		};
+
+		extern RenderSystem render;
 	}
 }
 #endif

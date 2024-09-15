@@ -1,13 +1,13 @@
-#include "utilities/Color.hpp"
-#include "visuals/Texture.hpp"
-#include "visuals/shaders/Shader.hpp"
-#include "yaml-cpp/node/node.h"
 #ifdef StevEngine_RENDERER_GL
 #include "Component.hpp"
 #include "scenes/GameObject.hpp"
-#include "main/Engine.hpp"
+#include "System.hpp"
+#include "utilities/Color.hpp"
+#include "visuals/Texture.hpp"
+#include "visuals/shaders/Shader.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <yaml-cpp/yaml.h>
 
 using StevEngine::Utilities::Color;
 
@@ -30,7 +30,7 @@ namespace StevEngine {
 					AddShader(ShaderProgram(node["shaders"][i]));
 			}
 			if(node["color"]) SetColor(node["color"].as<Color>());
-			if(node["texture"] && node["texture"].as<std::string>() != "") SetTexture(Visuals::Texture(engine->resources.GetFile(node["texture"].as<std::string>())));
+			if(node["texture"] && node["texture"].as<std::string>() != "") SetTexture(Visuals::Texture(Resources::resourceManager.GetFile(node["texture"].as<std::string>())));
 		}
 		//Destructor
 		RenderComponent::~RenderComponent() {
@@ -47,7 +47,7 @@ namespace StevEngine {
 			Utilities::Vector3 v = std::get<1>(angleAxis);
 			transform = glm::rotate(transform, (float)std::get<0>(angleAxis), glm::vec3(v.X, v.Y, v.Z));
 			//Draw
-			engine->render.DrawObject(object, transform);
+			Render::render.DrawObject(object, transform);
 		}
 		void RenderComponent::SetColor(Color color) {
 			this->color = color;

@@ -1,13 +1,13 @@
 #ifdef StevEngine_RENDERER_GL
 #include "Texture.hpp"
 #include "main/ResourceManager.hpp"
-#include "main/Engine.hpp"
+#include "visuals/render/System.hpp"
+#include <SDL.h>
 #ifdef WINDOWS
 #include <SDL_image.h>
 #else
 #include <SDL2/SDL_image.h>
 #endif
-#include <SDL.h>
 
 namespace StevEngine {
 	namespace Visuals {

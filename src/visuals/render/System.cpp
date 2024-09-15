@@ -2,10 +2,13 @@
 #include "System.hpp"
 #include "main/Log.hpp"
 #include "main/Engine.hpp"
+#include "main/EngineEvents.hpp"
+#include "scenes/SceneManager.hpp"
 #include "visuals/render/Object.hpp"
 #include "visuals/render/Lights.hpp"
 #include "visuals/shaders/Shader.hpp"
 #include "visuals/shaders/ShaderProgram.hpp"
+#include "visuals/Camera.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -24,8 +27,9 @@ namespace StevEngine {
 			#include "visuals/shaders/default.frag"
 		;
 
-		System::System() {}
-		Uint32 System::WindowType() {
+		RenderSystem render = RenderSystem();
+
+		const Uint32 RenderSystem::WindowType() {
 			int context_flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG;
 			#ifdef StevEngine_DEBUGGING
 			context_flags |= SDL_GL_CONTEXT_DEBUG_FLAG;
@@ -43,9 +47,9 @@ namespace StevEngine {
 			SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 			return SDL_WINDOW_OPENGL;
 		}
-		SDL_GLContext System::Init(SDL_Window* window) {
+		void RenderSystem::Init(SDL_Window* window) {
 			//Create SDL OpenGL context
-			SDL_GLContext context = SDL_GL_CreateContext(window);
+			context = SDL_GL_CreateContext(window);
 			if (!context) {
 				throw std::runtime_error("Failed to create OpenGL context: " + std::string(SDL_GetError()));
 			}
@@ -84,20 +88,28 @@ namespace StevEngine {
 			ResetGlobalShader(VERTEX);
 			ResetGlobalShader(FRAGMENT);
 
-			Log::Debug("Renderer has been initialized!", true);
+			//Set settings
+			GameSettings gameSettings = engine->GetGameSettings();
+			SetViewSize(gameSettings.WIDTH, gameSettings.HEIGHT);
+			SetVSync(gameSettings.vsync);
 
-			return context;
+			//Events
+			engine->events.Subscribe<WindowResizeEvent>([this] (WindowResizeEvent i) { return this->SetViewSize (i.width, i.height); });
+			engine->events.Subscribe<WindowVSyncEvent>([this] (WindowVSyncEvent i) { return this->SetVSync(i.value); });
+			engine->events.Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { return this->DrawFrame(); });
+
+			Log::Debug("Renderer has been initialized!", true);
 		}
 
-		void System::SetWindowSize(int width, int height) {
+		void RenderSystem::SetViewSize(int width, int height) {
 			glViewport(0, 0, width, height);
 		}
 
-		void System::SetVSync(bool vsync) {
+		void RenderSystem::SetVSync(bool vsync) {
 			SDL_GL_SetSwapInterval(vsync);
 		}
 
-		void System::ResetGlobalShader(ShaderType type) {
+		void RenderSystem::ResetGlobalShader(ShaderType type) {
 			if(type == VERTEX) {
 				vertexShaderProgram = ShaderProgram(VERTEX);
 				vertexShaderProgram.AddShader(Shader(vertexShaderSource, VERTEX));
@@ -114,7 +126,7 @@ namespace StevEngine {
 			glUseProgramStages(shaderPipeline, GL_FRAGMENT_SHADER_BIT, fragmentShaderProgram.location);
 		}
 
-		void System::AddGlobalShader(ShaderProgram shader) {
+		void RenderSystem::AddGlobalShader(ShaderProgram shader) {
 			shader.RelinkProgram();
 			if(shader.shaderType == VERTEX) {
 				glDeleteProgram(vertexShaderProgram.location);
@@ -131,11 +143,11 @@ namespace StevEngine {
 			glUseProgramStages(shaderPipeline, GL_FRAGMENT_SHADER_BIT, fragmentShaderProgram.location);
 		}
 
-		void System::DrawObject(Object object, glm::mat4x4 transform, RenderQueue queue) {
+		void RenderSystem::DrawObject(Object object, glm::mat4x4 transform, RenderQueue queue) {
 			queues[queue].push_back({object, transform});
 		};
 
-		void System::DrawFrame() {
+		void RenderSystem::DrawFrame() {
 			//Clear color and depth buffers
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -143,7 +155,7 @@ namespace StevEngine {
 			glBindVertexArray(VAO);
 
 			//Camera matrices
-			Visuals::Camera* camera = engine->scenes.GetActiveScene()->GetCamera();
+			Visuals::Camera* camera = sceneManager.GetActiveScene()->GetCamera();
 			//  View matrix
 			vertexShaderProgram.SetShaderUniform("viewTransform", camera->GetView());
 			fragmentShaderProgram.SetShaderUniform("viewPosition", (glm::vec3)camera->GetParent()->GetWorldPosition());
@@ -176,16 +188,16 @@ namespace StevEngine {
 			SDL_GL_SwapWindow(engine->window);
 		}
 
-		void System::SetBackground(Utilities::Color color) {
+		void RenderSystem::SetBackground(Utilities::Color color) {
 			backgroundColor = color;
 		}
 
-		void System::SetAmbientLight(float strength, Utilities::Color color) {
+		void RenderSystem::SetAmbientLight(float strength, Utilities::Color color) {
 			fragmentShaderProgram.SetShaderUniform("ambientColor", glm::vec3(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f));
 			fragmentShaderProgram.SetShaderUniform("ambientStrength", strength);
 		}
 
-		void System::Draw(RenderObject renderObject) {
+		void RenderSystem::Draw(RenderObject renderObject) {
 			Object object = renderObject.object;
 			glm::mat4x4 transform = renderObject.transform;
 			//Object specific shaders
@@ -226,7 +238,7 @@ namespace StevEngine {
 			}
 		}
 
-		unsigned int System::GetLightID(std::string type) {
+		unsigned int RenderSystem::GetLightID(std::string type) {
 			unsigned int next = 0;
 			for(Light* light : lights) {
 				if(light->type == type) {

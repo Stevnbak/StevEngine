@@ -5,14 +5,14 @@ namespace StevEngine {
 	class GameObject;
 	class Engine;
 	namespace Render {
-		class System;
+		class RenderSystem;
 	}
 
 	namespace Visuals {
 		class Camera : public Component {
 			friend class StevEngine::GameObject;
 			friend class StevEngine::Engine;
-			friend class Render::System;
+			friend class Render::RenderSystem;
 
 			public:
 				bool isOrthographic;

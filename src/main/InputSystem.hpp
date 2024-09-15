@@ -1,11 +1,14 @@
 #pragma once
 #ifdef StevEngine_INPUTS
-#include <SDL.h>
+#include "main/EventSystem.hpp"
 #include "utilities/Vector2.hpp"
+
+#include <SDL.h>
+
 #include <functional>
 
 namespace StevEngine::InputSystem {
-
+	void Init();
 	void Update(double deltaTime);
 
 	//Key inputs
@@ -34,6 +37,52 @@ namespace StevEngine::InputSystem {
 	};
 	extern CursorMode cursorMode;
 	extern bool cursorVisible;
+	#endif
+
+	//Input events
+	#ifdef StevEngine_INPUTS
+	class InputKeyDownEvent : public Event {
+		public:
+			InputKeyDownEvent(SDL_Keycode key) : key(key) {}
+			const std::string GetEventType() const override { return GetStaticEventType(); };
+			static const std::string GetStaticEventType() {  return "InputKeyDownEvent"; }
+			SDL_Keycode key;
+	};
+	class InputKeyUpEvent : public Event {
+		public:
+			InputKeyUpEvent(SDL_Keycode key) : key(key) {}
+			const std::string GetEventType() const override { return GetStaticEventType(); };
+			static const std::string GetStaticEventType() {  return "InputKeyUpEvent"; }
+			SDL_Keycode key;
+	};
+	class InputMouseMoveEvent : public Event {
+		public:
+			InputMouseMoveEvent(int x, int y, int deltaX, int deltaY) : x(x), y(y), deltaX(deltaX), deltaY(deltaY) {}
+			const std::string GetEventType() const override { return GetStaticEventType(); };
+			static const std::string GetStaticEventType() {  return "InputMouseMoveEvent"; }
+			int x, y, deltaX, deltaY;
+	};
+	class InputMouseWheelEvent : public Event {
+		public:
+			InputMouseWheelEvent(float value) : value(value) {}
+			const std::string GetEventType() const override { return GetStaticEventType(); };
+			static const std::string GetStaticEventType() {  return "InputMouseWheelEvent"; }
+			float value;
+	};
+	class InputMouseButtonDownEvent : public Event {
+		public:
+			InputMouseButtonDownEvent(Uint8 button) : button(button) {}
+			const std::string GetEventType() const override { return GetStaticEventType(); };
+			static const std::string GetStaticEventType() {  return "InputMouseButtonDownEvent"; }
+			Uint8 button;
+	};
+	class InputMouseButtonUpEvent : public Event {
+		public:
+			InputMouseButtonUpEvent(Uint8 button) : button(button) {}
+			const std::string GetEventType() const override { return GetStaticEventType(); };
+			static const std::string GetStaticEventType() {  return "InputMouseButtonUpEvent"; }
+			Uint8 button;
+	};
 	#endif
 }
 #endif

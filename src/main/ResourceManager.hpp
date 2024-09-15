@@ -9,10 +9,9 @@
 #include <vector>
 
 namespace StevEngine {
-	class Engine;
 	namespace Resources {
 		class Resource {
-			friend class System;
+			friend class ResourceManager;
 			public:
 				const unsigned short id;
 				const std::string path;
@@ -28,17 +27,18 @@ namespace StevEngine {
 				static unsigned short currentId;
 		};
 
-		class System {
-			friend class StevEngine::Engine;
+		class ResourceManager {
 			public:
+				ResourceManager();
 				Resource GetFile(unsigned short id) const;
 				Resource GetFile(std::string path) const;
 				void AddFile(std::string path, const char* data, const int size);
 				template<int hexSize = 2> void AddFileFromHex(std::string path, const char* hex, const int size);
 			private:
-				System();
 				std::map<unsigned short, const Resource> resources;
 				std::map<std::string, unsigned short> pathToId;
 		};
+
+		extern ResourceManager resourceManager;
 	}
 }

@@ -1,13 +1,13 @@
 #include "GameObject.hpp"
+#include "main/DataManager.hpp"
 #include "main/Log.hpp"
-#include "main/Engine.hpp"
+#include "scenes/SceneManager.hpp"
 #include "scenes/Component.hpp"
 #include "utilities/ID.hpp"
 #include "utilities/Quaternion.hpp"
 #include "utilities/Vector3.hpp"
-#include "yaml-cpp/emitter.h"
-#include "yaml-cpp/node/node.h"
 
+#include <yaml-cpp/yaml.h>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -84,7 +84,7 @@ namespace StevEngine {
 			components[i]->TransformUpdate(position, rotation, scale);
 		}
 		for (int i = 0; i < children.size(); i++) {
-			engine->scenes.GetScene(scene)->GetObject(children[i])->TransformUpdate(position, rotation, scale);
+			sceneManager.GetScene(scene)->GetObject(children[i])->TransformUpdate(position, rotation, scale);
 		}
 	}
 	Utilities::Vector3 GameObject::GetWorldPosition() {
@@ -97,14 +97,14 @@ namespace StevEngine {
 	}
 	Utilities::Quaternion GameObject::GetWorldRotation() {
 		if(!parent.IsNull()) {
-			return engine->scenes.GetScene(scene)->GetObject(parent)->GetWorldRotation() + rotation;
+			return sceneManager.GetScene(scene)->GetObject(parent)->GetWorldRotation() + rotation;
 		} else {
 			return rotation;
 		}
 	}
 	Utilities::Vector3 GameObject::GetWorldScale() {
 		if(!parent.IsNull()) {
-			return Utilities::Vector3::CombineScale(engine->scenes.GetScene(scene)->GetObject(parent)->GetWorldScale(), scale);
+			return Utilities::Vector3::CombineScale(sceneManager.GetScene(scene)->GetObject(parent)->GetWorldScale(), scale);
 		} else {
 			return scale;
 		}
@@ -121,7 +121,7 @@ namespace StevEngine {
 	//Children functions
 	int GameObject::AddChild(Utilities::ID gameObject) {
 		children.push_back(gameObject);
-		engine->scenes.GetScene(scene)->GetObject(gameObject)->parent = gameObject;
+		sceneManager.GetScene(scene)->GetObject(gameObject)->parent = gameObject;
 		return children.size() - 1;
 	}
 	void GameObject::RemoveChild(int index) {
@@ -129,13 +129,13 @@ namespace StevEngine {
 		children.erase(children.begin() + index);
 	}
 	GameObject* GameObject::GetChild(int index) const {
-		return engine->scenes.GetScene(scene)->GetObject(children[index]);
+		return sceneManager.GetScene(scene)->GetObject(children[index]);
 	}
 	int GameObject::GetChildCount() const {
 		return children.size();
 	}
 	GameObject* GameObject::GetParent() const {
-		if(!parent.IsNull()) return engine->scenes.GetScene(scene)->GetObject(parent);
+		if(!parent.IsNull()) return sceneManager.GetScene(scene)->GetObject(parent);
 		else return nullptr;
 	}
 
@@ -165,7 +165,7 @@ namespace StevEngine {
 		YAML::Emitter out;
 		out << node;
 		std::ofstream file;
-		file.open(engine->data.GetAppdataPath() + name + ".object");
+		file.open(data.GetAppdataPath() + name + ".object");
 		file << out.c_str();
 	}
 	#endif
@@ -187,7 +187,7 @@ namespace StevEngine {
 		//Children
 		if(node["children"]) {
 			for(YAML::Node childNode : node["children"]) {
-				AddChild(engine->scenes.GetScene(scene)->CreateObject(childNode));
+				AddChild(sceneManager.GetScene(scene)->CreateObject(childNode));
 			}
 		}
 	}
@@ -196,7 +196,7 @@ namespace StevEngine {
 		///Log::Normal(std::format("Destroying object with id {}", id), true);
 		//Destroy children
 		for (int i = 0; i < children.size(); i++) {
-			engine->scenes.GetScene(scene)->DestroyObject(children[i]);
+			sceneManager.GetScene(scene)->DestroyObject(children[i]);
 		}
 		//Destroy components
 		for (int i = 0; i < components.size(); i++)

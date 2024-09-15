@@ -28,7 +28,7 @@ namespace StevEngine {
 		ModelRenderer::ModelRenderer(Utilities::Model model)
 			: model(model), RenderComponent(CreateRenderObject(model, Color(255, 255, 255, 255), Visuals::Texture::empty), "ModelRenderer") {}
 		ModelRenderer::ModelRenderer(YAML::Node node)
-			: model(Utilities::Model(engine->resources.GetFile(node["model"].as<std::string>()))), RenderComponent(CreateRenderObject(Utilities::Model(engine->resources.GetFile(node["model"].as<std::string>())), Utilities::Color(), Visuals::Texture::empty), node) {}
+			: model(Utilities::Model(Resources::resourceManager.GetFile(node["model"].as<std::string>()))), RenderComponent(CreateRenderObject(Utilities::Model(Resources::resourceManager.GetFile(node["model"].as<std::string>())), Utilities::Color(), Visuals::Texture::empty), node) {}
 		YAML::Node ModelRenderer::Export(YAML::Node node) const {
 			YAML::Node n = RenderComponent::Export(node);
 			n["model"] = model.path;

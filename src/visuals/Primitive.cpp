@@ -8,7 +8,6 @@
 #include "utilities/Quaternion.hpp"
 #include "scenes/GameObject.hpp"
 #include "scenes/Component.hpp"
-#include "main/Engine.hpp"
 #include "visuals/render/Component.hpp"
 
 #include <SDL.h>

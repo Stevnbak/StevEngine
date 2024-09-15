@@ -6,7 +6,7 @@
 #include "utilities/Vector3.hpp"
 #include "utilities/Range3.hpp"
 #include "utilities/Quaternion.hpp"
-#include "yaml-cpp/yaml.h"
+#include <yaml-cpp/yaml.h>
 //Jolt:
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Collision/Shape/Shape.h>

@@ -15,7 +15,7 @@ namespace StevEngine {
 	}
 }
 
-#include "yaml-cpp/yaml.h"
+#include <yaml-cpp/yaml.h>
 namespace YAML {
 	template<> struct convert<StevEngine::Utilities::Color> {
 		static Node encode(const StevEngine::Utilities::Color& rhs);

@@ -5,11 +5,10 @@
 #include <vector>
 
 namespace StevEngine {
-	class Engine;
 	namespace Audio {
-		class System {
-			friend class StevEngine::Engine;
+		class AudioSystem {
 			public:
+				void Init();
 				void Play(Emitter* emitter);
 				void PlayBackground(std::string path, bool loop = true, double volume = 1);
 				void Stop(int channel);
@@ -24,7 +23,6 @@ namespace StevEngine {
 				void SetAudioDevice(const char* device);
 				const char* GetActiveAudioDevice() { return audioDevice; }
 			private:
-				System();
 				void CleanUp();
 				double volumeSounds;
 				double volumeMusic;
@@ -36,6 +34,8 @@ namespace StevEngine {
 				std::vector<Emitter*> activeSounds;
 				Mix_Music* music = NULL;
 		};
+
+		extern AudioSystem audio;
 	}
 }
 #endif

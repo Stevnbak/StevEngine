@@ -21,14 +21,15 @@ static std::vector<char> ReadAllBytes(char const* filename)
 
 namespace StevEngine {
 	namespace Resources {
+		ResourceManager resourceManager = ResourceManager();
 		//Create resource system by reading all files
-		System::System() {
+		ResourceManager::ResourceManager() {
 			resources = std::map<unsigned short, const Resource>();
 			pathToId = std::map<std::string, unsigned short>();
 		}
 
 		//Get file
-		Resource System::GetFile(unsigned short id) const {
+		Resource ResourceManager::GetFile(unsigned short id) const {
 			if(resources.contains(id)) {
 				return resources.at(id);
 			}
@@ -37,7 +38,7 @@ namespace StevEngine {
 				throw std::runtime_error(std::format("Resource {} not found.", id));
 			}
 		}
-		Resource System::GetFile(std::string path) const {
+		Resource ResourceManager::GetFile(std::string path) const {
 			if(pathToId.contains(path)) {
 				return resources.at(pathToId.at(path));
 			}
@@ -47,13 +48,13 @@ namespace StevEngine {
 			}
 		}
 
-		void System::AddFile(std::string path, const char* data, const int size) {
+		void ResourceManager::AddFile(std::string path, const char* data, const int size) {
 			Resource resource (path, data, size);
 			resources.insert({resource.id, resource});
 			pathToId.insert({resource.path, resource.id});
 		}
 
-		template<int hexSize> void System::AddFileFromHex(std::string path, const char* hex, const int size) {
+		template<int hexSize> void ResourceManager::AddFileFromHex(std::string path, const char* hex, const int size) {
 			char* data = new char[size];
 			char h[hexSize+1];
 			h[hexSize] = '\0';

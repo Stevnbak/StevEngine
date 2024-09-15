@@ -1,25 +1,25 @@
 #pragma once
 #include "Scene.hpp"
 #include "main/ResourceManager.hpp"
+
 #include <string>
 
-
 namespace StevEngine {
-	class Engine;
-
 	class SceneManager {
-		friend class StevEngine::Engine;
-
 		public:
+			void Init();
 			Scene* GetScene(std::string name) { return &scenes.at(name); }
 			Scene* GetActiveScene() { return &scenes.at(active); }
 			Scene* CreateSceneFromFile(Resources::Resource file);
 			Scene* CreateScene(std::string name);
 			void SetActiveScene(std::string name);
-		private:
-			SceneManager();
 			void ActivateDefault();
+		private:
+			void Update(double deltaTime);
+			void Draw();
 			std::map<std::string, Scene> scenes;
 			std::string active;
 	};
+
+	extern SceneManager sceneManager;
 }

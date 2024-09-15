@@ -21,12 +21,12 @@
 namespace StevEngine {
 	class Engine;
 	namespace Physics {
-		class System {
+		class PhysicsSystem {
 			friend class StevEngine::Engine;
 			public:
+				void Init(JPH::PhysicsSettings settings);
 				JPH::BodyInterface* GetBodyInterface() { return bodyInterface; }
 			private:
-				System(JPH::PhysicsSettings settings = JPH::PhysicsSettings());
 				void Update(double deltaTime);
 				//Jolt system
 				JPH::PhysicsSystem joltSystem;
@@ -43,6 +43,8 @@ namespace StevEngine {
 				// Create class that filters object vs object layers
 				ObjectLayerPairFilterImpl object_vs_object_layer_filter = ObjectLayerPairFilterImpl();
 		};
+
+		extern PhysicsSystem physics;
 	}
 }
 #endif

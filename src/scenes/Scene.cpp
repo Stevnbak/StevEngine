@@ -1,11 +1,12 @@
 #include "Scene.hpp"
-#include <format>
-#include <regex>
-#include "main/Engine.hpp"
+#include "main/DataManager.hpp"
 #include "scenes/Component.hpp"
 #include "utilities/ID.hpp"
-#include "yaml-cpp/node/node.h"
-#include "yaml-cpp/node/parse.h"
+
+#include <yaml-cpp/yaml.h>
+
+#include <format>
+#include <regex>
 
 using namespace StevEngine::Utilities;
 
@@ -75,7 +76,7 @@ namespace StevEngine {
 		YAML::Emitter out;
 		out << node;
 		std::ofstream file;
-		file.open(engine->data.GetAppdataPath() + name + ".scene");
+		file.open(data.GetAppdataPath() + name + ".scene");
 		file << out.c_str();
 	}
 	#endif

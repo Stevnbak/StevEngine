@@ -1,13 +1,12 @@
 #pragma once
 #include "main/Log.hpp"
 #include "utilities/ID.hpp"
-#include "yaml-cpp/yaml.h"
-#include "yaml-cpp/node/node.h"
 
-#include <functional>
+#include <yaml-cpp/yaml.h>
 #include <glm/mat4x4.hpp>
 
 #include <sys/types.h>
+#include <functional>
 #include <typeindex>
 #include <typeinfo>
 #include <unordered_map>

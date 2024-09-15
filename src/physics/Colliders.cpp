@@ -1,33 +1,31 @@
-#include <sstream>
 #ifdef StevEngine_PHYSICS
 #include "Colliders.hpp"
 #include "RigidBody.hpp"
 #include "scenes/Scene.hpp"
 #include "scenes/GameObject.hpp"
 #include "scenes/Component.hpp"
-#include "main/Engine.hpp"
 #include "main/ResourceManager.hpp"
 #include "utilities/Model.hpp"
 #include "utilities/Quaternion.hpp"
 #include "utilities/Vector3.hpp"
 
-#include "yaml-cpp/binary.h"
-
 
 #include <stdexcept>
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 
+#include <yaml-cpp/binary.h>
 #include <Jolt/Physics/Collision/Shape/ScaledShape.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
 #include <Jolt/Physics/Collision/Shape/CapsuleShape.h>
 #include <Jolt/Physics/Collision/Shape/CylinderShape.h>
-#include "Jolt/Physics/Collision/Shape/MeshShape.h"
-#include "Jolt/Physics/Collision/Shape/ConvexHullShape.h"
-#include "Jolt/Physics/Collision/Shape/StaticCompoundShape.h"
-#include "Jolt/Geometry/Triangle.h"
-#include "Jolt/Geometry/IndexedTriangle.h"
+#include <Jolt/Physics/Collision/Shape/MeshShape.h>
+#include <Jolt/Physics/Collision/Shape/ConvexHullShape.h>
+#include <Jolt/Physics/Collision/Shape/StaticCompoundShape.h>
+#include <Jolt/Geometry/Triangle.h>
+#include <Jolt/Geometry/IndexedTriangle.h>
 #include <Jolt/Core/StreamWrapper.h>
 #include <Jolt/ObjectStream/ObjectStream.h>
 #include <Jolt/ObjectStream/ObjectStreamTextOut.h>

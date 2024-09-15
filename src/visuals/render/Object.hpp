@@ -14,7 +14,7 @@
 
 namespace StevEngine {
 	namespace Render {
-		class System;
+		class RenderSystem;
 
 		struct Material {
 			Utilities::Vector3 ambient = Utilities::Vector3(1.0);
@@ -24,7 +24,7 @@ namespace StevEngine {
 		};
 
 		class Object {
-			friend class System;
+			friend class RenderSystem;
 			public:
 				Object(std::vector<Utilities::Vertex> vertices, Utilities::Color color = Utilities::Color(255, 255, 255, 255), Visuals::Texture textureData = Visuals::Texture::empty);
 				Object(std::vector<Utilities::Vertex> vertices, std::vector<unsigned int> indices, Utilities::Color color = Utilities::Color(255, 255, 255, 255), Visuals::Texture textureData = Visuals::Texture::empty);

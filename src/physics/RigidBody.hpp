@@ -1,5 +1,4 @@
 #pragma once
-#include "yaml-cpp/node/node.h"
 #ifdef StevEngine_PHYSICS
 #include "scenes/Component.hpp"
 #include "utilities/Vector3.hpp"
@@ -7,6 +6,7 @@
 #include "physics/Colliders.hpp"
 #include "physics/Layers.hpp"
 
+#include <yaml-cpp/yaml.h>
 //Jolt imports
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Collision/Shape/StaticCompoundShape.h>
