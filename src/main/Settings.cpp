@@ -1,5 +1,5 @@
+#ifdef StevEngine_SETTINGS
 #include "main/Engine.hpp"
-#ifdef StevEngine_PLAYER_DATA
 #include "Settings.hpp"
 #include "DataManager.hpp"
 

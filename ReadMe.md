@@ -61,10 +61,15 @@ Can be disabled by setting the cmake build option "USE_INPUTS" to OFF".
 
 The data manager handles saving player data to a local folder on the user's machine, which will persist across game restarts.
 
-This is also the system that is used for saving engine settings across restarts, and for logging to a file.
-It is therefore not recommended to disable this.
+This is also the system that is used for for logging to a file. It is therefore not recommended to disable this.
 
 Can be disabled by setting the cmake build option "USE_PLAYER_DATA" to OFF".
+
+## **Settings Manager**
+
+The settings manager handles saving player settings to a local file on the user's machine, which will persist across game restarts.
+
+Can be disabled by setting the cmake build option "USE_SETTINGS" to OFF".
 
 ## **OpenGL Renderer**
 
@@ -200,12 +205,12 @@ To start running StevEngine and all it's subsystems, the first step is to create
 
 This can be any form of allocated memory, as long as it stays alive for the entire program.
 
-The StevEngine::Engine object is created through it's constructor, that takes a couple of project specific arguments (such as title, target FPS and window options).
+The StevEngine::Engine object and all enabled subsystems is created through the function StevEngine::CreateEngine, that takes a couple of project specific arguments (such as title, target FPS and window options).
 
 Example of creating the engine object inside the main function:
 ```c++
 int main(int argc, char** argv) {
-    StevEngine::engine = new StevEngine::Engine("Game title");
+    StevEngine::CreateEngine("Game title", {});
     //Rest of the main function...
 }
 ```
@@ -216,7 +221,7 @@ After creating the engine, and any GameObjects used by the project.
 The main loop of the engine can be started by simply calling the Start method of the engine object:
 ```c++
 int main(int argc, char** argv) {
-    StevEngine::engine = new StevEngine::Engine("Game title");
+    StevEngine::CreateEngine("Game title", {});
     //Rest of the main function...
     return StevEngine::engine->Start();
 }

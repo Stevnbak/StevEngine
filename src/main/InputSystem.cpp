@@ -1,5 +1,5 @@
-#include "main/InputSystem.hpp"
 #ifdef StevEngine_INPUTS
+#include "main/InputSystem.hpp"
 #include "main/Log.hpp"
 #include "main/Engine.hpp"
 #include "main/EngineEvents.hpp"

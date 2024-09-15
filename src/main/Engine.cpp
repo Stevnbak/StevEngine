@@ -42,7 +42,9 @@ namespace StevEngine {
 		Log::StartLogging(data.GetLogPath());
 		#endif
 		//Read settings from file
+		#ifdef StevEngine_SETTINGS
 		SetGameSettingsFromFile();
+		#endif
 		//Initialize SDL
 		if (SDL_Init(
 			SDL_INIT_EVENTS | SDL_INIT_TIMER
@@ -95,8 +97,10 @@ namespace StevEngine {
 								events.Publish(WindowResizeEvent(ev.window.data1, ev.window.data2));
 								gameSettings.WIDTH  = ev.window.data1;
 								gameSettings.HEIGHT = ev.window.data2;
+								#ifdef StevEngine_SETTINGS
 								settings.Save("WindowWidth",  gameSettings.WIDTH);
 								settings.Save("WindowHeight", gameSettings.HEIGHT);
+								#endif
 								break;
 							case SDL_WINDOWEVENT_MOVED:
 								//Log::Debug(std::format("Moving window to {},{}", ev.window.data1, ev.window.data2), true);
@@ -166,7 +170,7 @@ namespace StevEngine {
 		SDL_Quit();
 		return 0;
 	}
-
+	#ifdef StevEngine_SETTINGS
 	void Engine::SetGameSettingsFromFile() {
 		if(settings.HasValue("VSync")) gameSettings.vsync = settings.Read<bool>("VSync");
 		if(settings.HasValue("Fullscreen")) gameSettings.fullscreen = settings.Read<bool>("Fullscreen");
@@ -178,6 +182,7 @@ namespace StevEngine {
 		if(settings.HasValue("audio.soundVolume")) Audio::audio.SetSoundsVolume(settings.Read<double>("audio.soundVolume"));
 		if(settings.HasValue("audio.musicVolume")) Audio::audio.SetMusicVolume(settings.Read<double>("audio.musicVolume"));
 	}
+	#endif
 	void Engine::SetSettings(GameSettings newSettings) {
 		#ifdef StevEngine_SHOW_WINDOW
 		SetVSync(newSettings.vsync);
@@ -185,19 +190,25 @@ namespace StevEngine {
 		SetWindowSize(newSettings.WIDTH, newSettings.HEIGHT);
 		#endif
 		SetTargetFPS(newSettings.targetFPS);
+		#ifdef StevEngine_SETTINGS
 		settings.SaveToFile();
+		#endif
 	}
 	void Engine::SetTargetFPS(int targetFPS) {
 		gameSettings.targetFPS = targetFPS;
+		#ifdef StevEngine_SETTINGS
 		settings.Save("TargetFPS", targetFPS);
 		settings.SaveToFile();
+		#endif
 	}
 	#ifdef StevEngine_SHOW_WINDOW
 	void Engine::SetVSync(bool vsync) {
 		gameSettings.vsync = vsync;
+		events.Publish(WindowVSyncEvent(vsync));
+		#ifdef StevEngine_SETTINGS
 		settings.Save("VSync", vsync);
 		settings.SaveToFile();
-		events.Publish(WindowVSyncEvent(vsync));
+		#endif
 	}
 	void Engine::SetFullscreen(bool fullscreen) {
 		gameSettings.fullscreen = fullscreen;
@@ -214,17 +225,21 @@ namespace StevEngine {
 			events.Publish(WindowResizeEvent(gameSettings.WIDTH, gameSettings.HEIGHT));
 		}
 		events.Publish(WindowFullscreenEvent(fullscreen));
+		#ifdef StevEngine_SETTINGS
 		settings.Save("Fullscreen", fullscreen);
 		settings.SaveToFile();
+		#endif
 	}
 	void Engine::SetWindowSize(int width, int height) {
 		gameSettings.WIDTH = width;
 		gameSettings.HEIGHT = height;
 		SDL_SetWindowSize(window, width, height);
 		events.Publish(WindowResizeEvent(width, height));
+		#ifdef StevEngine_SETTINGS
 		settings.Save("WindowWidth", width);
 		settings.Save("WindowHeight", height);
 		settings.SaveToFile();
+		#endif
 	}
 	#endif
 
@@ -237,7 +252,9 @@ namespace StevEngine {
 		#ifdef StevEngine_PLAYER_DATA
 			data.Init(title);
 		#endif
+		#ifdef StevEngine_SETTINGS
 		settings.Init(title);
+		#endif
 		engine = new Engine(title, gameSettings);
 		#ifdef StevEngine_PHYSICS
 			Physics::physics.Init(JPH::PhysicsSettings());
@@ -249,6 +266,8 @@ namespace StevEngine {
 		#ifdef StevEngine_AUDIO
 			Audio::audio.Init();
 		#endif
+		#ifdef StevEngine_INPUTS
 		inputManager.Init();
+		#endif
 	}
 }

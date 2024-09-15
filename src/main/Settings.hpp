@@ -1,5 +1,5 @@
 #pragma once
-#ifdef StevEngine_PLAYER_DATA
+#ifdef StevEngine_SETTINGS
 #include <string>
 #include <map>
 #include <fstream>
