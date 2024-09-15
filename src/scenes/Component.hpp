@@ -38,7 +38,6 @@ namespace StevEngine {
 			virtual void Deactivate() {};
 			virtual void Update(double deltaTime) {};
 			virtual void Draw(glm::mat4x4 transform) {};
-			virtual void TransformUpdate(bool position, bool rotation, bool scale) {};
 			void SetObject(Utilities::ID object, std::string scene);
 	};
 

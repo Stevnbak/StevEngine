@@ -32,3 +32,12 @@ namespace YAML {
 		static bool decode(const Node& node, StevEngine::Utilities::ID& rhs);
 	};
 }
+
+template <>
+struct std::hash<StevEngine::Utilities::ID>
+{
+	std::size_t operator()(const StevEngine::Utilities::ID& k) const
+	{
+		return (std::hash<std::string>()(k.GetString()));
+	}
+};

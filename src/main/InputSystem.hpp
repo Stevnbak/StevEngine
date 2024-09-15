@@ -28,8 +28,8 @@ namespace StevEngine {
 			Utilities::Vector2 GetMouseDelta() { return mouseDelta; }
 			//Cursor
 			#ifdef StevEngine_SHOW_WINDOW
-			CursorMode cursorMode;
-			bool cursorVisible;
+			CursorMode cursorMode = Free;
+			bool cursorVisible = true;
 			#endif
 		private:
 			EventManager events;

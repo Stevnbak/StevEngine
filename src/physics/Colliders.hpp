@@ -1,5 +1,6 @@
 #pragma once
 #ifdef StevEngine_PHYSICS
+#include "main/EventSystem.hpp"
 #include "main/ResourceManager.hpp"
 #include "utilities/Model.hpp"
 #include "scenes/Component.hpp"
@@ -25,8 +26,7 @@ namespace StevEngine::Physics {
 			void Deactivate();
 			void Update(double deltaTime) {};
 			void Start();
-			void TransformUpdate(bool position, bool rotation, bool scale);
-			void LocalTransformUpdate(bool position, bool rotation, bool scale);
+			void TransformUpdate(bool position, bool rotation, bool scale, bool fromLocal = false);
 		public:
 			YAML::Node Export(YAML::Node node) const;
 			Utilities::Vector3 GetScale()  { return scale; }
@@ -77,5 +77,14 @@ namespace StevEngine::Physics {
 		public:
 			ModelCollider(Utilities::Model model, bool convex = true, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1,1,1));
 		};
+
+	//Collider events
+	class ColliderUpdateEvent : public Event {
+		public:
+			ColliderUpdateEvent(Collider* collider) : collider(collider) {}
+			const std::string GetEventType() const override { return GetStaticEventType(); };
+			static const std::string GetStaticEventType() {  return "ColliderUpdateEvent"; }
+			Collider* collider;
+	};
 }
 #endif

@@ -1,8 +1,8 @@
 #ifdef StevEngine_AUDIO
 #include "Emitter.hpp"
 #include "audio/System.hpp"
+#include "main/ResourceManager.hpp"
 #include "scenes/Component.hpp"
-#include "scenes/GameObject.hpp"
 
 #include <SDL.h>
 #include <SDL_mixer.h>

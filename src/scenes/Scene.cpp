@@ -3,6 +3,7 @@
 #include "scenes/Component.hpp"
 #include "utilities/ID.hpp"
 
+#include <memory>
 #include <yaml-cpp/yaml.h>
 
 #include <format>
@@ -13,13 +14,13 @@ using namespace StevEngine::Utilities;
 namespace StevEngine {
 	ID Scene::CreateObject() {
 		ID id;
-		gameObjects.insert(std::make_pair(id, GameObject(id, "GameObject", name)));
-		if(active) gameObjects.at(id).Start();
+		gameObjects.insert({id, GameObject(id, "GameObject", name)});
+		if(active) GetObject(id)->Start();
 		return id;
 	}
 	ID Scene::CreateObject(std::string name, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) {
 		ID id;
-		gameObjects.insert(std::make_pair(id, GameObject(id, name, this->name)));
+		gameObjects.insert({id, GameObject(id, name, this->name)});
 		GameObject* object = GetObject(id);
 		object->position = position;
 		object->rotation = rotation;
@@ -33,16 +34,20 @@ namespace StevEngine {
 	}
 	Utilities::ID Scene::CreateObject(YAML::Node node) {
 		Utilities::ID id = node["id"] ? node["id"].as<Utilities::ID>() : Utilities::ID();
-		gameObjects.insert(std::make_pair(id, GameObject(id, "GameObject", name)));
-		GameObject* object = &gameObjects.at(id);
+		gameObjects.insert({id, GameObject(id, "GameObject", name)});
+		GameObject* object = GetObject(id);
 		object->Import(node);
 		if(active) object->Start();
 		return id;
 	}
+	GameObject* Scene::GetObject(Utilities::ID id) {
+		if(!gameObjects.contains(id)) return nullptr;
+		return &gameObjects.at(id);
+	}
 	std::vector<ID> Scene::GetAllObjects() {
 		std::vector<ID> keys;
-		for(std::map<ID, GameObject>::iterator it = gameObjects.begin(); it != gameObjects.end(); ++it) {
-			keys.push_back(it->first);
+		for(auto it = gameObjects.begin(); it != gameObjects.end(); ++it) {
+			keys.push_back(it->second.Id());
 		}
 		return keys;
 	}
@@ -67,10 +72,9 @@ namespace StevEngine {
 		node["name"] = name;
 		node["camera"] = activeCamera->GetParent()->Id();
 
-		for (ID id : GetAllObjects()) {
-			GameObject* object = &gameObjects.at(id);
-			if(!object->parent.IsNull()) continue;
-			node["objects"].push_back(object->Export());
+		for(auto&[id, object] : gameObjects) {
+			if(!object.parent.IsNull()) continue;
+			node["objects"].push_back(object.Export());
 		}
 
 		YAML::Emitter out;
@@ -82,14 +86,14 @@ namespace StevEngine {
 	#endif
 	void Scene::Activate() {
 		active = true;
-		for (ID id : GetAllObjects()) {
-			gameObjects.at(id).Start();
+		for(auto&[id, object] : gameObjects) {
+			object.Start();
 		}
 	}
 	void Scene::Deactivate() {
 		active = false;
-		for (ID id : GetAllObjects()) {
-			gameObjects.at(id).Deactivate();
+		for(auto&[id, object] : gameObjects) {
+			object.Deactivate();
 		}
 	}
 }

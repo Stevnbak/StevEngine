@@ -16,6 +16,7 @@ namespace StevEngine {
 		public:
 			virtual void Execute(const Event& e) = 0;
 			virtual std::string GetType() const = 0;
+			virtual ~EventHandlerBase() {}
 	};
 
 	template<typename EventType>
@@ -28,6 +29,7 @@ namespace StevEngine {
 					handler(static_cast<const EventType&>(event));
 				}
 			}
+			~EventHandler() {}
 		private:
 			std::string GetType() const override { return handlerType; }
 			EventFunction<EventType> handler;
@@ -37,12 +39,12 @@ namespace StevEngine {
 	class EventManager {
 		public:
 			template<typename EventType> std::string Subscribe(EventFunction<EventType> handler) {
-				return Subscribe(EventType::GetStaticEventType(), std::make_unique<EventHandler<EventType>>(EventHandler<EventType>(handler)));
+				return Subscribe(EventType::GetStaticEventType(), new EventHandler<EventType>(handler));
 			}
 			void Unsubscribe(const std::string eventId, const std::string handlerName);
 			void Publish(const Event& event);
 		private:
-			std::string Subscribe(const std::string eventId, std::unique_ptr<EventHandlerBase> handler);
-			std::unordered_map<std::string, std::vector<std::unique_ptr<EventHandlerBase>>> subscribers;
+			std::string Subscribe(const std::string eventId, EventHandlerBase* handler);
+			std::unordered_map<std::string, std::vector<EventHandlerBase*>> subscribers;
 	};
 }

@@ -174,7 +174,7 @@ int main(int argc, char** argv) {
 		ID id = scene->CreateObject("Cube", Utilities::Vector3(0, 4, 0), Utilities::Quaternion(), Utilities::Vector3(2.0));
 		GameObject* cube = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
-		Render::RenderComponent* primitive = cube->AddComponent(new SpherePrimitive(Vector3(), Quaternion(), Vector3(1.0), TextureType::REPEAT));
+		Render::RenderComponent* primitive = cube->AddComponent(new CubePrimitive(Vector3(), Quaternion(), Vector3(1.0), TextureType::REPEAT));
 		primitive->SetColor(Color(255, 255, 255, 255));
 		primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
 		cube->AddComponent(new Rotate(Vector3::up));
@@ -184,6 +184,8 @@ int main(int argc, char** argv) {
 		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
 		//Physics::RigidBody* rb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		#endif
+		GameObject* parent = scene->GetObject(scene->CreateObject("CubeParent", Utilities::Vector3(5, 0, 0), Utilities::Quaternion(), Utilities::Vector3(1.0)));
+		parent->AddChild(id);
 	}
 	{
 		ID id = scene->CreateObject("Sphere", Utilities::Vector3(3, 3, 0), Utilities::Quaternion(), Utilities::Vector3(2.0));

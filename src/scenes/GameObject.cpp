@@ -1,5 +1,6 @@
 #include "GameObject.hpp"
 #include "main/DataManager.hpp"
+#include "main/EventSystem.hpp"
 #include "main/Log.hpp"
 #include "scenes/SceneManager.hpp"
 #include "scenes/Component.hpp"
@@ -54,38 +55,26 @@ namespace StevEngine {
 	}
 
 	//Transform
-	Utilities::Vector3 GameObject::GetPosition() { return position; }
-	Utilities::Quaternion GameObject::GetRotation() { return rotation; }
-	Utilities::Vector3 GameObject::GetScale() { return scale; }
+	Utilities::Vector3 GameObject::GetPosition() const { return position; }
+	Utilities::Quaternion GameObject::GetRotation() const { return rotation; }
+	Utilities::Vector3 GameObject::GetScale() const { return scale; }
 	void GameObject::SetPosition(Utilities::Vector3 position, bool announce) {
 		this->position = position;
-		if(announce)
-			TransformUpdate(true, false, false);
+		if(announce) events.Publish(TransformUpdateEvent(true, false, false));
 	}
 	void GameObject::SetRotation(Utilities::Quaternion rotation, bool announce) {
 		this->rotation = rotation;
-		if(announce)
-			TransformUpdate(false, true, false);
+		if(announce) events.Publish(TransformUpdateEvent(false, true, false));
 	}
 	void GameObject::SetScale(Utilities::Vector3 scale, bool announce) {
 		this->scale = scale;
-		if(announce)
-			TransformUpdate(false, false, true);
+		if(announce) events.Publish(TransformUpdateEvent(false, false, true));
 	}
 	void GameObject::SetTransform(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, bool announce) {
 		this->position = position;
 		this->rotation = rotation;
 		this->scale = scale;
-		if(announce)
-			TransformUpdate(true, true, true);
-	}
-	void GameObject::TransformUpdate(bool position, bool rotation, bool scale) {
-		for (int i = 0; i < components.size(); i++) {
-			components[i]->TransformUpdate(position, rotation, scale);
-		}
-		for (int i = 0; i < children.size(); i++) {
-			sceneManager.GetScene(scene)->GetObject(children[i])->TransformUpdate(position, rotation, scale);
-		}
+		if(announce) events.Publish(TransformUpdateEvent(true, true, true));
 	}
 	Utilities::Vector3 GameObject::GetWorldPosition() {
 		if(!parent.IsNull()) {
@@ -104,7 +93,7 @@ namespace StevEngine {
 	}
 	Utilities::Vector3 GameObject::GetWorldScale() {
 		if(!parent.IsNull()) {
-			return Utilities::Vector3::CombineScale(sceneManager.GetScene(scene)->GetObject(parent)->GetWorldScale(), scale);
+			return Utilities::Vector3::CombineScale(GetParent()->GetWorldScale(), scale);
 		} else {
 			return scale;
 		}
@@ -121,7 +110,7 @@ namespace StevEngine {
 	//Children functions
 	int GameObject::AddChild(Utilities::ID gameObject) {
 		children.push_back(gameObject);
-		sceneManager.GetScene(scene)->GetObject(gameObject)->parent = gameObject;
+		sceneManager.GetScene(scene)->GetObject(gameObject)->parent = id;
 		return children.size() - 1;
 	}
 	void GameObject::RemoveChild(int index) {

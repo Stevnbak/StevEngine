@@ -1,4 +1,6 @@
 #pragma once
+#include "main/EventSystem.hpp"
+#include "utilities/ID.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Quaternion.hpp"
 #include "main/Log.hpp"
@@ -15,21 +17,32 @@
 #include <type_traits>
 
 namespace StevEngine {
+	//Child Events
+	template<typename EventType>
+	class ChildEvent : public Event {
+		public:
+			ChildEvent(const EventType& event) : event(event) {};
+			const EventType& event;
+			const std::string GetEventType() const override { return GetStaticEventType(); };
+			static const std::string GetStaticEventType() {  return "Child" + EventType::GetStaticEventType(); }
+	};
+
+	//Object class
 	class GameObject final {
 		friend class SceneManager;
 		friend class Scene;
 		//Basic properties
 		public:
 			std::string name;
-			Utilities::ID Id() { return id; }
+			Utilities::ID Id() const { return id; }
 		private:
 			Utilities::ID id;
 			std::string scene;
 		//Transform
 		public:
-			Utilities::Vector3 GetPosition();
-			Utilities::Quaternion GetRotation();
-			Utilities::Vector3 GetScale();
+			Utilities::Vector3 GetPosition() const;
+			Utilities::Quaternion GetRotation() const;
+			Utilities::Vector3 GetScale() const;
 			//Update properties
 			void SetPosition(Utilities::Vector3 position, bool announce = true);
 			void SetRotation(Utilities::Quaternion rotation, bool announce = true);
@@ -43,7 +56,6 @@ namespace StevEngine {
 			Utilities::Vector3 position = Utilities::Vector3();
 			Utilities::Quaternion rotation = Utilities::Quaternion();
 			Utilities::Vector3 scale = Utilities::Vector3(1,1,1);
-			void TransformUpdate(bool position, bool rotation, bool scale);
 		//Main functions
 		public:
 			~GameObject();
@@ -59,6 +71,27 @@ namespace StevEngine {
 			void Draw(glm::mat4x4 transform);
 			GameObject();
 			GameObject(Utilities::ID id, std::string name, std::string scene);
+		//Events
+		public:
+			template<typename EventType>
+			std::string Subscribe(EventFunction<EventType> handler, bool allowFromChild = true) {
+				if(allowFromChild) events.Subscribe<ChildEvent<EventType>>([handler] (ChildEvent<EventType> e) { handler(e.event); });
+				return events.Subscribe<EventType>(handler);
+			}
+			template<typename EventType>
+			void Publish(const EventType& event) {
+				events.Publish(event);
+				GameObject* parent = GetParent();
+				if(parent != nullptr) parent->ChildPublish<EventType>(event, id);
+			}
+		private:
+			template<typename EventType>
+			void ChildPublish(const EventType& event, Utilities::ID object) {
+				events.Publish(ChildEvent<EventType>(event));
+				GameObject* parent = GetParent();
+				if(parent != nullptr) parent->ChildPublish<EventType>(event, object);
+			}
+			EventManager events;
 		//Children functions
 		public:
 			int AddChild(Utilities::ID gameObjectID);
@@ -166,5 +199,15 @@ namespace StevEngine {
 				}
 				Log::Error(std::format("No component of type \"{}\" found on object {}", typeid(T).name(), id.GetString()), true);
 			}
+	};
+
+	//Transform Events
+	class TransformUpdateEvent : public Event {
+		public:
+			TransformUpdateEvent(bool position = true, bool rotation = true, bool scale = true)
+		 		: position(position), rotation(rotation), scale(scale) {}
+			const std::string GetEventType() const override { return GetStaticEventType(); };
+			static const std::string GetStaticEventType() {  return "TransformUpdateEvent"; }
+			bool position, rotation, scale;
 	};
 }

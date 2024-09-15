@@ -1,6 +1,7 @@
 #include "main/Engine.hpp"
 #ifdef StevEngine_PHYSICS
 #include "RigidBody.hpp"
+#include "physics/Colliders.hpp"
 #include "physics/System.hpp"
 #include "physics/Layers.hpp"
 #include "main/Log.hpp"
@@ -18,6 +19,7 @@ namespace StevEngine::Physics {
 	void RigidBody::Start() {
 		//Create shape
 		RefreshShape();
+
 		//Create new body
 		GameObject* parent = GetParent();
 		JPH::BodyCreationSettings bodySettings = JPH::BodyCreationSettings(shape, parent->GetWorldPosition() - shape->GetCenterOfMass(), parent->GetWorldRotation(), motionType, layer->id);
@@ -34,12 +36,14 @@ namespace StevEngine::Physics {
 			massProperties.SetMassAndInertiaOfSolidBox(shape->GetLocalBounds().GetSize(), 1000.0);
 		}
 		massProperties.ScaleToMass(mass);
-
 		bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
 		bodySettings.mMassPropertiesOverride = massProperties;
 		//	Create body from settings
 		body = physics.GetBodyInterface()->CreateBody(bodySettings);
 		physics.GetBodyInterface()->AddBody(body->GetID(), JPH::EActivation::Activate);
+
+		//Events
+		parent->Subscribe<ColliderUpdateEvent>([this](ColliderUpdateEvent) { RefreshShape(); });
 	}
 	void RigidBody::Deactivate() {
 		if(body) physics.GetBodyInterface()->DestroyBody(body->GetID());

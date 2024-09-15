@@ -1,6 +1,5 @@
 #ifdef StevEngine_PHYSICS
 #include "Colliders.hpp"
-#include "RigidBody.hpp"
 #include "scenes/Scene.hpp"
 #include "scenes/GameObject.hpp"
 #include "scenes/Component.hpp"
@@ -8,7 +7,6 @@
 #include "utilities/Model.hpp"
 #include "utilities/Quaternion.hpp"
 #include "utilities/Vector3.hpp"
-
 
 #include <stdexcept>
 #include <algorithm>
@@ -39,9 +37,12 @@ namespace StevEngine::Physics {
 		this->scale = scale;
 	}
 	void Collider::Start() {
+		GameObject* parent = GetParent();
 		//Set correct scale for shape
-		Utilities::Vector3 abs = GetParent()->GetWorldScale();
+		Utilities::Vector3 abs = parent->GetWorldScale();
 		if(rawShape) this->shape = new JPH::ScaledShape(rawShape, Utilities::Vector3(scale.X * abs.X, scale.Y * abs.Y, scale.Z * abs.Z));
+		//Events
+		parent->Subscribe<TransformUpdateEvent>([this] (TransformUpdateEvent e) { this->TransformUpdate(e.position, e.rotation, e.scale);});
 	}
 	void Collider::Deactivate()	{
 		if(shape) shape->Release();
@@ -53,53 +54,38 @@ namespace StevEngine::Physics {
 	void Collider::Draw(glm::mat4x4 transform) {
 
 	}
-	void Collider::TransformUpdate(bool position, bool rotation, bool scale) {
-		GameObject* latest = GetParent();
+	void Collider::TransformUpdate(bool position, bool rotation, bool scale, bool fromLocal) {
+		GameObject* parent = GetParent();
 		//Re scale collider
 		if(scale) {
-			Utilities::Vector3 abs = latest->GetWorldScale();
+			Utilities::Vector3 abs = parent->GetWorldScale();
 			this->shape = new JPH::ScaledShape(rawShape, Utilities::Vector3(this->scale.X * abs.X, this->scale.Y * abs.Y, this->scale.Z * abs.Z));
-		} else {
-			//Don't tell current rigidbody if it gets the same position or rotation change
-			latest = latest->GetParent();
+		} else if(!fromLocal) {
+			//Don't tell current parent if it gets the same position or rotation change
+			parent = parent->GetParent();
 		}
-		//Tell all related rigidbodies to update shape
-		while(latest != 0) {
-			RigidBody* rb = latest->GetComponent<RigidBody>(false);
-			if(rb != nullptr) {
-				rb->RefreshShape();
-			}
-			latest = latest->GetParent();
-		}
-	}
-	void Collider::LocalTransformUpdate(bool position, bool rotation, bool scale) {
-		TransformUpdate(position, rotation, scale);
-		if(!scale) {
-			RigidBody* rb = GetParent()->GetComponent<RigidBody>(false);
-			if(rb != nullptr) {
-				rb->RefreshShape();
-			}
-		}
+		//Publish shape updated
+		if(parent != nullptr) parent->Publish(ColliderUpdateEvent(this));
 	}
 
 	//Update transform
 	void Collider::SetScale(Utilities::Vector3 scale) {
 		this->scale = scale;
-		LocalTransformUpdate(false, false, true);
+		TransformUpdate(false, false, true, true);
 	}
 	void Collider::SetRotation(Utilities::Quaternion rotation) {
 		this->rotation = rotation;
-		LocalTransformUpdate(false, true, false);
+		TransformUpdate(false, true, false, true);
 	}
 	void Collider::SetPosition(Utilities::Vector3 position) {
 		this->position = position;
-		LocalTransformUpdate(true, false, false);
+		TransformUpdate(true, false, false, true);
 	}
 	void Collider::SetTransform(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) {
 		this->scale = scale;
 		this->rotation = rotation;
 		this->position = position;
-		LocalTransformUpdate(true, true, true);
+		TransformUpdate(true, true, true, true);
 	}
 	//Cube collider
 	CubeCollider::CubeCollider(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
