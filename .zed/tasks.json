@@ -26,7 +26,16 @@
 	{
 		"label": "start",
 		"type": "shell",
-		"command": "make && ./debug",
+		"command": "make && ./debug_development",
+		"cwd": "$ZED_WORKTREE_ROOT/build",
+		"reveal": "never",
+		"hide": "never",
+		"allow_concurrent_runs": true
+	},
+	{
+		"label": "test",
+		"type": "shell",
+		"command": "make && ./debug_performance",
 		"cwd": "$ZED_WORKTREE_ROOT/build",
 		"reveal": "never",
 		"hide": "never",

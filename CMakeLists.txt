@@ -118,10 +118,10 @@ else()
 	target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2)
 	if (WIN32)
 		add_custom_command(
-												TARGET ${PROJECT_NAME} POST_BUILD
-												COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2::SDL2>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
-												VERBATIM
-								)
+			TARGET ${PROJECT_NAME} POST_BUILD
+			COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2::SDL2>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+			VERBATIM
+		)
 	endif()
 endif()
 
@@ -131,10 +131,10 @@ if(USE_AUDIO)
 	target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_mixer::SDL2_mixer)
 	if (WIN32)
 		add_custom_command(
-												TARGET ${PROJECT_NAME} POST_BUILD
-												COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2_mixer::SDL2_mixer>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
-												VERBATIM
-								)
+			TARGET ${PROJECT_NAME} POST_BUILD
+			COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2_mixer::SDL2_mixer>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+			VERBATIM
+		)
 	endif()
 endif()
 
@@ -146,10 +146,10 @@ if(USE_RENDERER_GL)
 		target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image::SDL2_image)
 
 		add_custom_command(
-												TARGET ${PROJECT_NAME} POST_BUILD
-												COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2_image::SDL2_image>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
-												VERBATIM
-								)
+			TARGET ${PROJECT_NAME} POST_BUILD
+			COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2_image::SDL2_image>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+			VERBATIM
+		)
 	else()
 		target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image)
 	endif()
@@ -178,20 +178,25 @@ target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
 target_include_directories(${PROJECT_NAME} PUBLIC libs/uuidv7-h)
 
 # Debug executable
-option(DEBUG_EXECUTABLE "Build the debug program for testing the engine." OFF)
+option(DEBUG_EXECUTABLE "Build the debug programs for testing the engine." OFF)
 if(DEBUG_EXECUTABLE)
-	# debug executable
-	add_executable(debug debug/main.cpp)
-	target_link_libraries(debug PRIVATE ${PROJECT_NAME})
-	# embed resources
-	include(${CMAKE_CURRENT_SOURCE_DIR}/libs/CMRC/CMakeRC.cmake)
-	file(GLOB_RECURSE ASSETS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/debug/assets/*")
-	cmrc_add_resource_library(debug_assets ${ASSETS})
-	target_link_libraries(debug PRIVATE debug_assets)
-	#Windows
-	if(WIN32)
-		set_property(TARGET debug_assets PROPERTY MSVC_RUNTIME_LIBRARY ${MSVC_LIBRARY})
-		set_property(TARGET debug PROPERTY MSVC_RUNTIME_LIBRARY ${MSVC_LIBRARY})
-		set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT debug)
-	endif()
+	set(executables "development" "performance")
+	FOREACH (executable IN LISTS executables)
+		# debug executables
+		file(GLOB_RECURSE ${executable}_src CONFIGURE_DEPENDS "debug/${executable}/*.?pp")
+		add_executable(debug_${executable} ${${executable}_src})
+		target_link_libraries(debug_${executable} PRIVATE ${PROJECT_NAME})
+		# embed resources
+		include(${CMAKE_CURRENT_SOURCE_DIR}/libs/CMRC/CMakeRC.cmake)
+		file(GLOB_RECURSE ASSETS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/debug/${executable}/assets/*")
+		cmrc_add_resource_library(debug_${executable}_assets ${ASSETS})
+		target_link_libraries(debug_${executable} PRIVATE debug_${executable}_assets)
+		#Windows
+		if(WIN32)
+			set_property(TARGET debug_${executable}_assets PROPERTY MSVC_RUNTIME_LIBRARY ${MSVC_LIBRARY})
+			set_property(TARGET debug_${executable} PROPERTY MSVC_RUNTIME_LIBRARY ${MSVC_LIBRARY})
+			set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT debug_${executable})
+		endif()
+	ENDFOREACH()
 endif()
+

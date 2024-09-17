@@ -168,7 +168,7 @@ These options are:
   Debug symbols will only be available when built with the CMAKE_BUILD_TYPE set to "Debug".
   Whether built as Debug or Release will be passed along to dependencies such as Jolt.
 
-- **Debug executable**
+- **Debug executables**
 
   The debug executable can be enabled through setting the build option "DEBUG_EXECUTABLE" to either ON.
 

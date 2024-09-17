@@ -3,7 +3,7 @@
 .cache
 
 # Project
-build/*
+build
 out/*
 links.txt
 

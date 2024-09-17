@@ -25,7 +25,7 @@
 #include <SDL_keycode.h>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <cmrc/cmrc.hpp>
-CMRC_DECLARE(debug_assets);
+CMRC_DECLARE(debug_development_assets);
 
 using namespace StevEngine;
 using namespace StevEngine::Utilities;
@@ -144,9 +144,9 @@ int main(int argc, char** argv) {
 	engine->GetEvents()->Subscribe<WindowResizeEvent>(eventTest);
 
 	//Add debug assets
-	auto fs = cmrc::debug_assets::get_filesystem();
+	auto fs = cmrc::debug_development_assets::get_filesystem();
 	for (std::string path : {"test.txt", "test_2.txt", "audio.wav", "cube.object", "Debug scene.scene", "Fox.stl", "cube.stl", "box.png", "prototype.png", "test_shader.frag"}) {
-		cmrc::file file = fs.open("debug/assets/" + path);
+		cmrc::file file = fs.open("debug/development/assets/" + path);
 		Resources::resourceManager.AddFile(path, file.begin(), file.size());
 	}
 
