@@ -1,10 +1,10 @@
-#include "scenes/Component.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "Lights.hpp"
 #include "visuals/render/System.hpp"
-#include "main/Engine.hpp"
 #include "scenes/GameObject.hpp"
+#include "scenes/Component.hpp"
 #include "utilities/Vector3.hpp"
+
 #include <glm/gtc/type_ptr.hpp>
 
 namespace StevEngine::Render {

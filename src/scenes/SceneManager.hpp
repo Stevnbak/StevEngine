@@ -16,7 +16,9 @@ namespace StevEngine {
 			void ActivateDefault();
 		private:
 			void Update(double deltaTime);
+			#ifdef StevEngine_SHOW_WINDOW
 			void Draw();
+			#endif
 			std::map<std::string, Scene> scenes;
 			std::string active;
 	};

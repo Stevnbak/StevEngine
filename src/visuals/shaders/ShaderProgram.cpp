@@ -1,11 +1,13 @@
-#include <algorithm>
-#include <string>
 #ifdef StevEngine_RENDERER_GL
 #include "ShaderProgram.hpp"
 #include "visuals/shaders/Shader.hpp"
 #include "main/Log.hpp"
 #include "utilities/ID.hpp"
+
 #include <glm/gtc/type_ptr.hpp>
+
+#include <algorithm>
+#include <string>
 
 namespace StevEngine::Render {
 	const char* vertexMainSource =

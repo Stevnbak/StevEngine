@@ -38,7 +38,9 @@ namespace StevEngine {
 			virtual void Start() {};
 			virtual void Deactivate() {};
 			virtual void Update(double deltaTime) {};
+			#ifdef StevEngine_SHOW_WINDOW
 			virtual void Draw(glm::mat4x4 transform) {};
+			#endif
 			void SetObject(GameObject* object, std::string scene);
 		//Events
 		protected:

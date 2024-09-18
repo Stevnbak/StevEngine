@@ -33,6 +33,7 @@ namespace StevEngine {
 	void GameObject::Update(double deltaTime) {
 		events.Publish(UpdateEvent(deltaTime));
 	}
+	#ifdef StevEngine_SHOW_WINDOW
 	void GameObject::Draw(glm::mat4x4 transform) {
 		//Move
 		transform = glm::translate(transform, glm::vec3(position.X, position.Y, position.Z));
@@ -43,6 +44,7 @@ namespace StevEngine {
 		//Event
 		events.Publish(DrawEvent(transform));
 	}
+	#endif
 
 	//Transform
 	Utilities::Vector3 GameObject::GetPosition() const { return position; }

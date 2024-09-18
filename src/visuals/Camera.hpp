@@ -1,4 +1,5 @@
 #pragma once
+#ifdef StevEngine_SHOW_WINDOW
 #include "scenes/Component.hpp"
 
 namespace StevEngine {
@@ -33,3 +34,4 @@ namespace StevEngine {
 		inline bool camera = CreateComponents::RegisterComponentType<Camera>("Camera");
 	}
 }
+#endif

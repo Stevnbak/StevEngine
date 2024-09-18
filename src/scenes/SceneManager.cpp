@@ -22,7 +22,9 @@ namespace StevEngine {
 	void SceneManager::Init() {
 		engine->GetEvents()->Subscribe<EngineStartEvent>([this] (EngineStartEvent) { this->ActivateDefault(); });
 		engine->GetEvents()->Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); });
+		#ifdef StevEngine_SHOW_WINDOW
 		engine->GetEvents()->Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { this->Draw(); });
+		#endif
 	}
 
 	void SceneManager::Update(double deltaTime) {
@@ -31,6 +33,7 @@ namespace StevEngine {
 			scene->GetObject(id)->Update(deltaTime);
 		}
 	}
+	#ifdef StevEngine_SHOW_WINDOW
 	void SceneManager::Draw() {
 		Scene* scene = sceneManager.GetActiveScene();
 		if (scene->activeCamera == nullptr) return;
@@ -38,6 +41,7 @@ namespace StevEngine {
 			scene->GetObject(id)->Draw(glm::mat4x4(1.0));
 		}
 	}
+	#endif
 
 	Scene* SceneManager::CreateScene(std::string name) {
 		if(scenes.contains(name)) throw std::runtime_error("Scene \"" + name + "\" already exists!");

@@ -57,6 +57,7 @@ namespace StevEngine {
 				void DrawFrame();
 				void SetViewSize(int WIDTH, int HEIGHT);
 				void SetVSync(bool vsync);
+				void SetFaceCulling(bool enable, GLenum face = GL_BACK, bool clockwise = false);
 				//From Lights
 				std::vector<Light*> lights;
 				unsigned int GetLightID(std::string type);

@@ -24,8 +24,10 @@ namespace StevEngine {
 			Utilities::ID CreateObject(Resources::Resource file);
 			Utilities::ID CreateObject(YAML::Node node);
 			GameObject* GetObject(Utilities::ID id);
+			#ifdef StevEngine_SHOW_WINDOW
 			Visuals::Camera* GetCamera() { return activeCamera; }
 			GameObject* GetCameraObject() { return activeCamera->GetParent(); }
+			#endif
 			std::vector<Utilities::ID> GetAllObjects();
 			std::vector<Utilities::ID> GetAllParentObjects();
 			void DestroyObject(Utilities::ID id);
@@ -38,7 +40,9 @@ namespace StevEngine {
 			bool active = false;
 			void Activate();
 			void Deactivate();
+			#ifdef StevEngine_SHOW_WINDOW
 			Visuals::Camera* activeCamera;
+			#endif
 			std::unordered_map<Utilities::ID, GameObject> gameObjects;
 	};
 }

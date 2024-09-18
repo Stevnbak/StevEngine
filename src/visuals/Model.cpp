@@ -1,15 +1,14 @@
-#include "scenes/Component.hpp"
-#include "utilities/Color.hpp"
-#include "visuals/render/Component.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "Model.hpp"
 #include "main/Engine.hpp"
 #include "main/Log.hpp"
 #include "main/ResourceManager.hpp"
+#include "scenes/Component.hpp"
 #include "visuals/render/Object.hpp"
-#include "utilities/Model.hpp"
+#include "visuals/render/Component.hpp"
 #include "visuals/Texture.hpp"
-
+#include "utilities/Model.hpp"
+#include "utilities/Color.hpp"
 #include <vector>
 
 using StevEngine::Utilities::Color;

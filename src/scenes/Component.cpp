@@ -15,7 +15,9 @@ namespace StevEngine {
 		this->scene = scene;
 		//Event listeners
 		handlers.push_back({object->Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); }), UpdateEvent::GetStaticEventType()});
+		#ifdef StevEngine_SHOW_WINDOW
 		handlers.push_back({object->Subscribe<DrawEvent>([this] (DrawEvent e) { this->Draw(e.transform);  }), DrawEvent::GetStaticEventType()});
+		#endif
 		handlers.push_back({object->Subscribe<DeactivateEvent>([this] (DeactivateEvent) { this->Deactivate();  }), DeactivateEvent::GetStaticEventType()});
 	}
 	GameObject* Component::GetParent() {

@@ -1,4 +1,3 @@
-
 #ifdef StevEngine_RENDERER_GL
 #include "Primitive.hpp"
 #include "visuals/render/Object.hpp"

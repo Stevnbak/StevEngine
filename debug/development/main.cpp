@@ -29,8 +29,9 @@ CMRC_DECLARE(debug_development_assets);
 
 using namespace StevEngine;
 using namespace StevEngine::Utilities;
-using namespace StevEngine::Visuals;
 
+#ifdef StevEngine_SHOW_WINDOW
+using namespace StevEngine::Visuals;
 class CameraController final : public Component {
 	public:
 		double movementSpeed = 10;
@@ -43,7 +44,6 @@ class CameraController final : public Component {
 		CameraController(YAML::Node node) : Component(node) {};
 };
 bool camController = CreateComponents::RegisterComponentType<CameraController>("CameraController");
-
 void CameraController::Update(double deltaTime) {
 	if (inputManager.cursorMode == CursorMode::Free) {
 		return;
@@ -93,6 +93,7 @@ void CameraController::Start() {
 		}
 	});
 }
+#endif
 
 class Rotate final : public Component {
 	public:
@@ -127,21 +128,19 @@ void mainUpdate(UpdateEvent event) {
 	model->SetRotation(model->GetRotation() * Quaternion::FromAngleAxis(1 * deltaTime, Vector3(0,1,0)));//*/
 }
 
-void eventTest(const StevEngine::WindowResizeEvent event) {
-	Log::Debug("Recieved window resize event with data: (w: " + std::to_string(event.width) + "; h: " + std::to_string(event.height) + ");");
-}
-
 //Create engine
 int main(int argc, char** argv) {
-	CreateEngine("Debug", {  .vsync = true, .fullscreen = false, .targetFPS = 100 });
+	CreateEngine("Debug", {
+		#ifdef StevEngine_SHOW_WINDOW
+		.vsync = true, .fullscreen = false,
+		#endif
+		.targetFPS = 100
+	});
 	engine->GetEvents()->Subscribe<UpdateEvent>(mainUpdate);
 	//Debug logging:
 	Log::Debug("Debug log");
 	Log::Warning("Warning log");
 	Log::Error("Error log");
-
-	//Event system
-	engine->GetEvents()->Subscribe<WindowResizeEvent>(eventTest);
 
 	//Add debug assets
 	auto fs = cmrc::debug_development_assets::get_filesystem();
@@ -244,10 +243,12 @@ int main(int argc, char** argv) {
 		#endif
 	}
 	//Add Camera controller
+	#ifdef StevEngine_SHOW_WINDOW
 	GameObject* camObj = scene->GetCameraObject();
 	camObj->AddComponent(new CameraController());
 	camObj->SetPosition(Utilities::Vector3(0, 4, 25));
 	camObj->SetRotation(Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward));
+	#endif
 
 	//Add test lights
 	#ifdef StevEngine_RENDERER_GL
@@ -265,10 +266,12 @@ int main(int argc, char** argv) {
 	Log::Debug(std::format("Ressource \"test_2.txt\": {}", Resources::resourceManager.GetFile("test_2.txt").GetStrData()));
 
 	//Use test shader
+	#ifdef StevEngine_RENDERER_GL
 	Render::ShaderProgram shader = Render::ShaderProgram(Render::FRAGMENT);
 	shader.AddShader(Render::Shader(Resources::resourceManager.GetFile("test_shader.frag").GetRawData(), Render::FRAGMENT));
 	//Render::render.AddGlobalShader(shader);
 	scene->GetObject(modelObject)->GetComponent<Render::RenderComponent>()->AddShader(shader);
+	#endif
 
 	//Test data manager
 	#ifdef StevEngine_PLAYER_DATA
@@ -288,6 +291,7 @@ int main(int argc, char** argv) {
 	#endif
 
 	//Test graphics settings
+	#ifdef StevEngine_SHOW_WINDOW
 	inputManager.GetEvents()->Subscribe<InputKeyDownEvent>([](InputKeyDownEvent event) {
 		if (event.key == SDLK_f) {
 			StevEngine::engine->SetFullscreen(!engine->GetGameSettings().fullscreen);
@@ -296,6 +300,7 @@ int main(int argc, char** argv) {
 			StevEngine::engine->SetVSync(!engine->GetGameSettings().vsync);
 		}
 	});
+	#endif
 
 	//Export scene
 	#ifdef StevEngine_PLAYER_DATA

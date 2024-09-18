@@ -63,7 +63,9 @@ namespace StevEngine {
 	}
 	Scene::Scene(std::string name) : name(name) {
 		//Create main camera
+		#ifdef StevEngine_SHOW_WINDOW
 		activeCamera = GetObject(CreateObject("Main Camera"))->AddComponent(new Visuals::Camera());
+		#endif
 	}
 	Scene::Scene(YAML::Node node) : name(node["name"].as<std::string>()) {
 		//Create objects
@@ -71,13 +73,17 @@ namespace StevEngine {
 			CreateObject(obj);
 		}
 		//Set camera
+		#ifdef StevEngine_SHOW_WINDOW
 		activeCamera = GetObject(node["camera"].as<Utilities::ID>())->GetComponent<Visuals::Camera>();
+		#endif
 	}
 	#ifdef StevEngine_PLAYER_DATA
 	void Scene::ExportToFile() {
 		YAML::Node node;
 		node["name"] = name;
+		#ifdef StevEngine_SHOW_WINDOW
 		node["camera"] = activeCamera->GetParent()->Id();
+		#endif
 
 		for(auto&[id, object] : gameObjects) {
 			if(!object.parent.IsNull()) continue;

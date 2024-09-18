@@ -1,3 +1,4 @@
+#ifdef StevEngine_SHOW_WINDOW
 #include "Camera.hpp"
 #include "main/Engine.hpp"
 #include "scenes/Component.hpp"
@@ -65,3 +66,4 @@ namespace StevEngine::Visuals {
 		}
 	}
 }
+#endif

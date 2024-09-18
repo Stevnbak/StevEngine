@@ -68,7 +68,9 @@ namespace StevEngine {
 			void Start();
 			void Deactivate();
 			void Update(double deltaTime);
+			#ifdef StevEngine_SHOW_WINDOW
 			void Draw(glm::mat4x4 transform);
+			#endif
 			GameObject();
 			GameObject(Utilities::ID id, std::string name, std::string scene);
 		//Events

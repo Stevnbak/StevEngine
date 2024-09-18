@@ -149,7 +149,12 @@ namespace StevEngine {
 			//Log::Debug(std::format("Current FPS: {}; frameTime: {}; Clock: {}", std::round(currentFPS), frameTime, newTime), true);
 
 			//Wait for next frame
-			if (gameSettings.targetFPS != -1 && !gameSettings.vsync) {
+			#ifdef StevEngine_SHOW_WINDOW
+				bool vsync = gameSettings.vsync;
+			#else
+				bool vsync = false;
+			#endif
+			if (gameSettings.targetFPS != -1 && !vsync) {
 				double target = (1000.0 / gameSettings.targetFPS);
 				if(frameMs < target) SDL_Delay(target - frameMs);
 			}
@@ -172,15 +177,19 @@ namespace StevEngine {
 	}
 	#ifdef StevEngine_SETTINGS
 	void Engine::SetGameSettingsFromFile() {
+		#ifdef StevEngine_SHOW_WINDOW
 		if(settings.HasValue("VSync")) gameSettings.vsync = settings.Read<bool>("VSync");
 		if(settings.HasValue("Fullscreen")) gameSettings.fullscreen = settings.Read<bool>("Fullscreen");
 		if(settings.HasValue("WindowWidth")) gameSettings.WIDTH = settings.Read<int>("WindowWidth");
 		if(settings.HasValue("WindowHeight")) gameSettings.HEIGHT = settings.Read<int>("WindowHeight");
+		#endif
 		if(settings.HasValue("TargetFPS")) gameSettings.targetFPS = settings.Read<int>("TargetFPS");
 		//Audio
+		#ifdef StevEngine_AUDIO
 		if(settings.HasValue("audio.device")) Audio::audio.SetAudioDevice(settings.Read<std::string>("audio.device").c_str());
 		if(settings.HasValue("audio.soundVolume")) Audio::audio.SetSoundsVolume(settings.Read<double>("audio.soundVolume"));
 		if(settings.HasValue("audio.musicVolume")) Audio::audio.SetMusicVolume(settings.Read<double>("audio.musicVolume"));
+		#endif
 	}
 	#endif
 	void Engine::SetSettings(GameSettings newSettings) {

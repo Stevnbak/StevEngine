@@ -65,6 +65,7 @@ namespace StevEngine {
 		 	Log::Debug(std::format("OpenGL Renderer: {}", (char *)glGetString(GL_RENDERER)), true);
 			//Enable GL options
 			glEnable(GL_DEPTH_TEST);
+
 			//Clear viewport
 			glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
 			//Buffers
@@ -92,7 +93,7 @@ namespace StevEngine {
 			GameSettings gameSettings = engine->GetGameSettings();
 			SetViewSize(gameSettings.WIDTH, gameSettings.HEIGHT);
 			SetVSync(gameSettings.vsync);
-
+			SetFaceCulling(true);
 			//Events
 			engine->GetEvents()->Subscribe<WindowResizeEvent>([this] (WindowResizeEvent i) { return this->SetViewSize (i.width, i.height); });
 			engine->GetEvents()->Subscribe<WindowVSyncEvent>([this] (WindowVSyncEvent i) { return this->SetVSync(i.value); });
@@ -107,6 +108,16 @@ namespace StevEngine {
 
 		void RenderSystem::SetVSync(bool vsync) {
 			SDL_GL_SetSwapInterval(vsync);
+		}
+
+		void RenderSystem::SetFaceCulling(bool enable, GLenum face, bool clockwise) {
+			if(enable) {
+				glEnable(GL_CULL_FACE);
+				glCullFace(face);
+				glFrontFace(clockwise ? GL_CW : GL_CCW);
+			} else {
+				glDisable(GL_CULL_FACE);
+			}
 		}
 
 		void RenderSystem::ResetGlobalShader(ShaderType type) {
