@@ -1,4 +1,5 @@
 #pragma once
+#include "main/EventSystem.hpp"
 #include "main/Log.hpp"
 #include "utilities/ID.hpp"
 
@@ -38,7 +39,10 @@ namespace StevEngine {
 			virtual void Deactivate() {};
 			virtual void Update(double deltaTime) {};
 			virtual void Draw(glm::mat4x4 transform) {};
-			void SetObject(Utilities::ID object, std::string scene);
+			void SetObject(GameObject* object, std::string scene);
+		//Events
+		protected:
+			std::vector<std::pair<Utilities::ID, std::string>> handlers;
 	};
 
 	class CreateComponents {

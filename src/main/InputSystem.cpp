@@ -47,7 +47,7 @@ namespace StevEngine {
 	}
 	void InputManager::Init() {
 		engine->GetEvents()->Subscribe<SDLEvent>([this] (SDLEvent e) { this->HandleSDLEvent(e); });
-		engine->GetEvents()->Subscribe<EngineUpdateEvent>([this] (EngineUpdateEvent e) { this->Update(e.deltaTime); });
+		engine->GetEvents()->Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); });
 	}
 	//Key Inputs:
 	bool InputManager::IsKeyPressed(SDL_Keycode key) {

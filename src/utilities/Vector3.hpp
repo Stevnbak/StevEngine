@@ -39,12 +39,12 @@ namespace StevEngine {
 				Vector3  operator   /   (const double& other) const;
 				bool	 operator   ==  (const Vector3& other) const;
 				//Conversions
-				explicit operator Vector2();
-				explicit operator std::string();
-				explicit operator glm::vec3();
+				explicit operator Vector2() const;
+				explicit operator std::string() const;
+				explicit operator glm::vec3() const;
 				#ifdef StevEngine_PHYSICS
-				operator JPH::DVec3();
-				operator JPH::Vec3();
+				operator JPH::DVec3() const;
+				operator JPH::Vec3() const;
 				Vector3& operator= (const JPH::Vec3& other);
 				Vector3& operator= (const JPH::DVec3& other);
 				Vector3(const JPH::Vec3& other);

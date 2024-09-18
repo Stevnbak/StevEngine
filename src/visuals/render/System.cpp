@@ -143,7 +143,7 @@ namespace StevEngine {
 			glUseProgramStages(shaderPipeline, GL_FRAGMENT_SHADER_BIT, fragmentShaderProgram.location);
 		}
 
-		void RenderSystem::DrawObject(Object object, glm::mat4x4 transform, RenderQueue queue) {
+		void RenderSystem::DrawObject(const Object& object, glm::mat4x4 transform, RenderQueue queue) {
 			queues[queue].push_back({object, transform});
 		};
 
@@ -198,7 +198,7 @@ namespace StevEngine {
 		}
 
 		void RenderSystem::Draw(RenderObject renderObject) {
-			Object object = renderObject.object;
+			const Object& object = renderObject.object;
 			glm::mat4x4 transform = renderObject.transform;
 			//Object specific shaders
 			unsigned int pipeline;
@@ -206,9 +206,9 @@ namespace StevEngine {
 			if(usingCustomShaders) {
 				glGenProgramPipelines(1, &pipeline);
 				glBindProgramPipeline(pipeline);
-				if(object.shaders.contains(VERTEX)) glUseProgramStages(pipeline, GL_VERTEX_SHADER_BIT, object.shaders[VERTEX].location);
+				if(object.shaders.contains(VERTEX)) glUseProgramStages(pipeline, GL_VERTEX_SHADER_BIT, object.shaders.at(VERTEX).location);
 				else glUseProgramStages(pipeline, GL_VERTEX_SHADER_BIT, vertexShaderProgram.location);
-				if(object.shaders.contains(FRAGMENT)) glUseProgramStages(pipeline, GL_FRAGMENT_SHADER_BIT, object.shaders[FRAGMENT].location);
+				if(object.shaders.contains(FRAGMENT)) glUseProgramStages(pipeline, GL_FRAGMENT_SHADER_BIT, object.shaders.at(FRAGMENT).location);
 				else glUseProgramStages(pipeline, GL_FRAGMENT_SHADER_BIT, vertexShaderProgram.location);
 			}
 			//Update transform

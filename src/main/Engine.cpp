@@ -136,7 +136,7 @@ namespace StevEngine {
 
 			//Run update
 			double frameSeconds = frameMs / 1000.0;
-			events.Publish(EngineUpdateEvent(frameSeconds));
+			events.Publish(UpdateEvent(frameSeconds));
 
 			//Draw the frame
 			#ifdef StevEngine_SHOW_WINDOW

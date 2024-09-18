@@ -27,6 +27,7 @@ namespace StevEngine {
 			Visuals::Camera* GetCamera() { return activeCamera; }
 			GameObject* GetCameraObject() { return activeCamera->GetParent(); }
 			std::vector<Utilities::ID> GetAllObjects();
+			std::vector<Utilities::ID> GetAllParentObjects();
 			void DestroyObject(Utilities::ID id);
 			#ifdef StevEngine_PLAYER_DATA
 			void ExportToFile();

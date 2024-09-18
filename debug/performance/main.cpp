@@ -43,7 +43,7 @@ void SpawnPhysicsObjects(Scene* scene) {
 
 int main(int argc, char** argv) {
 	CreateEngine("Performance", { .vsync = false, .fullscreen = false, .WIDTH = 1920, .HEIGHT = 1080, .targetFPS = -1 });
-	engine->GetEvents()->Subscribe<EngineUpdateEvent>([](EngineUpdateEvent) { Log::Debug("FPS: " + std::to_string(engine->getFPS())); });
+	engine->GetEvents()->Subscribe<UpdateEvent>([](UpdateEvent) { Log::Debug("FPS: " + std::to_string(engine->getFPS())); });
 
 	Scene* scene = sceneManager.CreateScene("Physics test");
 	SpawnPhysicsObjects(scene);

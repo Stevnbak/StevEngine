@@ -42,7 +42,7 @@ namespace StevEngine::Physics {
 		Utilities::Vector3 abs = parent->GetWorldScale();
 		if(rawShape) this->shape = new JPH::ScaledShape(rawShape, Utilities::Vector3(scale.X * abs.X, scale.Y * abs.Y, scale.Z * abs.Z));
 		//Events
-		parent->Subscribe<TransformUpdateEvent>([this] (TransformUpdateEvent e) { this->TransformUpdate(e.position, e.rotation, e.scale);});
+		handlers.push_back({parent->Subscribe<TransformUpdateEvent>([this] (TransformUpdateEvent e) { this->TransformUpdate(e.position, e.rotation, e.scale);}), TransformUpdateEvent::GetStaticEventType() });
 	}
 	void Collider::Deactivate()	{
 		if(shape) shape->Release();

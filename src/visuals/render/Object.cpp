@@ -1,3 +1,6 @@
+#include "main/Log.hpp"
+#include <memory>
+#include <string>
 #ifdef StevEngine_RENDERER_GL
 #include "Object.hpp"
 #include "visuals/Texture.hpp"
@@ -43,6 +46,9 @@ namespace StevEngine {
 			SetTexture(textureData);
 		}
 		Object::Object(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Color color, Visuals::Texture textureData) : vertices(ToFloatList(vertices)), indices(indices) {
+			SetTexture(textureData);
+		}
+		Object::Object(Object& instance, Utilities::Color color, Visuals::Texture textureData) : indices(instance.indices), vertices(instance.vertices), color(color) {
 			SetTexture(textureData);
 		}
 		void Object::SetTexture(Visuals::Texture textureData) {

@@ -90,8 +90,9 @@ namespace StevEngine {
 			}
 			return std::vector<Vertex>(vertices.begin(), vertices.end());
 		}
+		Object cubeCoverObject = Object(CubeVertices(COVER));
 		CubePrimitive::CubePrimitive(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, TextureType textureType)
-			: RenderComponent(CubeVertices(textureType), position, rotation, scale, "CubePrimitive"), textureType(textureType) {}
+			: RenderComponent(Object(cubeCoverObject), position, rotation, scale, "CubePrimitive"), textureType(textureType) {}
 		CubePrimitive::CubePrimitive(YAML::Node node)
 			: RenderComponent(CubeVertices((TextureType)node["textureType"].as<unsigned int>()), node) {}
 		YAML::Node CubePrimitive::Export(YAML::Node node) const {

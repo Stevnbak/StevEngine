@@ -1,4 +1,5 @@
 #pragma once
+#include "utilities/ID.hpp"
 #include <functional>
 #include <memory>
 #include <string>
@@ -15,14 +16,15 @@ namespace StevEngine {
 	class EventHandlerBase {
 		public:
 			virtual void Execute(const Event& e) = 0;
-			virtual std::string GetType() const = 0;
+			Utilities::ID GetType() const { return handlerType; }
 			virtual ~EventHandlerBase() {}
+			const Utilities::ID handlerType;
 	};
 
 	template<typename EventType>
 	class EventHandler : public EventHandlerBase {
 		public:
-			explicit EventHandler(const EventFunction<EventType>& handler) : handler(handler), handlerType(handler.target_type().name()) {};
+			explicit EventHandler(const EventFunction<EventType>& handler) : handler(handler) {};
 			void Execute(const Event& event) override
 			{
 				if (event.GetEventType() == EventType::GetStaticEventType()) {
@@ -31,20 +33,18 @@ namespace StevEngine {
 			}
 			~EventHandler() {}
 		private:
-			std::string GetType() const override { return handlerType; }
 			EventFunction<EventType> handler;
-			const std::string handlerType;
 	};
 
 	class EventManager {
 		public:
-			template<typename EventType> std::string Subscribe(EventFunction<EventType> handler) {
+			template<typename EventType> Utilities::ID Subscribe(EventFunction<EventType> handler) {
 				return Subscribe(EventType::GetStaticEventType(), new EventHandler<EventType>(handler));
 			}
-			void Unsubscribe(const std::string eventId, const std::string handlerName);
+			void Unsubscribe(const std::string eventId, const Utilities::ID handler);
 			void Publish(const Event& event);
 		private:
-			std::string Subscribe(const std::string eventId, EventHandlerBase* handler);
+			Utilities::ID Subscribe(const std::string eventId, EventHandlerBase* handler);
 			std::unordered_map<std::string, std::vector<EventHandlerBase*>> subscribers;
 	};
 }

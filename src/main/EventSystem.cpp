@@ -3,31 +3,23 @@
 #include <memory>
 
 namespace StevEngine {
-	std::string EventManager::Subscribe(const std::string eventId, EventHandlerBase* handler) {
-		std::string name = handler->GetType();
+	Utilities::ID EventManager::Subscribe(const std::string eventId, EventHandlerBase* handler) {
 		auto subs = subscribers.find(eventId);
 		if (subs != subscribers.end()) {
 			auto& handlers = subscribers[eventId];
-			//Is handler already subscribed?
-			for (EventHandlerBase* it : handlers) {
-				if (it->GetType() == name) {
-					Log::Error("Attempting to double-register event handler", true);
-					return nullptr;
-				}
-			}
 			//Add new handler
 			handlers.push_back(std::move(handler));
 		} else {
 			//Add new event id to subscribers
 			subscribers[eventId].emplace_back(std::move(handler));
 		}
-		return name;
+		return handler->GetType();
 	}
 
-	void EventManager::Unsubscribe(const std::string eventId, const std::string handlerName) {
+	void EventManager::Unsubscribe(const std::string eventId, const Utilities::ID handler) {
 		auto handlers = subscribers[eventId];
 		for(size_t i = 0; i < handlers.size(); i++) {
-			if (handlers[i]->GetType() == handlerName) {
+			if (handlers[i]->GetType() == handler) {
 				delete handlers[i];
 				handlers.erase(handlers.begin() + i);
 				return;

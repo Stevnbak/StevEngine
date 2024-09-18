@@ -24,7 +24,7 @@ namespace StevEngine {
 
 		//Object structs
 		struct RenderObject {
-			Object object;
+			const Object& object;
 			glm::mat4x4 transform;
 		};
 
@@ -46,7 +46,7 @@ namespace StevEngine {
 
 			public:
 				void Init(SDL_Window* window);
-				void DrawObject(Object object, glm::mat4x4 transform, RenderQueue queue = STANDARD);
+				void DrawObject(const Object& object, glm::mat4x4 transform, RenderQueue queue = STANDARD);
 				void SetBackground(Utilities::Color color);
 				void SetAmbientLight(float strength, Utilities::Color color = Utilities::Color(255,255,255,255));
 				void AddGlobalShader(ShaderProgram shader);

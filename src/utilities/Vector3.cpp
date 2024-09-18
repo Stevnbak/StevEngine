@@ -92,17 +92,17 @@ namespace StevEngine {
 			return (X == other.X) && (Y == other.Y) && (Z == other.Z);
 		}
 		//Conversions
-		Vector3::operator Vector2() {
+		Vector3::operator Vector2() const {
 			return Vector2(X, Y);
 		}
-		Vector3::operator std::string() {
+		Vector3::operator std::string() const {
 			return std::format("[{};{};{}]", X, Y, Z);
 		}
-		Vector3::operator glm::vec3() {
+		Vector3::operator glm::vec3() const {
 			return glm::vec3(X, Y, Z);
 		}
 		#ifdef StevEngine_PHYSICS
-		Vector3::operator JPH::DVec3() {
+		Vector3::operator JPH::DVec3() const {
 			return JPH::DVec3(X, Y, Z);
 		}
 		Vector3& Vector3::operator= (const JPH::DVec3& other) {
@@ -116,7 +116,7 @@ namespace StevEngine {
 			Y = other.GetY();
 			Z = other.GetZ();
 		}
-		Vector3::operator JPH::Vec3() {
+		Vector3::operator JPH::Vec3() const {
 			return JPH::Vec3(X, Y, Z);
 		}
 		Vector3& Vector3::operator= (const JPH::Vec3& other) {

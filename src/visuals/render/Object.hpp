@@ -28,6 +28,7 @@ namespace StevEngine {
 			public:
 				Object(std::vector<Utilities::Vertex> vertices, Utilities::Color color = Utilities::Color(255, 255, 255, 255), Visuals::Texture textureData = Visuals::Texture::empty);
 				Object(std::vector<Utilities::Vertex> vertices, std::vector<unsigned int> indices, Utilities::Color color = Utilities::Color(255, 255, 255, 255), Visuals::Texture textureData = Visuals::Texture::empty);
+				Object(Object& instance, Utilities::Color color = Utilities::Color(255, 255, 255, 255), Visuals::Texture textureData = Visuals::Texture::empty);
 				void SetTexture(Visuals::Texture textureData);
 				void FreeTexture();
 				Utilities::Color color;

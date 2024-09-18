@@ -115,7 +115,7 @@ bool rotate = CreateComponents::RegisterComponentType<Rotate>("Rotate");
 
 ID modelObject;
 
-void mainUpdate(EngineUpdateEvent event) {
+void mainUpdate(UpdateEvent event) {
 	/*Utilities::Quaternion testQ(0, 0, 90);
 	Utilities::Vector3 forward = testQ.forward();
 	Log::Normal(std::format("Forward: ({};{};{})", forward.X, forward.Y, forward.Z));
@@ -134,7 +134,7 @@ void eventTest(const StevEngine::WindowResizeEvent event) {
 //Create engine
 int main(int argc, char** argv) {
 	CreateEngine("Debug", {  .vsync = true, .fullscreen = false, .targetFPS = 100 });
-	engine->GetEvents()->Subscribe<EngineUpdateEvent>(mainUpdate);
+	engine->GetEvents()->Subscribe<UpdateEvent>(mainUpdate);
 	//Debug logging:
 	Log::Debug("Debug log");
 	Log::Warning("Warning log");

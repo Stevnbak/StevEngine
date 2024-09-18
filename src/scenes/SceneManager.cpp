@@ -21,23 +21,21 @@ namespace StevEngine {
 
 	void SceneManager::Init() {
 		engine->GetEvents()->Subscribe<EngineStartEvent>([this] (EngineStartEvent) { this->ActivateDefault(); });
-		engine->GetEvents()->Subscribe<EngineUpdateEvent>([this] (EngineUpdateEvent e) { this->Update(e.deltaTime); });
+		engine->GetEvents()->Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); });
 		engine->GetEvents()->Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { this->Draw(); });
 	}
 
 	void SceneManager::Update(double deltaTime) {
 		Scene* scene = GetActiveScene();
-		for (Utilities::ID id : scene->GetAllObjects()) {
+		for (Utilities::ID id : scene->GetAllParentObjects()) {
 			scene->GetObject(id)->Update(deltaTime);
 		}
 	}
 	void SceneManager::Draw() {
-		if (sceneManager.GetActiveScene()->activeCamera != nullptr) {
-			Scene* scene = sceneManager.GetActiveScene();
-			for (Utilities::ID id : scene->GetAllObjects()) {
-				if(!scene->GetObject(id)->parent.IsNull()) continue;
-				scene->GetObject(id)->Draw(glm::mat4x4(1.0));
-			}
+		Scene* scene = sceneManager.GetActiveScene();
+		if (scene->activeCamera == nullptr) return;
+		for (Utilities::ID id : scene->GetAllParentObjects()) {
+			scene->GetObject(id)->Draw(glm::mat4x4(1.0));
 		}
 	}
 

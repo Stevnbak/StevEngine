@@ -74,7 +74,7 @@ namespace StevEngine {
 		//Events
 		public:
 			template<typename EventType>
-			std::string Subscribe(EventFunction<EventType> handler, bool allowFromChild = true) {
+			Utilities::ID Subscribe(EventFunction<EventType> handler, bool allowFromChild = true) {
 				if(allowFromChild) events.Subscribe<ChildEvent<EventType>>([handler] (ChildEvent<EventType> e) { handler(e.event); });
 				return events.Subscribe<EventType>(handler);
 			}
@@ -84,6 +84,7 @@ namespace StevEngine {
 				GameObject* parent = GetParent();
 				if(parent != nullptr) parent->ChildPublish<EventType>(event, id);
 			}
+			void Unsubscribe(const std::string eventId, const Utilities::ID handlerId) { events.Unsubscribe(eventId, handlerId); }
 		private:
 			template<typename EventType>
 			void ChildPublish(const EventType& event, Utilities::ID object) {
@@ -163,7 +164,7 @@ namespace StevEngine {
 					}
 				}
 				//Add to list
-				component->SetObject(this->id, this->scene);
+				component->SetObject(this, this->scene);
 				components.push_back(component);
 				return component;
 			}
@@ -209,5 +210,20 @@ namespace StevEngine {
 			const std::string GetEventType() const override { return GetStaticEventType(); };
 			static const std::string GetStaticEventType() {  return "TransformUpdateEvent"; }
 			bool position, rotation, scale;
+	};
+	#ifdef StevEngine_SHOW_WINDOW
+		class DrawEvent : public Event {
+			public:
+				DrawEvent(glm::mat4x4 transform) : transform(transform) {}
+				const std::string GetEventType() const override { return GetStaticEventType(); };
+				static const std::string GetStaticEventType() {  return "DrawEvent"; }
+				glm::mat4x4 transform;
+		};
+	#endif
+	class DeactivateEvent : public Event {
+		public:
+			DeactivateEvent() {}
+			const std::string GetEventType() const override { return GetStaticEventType(); };
+			static const std::string GetStaticEventType() {  return "DeactivateEvent"; }
 	};
 }

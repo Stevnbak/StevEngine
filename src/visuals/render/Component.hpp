@@ -29,6 +29,7 @@ namespace StevEngine {
 				Utilities::Vector3 position = Utilities::Vector3();
 				Utilities::Quaternion rotation = Utilities::Quaternion();
 				Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1);
+				Object& GetObject() { return object; };
 				void SetColor(Utilities::Color color);
 				void SetTexture(Visuals::Texture texture);
 				void AddShader(ShaderProgram program);

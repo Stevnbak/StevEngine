@@ -1,5 +1,6 @@
 #include "GameObject.hpp"
 #include "main/DataManager.hpp"
+#include "main/EngineEvents.hpp"
 #include "main/EventSystem.hpp"
 #include "main/Log.hpp"
 #include "scenes/SceneManager.hpp"
@@ -27,15 +28,10 @@ namespace StevEngine {
 		}
 	}
 	void GameObject::Deactivate() {
-		for (size_t i = 0; i < components.size(); i++) {
-			components.at(i)->Deactivate();
-		}
+		events.Publish(DeactivateEvent());
 	}
 	void GameObject::Update(double deltaTime) {
-		//Components
-		for (size_t i = 0; i < components.size(); i++) {
-			components.at(i)->Update(deltaTime);
-		}
+		events.Publish(UpdateEvent(deltaTime));
 	}
 	void GameObject::Draw(glm::mat4x4 transform) {
 		//Move
@@ -44,14 +40,8 @@ namespace StevEngine {
 		transform *= glm::mat4_cast(glm::quat(rotation.W,rotation.X,rotation.Y,rotation.Z));
 		//Scale
 		transform = glm::scale(transform, glm::vec3(scale.X, scale.Y, scale.Z));
-		//Components
-		for (int i = 0; i < components.size(); i++) {
-			components.at(i)->Draw(transform);
-		}
-		//Children
-		for (int i = 0; i < children.size(); i++) {
-			GetChild(i)->Draw(transform);
-		}
+		//Event
+		events.Publish(DrawEvent(transform));
 	}
 
 	//Transform
@@ -101,10 +91,10 @@ namespace StevEngine {
 
 	//Constructors
 	GameObject::GameObject() : id(Utilities::ID()), name("GameObject") {
-		Log::Normal(std::format("Creating gameobject with new id {}", id.GetString()), true);
+		//Log::Normal(std::format("Creating gameobject with new id {}", id.GetString()), true);
 	}
 	GameObject::GameObject(Utilities::ID id, std::string name, std::string scene) : id(id), name(name), scene(scene) {
-		Log::Normal(std::format("Creating gameobject with id {}", id.GetString()), true);
+		//Log::Normal(std::format("Creating gameobject with id {}", id.GetString()), true);
 	}
 
 	//Children functions
