@@ -1,5 +1,7 @@
 #pragma once
+#include "main/multithreading/JobQueue.hpp"
 #include "utilities/ID.hpp"
+
 #include <functional>
 #include <memory>
 #include <string>
@@ -27,9 +29,7 @@ namespace StevEngine {
 			explicit EventHandler(const EventFunction<EventType>& handler) : handler(handler) {};
 			void Execute(const Event& event) override
 			{
-				if (event.GetEventType() == EventType::GetStaticEventType()) {
-					handler(static_cast<const EventType&>(event));
-				}
+				handler(static_cast<const EventType&>(event));
 			}
 			~EventHandler() {}
 		private:

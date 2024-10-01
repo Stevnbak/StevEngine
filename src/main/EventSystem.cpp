@@ -1,4 +1,5 @@
 #include "EventSystem.hpp"
+#include "main/Engine.hpp"
 #include "main/Log.hpp"
 #include <memory>
 
@@ -30,7 +31,7 @@ namespace StevEngine {
 	void EventManager::Publish(const Event& event) {
 		auto handlers = subscribers[event.GetEventType()];
 		for (auto& handler : handlers) {
-			handler->Execute(event);
+			engine->GetJobs().RunJob<std::reference_wrapper<const Event>>([handler] (std::reference_wrapper<const Event> e) { handler->Execute(e); }, std::ref(event));
 		}
 		//Log::Debug(event.GetEventType() + " published to " + std::to_string(handlers.size()) + " listeners.", true);
 	}

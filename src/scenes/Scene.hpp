@@ -1,5 +1,6 @@
 #pragma once
 #include "main/ResourceManager.hpp"
+#include "main/multithreading/Lockable.hpp"
 #include "scenes/GameObject.hpp"
 #include "visuals/Camera.hpp"
 
@@ -13,7 +14,7 @@ namespace StevEngine {
 	class SceneManager;
 	namespace Visuals { class Camera; };
 
-	class Scene {
+	class Scene : Lockable {
 		friend class Engine;
 		friend class SceneManager;
 		public:
@@ -25,14 +26,14 @@ namespace StevEngine {
 			Utilities::ID CreateObject(YAML::Node node);
 			GameObject* GetObject(Utilities::ID id);
 			#ifdef StevEngine_SHOW_WINDOW
-			Visuals::Camera* GetCamera() { return activeCamera; }
-			GameObject* GetCameraObject() { return activeCamera->GetParent(); }
+			Visuals::Camera* GetCamera() const { return activeCamera; }
+			GameObject* GetCameraObject() const { return activeCamera->GetParent(); }
 			#endif
-			std::vector<Utilities::ID> GetAllObjects();
-			std::vector<Utilities::ID> GetAllParentObjects();
+			std::vector<Utilities::ID> GetAllObjects() const;
+			std::vector<Utilities::ID> GetAllParentObjects() const;
 			void DestroyObject(Utilities::ID id);
 			#ifdef StevEngine_PLAYER_DATA
-			void ExportToFile();
+			void ExportToFile() const;
 			#endif
 		private:
 			Scene(std::string name);

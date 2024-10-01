@@ -23,8 +23,13 @@
 namespace StevEngine {
 	//Main functions
 	void GameObject::Start() {
-		for (Component* component : components) {
+		Lock();
+		auto c = components;
+		Unlock();
+		for (Component* component : c) {
+			component->Lock();
 			component->Start();
+			component->Unlock();
 		}
 	}
 	void GameObject::Deactivate() {
@@ -35,12 +40,14 @@ namespace StevEngine {
 	}
 	#ifdef StevEngine_SHOW_WINDOW
 	void GameObject::Draw(glm::mat4x4 transform) {
+		Lock();
 		//Move
 		transform = glm::translate(transform, glm::vec3(position.X, position.Y, position.Z));
 		//Rotate
 		transform *= glm::mat4_cast(glm::quat(rotation.W,rotation.X,rotation.Y,rotation.Z));
 		//Scale
 		transform = glm::scale(transform, glm::vec3(scale.X, scale.Y, scale.Z));
+		Unlock();
 		//Event
 		events.Publish(DrawEvent(transform));
 	}
@@ -51,24 +58,32 @@ namespace StevEngine {
 	Utilities::Quaternion GameObject::GetRotation() const { return rotation; }
 	Utilities::Vector3 GameObject::GetScale() const { return scale; }
 	void GameObject::SetPosition(Utilities::Vector3 position, bool announce) {
+		Lock();
 		this->position = position;
 		if(announce) events.Publish(TransformUpdateEvent(true, false, false));
+		Unlock();
 	}
 	void GameObject::SetRotation(Utilities::Quaternion rotation, bool announce) {
+		Lock();
 		this->rotation = rotation;
 		if(announce) events.Publish(TransformUpdateEvent(false, true, false));
+		Unlock();
 	}
 	void GameObject::SetScale(Utilities::Vector3 scale, bool announce) {
+		Lock();
 		this->scale = scale;
 		if(announce) events.Publish(TransformUpdateEvent(false, false, true));
+		Unlock();
 	}
 	void GameObject::SetTransform(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, bool announce) {
+		Lock();
 		this->position = position;
 		this->rotation = rotation;
 		this->scale = scale;
 		if(announce) events.Publish(TransformUpdateEvent(true, true, true));
+		Unlock();
 	}
-	Utilities::Vector3 GameObject::GetWorldPosition() {
+	Utilities::Vector3 GameObject::GetWorldPosition() const {
 		if(!parent.IsNull()) {
 			GameObject* object = GetParent();
 			return ((object->GetRotation() * object->GetWorldPosition()) + position);
@@ -76,14 +91,14 @@ namespace StevEngine {
 			return position;
 		}
 	}
-	Utilities::Quaternion GameObject::GetWorldRotation() {
+	Utilities::Quaternion GameObject::GetWorldRotation() const {
 		if(!parent.IsNull()) {
 			return sceneManager.GetScene(scene)->GetObject(parent)->GetWorldRotation() + rotation;
 		} else {
 			return rotation;
 		}
 	}
-	Utilities::Vector3 GameObject::GetWorldScale() {
+	Utilities::Vector3 GameObject::GetWorldScale() const {
 		if(!parent.IsNull()) {
 			return Utilities::Vector3::CombineScale(GetParent()->GetWorldScale(), scale);
 		} else {
@@ -101,9 +116,12 @@ namespace StevEngine {
 
 	//Children functions
 	int GameObject::AddChild(Utilities::ID gameObject) {
+		Lock();
 		children.push_back(gameObject);
 		sceneManager.GetScene(scene)->GetObject(gameObject)->parent = id;
-		return children.size() - 1;
+		int i = children.size() - 1;
+		Unlock();
+		return i;
 	}
 	void GameObject::RemoveChild(int index) {
 		GetChild(index)->parent = Utilities::ID::empty;
@@ -153,6 +171,7 @@ namespace StevEngine {
 	//Import from yaml
 	void GameObject::Import(YAML::Node node)
 	{
+		Lock();
 		//Basic info
 		name = node["name"].as<std::string>();
 		//Transform info
@@ -171,6 +190,7 @@ namespace StevEngine {
 				AddChild(sceneManager.GetScene(scene)->CreateObject(childNode));
 			}
 		}
+		Unlock();
 	}
 	//Destroy
 	GameObject::~GameObject() {

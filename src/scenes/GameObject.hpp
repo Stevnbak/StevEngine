@@ -1,5 +1,6 @@
 #pragma once
 #include "main/EventSystem.hpp"
+#include "main/multithreading/Lockable.hpp"
 #include "utilities/ID.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Quaternion.hpp"
@@ -28,7 +29,7 @@ namespace StevEngine {
 	};
 
 	//Object class
-	class GameObject final {
+	class GameObject final : Lockable {
 		friend class SceneManager;
 		friend class Scene;
 		//Basic properties
@@ -49,9 +50,9 @@ namespace StevEngine {
 			void SetScale(Utilities::Vector3 scale, bool announce = true);
 			void SetTransform(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, bool announce = true);
 			//Absolute properties
-			Utilities::Vector3 GetWorldPosition();
-			Utilities::Quaternion GetWorldRotation();
-			Utilities::Vector3 GetWorldScale();
+			Utilities::Vector3 GetWorldPosition() const;
+			Utilities::Quaternion GetWorldRotation() const;
+			Utilities::Vector3 GetWorldScale() const;
 		private:
 			Utilities::Vector3 position = Utilities::Vector3();
 			Utilities::Quaternion rotation = Utilities::Quaternion();

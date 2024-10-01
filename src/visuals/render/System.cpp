@@ -97,7 +97,6 @@ namespace StevEngine {
 			//Events
 			engine->GetEvents()->Subscribe<WindowResizeEvent>([this] (WindowResizeEvent i) { return this->SetViewSize (i.width, i.height); });
 			engine->GetEvents()->Subscribe<WindowVSyncEvent>([this] (WindowVSyncEvent i) { return this->SetVSync(i.value); });
-			engine->GetEvents()->Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { return this->DrawFrame(); });
 
 			Log::Debug("Renderer has been initialized!", true);
 		}

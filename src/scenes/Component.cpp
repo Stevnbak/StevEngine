@@ -11,6 +11,7 @@ using namespace StevEngine::Utilities;
 namespace StevEngine {
 	Component::Component(std::string type) : type(type) {}
 	void Component::SetObject(GameObject* object, std::string scene) {
+		Lock();
 		gameObject = object->Id();
 		this->scene = scene;
 		//Event listeners
@@ -19,11 +20,12 @@ namespace StevEngine {
 		handlers.push_back({object->Subscribe<DrawEvent>([this] (DrawEvent e) { this->Draw(e.transform);  }), DrawEvent::GetStaticEventType()});
 		#endif
 		handlers.push_back({object->Subscribe<DeactivateEvent>([this] (DeactivateEvent) { this->Deactivate();  }), DeactivateEvent::GetStaticEventType()});
+		Unlock();
 	}
-	GameObject* Component::GetParent() {
+	GameObject* Component::GetParent() const {
 		return GetScene()->GetObject(gameObject);
 	}
-	Scene* Component::GetScene() {
+	Scene* Component::GetScene() const {
 		return sceneManager.GetScene(scene);
 	}
 	Component::~Component() {

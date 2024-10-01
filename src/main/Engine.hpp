@@ -1,6 +1,7 @@
 #pragma once
 #include "EventSystem.hpp"
 #include "Log.hpp"
+#include "main/multithreading/JobQueue.hpp"
 #include <SDL.h>
 
 namespace StevEngine {
@@ -15,12 +16,13 @@ namespace StevEngine {
 	};
 	class Engine {
 		public:
-			Engine(std::string title, GameSettings gameSettings);
+			Engine(std::string title, GameSettings gameSettings, bool multithreading);
 			int Start();
 			#ifdef StevEngine_SHOW_WINDOW
 			SDL_Window* window;
 			#endif
 			EventManager* GetEvents() { return &events; };
+			JobQueue& GetJobs() { return jobs; };
 			double getFPS();
 			bool running;
 			//Engine settings
@@ -35,6 +37,7 @@ namespace StevEngine {
 			#endif
 		private:
 			EventManager events;
+			JobQueue jobs;
 			double currentFPS;
 			SDL_Event ev;
 			GameSettings gameSettings;
@@ -44,5 +47,5 @@ namespace StevEngine {
 	};
 
 	extern Engine* engine;
-	void CreateEngine(std::string title = "Game", GameSettings gameSettings = GameSettings());
+	void CreateEngine(std::string title = "Game", GameSettings gameSettings = GameSettings(), bool multithreading = true);
 }

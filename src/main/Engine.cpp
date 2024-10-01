@@ -19,6 +19,7 @@
 #include "main/InputSystem.hpp"
 #include "main/ResourceManager.hpp"
 #include "main/Settings.hpp"
+#include "main/multithreading/JobQueue.hpp"
 #include "physics/System.hpp"
 #include "scenes/GameObject.hpp"
 #include "main/Log.hpp"
@@ -34,8 +35,8 @@ uint64_t GetTime() {
 
 namespace StevEngine {
 	Engine* engine = nullptr;
-	Engine::Engine(std::string title, GameSettings gameSettings)
-		: title(title), running(false),gameSettings(gameSettings), events(EventManager())
+	Engine::Engine(std::string title, GameSettings gameSettings, bool multithreading)
+		: title(title), running(false),gameSettings(gameSettings), events(EventManager()), jobs(JobQueue(multithreading))
 	{
 		//Initialize logging
 		#ifdef StevEngine_PLAYER_DATA
@@ -141,6 +142,14 @@ namespace StevEngine {
 			//Draw the frame
 			#ifdef StevEngine_SHOW_WINDOW
 			events.Publish(EngineDrawEvent());
+			#endif
+
+			//Wait for all threads
+			jobs.WaitForAllJobs();
+
+			//OpenGL render
+			#ifdef StevEngine_RENDERER_GL
+			Render::render.DrawFrame();
 			#endif
 
 			//Calculate FPS:
@@ -257,14 +266,14 @@ namespace StevEngine {
 	}
 
 	//Create engine and subsystems function
-	void CreateEngine(std::string title, GameSettings gameSettings) {
+	void CreateEngine(std::string title, GameSettings gameSettings, bool multithreading) {
 		#ifdef StevEngine_PLAYER_DATA
 			data.Init(title);
 		#endif
 		#ifdef StevEngine_SETTINGS
 		settings.Init(title);
 		#endif
-		engine = new Engine(title, gameSettings);
+		engine = new Engine(title, gameSettings, multithreading);
 		#ifdef StevEngine_PHYSICS
 			Physics::physics.Init(JPH::PhysicsSettings());
 		#endif

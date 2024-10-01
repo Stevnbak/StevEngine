@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
 		.vsync = false, .fullscreen = false, .WIDTH = 1920, .HEIGHT = 1080,
 		#endif
 		.targetFPS = -1
-	});
+	}, false);
 	engine->GetEvents()->Subscribe<UpdateEvent>([](UpdateEvent) { Log::Debug("FPS: " + std::to_string(engine->getFPS())); });
 
 	Scene* scene = sceneManager.CreateScene("Physics test");
