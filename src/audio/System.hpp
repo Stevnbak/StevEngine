@@ -16,12 +16,12 @@ namespace StevEngine {
 				void SDLCALL ChannelCompleted(int channel);
 				//Settings
 				void SetSoundsVolume(double volume);
-				double GetSoundsVolume() { return volumeSounds; }
+				double GetSoundsVolume() const { return volumeSounds; }
 				void SetMusicVolume(double volume);
-				double GetMusicVolume() { return volumeMusic; }
+				double GetMusicVolume() const { return volumeMusic; }
 				std::vector<const char*> GetAudioDevices();
 				void SetAudioDevice(const char* device);
-				const char* GetActiveAudioDevice() { return audioDevice; }
+				const char* GetActiveAudioDevice() const { return audioDevice; }
 			private:
 				void CleanUp();
 				double volumeSounds;

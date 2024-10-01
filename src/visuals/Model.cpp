@@ -15,7 +15,7 @@ using StevEngine::Utilities::Color;
 
 namespace StevEngine {
 	namespace Visuals {
-		Render::Object CreateRenderObject(Utilities::Model model, Color color, Visuals::Texture surface) {
+		Render::Object CreateRenderObject(const Utilities::Model& model, Color color, Visuals::Texture surface) {
 			std::vector<Utilities::Vertex> vertices;
 			std::vector<unsigned int> indices;
 			for(Utilities::Mesh mesh : model.GetMeshes()) {
@@ -24,7 +24,7 @@ namespace StevEngine {
 			}
 			return Render::Object(vertices, indices, color, surface);
 		}
-		ModelRenderer::ModelRenderer(Utilities::Model model)
+		ModelRenderer::ModelRenderer(const Utilities::Model& model)
 			: model(model), RenderComponent(CreateRenderObject(model, Color(255, 255, 255, 255), Visuals::Texture::empty), "ModelRenderer") {}
 		ModelRenderer::ModelRenderer(YAML::Node node)
 			: model(Utilities::Model(Resources::resourceManager.GetFile(node["model"].as<std::string>()))), RenderComponent(CreateRenderObject(Utilities::Model(Resources::resourceManager.GetFile(node["model"].as<std::string>())), Utilities::Color(), Visuals::Texture::empty), node) {}

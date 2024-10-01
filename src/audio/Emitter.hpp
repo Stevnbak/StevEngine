@@ -20,13 +20,10 @@ namespace StevEngine {
 				YAML::Node Export(YAML::Node node) const;
 				void Play();
 				void ChangeSource(std::string path);
-				Mix_Chunk* GetData() { return audioData; };
-				bool isPlaying() { return channel != -1; }
+				Mix_Chunk* GetData() const { return audioData; };
+				bool isPlaying() const { return channel != -1; }
 			private:
-				void Start() {};
 				void Deactivate();
-				void Update(double deltaTime) {};
-				void Draw(glm::mat4x4 transform) {};
 				~Emitter();
 		};
 		inline bool emitter = CreateComponents::RegisterComponentType<Emitter>("Emitter");

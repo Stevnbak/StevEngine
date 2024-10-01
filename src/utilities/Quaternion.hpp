@@ -19,9 +19,9 @@ namespace StevEngine {
 				Quaternion(std::string str);
 				Quaternion();
 				//Directions
-				Vector3 Forward();
-				Vector3 Right();
-				Vector3 Up();
+				Vector3 Forward() const;
+				Vector3 Right() const;
+				Vector3 Up() const;
 				Quaternion& Conjugate();
 				Quaternion& Inverse();
 				//Functions
@@ -41,22 +41,22 @@ namespace StevEngine {
 				//Vector operators
 				Vector3 operator*(const Vector3& other) const;
 				//Conversions
-				explicit operator std::string();
+				explicit operator std::string() const;
 				#ifdef StevEngine_PHYSICS
-				operator JPH::Quat();
+				operator JPH::Quat() const;
 				Quaternion& operator= (const JPH::Quat& other);
 				Quaternion(const JPH::Quat& other);
 				#endif
 				//Static methods
 				static Quaternion FromAngleAxis(double angle, Vector3 axis);
-				static double Angle(Quaternion a, Quaternion b);
-				static Quaternion Lerp(Quaternion a, Quaternion b, double t);
-				static Quaternion Slerp(Quaternion a, Quaternion b, double t);
+				static double Angle(const Quaternion& a, const Quaternion& b);
+				static Quaternion Lerp(const Quaternion& a, const Quaternion& b, double t);
+				static Quaternion Slerp(const Quaternion& a, const Quaternion& b, double t);
 				static Quaternion FromToRotation(Vector3 fromDirection, Vector3 toDirection);
-				static Quaternion LookRotation(Vector3 forward, Vector3 upwards = Vector3::up);
-				static Quaternion Conjugate(Quaternion q);
-				static Quaternion Inverse(Quaternion q);
-				static double Dot(Quaternion a, Quaternion b);
+				static Quaternion LookRotation(Vector3 forward, const Vector3& upwards = Vector3::up);
+				static Quaternion Conjugate(const Quaternion& q);
+				static Quaternion Inverse(const Quaternion& q);
+				static double Dot(const Quaternion& a, const Quaternion& b);
 				static double DegreesToRadians(double degrees);
 				static double RadiansToDegrees(double radians);
 		};

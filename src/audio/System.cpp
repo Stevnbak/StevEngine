@@ -99,9 +99,9 @@ namespace StevEngine::Audio {
 		std::vector<const char*> devices;
 		int count = SDL_GetNumAudioDevices(0);
 		if(count < 0) return devices;
-		devices.resize(count);
+		devices.reserve(count);
 		for(int i = 0; i < count; i++) {
-			devices[i] = SDL_GetAudioDeviceName(i, 0);
+			devices.emplace_back(SDL_GetAudioDeviceName(i, 0));
 		}
 		return devices;
 	}

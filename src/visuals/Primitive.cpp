@@ -259,13 +259,13 @@ namespace StevEngine {
 			// Bottom sphere
 			for(int i = 0; i < sphere.size() / 2; i++) {
 				Vertex v = sphere[i];
-				v.y = v.y - (r);
+				v.position.Y -= r;
 				vertices.push_back(v);
 			}
 			// Top sphere
 			for(int i = sphere.size() / 2; i < sphere.size(); i++) {
 				Vertex v = sphere[i];
-				v.y = v.y + (r);
+				v.position.Y += r;
 				vertices.push_back(v);
 			}
 			// Sides

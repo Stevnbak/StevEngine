@@ -132,7 +132,7 @@ namespace StevEngine {
 		}
 		#endif
 		#ifdef StevEngine_MODELS
-		Vector3::operator aiVector3D() {
+		Vector3::operator aiVector3D() const {
 			return aiVector3D(X, Y, Z);
 		}
 		Vector3& Vector3::operator= (const aiVector3D& other) {
@@ -151,20 +151,20 @@ namespace StevEngine {
 		Vector3 Vector3::up = Vector3(0,1,0);
 		Vector3 Vector3::right = Vector3(1,0,0);
 		Vector3 Vector3::forward = Vector3(0,0,1);
-		double Vector3::Distance(Vector3 a, Vector3 b) {
+		double Vector3::Distance(const Vector3& a, const Vector3& b) {
 			return sqrt(exp2(a.X - b.X) + exp2(a.Y - b.Y) + exp2(a.Z - b.Z));
 		}
-		Vector3 Vector3::Cross(Vector3 a, Vector3 b) {
+		Vector3 Vector3::Cross(const Vector3& a, const Vector3& b) {
 			return Vector3(
 				a.Y * b.Z - a.Z * b.Y,
 				-(a.X * b.Z - a.Z * b.X),
 				a.X * b.Y - a.Y * b.X
 			);
 		}
-		double Vector3::Dot(Vector3 a, Vector3 b) {
+		double Vector3::Dot(const Vector3& a, const Vector3& b) {
 			return (a.X * b.X) + (a.Y * b.Y) + (a.Z * b.Z);
 		}
-		Vector3 Vector3::CombineScale(Vector3 a, Vector3 b) {
+		Vector3 Vector3::CombineScale(const Vector3& a, const Vector3& b) {
 			Utilities::Vector3 s = a.Get();
 			s.X *= b.X;
 			s.Y *= b.Y;

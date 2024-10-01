@@ -35,7 +35,7 @@ namespace StevEngine::Visuals {
 		return node;
 	}
 
-	glm::mat4x4 Camera::GetView() {
+	glm::mat4x4 Camera::GetView() const {
 		glm::mat4x4 transform = glm::mat4(1.0f);
 		//Move everything else based on camera position
 		Vector3 position = GetParent()->GetWorldPosition();
@@ -48,7 +48,7 @@ namespace StevEngine::Visuals {
 		return transform;
 	}
 
-	glm::mat4x4 Camera::GetProjection() {
+	glm::mat4x4 Camera::GetProjection() const {
 		GameSettings s = engine->GetGameSettings();
 		double aspect = (double)s.WIDTH / s.HEIGHT;
 		if (isOrthographic)

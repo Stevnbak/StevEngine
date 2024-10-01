@@ -50,10 +50,10 @@ namespace StevEngine {
 		engine->GetEvents()->Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); });
 	}
 	//Key Inputs:
-	bool InputManager::IsKeyPressed(SDL_Keycode key) {
+	bool InputManager::IsKeyPressed(SDL_Keycode key) const {
 		bool pressed = false;
 		if (inputMap.contains(key)) {
-			pressed = inputMap[key];
+			pressed = inputMap.at(key);
 		}
 		///Log::Debug(std::format("Key ({}) has pressed value of {}", SDL_GetKeyName(key), pressed), true);
 		return pressed;
@@ -64,10 +64,10 @@ namespace StevEngine {
 		if(value) events.Publish(InputKeyDownEvent(key));
 		else events.Publish(InputKeyUpEvent(key));
 	}
-	bool InputManager::IsMouseButtonPressed(Uint8 button) {
+	bool InputManager::IsMouseButtonPressed(Uint8 button) const {
 		bool pressed = false;
 		if (mouseInputMap.contains(button)) {
-			pressed = inputMap[button];
+			pressed = inputMap.at(button);
 		}
 		///Log::Debug(std::format("Mouse button ({}) has pressed value of {}", button, pressed), true);
 		return pressed;

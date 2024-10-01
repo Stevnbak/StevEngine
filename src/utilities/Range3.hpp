@@ -19,12 +19,12 @@ namespace StevEngine {
 				//Constructors
 				Range3();
 				Range3(double lowX, double highX, double lowY, double highY, double lowZ, double highZ);
-				Range3(Vector3 low, Vector3 high);
+				Range3(const Vector3& low, const Vector3& high);
 				//Functions
-				Vector3 GetCenter();
+				Vector3 GetCenter() const;
 				//Conversions
 				#ifdef StevEngine_PHYSICS
-				operator JPH::AABox();
+				operator JPH::AABox() const;
 				Range3& operator= (const JPH::AABox& other);
 				Range3(const JPH::AABox& other);
 				#endif

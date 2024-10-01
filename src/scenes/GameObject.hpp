@@ -98,7 +98,7 @@ namespace StevEngine {
 			EventManager events;
 		//Children functions
 		public:
-			int AddChild(Utilities::ID gameObjectID);
+			int AddChild(const Utilities::ID& gameObjectID);
 			void RemoveChild(int index);
 			GameObject* GetChild(int index) const;
 			int GetChildCount() const;

@@ -25,7 +25,7 @@ namespace StevEngine {
 			friend class StevEngine::Engine;
 			public:
 				void Init(JPH::PhysicsSettings settings);
-				JPH::BodyInterface* GetBodyInterface() { return bodyInterface; }
+				JPH::BodyInterface* GetBodyInterface() const { return bodyInterface; }
 			private:
 				void Update(double deltaTime);
 				//Jolt system

@@ -16,8 +16,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glad/gl.h>
 
-using StevEngine::Utilities::Vertex;
-
 namespace StevEngine {
 	namespace Render {
 		const char* vertexShaderSource =
@@ -76,13 +74,13 @@ namespace StevEngine {
 			glGenBuffers(1, &EBO);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 			// position layout
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, Vertex::size, (void*)0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, Utilities::VERTEX_SIZE, (void*)0);
 			glEnableVertexAttribArray(0);
 			// normal layout
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, Vertex::size, (void*)((3) * sizeof(float)));
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, Utilities::VERTEX_SIZE, (void*)((3) * sizeof(float)));
 			glEnableVertexAttribArray(1);
 			// uv layout
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, Vertex::size, (void*)((3 + 3) * sizeof(float)));
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, Utilities::VERTEX_SIZE, (void*)((3 + 3) * sizeof(float)));
 			glEnableVertexAttribArray(2);
 
 			//Shaders
@@ -154,7 +152,7 @@ namespace StevEngine {
 		}
 
 		void RenderSystem::DrawObject(const Object& object, glm::mat4x4 transform, RenderQueue queue) {
-			queues[queue].push_back({object, transform});
+			queues[queue].emplace_back(object, transform);
 		};
 
 		void RenderSystem::DrawFrame() {
@@ -185,7 +183,7 @@ namespace StevEngine {
 				if(i == RenderQueue::TRANSPARENT) glDepthMask(GL_FALSE);
 				else glDepthMask(GL_TRUE);
 				//Draw objects
-				for(RenderObject object : queues[i]) {
+				for(RenderObject& object : queues[i]) {
 					Draw(object);
 				}
 				//Clear queue
@@ -198,18 +196,18 @@ namespace StevEngine {
 			SDL_GL_SwapWindow(engine->window);
 		}
 
-		void RenderSystem::SetBackground(Utilities::Color color) {
+		void RenderSystem::SetBackground(const Utilities::Color& color) {
 			backgroundColor = color;
 		}
 
-		void RenderSystem::SetAmbientLight(float strength, Utilities::Color color) {
+		void RenderSystem::SetAmbientLight(float strength, const Utilities::Color& color) {
 			fragmentShaderProgram.SetShaderUniform("ambientColor", glm::vec3(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f));
 			fragmentShaderProgram.SetShaderUniform("ambientStrength", strength);
 		}
 
-		void RenderSystem::Draw(RenderObject renderObject) {
+		void RenderSystem::Draw(const RenderObject& renderObject) {
 			const Object& object = renderObject.object;
-			glm::mat4x4 transform = renderObject.transform;
+			const glm::mat4x4& transform = renderObject.transform;
 			//Object specific shaders
 			unsigned int pipeline;
 			bool usingCustomShaders = object.shaders.size() > 0;

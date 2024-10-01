@@ -16,17 +16,17 @@ namespace StevEngine {
 			Low = Vector3(lowX, lowY, lowZ);
 			High = Vector3(highX, highY, highZ);
 		}
-		Range3::Range3(Vector3 low, Vector3 high) {
+		Range3::Range3(const Vector3& low, const Vector3& high) {
 			Low = low;
 			High = high;
 		}
 		//Functions
-		Vector3 Range3::GetCenter() {
+		Vector3 Range3::GetCenter() const {
 			return Vector3(Low.X + ((High.X - Low.X) / 2), Low.Y + ((High.Y - Low.Y) / 2), Low.Z + ((High.Z - Low.Z) / 2));
 		}
 		//Conversions
 		#ifdef StevEngine_PHYSICS
-		Range3::operator JPH::AABox() {
+		Range3::operator JPH::AABox() const {
 			return JPH::AABox((JPH::DVec3)Low, (JPH::DVec3)High);
 		}
 		Range3& Range3::operator= (const JPH::AABox& other) {

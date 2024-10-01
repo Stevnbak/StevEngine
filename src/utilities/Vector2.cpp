@@ -89,19 +89,19 @@ namespace StevEngine {
 			return (X == other.X) && (Y == other.Y);
 		}
 		//Conversions
-		Vector2::operator Vector3() {
+		Vector2::operator Vector3() const {
 			return Vector3(X, Y, 0);
 		}
-		Vector2::operator std::string() {
+		Vector2::operator std::string() const {
 			return std::format("[{};{}]", X, Y);
 		}
 		//Static stuff
 		Vector2 Vector2::up = Vector2(0,1);
 		Vector2 Vector2::right = Vector2(1,0);
-		double Vector2::Distance(Vector2 a, Vector2 b) {
+		double Vector2::Distance(const Vector2& a, const Vector2& b) {
 			return sqrt(exp2(a.X - b.X) + exp2(a.Y - b.Y));
 		}
-		double Vector2::Dot(Vector2 a, Vector2 b) {
+		double Vector2::Dot(const Vector2& a, const Vector2& b) {
 			return (a.X * b.X) + (a.Y * b.Y);
 		}
 	}

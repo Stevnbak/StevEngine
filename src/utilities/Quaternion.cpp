@@ -52,13 +52,13 @@ namespace StevEngine {
 			Z = 0;
 		}
 		//Directions
-		Vector3 Quaternion::Forward() {
+		Vector3 Quaternion::Forward() const {
 			return Get() * Vector3::forward;
 		}
-		Vector3 Quaternion::Right() {
+		Vector3 Quaternion::Right() const {
 			return Get() * Vector3::right;
 		}
-		Vector3 Quaternion::Up() {
+		Vector3 Quaternion::Up() const {
 			return Get() * Vector3::up;
 		}
 		Quaternion& Quaternion::Conjugate() {
@@ -172,11 +172,11 @@ namespace StevEngine {
 			return v + Vector3::Cross(Vector3(X, Y, Z), (v * W + Vector3::Cross(Vector3(X, Y, Z), v))) * 2;
 		}
 		//Conversions
-		Quaternion::operator std::string() {
+		Quaternion::operator std::string() const {
 			return std::format("[{};{};{};{}]", W, X, Y, Z);
 		}
 		#ifdef StevEngine_PHYSICS
-		Quaternion::operator JPH::Quat() {
+		Quaternion::operator JPH::Quat() const {
 			return JPH::Quat(X, Y, Z, W);
 		}
 		Quaternion& Quaternion::operator= (const JPH::Quat& other) {
@@ -202,15 +202,15 @@ namespace StevEngine {
 			double w = cos(angle / 2);
 			return Quaternion(w, x, y, z);
 		}
-		double Quaternion::Angle(Quaternion a, Quaternion b) {
+		double Quaternion::Angle(const Quaternion& a, const Quaternion& b) {
 			return acos(Quaternion::Dot(a.Normalized(), b.Normalized())) * 2.0;
 		}
-		Quaternion Quaternion::Lerp(Quaternion a, Quaternion b, double t) {
+		Quaternion Quaternion::Lerp(const Quaternion& a, const Quaternion& b, double t) {
 			return (a * (1 - t) + b * t).Normalized();
 		}
-		Quaternion Quaternion::Slerp(Quaternion a, Quaternion b, double t) {
+		Quaternion Quaternion::Slerp(const Quaternion& a, const Quaternion& b, double t) {
 			double d = Dot(a,b);
-			Quaternion a2 = d >= 0 ? a : a.Inverse();
+			Quaternion a2 = d >= 0 ? a : Inverse(a);
 			return a2 * (1-t) + b * t;
 		}
 		Quaternion Quaternion::FromToRotation(Vector3 fromDirection, Vector3 toDirection) {
@@ -227,7 +227,7 @@ namespace StevEngine {
 				n.Z * sinA2
 			);
 		}
-		Quaternion Quaternion::LookRotation(Vector3 forward, Vector3 globalup) {
+		Quaternion Quaternion::LookRotation(Vector3 forward, const Vector3& globalup) {
 			forward.Normalize();
 			Vector3 right = Vector3::Cross(globalup.Normalized(), forward);
 			Vector3 up = Vector3::Cross(forward, right);
@@ -241,13 +241,13 @@ namespace StevEngine {
 				(up.Y - right.Y) * w4_recip
 			);
 		}
-		Quaternion Quaternion::Inverse(Quaternion q) {
-			return q.Inverse();
+		Quaternion Quaternion::Inverse(const Quaternion& q) {
+			return q.Get().Inverse();
 		}
-		Quaternion Quaternion::Conjugate(Quaternion q) {
-			return q.Conjugate();
+		Quaternion Quaternion::Conjugate(const Quaternion& q) {
+			return q.Get().Conjugate();
 		}
-		double Quaternion::Dot(Quaternion a, Quaternion b) {
+		double Quaternion::Dot(const Quaternion& a, const Quaternion& b) {
 			return a.W * b.W + a.X * b.X + a.Y * b.Y + a.Z * b.Z;
 		}
 		double Quaternion::DegreesToRadians(double degrees) {

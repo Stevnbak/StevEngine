@@ -17,10 +17,10 @@ namespace StevEngine {
 	}*/
 
 	void Lockable::Lock() {
-		lock = new std::lock_guard(mutex);
+		//lock = new std::lock_guard(mutex);
 	}
 
 	void Lockable::Unlock() {
-		delete lock;
+		//delete lock;
 	}
 }

@@ -1,4 +1,5 @@
 #include "main/Log.hpp"
+#include "utilities/Vertex.hpp"
 #include <memory>
 #include <string>
 #ifdef StevEngine_RENDERER_GL
@@ -13,42 +14,42 @@ using StevEngine::Utilities::Color;
 
 namespace StevEngine {
 	namespace Render {
-		std::vector<float> ToFloatList(std::vector<Vertex> vertices) {
+		std::vector<float> ToFloatList(const std::vector<Vertex>& vertices) {
 			std::vector<float> result;
-			result.resize(vertices.size() * (3+3+2));
+			result.resize(vertices.size() * (Utilities::VERTEX_COUNT));
 			int j = 0;
 			for(int i = 0; i < vertices.size(); i++) {
-				Vertex vertex = vertices[i];
-				result[j++] = vertex.x;
-				result[j++] = vertex.y;
-				result[j++] = vertex.z;
-				result[j++] = vertex.nX;
-				result[j++] = vertex.nY;
-				result[j++] = vertex.nZ;
-				result[j++] = vertex.u;
-				result[j++] = vertex.v;
+				const Vertex& vertex = vertices[i];
+				result[j++] = vertex.position.X;
+				result[j++] = vertex.position.Y;
+				result[j++] = vertex.position.Z;
+				result[j++] = vertex.normal.X;
+				result[j++] = vertex.normal.Y;
+				result[j++] = vertex.normal.Z;
+				result[j++] = vertex.uv.X;
+				result[j++] = vertex.uv.Y;
 			}
 			return result;
 		}
-		Object::Object(std::vector<Vertex> vertices, Color color, Visuals::Texture textureData) {
+		Object::Object(const std::vector<Vertex>& vertices, Color color, Visuals::Texture textureData) {
 			//Create indices and filter out duplicates
 			std::vector<Vertex> uniqueVertices;
 			for (Vertex v : vertices) {
 				int index = std::find(uniqueVertices.begin(), uniqueVertices.end(), v) - uniqueVertices.begin();
 				if(index == uniqueVertices.size()) {
-					uniqueVertices.push_back(v);
+					uniqueVertices.emplace_back(v);
 				}
-				indices.push_back(index);
+				indices.emplace_back(index);
 			}
 			//Generate vertex array
 			this->vertices = ToFloatList(uniqueVertices);
 			//Bind texture
 			SetTexture(textureData);
 		}
-		Object::Object(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Color color, Visuals::Texture textureData) : vertices(ToFloatList(vertices)), indices(indices) {
+		Object::Object(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, Color color, Visuals::Texture textureData) : vertices(ToFloatList(vertices)), indices(indices) {
 			SetTexture(textureData);
 		}
-		Object::Object(Object& instance, Utilities::Color color, Visuals::Texture textureData) : indices(instance.indices), vertices(instance.vertices), color(color) {
+		Object::Object(const Object& instance, Utilities::Color color, Visuals::Texture textureData) : indices(instance.indices), vertices(instance.vertices), color(color) {
 			SetTexture(textureData);
 		}
 		void Object::SetTexture(Visuals::Texture textureData) {

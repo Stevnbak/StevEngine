@@ -7,7 +7,6 @@ namespace StevEngine {
 	namespace Render {
 		class RenderSystem;
 		class Light : public Component {
-			friend class StevEngine::GameObject;
 			friend class StevEngine::Render::RenderSystem;
 			public:
 				Utilities::Vector3 diffuse;
@@ -18,11 +17,6 @@ namespace StevEngine {
 				const unsigned int shaderLightID;
 				virtual void UpdateShader() = 0;
 				virtual ~Light();
-			private:
-				void Update(double deltaTime) {};
-				void Draw(glm::mat4x4 transform) {};
-				void Deactivate() {};
-				void Start() {};
 		};
 
 		class DirectionalLight final : public Light {
