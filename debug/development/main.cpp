@@ -80,7 +80,7 @@ void CameraController::Update(double deltaTime) {
 }
 void CameraController::Start() {
 	inputManager.cursorMode = CursorMode::Free;
-	inputManager.GetEvents()->Subscribe<InputKeyDownEvent>([](InputKeyDownEvent event) {
+	inputManager.GetEvents().Subscribe<InputKeyDownEvent>([](InputKeyDownEvent event) {
 		if (event.key == SDLK_ESCAPE) {
 			if (inputManager.cursorMode == CursorMode::Free) {
 				inputManager.cursorMode = CursorMode::Locked;
@@ -135,7 +135,7 @@ int main(int argc, char** argv) {
 		#endif
 		.targetFPS = 100
 	}, false);
-	engine->GetEvents()->Subscribe<UpdateEvent>(mainUpdate);
+	engine->GetEvents().Subscribe<UpdateEvent>(mainUpdate);
 	Render::render.SetFaceCulling(false);
 	//Debug logging:
 	Log::Debug("Debug log");
@@ -150,101 +150,96 @@ int main(int argc, char** argv) {
 	}
 
 	//Create new scene
-	//Scene* importedscene = sceneManager.CreateSceneFromFile(Resources::resourceManager.GetFile("Debug scene.scene"));
+	//Scene& importedscene = sceneManager.CreateSceneFromFile(Resources::resourceManager.GetFile("Debug scene.scene"));
 	///*
-	Scene* scene = sceneManager.CreateScene("Debug scene");
+	Scene& scene = sceneManager.CreateScene("Debug scene");
 
 	//sceneManager.SetActiveScene("Debug imported scene");
 
 	//Create test objects
 	{
-		ID id = scene->CreateObject("Cube", Utilities::Vector3(0, -1, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward), Utilities::Vector3(100, 1, 100));
-		GameObject* floor = scene->GetObject(id);
+		GameObject& object = scene.CreateObject("Cube", Utilities::Vector3(0, -1, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward), Utilities::Vector3(100, 1, 100));
 		#ifdef StevEngine_RENDERER_GL
-		CubePrimitive* primitive = floor->AddComponent(new CubePrimitive());
+		CubePrimitive* primitive = object.AddComponent(new CubePrimitive());
 		primitive->SetColor(Color(0, 255, 0, 255 ));
 		#endif
 		#ifdef StevEngine_PHYSICS
-		Physics::CubeCollider* collider = floor->AddComponent(new Physics::CubeCollider());
-		Physics::RigidBody* rb = floor->AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layer::GetLayerByName("Static")));
+		Physics::CubeCollider* collider = object.AddComponent(new Physics::CubeCollider());
+		Physics::RigidBody* rb = object.AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layer::GetLayerByName("Static")));
 		#endif
 	}
 	{
-		ID id = scene->CreateObject("Cube", Utilities::Vector3(0, 4, 0), Utilities::Quaternion(), Utilities::Vector3(2.0));
-		GameObject* cube = scene->GetObject(id);
+		GameObject& object = scene.CreateObject("Cube", Utilities::Vector3(0, 4, 0), Utilities::Quaternion(), Utilities::Vector3(2.0));
 		#ifdef StevEngine_RENDERER_GL
-		Render::RenderComponent* primitive = cube->AddComponent(new CubePrimitive(Vector3(), Quaternion(), Vector3(1.0), TextureType::REPEAT));
+		Render::RenderComponent* primitive = object.AddComponent(new CubePrimitive(Vector3(), Quaternion(), Vector3(1.0), TextureType::REPEAT));
 		primitive->SetColor(Color(255, 255, 255, 255));
 		primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
-		cube->AddComponent(new Rotate(Vector3::up));
-		cube->AddComponent(new Rotate(Vector3::right));
+		object.AddComponent(new Rotate(Vector3::up));
+		object.AddComponent(new Rotate(Vector3::right));
 		#endif
 		#ifdef StevEngine_PHYSICS
-		Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
+		Physics::CubeCollider* collider = object.AddComponent(new Physics::CubeCollider());
 		//Physics::RigidBody* rb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		#endif
-		GameObject* parent = scene->GetObject(scene->CreateObject("CubeParent", Utilities::Vector3(5, 0, 0), Utilities::Quaternion(), Utilities::Vector3(1.0)));
-		parent->AddChild(id);
+		GameObject& parent = scene.CreateObject("CubeParent", Utilities::Vector3(5, 0, 0), Utilities::Quaternion(), Utilities::Vector3(1.0));
+		parent.AddChild(object.Id());
 	}
 	{
-		ID id = scene->CreateObject("Sphere", Utilities::Vector3(3, 3, 0), Utilities::Quaternion(), Utilities::Vector3(2.0));
-		GameObject* sphere = scene->GetObject(id);
+		GameObject& object = scene.CreateObject("Sphere", Utilities::Vector3(3, 3, 0), Utilities::Quaternion(), Utilities::Vector3(2.0));
 		#ifdef StevEngine_RENDERER_GL
-		SpherePrimitive* primitive = sphere->AddComponent(new SpherePrimitive());
+		SpherePrimitive* primitive = object.AddComponent(new SpherePrimitive());
 		primitive->SetColor(Color(255, 255, 255, 255));
 		primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
 		#endif
 		#ifdef StevEngine_PHYSICS
-		Physics::Collider* collider = sphere->AddComponent(new Physics::SphereCollider());
-		Physics::RigidBody* rb = sphere->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		Physics::Collider* collider = object.AddComponent(new Physics::SphereCollider());
+		Physics::RigidBody* rb = object.AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		#endif
 	}
 	{
-		modelObject = scene->CreateObject("Model", Utilities::Vector3(0, 0, 0));
-		GameObject* modelObj = scene->GetObject(modelObject);
+		GameObject& modelObj = scene.CreateObject("Model", Utilities::Vector3(0, 0, 0));
+		modelObject = modelObj.Id();
 		#ifdef StevEngine_MODELS
 		Model model = Model(Resources::resourceManager.GetFile("Fox.stl"));
 		double modelScale = 1.0 / 30.0;
 		#endif
 		#ifdef StevEngine_RENDERER_GL
-		ModelRenderer* r = modelObj->AddComponent(new ModelRenderer(model));
+		ModelRenderer* r = modelObj.AddComponent(new ModelRenderer(model));
 		r->scale = Vector3(modelScale);
 		r->SetColor({255,255,0,255});
 		#endif
 		#ifdef StevEngine_PHYSICS
-		modelObj->AddComponent(new Physics::ModelCollider(model, true, Vector3(), Quaternion(), Vector3(modelScale)));
-		modelObj->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		modelObj.AddComponent(new Physics::ModelCollider(model, true, Vector3(), Quaternion(), Vector3(modelScale)));
+		modelObj.AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		#endif
 	}
 	{
-		ID id = scene->CreateObject("Cylinder", Utilities::Vector3(0, 3, 3), Quaternion(), Vector3(1.0, 1.0, 1.0));
-		GameObject* obj = scene->GetObject(id);
+		GameObject& object = scene.CreateObject("Cylinder", Utilities::Vector3(0, 3, 3), Quaternion(), Vector3(1.0, 1.0, 1.0));
 		#ifdef StevEngine_RENDERER_GL
-		CylinderPrimitive* primitive = obj->AddComponent(new CylinderPrimitive());
+		CylinderPrimitive* primitive = object.AddComponent(new CylinderPrimitive());
 		primitive->SetColor(Color(255, 255, 255, 255));
 		primitive->SetTexture(Texture(Resources::resourceManager.GetFile("box.png")));
 		#endif
 		#ifdef StevEngine_PHYSICS
-		Physics::Collider* collider = obj->AddComponent(new Physics::CylinderCollider());
-		Physics::RigidBody* rb = obj->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		Physics::Collider* collider = object.AddComponent(new Physics::CylinderCollider());
+		Physics::RigidBody* rb = object.AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		#endif
 	}
 	{
-		ID id = scene->CreateObject("Capsule", Utilities::Vector3(0, 3, 3), Quaternion(), Vector3(1.0, 1.0, 1.0));
-		GameObject* obj = scene->GetObject(id);
+		GameObject& object = scene.CreateObject("Capsule", Utilities::Vector3(0, 3, 3), Quaternion(), Vector3(1.0, 1.0, 1.0));
 		#ifdef StevEngine_RENDERER_GL
-		CapsulePrimitive* primitive = obj->AddComponent(new CapsulePrimitive(Vector3(), Quaternion(), Vector3(1.0), TextureType::COVER));
+		CapsulePrimitive* primitive = object.AddComponent(new CapsulePrimitive(Vector3(), Quaternion(), Vector3(1.0), TextureType::COVER));
 		primitive->SetColor(Color(255, 255, 255, 255));
 		primitive->SetTexture(Texture(Resources::resourceManager.GetFile("box.png")));
 		#endif
 		#ifdef StevEngine_PHYSICS
-		Physics::Collider* collider = obj->AddComponent(new Physics::CapsuleCollider());
-		Physics::RigidBody* rb = obj->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		Physics::Collider* collider = object.AddComponent(new Physics::CapsuleCollider());
+		Physics::RigidBody* rb = object.AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
 		#endif
 	}
 	//Add Camera controller
 	#ifdef StevEngine_SHOW_WINDOW
-	GameObject* camObj = scene->GetCameraObject();
+	GameObject* camObj = scene.GetCameraObject();
 	camObj->AddComponent(new CameraController());
 	camObj->SetPosition(Utilities::Vector3(0, 4, 25));
 	camObj->SetRotation(Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward));
@@ -252,13 +247,13 @@ int main(int argc, char** argv) {
 
 	//Add test lights
 	#ifdef StevEngine_RENDERER_GL
-	GameObject* light1 = scene->GetObject(scene->CreateObject("PointLight1", Utilities::Vector3(0, 8, 3)));
-	light1->AddComponent(new Render::PointLight(Vector3(0.0, 1.0, 1.0), Vector3(0.0, 1.0, 1.0) * 0.5));
-	light1->AddComponent(new CubePrimitive(Utilities::Vector3(), Utilities::Quaternion(), Utilities::Vector3(0.1)))->SetColor({255,255,255,255});
-	GameObject* light2 = scene->GetObject(scene->CreateObject("PointLight2", Utilities::Vector3(2, 5, 1)));
-	light2->AddComponent(new Render::PointLight(Vector3(1.0, 0.5, 0.0), Vector3(1.0, 0.5, 0.0) * 0.5));
-	light2->AddComponent(new CubePrimitive(Utilities::Vector3(), Utilities::Quaternion(), Utilities::Vector3(0.1)));
-	scene->GetObject(scene->CreateObject("DirectionalLight", Utilities::Vector3(0, 0, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(-90), Utilities::Vector3::right)))->AddComponent(new Render::DirectionalLight(Vector3(0.33), Vector3(0.25)));
+	GameObject& light1 = scene.CreateObject("PointLight1", Utilities::Vector3(0, 8, 3));
+	light1.AddComponent(new Render::PointLight(Vector3(0.0, 1.0, 1.0), Vector3(0.0, 1.0, 1.0) * 0.5));
+	light1.AddComponent(new CubePrimitive(Utilities::Vector3(), Utilities::Quaternion(), Utilities::Vector3(0.1)))->SetColor({255,255,255,255});
+	GameObject& light2 = scene.CreateObject("PointLight2", Utilities::Vector3(2, 5, 1));
+	light2.AddComponent(new Render::PointLight(Vector3(1.0, 0.5, 0.0), Vector3(1.0, 0.5, 0.0) * 0.5));
+	light2.AddComponent(new CubePrimitive(Utilities::Vector3(), Utilities::Quaternion(), Utilities::Vector3(0.1)));
+	scene.CreateObject("DirectionalLight", Utilities::Vector3(0, 0, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(-90), Utilities::Vector3::right)).AddComponent(new Render::DirectionalLight(Vector3(0.33), Vector3(0.25)));
 	#endif
 	//Test ressource manager
 	Log::Debug(std::format("Ressource 0: {}", Resources::resourceManager.GetFile(0).path));
@@ -270,7 +265,7 @@ int main(int argc, char** argv) {
 	Render::ShaderProgram shader = Render::ShaderProgram(Render::FRAGMENT);
 	shader.AddShader(Render::Shader(Resources::resourceManager.GetFile("test_shader.frag").GetRawData(), Render::FRAGMENT));
 	//Render::render.AddGlobalShader(shader);
-	scene->GetObject(modelObject)->GetComponent<Render::RenderComponent>()->AddShader(shader);
+	scene.GetObject(modelObject)->GetComponent<Render::RenderComponent>()->AddShader(shader);
 	#endif
 
 	//Test data manager
@@ -282,9 +277,8 @@ int main(int argc, char** argv) {
 
 	//Play audio
 	#ifdef StevEngine_AUDIO
-	ID audioId = scene->CreateObject("Audio Player");
-	GameObject* audioPlayer = scene->GetObject(audioId);
-	Audio::Emitter* emitter = audioPlayer->AddComponent(new Audio::Emitter("audio.wav", false, 0.5));
+	GameObject& audioPlayer = scene.CreateObject("Audio Player");
+	Audio::Emitter* emitter = audioPlayer.AddComponent(new Audio::Emitter("audio.wav", false, 0.5));
 	emitter->Play();
 
 	//engine->audio.PlayBackground("audio.wav", true);
@@ -292,7 +286,7 @@ int main(int argc, char** argv) {
 
 	//Test graphics settings
 	#ifdef StevEngine_SHOW_WINDOW
-	inputManager.GetEvents()->Subscribe<InputKeyDownEvent>([](InputKeyDownEvent event) {
+	inputManager.GetEvents().Subscribe<InputKeyDownEvent>([](InputKeyDownEvent event) {
 		if (event.key == SDLK_f) {
 			StevEngine::engine->SetFullscreen(!engine->GetGameSettings().fullscreen);
 		}
@@ -304,7 +298,7 @@ int main(int argc, char** argv) {
 
 	//Export scene
 	#ifdef StevEngine_PLAYER_DATA
-	scene->ExportToFile();
+	scene.ExportToFile();
 	#endif
 	//*/
 

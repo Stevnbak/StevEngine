@@ -2,16 +2,17 @@
 #include "Scene.hpp"
 #include "main/ResourceManager.hpp"
 
+#include <cassert>
 #include <string>
 
 namespace StevEngine {
 	class SceneManager {
 		public:
 			void Init();
-			Scene* GetScene(std::string name) { return &scenes.at(name); }
-			Scene* GetActiveScene() { return &scenes.at(active); }
-			Scene* CreateSceneFromFile(Resources::Resource file);
-			Scene* CreateScene(std::string name);
+			Scene& GetScene(std::string name);
+			Scene& GetActiveScene();
+			Scene& CreateSceneFromFile(Resources::Resource file);
+			Scene& CreateScene(std::string name);
 			void SetActiveScene(std::string name);
 			void ActivateDefault();
 		private:

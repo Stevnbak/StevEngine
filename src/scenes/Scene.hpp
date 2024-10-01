@@ -1,4 +1,5 @@
 #pragma once
+#include "main/EventSystem.hpp"
 #include "main/ResourceManager.hpp"
 #include "main/multithreading/Lockable.hpp"
 #include "scenes/GameObject.hpp"
@@ -20,22 +21,24 @@ namespace StevEngine {
 		public:
 			const std::string name;
 		public:
-			Utilities::ID CreateObject();
-			Utilities::ID CreateObject(std::string name, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1));
-			Utilities::ID CreateObject(Resources::Resource file);
-			Utilities::ID CreateObject(YAML::Node node);
-			GameObject* GetObject(Utilities::ID id);
+			GameObject& CreateObject();
+			GameObject& CreateObject(std::string name, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1));
+			GameObject& CreateObject(Resources::Resource file);
+			GameObject& CreateObject(YAML::Node node);
+			GameObject* GetObject(const Utilities::ID& id);
 			#ifdef StevEngine_SHOW_WINDOW
 			Visuals::Camera* GetCamera() const { return activeCamera; }
 			GameObject* GetCameraObject() const { return activeCamera->GetParent(); }
 			#endif
 			std::vector<Utilities::ID> GetAllObjects() const;
 			std::vector<Utilities::ID> GetAllParentObjects() const;
-			void DestroyObject(Utilities::ID id);
+			void DestroyObject(const Utilities::ID& id);
 			#ifdef StevEngine_PLAYER_DATA
 			void ExportToFile() const;
 			#endif
+			EventManager& GetEvents() { return events; };
 		private:
+			EventManager events;
 			Scene(std::string name);
 			Scene(YAML::Node);
 			bool active = false;

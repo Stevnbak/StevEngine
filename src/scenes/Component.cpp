@@ -23,9 +23,9 @@ namespace StevEngine {
 		Unlock();
 	}
 	GameObject* Component::GetParent() const {
-		return GetScene()->GetObject(gameObject);
+		return GetScene().GetObject(gameObject);
 	}
-	Scene* Component::GetScene() const {
+	Scene& Component::GetScene() const {
 		return sceneManager.GetScene(scene);
 	}
 	Component::~Component() {

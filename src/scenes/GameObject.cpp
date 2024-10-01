@@ -24,6 +24,12 @@ namespace StevEngine {
 	//Main functions
 	void GameObject::Start() {
 		Lock();
+		auto& sceneEvents = sceneManager.GetScene(scene).GetEvents();
+		handlers.emplace_back(sceneEvents.Subscribe<DeactivateEvent>([this] (DeactivateEvent) { this->Deactivate(); }), DeactivateEvent::GetStaticEventType());
+		handlers.emplace_back(sceneEvents.Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); }), UpdateEvent::GetStaticEventType());
+		#ifdef StevEngine_SHOW_WINDOW
+		handlers.emplace_back(sceneEvents.Subscribe<DrawEvent>([this] (DrawEvent e) { this->Draw(e.transform); }), DrawEvent::GetStaticEventType());
+		#endif
 		auto c = components;
 		Unlock();
 		for (Component* component : c) {
@@ -33,6 +39,13 @@ namespace StevEngine {
 		}
 	}
 	void GameObject::Deactivate() {
+		Lock();
+		//Remove event listeners
+		auto sceneEvents = sceneManager.GetScene(scene).GetEvents();
+		for(auto[id, event] : handlers) {
+			sceneEvents.Unsubscribe(event, id);
+		}
+		Unlock();
 		events.Publish(DeactivateEvent());
 	}
 	void GameObject::Update(double deltaTime) {
@@ -93,7 +106,7 @@ namespace StevEngine {
 	}
 	Utilities::Quaternion GameObject::GetWorldRotation() const {
 		if(!parent.IsNull()) {
-			return sceneManager.GetScene(scene)->GetObject(parent)->GetWorldRotation() + rotation;
+			return sceneManager.GetScene(scene).GetObject(parent)->GetWorldRotation() + rotation;
 		} else {
 			return rotation;
 		}
@@ -107,7 +120,7 @@ namespace StevEngine {
 	}
 
 	//Constructors
-	GameObject::GameObject() : id(Utilities::ID()), name("GameObject") {
+	GameObject::GameObject() : id(Utilities::ID()), name("Unknown") {
 		//Log::Normal(std::format("Creating gameobject with new id {}", id.GetString()), true);
 	}
 	GameObject::GameObject(Utilities::ID id, std::string name, std::string scene) : id(id), name(name), scene(scene) {
@@ -118,7 +131,7 @@ namespace StevEngine {
 	int GameObject::AddChild(const Utilities::ID& id) {
 		Lock();
 		children.emplace_back(id);
-		sceneManager.GetScene(scene)->GetObject(id)->parent = this->id;
+		sceneManager.GetScene(scene).GetObject(id)->parent = this->id;
 		int i = children.size() - 1;
 		Unlock();
 		return i;
@@ -128,13 +141,13 @@ namespace StevEngine {
 		children.erase(children.begin() + index);
 	}
 	GameObject* GameObject::GetChild(int index) const {
-		return sceneManager.GetScene(scene)->GetObject(children[index]);
+		return sceneManager.GetScene(scene).GetObject(children[index]);
 	}
 	int GameObject::GetChildCount() const {
 		return children.size();
 	}
 	GameObject* GameObject::GetParent() const {
-		if(!parent.IsNull()) return sceneManager.GetScene(scene)->GetObject(parent);
+		if(!parent.IsNull()) return sceneManager.GetScene(scene).GetObject(parent);
 		else return nullptr;
 	}
 
@@ -187,7 +200,7 @@ namespace StevEngine {
 		//Children
 		if(node["children"]) {
 			for(YAML::Node childNode : node["children"]) {
-				AddChild(sceneManager.GetScene(scene)->CreateObject(childNode));
+				AddChild(sceneManager.GetScene(scene).CreateObject(childNode).id);
 			}
 		}
 		Unlock();
@@ -197,7 +210,7 @@ namespace StevEngine {
 		///Log::Normal(std::format("Destroying object with id {}", id), true);
 		//Destroy children
 		for (int i = 0; i < children.size(); i++) {
-			sceneManager.GetScene(scene)->DestroyObject(children[i]);
+			sceneManager.GetScene(scene).DestroyObject(children[i]);
 		}
 		//Destroy components
 		for (int i = 0; i < components.size(); i++)

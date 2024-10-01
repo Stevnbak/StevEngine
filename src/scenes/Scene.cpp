@@ -1,6 +1,7 @@
 #include "Scene.hpp"
 #include "main/DataManager.hpp"
 #include "scenes/Component.hpp"
+#include "scenes/GameObject.hpp"
 #include "utilities/ID.hpp"
 
 #include <memory>
@@ -12,41 +13,44 @@
 using namespace StevEngine::Utilities;
 
 namespace StevEngine {
-	ID Scene::CreateObject() {
+	GameObject& Scene::CreateObject() {
 		ID id;
 		Lock();
 		gameObjects.try_emplace(id, GameObject(id, "GameObject", name));
+		GameObject& object = gameObjects.at(id);
 		Unlock();
-		if(active) GetObject(id)->Start();
-		return id;
+		if(active) object.Start();
+		return object;
 	}
-	ID Scene::CreateObject(std::string name, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) {
+	GameObject& Scene::CreateObject(std::string name, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) {
 		ID id;
 		Lock();
 		gameObjects.try_emplace(id, GameObject(id, name, this->name));
+		GameObject& object = gameObjects.at(id);
 		Unlock();
-		GameObject* object = GetObject(id);
-		object->position = position;
-		object->rotation = rotation;
-		object->scale = scale;
-		if(active) object->Start();
-		return id;
+		object.Lock();
+		object.position = position;
+		object.rotation = rotation;
+		object.scale = scale;
+		object.Unlock();
+		if(active) object.Start();
+		return object;
 	}
-	Utilities::ID Scene::CreateObject(Resources::Resource file) {
+	GameObject& Scene::CreateObject(Resources::Resource file) {
 		YAML::Node node = YAML::Load(file.GetRawData());
 		return CreateObject(node);
 	}
-	Utilities::ID Scene::CreateObject(YAML::Node node) {
+	GameObject& Scene::CreateObject(YAML::Node node) {
 		Utilities::ID id = node["id"] ? node["id"].as<Utilities::ID>() : Utilities::ID();
 		Lock();
 		gameObjects.try_emplace(id, GameObject(id, "GameObject", name));
+		GameObject& object = gameObjects.at(id);
 		Unlock();
-		GameObject* object = GetObject(id);
-		object->Import(node);
-		if(active) object->Start();
-		return id;
+		object.Import(node);
+		if(active) object.Start();
+		return object;
 	}
-	GameObject* Scene::GetObject(Utilities::ID id) {
+	GameObject* Scene::GetObject(const ID& id) {
 		Lock();
 		GameObject* obj;
 		if(!gameObjects.contains(id)) obj = nullptr;
@@ -70,13 +74,13 @@ namespace StevEngine {
 		}
 		return keys;
 	}
-	void Scene::DestroyObject(ID id) {
+	void Scene::DestroyObject(const ID& id) {
 		gameObjects.erase(id);
 	}
 	Scene::Scene(std::string name) : name(name) {
 		//Create main camera
 		#ifdef StevEngine_SHOW_WINDOW
-		activeCamera = GetObject(CreateObject("Main Camera"))->AddComponent(new Visuals::Camera());
+		activeCamera = CreateObject("Main Camera").AddComponent(new Visuals::Camera());
 		#endif
 	}
 	Scene::Scene(YAML::Node node) : name(node["name"].as<std::string>()) {
@@ -121,8 +125,6 @@ namespace StevEngine {
 		Lock();
 		active = false;
 		Unlock();
-		for (auto id : GetAllObjects()) {
-			GetObject(id)->Deactivate();
-		}
+		events.Publish(DeactivateEvent());
 	}
 }

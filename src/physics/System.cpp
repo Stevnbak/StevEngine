@@ -72,7 +72,7 @@ namespace StevEngine::Physics {
 		//Get The body interface
 		bodyInterface = &joltSystem.GetBodyInterface();
 		//Events
-		engine->GetEvents()->Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); });
+		engine->GetEvents().Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); });
 	}
 }
 #endif

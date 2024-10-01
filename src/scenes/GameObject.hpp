@@ -96,6 +96,7 @@ namespace StevEngine {
 				if(parent != nullptr) parent->ChildPublish<EventType>(event, object);
 			}
 			EventManager events;
+			std::vector<std::pair<Utilities::ID, std::string>> handlers;
 		//Children functions
 		public:
 			int AddChild(const Utilities::ID& gameObjectID);

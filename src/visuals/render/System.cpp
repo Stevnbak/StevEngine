@@ -93,8 +93,8 @@ namespace StevEngine {
 			SetVSync(gameSettings.vsync);
 			SetFaceCulling(true);
 			//Events
-			engine->GetEvents()->Subscribe<WindowResizeEvent>([this] (WindowResizeEvent i) { return this->SetViewSize (i.width, i.height); });
-			engine->GetEvents()->Subscribe<WindowVSyncEvent>([this] (WindowVSyncEvent i) { return this->SetVSync(i.value); });
+			engine->GetEvents().Subscribe<WindowResizeEvent>([this] (WindowResizeEvent i) { return this->SetViewSize (i.width, i.height); });
+			engine->GetEvents().Subscribe<WindowVSyncEvent>([this] (WindowVSyncEvent i) { return this->SetVSync(i.value); });
 
 			Log::Debug("Renderer has been initialized!", true);
 		}
@@ -163,7 +163,7 @@ namespace StevEngine {
 			glBindVertexArray(VAO);
 
 			//Camera matrices
-			Visuals::Camera* camera = sceneManager.GetActiveScene()->GetCamera();
+			Visuals::Camera* camera = sceneManager.GetActiveScene().GetCamera();
 			//  View matrix
 			vertexShaderProgram.SetShaderUniform("viewTransform", camera->GetView());
 			fragmentShaderProgram.SetShaderUniform("viewPosition", (glm::vec3)camera->GetParent()->GetWorldPosition());

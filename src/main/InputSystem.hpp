@@ -19,7 +19,7 @@ namespace StevEngine {
 		public:
 			void Init();
 			//Input events
-			EventManager* GetEvents() { return &events; };
+			EventManager& GetEvents() { return events; };
 			//Key functions
 			bool IsKeyPressed(SDL_Keycode key) const;
 			void ForcePressKey(SDL_Keycode key, bool value);

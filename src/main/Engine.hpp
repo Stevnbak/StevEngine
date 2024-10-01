@@ -21,7 +21,7 @@ namespace StevEngine {
 			#ifdef StevEngine_SHOW_WINDOW
 			SDL_Window* window;
 			#endif
-			EventManager* GetEvents() { return &events; };
+			EventManager& GetEvents() { return events; };
 			JobQueue& GetJobs() { return jobs; };
 			double getFPS() const;
 			bool running;
