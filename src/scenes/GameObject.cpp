@@ -24,12 +24,23 @@ namespace StevEngine {
 	//Main functions
 	void GameObject::Start() {
 		Lock();
-		auto& sceneEvents = sceneManager.GetScene(scene).GetEvents();
-		handlers.emplace_back(sceneEvents.Subscribe<DeactivateEvent>([this] (DeactivateEvent) { this->Deactivate(); }), DeactivateEvent::GetStaticEventType());
-		handlers.emplace_back(sceneEvents.Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); }), UpdateEvent::GetStaticEventType());
-		#ifdef StevEngine_SHOW_WINDOW
-		handlers.emplace_back(sceneEvents.Subscribe<DrawEvent>([this] (DrawEvent e) { this->Draw(e.transform); }), DrawEvent::GetStaticEventType());
-		#endif
+		if(parent.IsNull()) {
+			//Subscribe to scene events
+			auto& sceneEvents = sceneManager.GetScene(scene).GetEvents();
+			handlers.emplace_back(sceneEvents.Subscribe<DeactivateEvent>([this] (DeactivateEvent) { this->Deactivate(); }), DeactivateEvent::GetStaticEventType());
+			handlers.emplace_back(sceneEvents.Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); }), UpdateEvent::GetStaticEventType());
+			#ifdef StevEngine_SHOW_WINDOW
+			handlers.emplace_back(sceneEvents.Subscribe<DrawEvent>([this] (DrawEvent e) { this->Draw(e.transform); }), DrawEvent::GetStaticEventType());
+			#endif
+		} else {
+			//Subscribe to parent events
+			auto parent = GetParent();
+			handlers.emplace_back(parent->Subscribe<DeactivateEvent>([this] (DeactivateEvent) { this->Deactivate(); }), DeactivateEvent::GetStaticEventType());
+			handlers.emplace_back(parent->Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); }), UpdateEvent::GetStaticEventType());
+			#ifdef StevEngine_SHOW_WINDOW
+			handlers.emplace_back(parent->Subscribe<DrawEvent>([this] (DrawEvent e) { this->Draw(e.transform); }), DrawEvent::GetStaticEventType());
+			#endif
+		}
 		auto c = components;
 		Unlock();
 		for (Component* component : c) {
