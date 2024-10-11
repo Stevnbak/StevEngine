@@ -21,11 +21,11 @@ namespace StevEngine {
 			SDL_Window* window;
 			#endif
 			EventManager* GetEvents() { return &events; };
-			double getFPS();
+			double getFPS() const;
 			bool running;
 			//Engine settings
 			const std::string title;
-			GameSettings GetGameSettings() { return gameSettings; }
+			GameSettings GetGameSettings() const { return gameSettings; }
 			void SetSettings(GameSettings gameSettings);
 			void SetTargetFPS(int targetFPS);
 			#ifdef StevEngine_SHOW_WINDOW

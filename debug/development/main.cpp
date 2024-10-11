@@ -36,7 +36,6 @@ class CameraController final : public Component {
 	public:
 		double movementSpeed = 10;
 		double sensitivity = 2;
-		void Draw(glm::mat4x4 transform) {}
 		void Update(double deltaTime);
 		void Start();
 		void Deactivate() {};
@@ -99,7 +98,7 @@ class Rotate final : public Component {
 	public:
 		double movementSpeed = 0.5;
 		Vector3 axis = Vector3::right;
-		void Draw(glm::mat4x4 transform) {}
+		void Draw(const glm::mat4x4& transform) {}
 		void Update(double deltaTime) {
 			GameObject* gameObject = GetParent();
 			Utilities::Quaternion rotation = gameObject->GetRotation();
@@ -135,8 +134,9 @@ int main(int argc, char** argv) {
 		.vsync = true, .fullscreen = false,
 		#endif
 		.targetFPS = 100
-	});
+	}, false);
 	engine->GetEvents()->Subscribe<UpdateEvent>(mainUpdate);
+	Render::render.SetFaceCulling(false);
 	//Debug logging:
 	Log::Debug("Debug log");
 	Log::Warning("Warning log");

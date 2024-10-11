@@ -46,15 +46,17 @@ namespace StevEngine {
 	}
 	std::vector<ID> Scene::GetAllObjects() {
 		std::vector<ID> keys;
+		keys.reserve(gameObjects.size());
 		for(auto&[id, object] : gameObjects) {
-			keys.push_back(id);
+			keys.emplace_back(id);
 		}
 		return keys;
 	}
 	std::vector<ID> Scene::GetAllParentObjects() {
 		std::vector<ID> keys;
+		keys.reserve(gameObjects.size());
 		for(auto&[id, object] : gameObjects) {
-			if(object.parent.IsNull()) keys.push_back(id);
+			if(object.parent.IsNull()) keys.emplace_back(id);
 		}
 		return keys;
 	}

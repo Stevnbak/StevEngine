@@ -25,7 +25,7 @@ namespace StevEngine {
 			start.open(configPath + "game.settings");
 			settings = YAML::Load(start);
 		}
-		bool Settings::HasValue(std::string name) {
+		bool Settings::HasValue(std::string name) const {
 			return settings[name].IsDefined();
 		}
 		void Settings::Delete(std::string name) {

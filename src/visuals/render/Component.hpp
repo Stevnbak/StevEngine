@@ -30,8 +30,8 @@ namespace StevEngine {
 				Utilities::Quaternion rotation = Utilities::Quaternion();
 				Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1);
 				Object& GetObject() { return object; };
-				void SetColor(Utilities::Color color);
-				void SetTexture(Visuals::Texture texture);
+				void SetColor(const Utilities::Color& color);
+				void SetTexture(const Visuals::Texture& texture);
 				void AddShader(ShaderProgram program);
 				void RemoveShader(ShaderType type);
 				~RenderComponent();
@@ -43,10 +43,7 @@ namespace StevEngine {
 				std::map<ShaderType, ShaderProgram> shaders;
 			//Main functions
 			private:
-				void Update(double deltaTime) {};
-				void Draw(glm::mat4x4 transform);
-				void Deactivate() {};
-				void Start() {};
+				void Draw(const glm::mat4x4& transform);
 		};
 	}
 }

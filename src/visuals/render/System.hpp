@@ -25,7 +25,8 @@ namespace StevEngine {
 		//Object structs
 		struct RenderObject {
 			const Object& object;
-			glm::mat4x4 transform;
+			const glm::mat4x4 transform;
+			RenderObject(const Object& object, const glm::mat4x4& transform) : object(object), transform(transform) {}
 		};
 
 		//Render queues
@@ -47,11 +48,10 @@ namespace StevEngine {
 			public:
 				void Init(SDL_Window* window);
 				void DrawObject(const Object& object, glm::mat4x4 transform, RenderQueue queue = STANDARD);
-				void SetBackground(Utilities::Color color);
-				void SetAmbientLight(float strength, Utilities::Color color = Utilities::Color(255,255,255,255));
+				void SetBackground(const Utilities::Color& color);
+				void SetAmbientLight(float strength, const Utilities::Color& color = Utilities::Color(255,255,255,255));
 				void AddGlobalShader(ShaderProgram shader);
 				void ResetGlobalShader(ShaderType type);
-			public:
 				//For Engine
 				static const Uint32 WindowType();
 				void DrawFrame();
@@ -65,7 +65,7 @@ namespace StevEngine {
 				SDL_GLContext context;
 				//Queues
 				std::array<std::vector<RenderObject>, RenderQueue::MUST_BE_LAST> queues;
-				void Draw(RenderObject object);
+				void Draw(const RenderObject& object);
 				//Shader program
 				ShaderProgram vertexShaderProgram;
 				ShaderProgram fragmentShaderProgram;

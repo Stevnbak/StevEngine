@@ -11,7 +11,7 @@ namespace StevEngine {
 	class Settings {
 		public:
 			void Init(std::string title);
-			template<typename T> T Read(std::string name)  {
+			template<typename T> T Read(std::string name) const {
 				//Get line if key exists
 				if(!settings[name]) {
 					Log::Error(std::format("Game data with key '{}' not found!", name), true);
@@ -20,12 +20,12 @@ namespace StevEngine {
 				//Get data
 				return settings[name].as<T>();
 			}
-			bool HasValue(std::string name);
+			bool HasValue(std::string name) const;
 			template<typename T> void Save(std::string name, T data) {
 				settings[name] = data;
 			}
 			void Delete(std::string name);
-			std::string GetConfigPath() { return configPath; }
+			std::string GetConfigPath() const { return configPath; }
 			void SaveToFile() const;
 		private:
 			std::string configPath;

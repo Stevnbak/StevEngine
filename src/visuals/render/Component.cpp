@@ -1,3 +1,4 @@
+#include "glm/ext/matrix_float4x4.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "Component.hpp"
 #include "scenes/GameObject.hpp"
@@ -37,23 +38,24 @@ namespace StevEngine {
 			object.FreeTexture();
 		}
 		//Main draw function
-		void RenderComponent::Draw(glm::mat4x4 transform) {
+		void RenderComponent::Draw(const glm::mat4x4& transform) {
+			glm::mat4x4 trnsfm = transform;
 		 	//Scale
-			transform = glm::scale(transform, glm::vec3(scale.X, scale.Y, scale.Z));
+			trnsfm = glm::scale(trnsfm, glm::vec3(scale.X, scale.Y, scale.Z));
 			//Move
-			transform = glm::translate(transform, glm::vec3(position.X, position.Y, position.Z));
+			trnsfm = glm::translate(trnsfm, glm::vec3(position.X, position.Y, position.Z));
 			//Rotate
 			std::tuple<double, Utilities::Vector3> angleAxis = rotation.GetAngleAxis();
 			Utilities::Vector3 v = std::get<1>(angleAxis);
-			transform = glm::rotate(transform, (float)std::get<0>(angleAxis), glm::vec3(v.X, v.Y, v.Z));
+			trnsfm = glm::rotate(trnsfm, (float)std::get<0>(angleAxis), glm::vec3(v.X, v.Y, v.Z));
 			//Draw
-			Render::render.DrawObject(object, transform);
+			Render::render.DrawObject(object, trnsfm);
 		}
-		void RenderComponent::SetColor(Color color) {
+		void RenderComponent::SetColor(const Color& color) {
 			this->color = color;
 			object.color = color;
 		}
-		void RenderComponent::SetTexture(Visuals::Texture texture) {
+		void RenderComponent::SetTexture(const Visuals::Texture& texture) {
 			object.SetTexture(texture);
 			texturePath = texture.path;
 		}

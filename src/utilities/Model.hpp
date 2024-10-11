@@ -24,7 +24,7 @@ namespace StevEngine {
 			public:
 				Model(Resources::Resource file);
 				const std::string path;
-				std::vector<Mesh> GetMeshes();
+				std::vector<Mesh> GetMeshes() const;
 			private:
 				const aiScene* assimpScene;
 				std::vector<Mesh> meshes;

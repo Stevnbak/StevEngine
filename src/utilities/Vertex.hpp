@@ -5,17 +5,18 @@
 
 namespace StevEngine {
 	namespace Utilities {
+		const int VERTEX_COUNT = (3 + 3 + 2);
+		const size_t VERTEX_SIZE = (VERTEX_COUNT) * sizeof(float);
 		struct Vertex {
-			float x, y, z;
-			float u, v;
-			float nX, nY, nZ;
+			Vector3 position;
+			Vector2 uv;
+			Vector3 normal;
 			Vertex(float x, float y, float z, float nX, float nY, float nZ, float u = 0, float v = 0)
-				: x(x), y(y), z(z), nX(nX), nY(nY), nZ(nZ), u(u), v(v) {}
-			Vertex(Vector3 position, Vector3 normal, Vector2 texture = Vector2(0,0))
-					: x(position.X), y(position.Y), z(position.Z), nX(normal.X), nY(normal.Y), nZ(normal.Z), u(texture.X), v(texture.Y) {}
+				: position(x, y, z), normal(nX, nY, nZ), uv(u, v) {}
+			Vertex(Vector3 position, Vector3 normal, Vector2 uv = Vector2(0,0))
+					: position(position), normal(normal), uv(uv) {}
 			Vertex() {};
 			bool operator==(const Vertex o) const;
-			static size_t size;
 		};
 	}
 }

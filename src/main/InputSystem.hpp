@@ -21,11 +21,11 @@ namespace StevEngine {
 			//Input events
 			EventManager* GetEvents() { return &events; };
 			//Key functions
-			bool IsKeyPressed(SDL_Keycode key);
+			bool IsKeyPressed(SDL_Keycode key) const;
 			void ForcePressKey(SDL_Keycode key, bool value);
-			bool IsMouseButtonPressed(Uint8 button);
-			Utilities::Vector2 GetMousePosition() { return mousePosition; }
-			Utilities::Vector2 GetMouseDelta() { return mouseDelta; }
+			bool IsMouseButtonPressed(Uint8 button) const;
+			Utilities::Vector2 GetMousePosition() const { return mousePosition; }
+			Utilities::Vector2 GetMouseDelta() const { return mouseDelta; }
 			//Cursor
 			#ifdef StevEngine_SHOW_WINDOW
 			CursorMode cursorMode = Free;

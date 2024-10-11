@@ -42,7 +42,7 @@ namespace StevEngine::Physics {
 		Utilities::Vector3 abs = parent->GetWorldScale();
 		if(rawShape) this->shape = new JPH::ScaledShape(rawShape, Utilities::Vector3(scale.X * abs.X, scale.Y * abs.Y, scale.Z * abs.Z));
 		//Events
-		handlers.push_back({parent->Subscribe<TransformUpdateEvent>([this] (TransformUpdateEvent e) { this->TransformUpdate(e.position, e.rotation, e.scale);}), TransformUpdateEvent::GetStaticEventType() });
+		handlers.emplace_back(parent->Subscribe<TransformUpdateEvent>([this] (TransformUpdateEvent e) { this->TransformUpdate(e.position, e.rotation, e.scale);}), TransformUpdateEvent::GetStaticEventType());
 	}
 	void Collider::Deactivate()	{
 		if(shape) shape->Release();
@@ -50,9 +50,6 @@ namespace StevEngine::Physics {
 	Collider::~Collider() {
 		if(shape) shape->Release();
 		if(rawShape) rawShape->Release();
-	}
-	void Collider::Draw(glm::mat4x4 transform) {
-
 	}
 	void Collider::TransformUpdate(bool position, bool rotation, bool scale, bool fromLocal) {
 		GameObject* parent = GetParent();
@@ -111,10 +108,10 @@ namespace StevEngine::Physics {
 			//Create as ConvexHullShape
 			for(Utilities::Mesh mesh : model.GetMeshes()) {
 				JPH::Array<JPH::Vec3> vertices;
-				vertices.resize(mesh.indices.size());
+				vertices.reserve(mesh.indices.size());
 				for(int i = 0; i < mesh.indices.size(); i++) {
-					Utilities::Vertex v = mesh.vertices[mesh.indices[i]];
-					vertices[i] = JPH::Vec3(v.x, v.y, v.z);
+					const Utilities::Vertex& v = mesh.vertices[mesh.indices[i]];
+					vertices.emplace_back(v.position);
 				};
 				shapeSettings.AddShape(Utilities::Vector3(), Utilities::Quaternion(1,0,0,0), new JPH::ConvexHullShapeSettings(vertices));
 				continue;
@@ -130,22 +127,14 @@ namespace StevEngine::Physics {
 			//Create as mesh
 			for(Utilities::Mesh mesh : model.GetMeshes()) {
 				JPH::VertexList vertices;
-				vertices.resize(mesh.vertices.size());
-				std::transform(mesh.vertices.begin(), mesh.vertices.end(), vertices.begin(), [](Utilities::Vertex v) { return JPH::Float3(v.x, v.y, v.z); });
+				vertices.reserve(mesh.vertices.size());
+				std::transform(mesh.vertices.begin(), mesh.vertices.end(), vertices.begin(), [](Utilities::Vertex v) { return JPH::Float3(v.position.X, v.position.Y, v.position.Z); });
 				JPH::IndexedTriangleList indices;
-				indices.resize(mesh.indices.size() / 3);
+				indices.reserve(mesh.indices.size() / 3);
 				for(int i = 0; i < indices.size(); i++) {
-					indices[i] = JPH::IndexedTriangle(mesh.indices[i*3+0], mesh.indices[i*3+1], mesh.indices[i*3+2]);
+					indices.emplace_back(mesh.indices[i*3+0], mesh.indices[i*3+1], mesh.indices[i*3+2]);
 				}
 				shapeSettings.AddShape(Utilities::Vector3(), Utilities::Quaternion(1,0,0,0), new JPH::MeshShapeSettings(vertices, indices, JPH::PhysicsMaterialList()));
-				continue;
-				JPH::MeshShapeSettings meshShape = JPH::MeshShapeSettings(vertices, indices, JPH::PhysicsMaterialList());
-				JPH::ShapeSettings::ShapeResult meshResult = meshShape.Create();
-				if(meshResult.IsValid()) {
-					shapeSettings.AddShape(Utilities::Vector3(), Utilities::Quaternion(1,0,0,0), new JPH::MeshShapeSettings(vertices, indices, JPH::PhysicsMaterialList()));
-				} else {
-					Log::Error(meshResult.GetError().c_str(), true);
-				}
 			}
 		}
 		//Create final shape

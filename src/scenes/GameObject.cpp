@@ -100,10 +100,10 @@ namespace StevEngine {
 	}
 
 	//Children functions
-	int GameObject::AddChild(Utilities::ID gameObject) {
-		children.push_back(gameObject);
-		sceneManager.GetScene(scene)->GetObject(gameObject)->parent = id;
-		return children.size() - 1;
+		children.emplace_back(id);
+		sceneManager.GetScene(scene)->GetObject(id)->parent = this->id;
+		int i = children.size() - 1;
+		return i;
 	}
 	void GameObject::RemoveChild(int index) {
 		GetChild(index)->parent = Utilities::ID::empty;

@@ -24,6 +24,7 @@ namespace StevEngine {
 				return;
 			}
 			//Read meshes
+			meshes.reserve(assimpScene->mNumMeshes);
 			for(int i = 0; i < assimpScene->mNumMeshes; i++) {
 				aiMesh* assimpMesh = assimpScene->mMeshes[i];
 				std::vector<Vertex> vertices;
@@ -32,24 +33,26 @@ namespace StevEngine {
 				Utilities::Range3 bounds = Utilities::Range3(assimpMesh->mAABB.mMin, assimpMesh->mAABB.mMax);
 				Utilities::Vector3 center = bounds.GetCenter();
 				//Vertices
+				vertices.reserve(assimpMesh->mNumVertices);
 				for(int v = 0; v < assimpMesh->mNumVertices; v++) {
 					Utilities::Vector3 coords = ((Utilities::Vector3)assimpMesh->mVertices[v]) - center;
 					Utilities::Vector3 tex = assimpMesh->HasTextureCoords(v) ? assimpMesh->mTextureCoords[0][v] : aiVector3D();
 					Utilities::Vector3 normal = ((Utilities::Vector3)assimpMesh->mNormals[v]);
-					vertices.push_back(Vertex(coords, normal, (Utilities::Vector2)tex));
+					vertices.emplace_back(coords, normal, (Utilities::Vector2)tex);
 				}
 				//Indices
 				for(unsigned int i = 0; i < assimpMesh->mNumFaces; i++)
 				{
 					aiFace face = assimpMesh->mFaces[i];
+					indices.reserve(face.mNumIndices);
 					for(unsigned int j = 0; j < face.mNumIndices; j++)
-						indices.push_back(face.mIndices[j]);
+						indices.emplace_back(face.mIndices[j]);
 				}
-				meshes.push_back(Mesh(vertices, indices));
+				meshes.emplace_back(vertices, indices);
 			}
 		}
 
-		std::vector<Mesh> Model::GetMeshes() {
+		std::vector<Mesh> Model::GetMeshes() const {
 			return meshes;
 		}
 	}

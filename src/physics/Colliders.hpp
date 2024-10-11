@@ -22,23 +22,21 @@ namespace StevEngine::Physics {
 			Collider(YAML::Node);
 			~Collider();
 		private:
-			void Draw(glm::mat4x4 transform);
 			void Deactivate();
-			void Update(double deltaTime) {};
 			void Start();
 			void TransformUpdate(bool position, bool rotation, bool scale, bool fromLocal = false);
 		public:
 			YAML::Node Export(YAML::Node node) const;
-			Utilities::Vector3 GetScale()  { return scale; }
-			Utilities::Quaternion GetRotation()  { return rotation; }
-			Utilities::Vector3 GetPosition() { return position; }
+			Utilities::Vector3 GetScale() const { return scale; }
+			Utilities::Quaternion GetRotation() const  { return rotation; }
+			Utilities::Vector3 GetPosition() const { return position; }
 			void SetScale(Utilities::Vector3 scale);
 			void SetRotation(Utilities::Quaternion rotation);
 			void SetPosition(Utilities::Vector3 position);
 			void SetTransform(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale);
-			Utilities::Range3 GetBounds() { return shape->GetLocalBounds(); };
-			Utilities::Vector3 GetCenterOfMass() { return shape->GetCenterOfMass(); };
-			JPH::Ref<JPH::Shape> GetShape() { return shape; }
+			Utilities::Range3 GetBounds() const { return shape->GetLocalBounds(); };
+			Utilities::Vector3 GetCenterOfMass() const { return shape->GetCenterOfMass(); };
+			JPH::Ref<JPH::Shape> GetShape() const { return shape; }
 		protected:
 			Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1);
 			Utilities::Vector3 position = Utilities::Vector3();

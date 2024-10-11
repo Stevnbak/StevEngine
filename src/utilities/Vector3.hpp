@@ -51,16 +51,16 @@ namespace StevEngine {
 				Vector3(const JPH::DVec3& other);
 				#endif
 				#ifdef StevEngine_MODELS
-				operator aiVector3D();
+				operator aiVector3D() const;
 				Vector3& operator= (const aiVector3D& other);
 				Vector3(const aiVector3D& other);
 				#endif
 				//Static stuff
 				static Vector3 up, right, forward;
-				static double Distance(Vector3 a, Vector3 b);
-				static Vector3 Cross(Vector3 a, Vector3 b);
-				static double Dot(Vector3 a, Vector3 b);
-				static Vector3 CombineScale(Vector3 a, Vector3 b);
+				static double Distance(const Vector3& a, const Vector3& b);
+				static Vector3 Cross(const Vector3& a, const Vector3& b);
+				static double Dot(const Vector3& a, const Vector3& b);
+				static Vector3 CombineScale(const Vector3& a, const Vector3& b);
 		};
 	}
 }

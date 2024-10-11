@@ -15,10 +15,10 @@ namespace StevEngine {
 			public:
 				const unsigned short id;
 				const std::string path;
-				SDL_RWops* GetSDLData();
-				std::string GetStrData();
-				const char* GetRawData();
-				int GetSize();
+				SDL_RWops* GetSDLData() const;
+				std::string GetStrData() const;
+				const char* GetRawData() const;
+				int GetSize() const;
 			private:
 				Resource();
 				Resource(std::string path, const char* data, const int size);
@@ -30,8 +30,8 @@ namespace StevEngine {
 		class ResourceManager {
 			public:
 				ResourceManager();
-				Resource GetFile(unsigned short id) const;
-				Resource GetFile(std::string path) const;
+				const Resource& GetFile(unsigned short id) const;
+				const Resource& GetFile(std::string path) const;
 				void AddFile(std::string path, const char* data, const int size);
 				template<int hexSize = 2> void AddFileFromHex(std::string path, const char* hex, const int size);
 			private:

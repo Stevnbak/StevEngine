@@ -252,7 +252,7 @@ namespace StevEngine {
 	}
 	#endif
 
-	double Engine::getFPS() {
+	double Engine::getFPS() const {
 		return currentFPS;
 	}
 

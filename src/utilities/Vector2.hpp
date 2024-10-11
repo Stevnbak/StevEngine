@@ -30,12 +30,12 @@ namespace StevEngine {
 				Vector2  operator   /   (const double& other) const;
 				bool	 operator   ==  (const Vector2& other) const;
 				//Conversions
-				explicit operator Vector3();
-				explicit operator std::string();
+				explicit operator Vector3() const;
+				explicit operator std::string() const;
 				//Static stuff
 				static Vector2 up, right;
-				static double Distance(Vector2 a, Vector2 b);
-				static double Dot(Vector2 a, Vector2 b);
+				static double Distance(const Vector2& a, const Vector2& b);
+				static double Dot(const Vector2& a, const Vector2& b);
 		};
 	}
 }

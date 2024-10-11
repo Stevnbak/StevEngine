@@ -29,7 +29,7 @@ namespace StevEngine {
 		}
 
 		//Get file
-		Resource ResourceManager::GetFile(unsigned short id) const {
+		const Resource& ResourceManager::GetFile(unsigned short id) const {
 			if(resources.contains(id)) {
 				return resources.at(id);
 			}
@@ -38,7 +38,7 @@ namespace StevEngine {
 				throw std::runtime_error(std::format("Resource {} not found.", id));
 			}
 		}
-		Resource ResourceManager::GetFile(std::string path) const {
+		const Resource& ResourceManager::GetFile(std::string path) const {
 			if(pathToId.contains(path)) {
 				return resources.at(pathToId.at(path));
 			}
@@ -49,7 +49,7 @@ namespace StevEngine {
 		}
 
 		void ResourceManager::AddFile(std::string path, const char* data, const int size) {
-			Resource resource (path, data, size);
+			Resource resource(path, data, size);
 			resources.insert({resource.id, resource});
 			pathToId.insert({resource.path, resource.id});
 		}
@@ -73,16 +73,16 @@ namespace StevEngine {
 		Resource::Resource() : id(Resource::currentId++), path(), size() {}
 		Resource::Resource(std::string path, const char* data, const int size) : id(Resource::currentId++), path(path), data(data), size(size) {}
 
-		int Resource::GetSize() {
+		int Resource::GetSize() const {
 			return size;
 		}
-		const char* Resource::GetRawData() {
+		const char* Resource::GetRawData() const {
 			return data;
 		}
-		SDL_RWops* Resource::GetSDLData() {
+		SDL_RWops* Resource::GetSDLData() const {
 			return SDL_RWFromConstMem(data, size);
 		};
-		std::string Resource::GetStrData() {
+		std::string Resource::GetStrData() const {
 			std::stringstream ss;
 			for(int i = 0; i < size; i++) {
 				ss << data[i];
