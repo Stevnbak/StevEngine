@@ -29,8 +29,8 @@ namespace StevEngine {
 		public:
 			Component(std::string type);
 			virtual ~Component();
-			GameObject* GetParent();
-			Scene* GetScene();
+			GameObject* GetParent() const;
+			Scene* GetScene() const;
 			virtual YAML::Node Export(YAML::Node node) const;
 			YAML::Node Export() const;
 			Component(YAML::Node node);

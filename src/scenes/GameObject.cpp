@@ -100,6 +100,7 @@ namespace StevEngine {
 	}
 
 	//Children functions
+	int GameObject::AddChild(const Utilities::ID& id) {
 		children.emplace_back(id);
 		sceneManager.GetScene(scene)->GetObject(id)->parent = this->id;
 		int i = children.size() - 1;

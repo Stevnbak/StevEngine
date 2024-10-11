@@ -134,7 +134,7 @@ int main(int argc, char** argv) {
 		.vsync = true, .fullscreen = false,
 		#endif
 		.targetFPS = 100
-	}, false);
+	});
 	engine->GetEvents()->Subscribe<UpdateEvent>(mainUpdate);
 	Render::render.SetFaceCulling(false);
 	//Debug logging:

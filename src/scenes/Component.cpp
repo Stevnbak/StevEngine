@@ -20,10 +20,10 @@ namespace StevEngine {
 		#endif
 		handlers.emplace_back(object->Subscribe<DeactivateEvent>([this] (DeactivateEvent) { this->Deactivate();  }), DeactivateEvent::GetStaticEventType());
 	}
-	GameObject* Component::GetParent() {
+	GameObject* Component::GetParent() const {
 		return GetScene()->GetObject(gameObject);
 	}
-	Scene* Component::GetScene() {
+	Scene* Component::GetScene() const {
 		return sceneManager.GetScene(scene);
 	}
 	Component::~Component() {
