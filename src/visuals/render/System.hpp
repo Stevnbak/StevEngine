@@ -60,7 +60,7 @@ namespace StevEngine {
 				void SetFaceCulling(bool enable, GLenum face = GL_BACK, bool clockwise = false);
 				//From Lights
 				std::vector<Light*> lights;
-				unsigned int GetLightID(std::string type);
+				uint32_t GetLightID(std::string type);
 			private:
 				SDL_GLContext context;
 				//Queues
@@ -69,11 +69,11 @@ namespace StevEngine {
 				//Shader program
 				ShaderProgram vertexShaderProgram;
 				ShaderProgram fragmentShaderProgram;
-				unsigned int shaderPipeline;
+				uint32_t shaderPipeline;
 				//GPU Buffers
-				unsigned int VBO; //Vertex Buffer Object
-				unsigned int EBO; //Element Buffer Object
-				unsigned int VAO; //Vertex Array Object
+				uint32_t VBO; //Vertex Buffer Object
+				uint32_t EBO; //Element Buffer Object
+				uint32_t VAO; //Vertex Array Object
 				//Background
 				Utilities::Color backgroundColor = {0, 0, 0, 255};
 		};

@@ -28,7 +28,7 @@ namespace StevEngine {
 			for(int i = 0; i < assimpScene->mNumMeshes; i++) {
 				aiMesh* assimpMesh = assimpScene->mMeshes[i];
 				std::vector<Vertex> vertices;
-				std::vector<unsigned int> indices;
+				std::vector<uint32_t> indices;
 				//Bounding box
 				Utilities::Range3 bounds = Utilities::Range3(assimpMesh->mAABB.mMin, assimpMesh->mAABB.mMax);
 				Utilities::Vector3 center = bounds.GetCenter();
@@ -41,11 +41,11 @@ namespace StevEngine {
 					vertices.emplace_back(coords, normal, (Utilities::Vector2)tex);
 				}
 				//Indices
-				for(unsigned int i = 0; i < assimpMesh->mNumFaces; i++)
+				for(int i = 0; i < assimpMesh->mNumFaces; i++)
 				{
 					aiFace face = assimpMesh->mFaces[i];
 					indices.reserve(face.mNumIndices);
-					for(unsigned int j = 0; j < face.mNumIndices; j++)
+					for(uint32_t j = 0; j < face.mNumIndices; j++)
 						indices.emplace_back(face.mIndices[j]);
 				}
 				meshes.emplace_back(vertices, indices);

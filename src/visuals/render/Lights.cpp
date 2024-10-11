@@ -8,7 +8,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 namespace StevEngine::Render {
-	Light::Light(unsigned int shaderID, Utilities::Vector3 diffuse, Utilities::Vector3 specular, std::string type)
+	Light::Light(uint32_t shaderID, Utilities::Vector3 diffuse, Utilities::Vector3 specular, std::string type)
 		: shaderLightID(shaderID), diffuse(diffuse), specular(specular), Component(type) {};
 	//Create light components
 	DirectionalLight::DirectionalLight(Utilities::Vector3 diffuse, Utilities::Vector3 specular)

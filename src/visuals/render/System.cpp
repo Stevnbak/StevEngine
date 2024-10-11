@@ -210,7 +210,7 @@ namespace StevEngine {
 			const Object& object = renderObject.object;
 			const glm::mat4x4& transform = renderObject.transform;
 			//Object specific shaders
-			unsigned int pipeline;
+			uint32_t pipeline;
 			bool usingCustomShaders = object.shaders.size() > 0;
 			if(usingCustomShaders) {
 				glGenProgramPipelines(1, &pipeline);
@@ -237,9 +237,9 @@ namespace StevEngine {
 			fragmentShaderProgram.SetShaderUniform("objectMaterial.specular", (glm::vec3)object.material.specular);
 			fragmentShaderProgram.SetShaderUniform("objectMaterial.shininess", object.material.shininess);
 			//Draw object
-			glBufferData(GL_ARRAY_BUFFER, object.vertices.size() * sizeof(float), object.vertices.data(), GL_STATIC_DRAW);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, object.indices.size() * sizeof(float), object.indices.data(), GL_STATIC_DRAW);
-			glDrawElements(GL_TRIANGLES, object.indices.size(), GL_UNSIGNED_INT, 0);
+			glBufferData(GL_ARRAY_BUFFER, object.vertexCount * sizeof(float), object.vertices, GL_STATIC_DRAW);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, object.indexCount * sizeof(uint32_t), object.indices, GL_STATIC_DRAW);
+			glDrawElements(GL_TRIANGLES, object.indexCount, GL_UNSIGNED_INT, 0);
 			//Remove custom pipeline
 			if(usingCustomShaders) {
 				glBindProgramPipeline(shaderPipeline);
@@ -247,8 +247,8 @@ namespace StevEngine {
 			}
 		}
 
-		unsigned int RenderSystem::GetLightID(std::string type) {
-			unsigned int next = 0;
+		uint32_t RenderSystem::GetLightID(std::string type) {
+			uint32_t next = 0;
 			for(Light* light : lights) {
 				if(light->type == type) {
 					if(next == light->shaderLightID) {

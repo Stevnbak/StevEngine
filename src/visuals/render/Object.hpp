@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #ifdef StevEngine_RENDERER_GL
 #include <vector>
 #include <SDL.h>
@@ -27,7 +28,7 @@ namespace StevEngine {
 			friend class RenderSystem;
 			public:
 				Object(const std::vector<Utilities::Vertex>& vertices, Utilities::Color color = Utilities::Color(255, 255, 255, 255), Visuals::Texture textureData = Visuals::Texture::empty);
-				Object(const std::vector<Utilities::Vertex>& vertices, const std::vector<unsigned int>& indices, Utilities::Color color = Utilities::Color(255, 255, 255, 255), Visuals::Texture textureData = Visuals::Texture::empty);
+				Object(const std::vector<Utilities::Vertex>& vertices, const std::vector<uint32_t>& indices, Utilities::Color color = Utilities::Color(255, 255, 255, 255), Visuals::Texture textureData = Visuals::Texture::empty);
 				Object(const Object& instance, Utilities::Color color = Utilities::Color(255, 255, 255, 255), Visuals::Texture textureData = Visuals::Texture::empty);
 				void SetTexture(Visuals::Texture textureData);
 				void FreeTexture();
@@ -36,8 +37,10 @@ namespace StevEngine {
 				void AddShader(Render::ShaderProgram program);
 				void RemoveShader(Render::ShaderType type);
 			private:
-				std::vector<float> vertices;
-				std::vector<unsigned int> indices;
+				float* vertices;
+				size_t vertexCount;
+				uint32_t* indices;
+				size_t indexCount;
 				std::map<Render::ShaderType, Render::ShaderProgram> shaders;
 				GLuint texture;
 				bool textured;

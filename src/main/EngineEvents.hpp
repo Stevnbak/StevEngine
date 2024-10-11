@@ -44,10 +44,10 @@ namespace StevEngine {
 	#ifdef StevEngine_SHOW_WINDOW
 		class WindowResizeEvent : public Event {
 			public:
-				WindowResizeEvent(unsigned int width, unsigned int height) : width(width), height(height) {}
+				WindowResizeEvent(uint32_t width, uint32_t height) : width(width), height(height) {}
 				const std::string GetEventType() const override { return GetStaticEventType(); };
 				static const std::string GetStaticEventType() {  return "WindowResizeEvent"; }
-				unsigned int width, height;
+				uint32_t width, height;
 		};
 		class WindowMoveEvent : public Event {
 			public:

@@ -14,7 +14,7 @@ namespace StevEngine {
 			private:
 				Texture() {};
 				SDL_Surface* surface;
-				unsigned int GLLocation;
+				uint32_t GLLocation;
 		};
 	}
 }

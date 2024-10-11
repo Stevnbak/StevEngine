@@ -12,9 +12,9 @@ namespace StevEngine {
 				Utilities::Vector3 diffuse;
 				Utilities::Vector3 specular;
 			protected:
-				Light(unsigned int shaderID, Utilities::Vector3 diffuse, Utilities::Vector3 specular, std::string type);
+				Light(uint32_t shaderID, Utilities::Vector3 diffuse, Utilities::Vector3 specular, std::string type);
 				Light(YAML::Node node);
-				const unsigned int shaderLightID;
+				const uint32_t shaderLightID;
 				virtual void UpdateShader() = 0;
 				virtual ~Light();
 		};

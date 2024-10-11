@@ -1,4 +1,6 @@
 #pragma once
+#include <SDL_stdinc.h>
+#include <cstdint>
 #ifdef StevEngine_AUDIO
 #include "audio/Emitter.hpp"
 #include <SDL.h>
@@ -28,7 +30,7 @@ namespace StevEngine {
 				double volumeMusic;
 				const char* audioDevice;
 				int audioRate;
-				uint16_t audioFormat;
+			 	uint16_t audioFormat;
 				int audioChannels;
 				bool audioOpen = false;
 				std::vector<Emitter*> activeSounds;

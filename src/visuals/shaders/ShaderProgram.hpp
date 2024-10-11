@@ -20,8 +20,8 @@ namespace StevEngine {
 				ShaderProgram(YAML::Node node);
 				ShaderProgram() {};
 				//Set shaders
-				unsigned int AddShader(Shader shader);
-				void RemoveShader(unsigned int location);
+				uint32_t AddShader(Shader shader);
+				void RemoveShader(uint32_t location);
 				void RelinkProgram();
 				//Set shader uniforms
 				void SetShaderUniform(const char* name, glm::mat4 value);
@@ -36,10 +36,10 @@ namespace StevEngine {
 				//Export
 				YAML::Node Export() const;
 			private:
-				unsigned int location;
+				uint32_t location;
 				ShaderType shaderType;
 				bool modified;
-				std::map<unsigned int, Shader> shaders;
+				std::map<uint32_t, Shader> shaders;
 		};
 	}
 }

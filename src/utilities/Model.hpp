@@ -15,8 +15,8 @@ namespace StevEngine {
 
 		struct Mesh {
 			std::vector<Vertex> vertices;
-			std::vector<unsigned int> indices;
-			Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices)
+			std::vector<uint32_t> indices;
+			Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices)
 				: vertices(vertices), indices(indices) {}
 		};
 

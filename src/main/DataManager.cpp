@@ -62,7 +62,7 @@ namespace StevEngine {
 	template std::string GameData::Read(std::string name);
 	template bool GameData::Read(std::string name);
 	template int GameData::Read(std::string name);
-	template unsigned int GameData::Read(std::string name);
+	template uint32_t GameData::Read(std::string name);
 	template double GameData::Read(std::string name);
 	template float GameData::Read(std::string name);
 
@@ -74,7 +74,7 @@ namespace StevEngine {
 	template void GameData::Save(std::string name, std::string input);
 	template void GameData::Save(std::string name, bool input);
 	template void GameData::Save(std::string name, int input);
-	template void GameData::Save(std::string name, unsigned int input);
+	template void GameData::Save(std::string name, uint32_t input);
 	template void GameData::Save(std::string name, double input);
 	template void GameData::Save(std::string name, float input);
 

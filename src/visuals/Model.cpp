@@ -17,7 +17,7 @@ namespace StevEngine {
 	namespace Visuals {
 		Render::Object CreateRenderObject(const Utilities::Model& model, Color color, Visuals::Texture surface) {
 			std::vector<Utilities::Vertex> vertices;
-			std::vector<unsigned int> indices;
+			std::vector<uint32_t> indices;
 			for(Utilities::Mesh mesh : model.GetMeshes()) {
 				vertices.insert(vertices.end(), mesh.vertices.begin(), mesh.vertices.end());
 				indices.insert(indices.end(), mesh.indices.begin(), mesh.indices.end());

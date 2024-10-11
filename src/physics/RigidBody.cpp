@@ -107,10 +107,10 @@ namespace StevEngine::Physics {
 
 	YAML::Node RigidBody::Export(YAML::Node node) const {
 		node["mass"] = mass;
-		node["motionType"] = (unsigned int)motionType;
+		node["motionType"] = (uint32_t)motionType;
 		node["layer"] = layer->id;
 		return node;
 	}
-	RigidBody::RigidBody(YAML::Node node) : Component(node), mass(node["mass"].as<double>()), motionType((JPH::EMotionType)node["motionType"].as<unsigned int>()), layer(StevEngine::Physics::Layer::GetLayerById(node["layer"].as<int>())), body(nullptr) {}
+	RigidBody::RigidBody(YAML::Node node) : Component(node), mass(node["mass"].as<double>()), motionType((JPH::EMotionType)node["motionType"].as<uint32_t>()), layer(StevEngine::Physics::Layer::GetLayerById(node["layer"].as<int>())), body(nullptr) {}
 }
 #endif

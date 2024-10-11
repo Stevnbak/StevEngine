@@ -30,14 +30,14 @@ namespace StevEngine::Render {
 		}
 	}
 
-	unsigned int ShaderProgram::AddShader(Shader shader) {
+	uint32_t ShaderProgram::AddShader(Shader shader) {
 		glAttachShader(location, shader.location);
 		shaders.insert({shader.location, shader});
 		modified = true;
 		return shader.location;
 	}
 
-	void ShaderProgram::RemoveShader(unsigned int location) {
+	void ShaderProgram::RemoveShader(uint32_t location) {
 		glDetachShader(this->location, location);
 		shaders.erase(location);
 		glDeleteShader(location);

@@ -21,7 +21,7 @@ namespace StevEngine {
 				Shader(const char* source, ShaderType shaderType);
 				const ShaderType shaderType;
 			private:
-				unsigned int location;
+				uint32_t location;
 				const char* source;
 		};
 	}
