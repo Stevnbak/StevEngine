@@ -36,16 +36,21 @@ namespace StevEngine::Physics {
 	using namespace JPH;
 	using namespace std;
 
-	PhysicsSystem physics = PhysicsSystem();
 	//Tick
 	void PhysicsSystem::Update(double deltaTime) {
 		joltSystem.Update(deltaTime, 1, &tempAllocator, &jobSystem);
 	}
 
+	//Constructor
+	PhysicsSystem physics = PhysicsSystem();
+	JPH::PhysicsSystem CreateJoltSystem() {
+		RegisterDefaultAllocator();
+		return JPH::PhysicsSystem();
+	}
+	PhysicsSystem::PhysicsSystem() : joltSystem(CreateJoltSystem()) {}
+
 	//Start
 	void PhysicsSystem::Init(JPH::PhysicsSettings settings) {
-		// Register allocation hook.
-		RegisterDefaultAllocator();
 		// Install trace and assert callbacks
 		Trace = TraceImpl;
 		// Create a factory and register Jolt physics Types

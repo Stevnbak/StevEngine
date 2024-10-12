@@ -15,10 +15,10 @@ namespace StevEngine {
 		const char* homePath2 = std::getenv("HOMEPATH");
 
 		if (homePath != nullptr) {
-			return homePath;
+			return std::string(homePath);
 		}
 		else if (userPath != nullptr) {
-			return userPath;
+			return std::string(userPath) + "\\";
 		}
 		else if (homeDrive != nullptr && homePath2 != nullptr) {
 			return std::string(homeDrive) + std::string(homePath2);
@@ -30,7 +30,7 @@ namespace StevEngine {
 	}
 	std::string GetDataPath() {
 		if(std::getenv("HOME")) {
-			return std::format("{}/.local/", GetHomePath());
+			return std::format("{}\\.local\\", GetHomePath());
 		}
 		else {
 			return GetHomePath();
@@ -40,8 +40,8 @@ namespace StevEngine {
 	void GameData::Init(std::string title) {
 		//Get and create data folder
 		std::replace(title.begin(), title.end(), ' ', '-');
-		appdataPath = std::format("{}{}/", GetDataPath(), title);
-		logPath = std::format("{}{}/{}/", GetDataPath(), title, "logs");
+		appdataPath = std::format("{}{}\\", GetDataPath(), title);
+		logPath = std::format("{}{}\\{}\\", GetDataPath(), title, "logs");
 		std::filesystem::create_directories(appdataPath);
 		std::filesystem::create_directories(logPath);
 		//Read or create data file

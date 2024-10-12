@@ -24,6 +24,7 @@ namespace StevEngine {
 		class PhysicsSystem {
 			friend class StevEngine::Engine;
 			public:
+				PhysicsSystem();
 				void Init(JPH::PhysicsSettings settings);
 				JPH::BodyInterface* GetBodyInterface() const { return bodyInterface; }
 			private:

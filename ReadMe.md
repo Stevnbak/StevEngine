@@ -122,6 +122,14 @@ Install SDL2, SDL2_Image and SDL2_Mixer system wide:
 > [!IMPORTANT]
 > When downloading for windows make sure to download the `-devel-X.X.X-VC` option.
 
+Building or installing [glad](https://github.com/Dav1dde/glad):
+> [!WARNING]
+> Building glad requires a python intepreter installed and added to the path.
+> 
+> Alternatively glad can be generated online through this link: https://gen.glad.sh/#generator=c&api=gl%3D4.4&profile=gl%3Dcore%2Cgles1%3Dcommon and the build optiosn `BUILD_GLAD` can be set to `OFF` and `GLAD_DIR` should be set to the directory of the installed GLAD files.
+> 
+> (*This can be done by adding `-DBUILD_GLAD=OFF -DGLAD_DIR=<glad_path>` to the cmake command*)
+
 ## Linux
 
 Build StevEngine and all other external libraries by running CMake with the following command:

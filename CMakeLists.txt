@@ -82,9 +82,16 @@ set(BUILD_SHARED_LIBS OFF)
 
 # # GLAD
 if(USE_RENDERER_GL)
-	add_subdirectory(libs/glad/cmake)
-	glad_add_library(glad STATIC QUIET REPRODUCIBLE API gl:core=4.4)
-	target_link_libraries(${PROJECT_NAME} PUBLIC glad)
+	option(BUILD_GLAD "Build GLAD as part of the build process" ON)
+	if(BUILD_GLAD)
+		add_subdirectory(libs/glad/cmake)
+		glad_add_library(glad STATIC QUIET REPRODUCIBLE API gl:core=4.4)
+		target_link_libraries(${PROJECT_NAME} PUBLIC glad)
+	else()
+		option(GLAD_DIR "Directory to find the glad files in" ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad)
+		target_include_directories(${PROJECT_NAME} PUBLIC ${GLAD_DIR}/include)
+		target_sources(${PROJECT_NAME} PRIVATE ${GLAD_DIR}/src/gl.c)
+	endif()
 endif()
 
 # # glm

@@ -26,7 +26,7 @@
 	{
 		"label": "start",
 		"type": "shell",
-		"command": "make && ./debug_development",
+		"command": "make && gdb -ex run ./debug_development",
 		"cwd": "$ZED_WORKTREE_ROOT/build",
 		"reveal": "never",
 		"hide": "never",
