@@ -10,8 +10,10 @@
 #include "physics/Colliders.hpp"
 #include "physics/Layers.hpp"
 #include "scenes/SceneManager.hpp"
+#include "utilities/Terrain.hpp"
 #include "visuals/Primitive.hpp"
-#include "visuals/Model.hpp"
+#include "visuals/ModelRenderer.hpp"
+#include "visuals/TerrainRenderer.hpp"
 #include "visuals/render/Component.hpp"
 #include "visuals/render/Lights.hpp"
 #include "utilities/Quaternion.hpp"
@@ -158,7 +160,7 @@ int main(int argc, char** argv) {
 
 	//Create test objects
 	{
-		ID id = scene->CreateObject("Cube", Utilities::Vector3(0, -1, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward), Utilities::Vector3(100, 1, 100));
+		/*ID id = scene->CreateObject("Cube", Utilities::Vector3(0, -1, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward), Utilities::Vector3(100, 1, 100));
 		GameObject* floor = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		CubePrimitive* primitive = floor->AddComponent(new CubePrimitive());
@@ -167,7 +169,7 @@ int main(int argc, char** argv) {
 		#ifdef StevEngine_PHYSICS
 		Physics::CubeCollider* collider = floor->AddComponent(new Physics::CubeCollider());
 		Physics::RigidBody* rb = floor->AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layer::GetLayerByName("Static")));
-		#endif
+		#endif*/
 	}
 	{
 		ID id = scene->CreateObject("Cube", Utilities::Vector3(0, 4, 0), Utilities::Quaternion(), Utilities::Vector3(2.0));
@@ -240,6 +242,28 @@ int main(int argc, char** argv) {
 		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = obj->AddComponent(new Physics::CapsuleCollider());
 		Physics::RigidBody* rb = obj->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		#endif
+	}
+	//Terrain
+	{
+		ID id = scene->CreateObject("Terrain", Utilities::Vector3(2, 0, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward), Utilities::Vector3(1, 1, 1));
+		GameObject* object = scene->GetObject(id);
+		double data[4*4];
+		double height1 = 4;
+		double height2 = 3;
+		double height3 = 2;
+		double height4 = 1;
+		data[0] = height1;data[1] = height2;data[2] = height3;data[3] = height4;
+		data[4] = height1;data[5] = height2;data[6] = height3;data[7] = height4;
+		data[8] = height1;data[9] = height2;data[10] = height3;data[11] = height4;
+		data[12] = height1;data[13] = height2;data[14] = height3;data[15] = height4;
+		TerrainData terrain(4, 3, data);
+		#ifdef StevEngine_RENDERER_GL
+		TerrainRenderer* primitive = object->AddComponent(new TerrainRenderer(terrain, Color(0, 125, 255, 255 )));
+		#endif
+		#ifdef StevEngine_PHYSICS
+		Physics::TerrainCollider* collider = object->AddComponent(new Physics::TerrainCollider(terrain));
+		Physics::RigidBody* rb = object->AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layer::GetLayerByName("Static")));
 		#endif
 	}
 	//Add Camera controller

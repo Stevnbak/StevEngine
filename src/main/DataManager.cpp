@@ -18,7 +18,7 @@ namespace StevEngine {
 			return std::string(homePath);
 		}
 		else if (userPath != nullptr) {
-			return std::string(userPath) + "\\";
+			return std::string(userPath) + "/";
 		}
 		else if (homeDrive != nullptr && homePath2 != nullptr) {
 			return std::string(homeDrive) + std::string(homePath2);
@@ -30,7 +30,7 @@ namespace StevEngine {
 	}
 	std::string GetDataPath() {
 		if(std::getenv("HOME")) {
-			return std::format("{}\\.local\\", GetHomePath());
+			return std::format("{}/.local/", GetHomePath());
 		}
 		else {
 			return GetHomePath();

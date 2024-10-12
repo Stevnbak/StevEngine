@@ -4,6 +4,7 @@
 #include "scenes/SceneManager.hpp"
 #include "main/Log.hpp"
 #include <cstddef>
+#include <cstdint>
 #include <stdexcept>
 
 using namespace StevEngine::Utilities;
@@ -28,7 +29,9 @@ namespace StevEngine {
 	}
 	Component::~Component() {
 		//Unsubscribe from events
+		if(handlers.empty()) return;
 		GameObject* object = GetParent();
+		if(!object) return;
 		for(auto[id, event] : handlers) {
 			object->Unsubscribe(event, id);
 		}

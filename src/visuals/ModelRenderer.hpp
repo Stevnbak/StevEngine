@@ -12,7 +12,7 @@ namespace StevEngine {
 			friend class StevEngine::GameObject;
 
 			public:
-				ModelRenderer(const Utilities::Model& model);
+				ModelRenderer(const Utilities::Model& model, const Utilities::Color& color = Utilities::Color(255, 255, 255, 255), Visuals::Texture surface = Visuals::Texture::empty);
 				ModelRenderer(YAML::Node node);
 				YAML::Node Export(YAML::Node node) const;
 			private:

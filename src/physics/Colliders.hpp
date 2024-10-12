@@ -2,11 +2,12 @@
 #ifdef StevEngine_PHYSICS
 #include "main/EventSystem.hpp"
 #include "main/ResourceManager.hpp"
-#include "utilities/Model.hpp"
 #include "scenes/Component.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Range3.hpp"
 #include "utilities/Quaternion.hpp"
+#include "utilities/Model.hpp"
+#include "utilities/Terrain.hpp"
 #include <yaml-cpp/yaml.h>
 //Jolt:
 #include <Jolt/Jolt.h>
@@ -73,8 +74,14 @@ namespace StevEngine::Physics {
 	//Model collider
 	class ModelCollider : public Collider {
 		public:
-			ModelCollider(Utilities::Model model, bool convex = true, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1,1,1));
-		};
+			ModelCollider(const Utilities::Model& model, bool convex = true, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1,1,1));
+	};
+
+	//Terrain collider
+	class TerrainCollider : public Collider {
+		public:
+			TerrainCollider(const Utilities::TerrainData& data, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1,1,1));
+	};
 
 	//Collider events
 	class ColliderUpdateEvent : public Event {

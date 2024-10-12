@@ -1,5 +1,5 @@
 #ifdef StevEngine_RENDERER_GL
-#include "Model.hpp"
+#include "ModelRenderer.hpp"
 #include "main/Engine.hpp"
 #include "main/Log.hpp"
 #include "main/ResourceManager.hpp"
@@ -24,8 +24,8 @@ namespace StevEngine {
 			}
 			return Render::Object(vertices, indices, color, surface);
 		}
-		ModelRenderer::ModelRenderer(const Utilities::Model& model)
-			: model(model), RenderComponent(CreateRenderObject(model, Color(255, 255, 255, 255), Visuals::Texture::empty), "ModelRenderer") {}
+		ModelRenderer::ModelRenderer(const Utilities::Model& model, const Color& color, Visuals::Texture surface)
+			: model(model), RenderComponent(CreateRenderObject(model, color, surface), "ModelRenderer") {}
 		ModelRenderer::ModelRenderer(YAML::Node node)
 			: model(Utilities::Model(Resources::resourceManager.GetFile(node["model"].as<std::string>()))), RenderComponent(CreateRenderObject(Utilities::Model(Resources::resourceManager.GetFile(node["model"].as<std::string>())), Utilities::Color(), Visuals::Texture::empty), node) {}
 		YAML::Node ModelRenderer::Export(YAML::Node node) const {

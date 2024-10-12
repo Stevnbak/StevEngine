@@ -7,6 +7,7 @@
 #include "utilities/Model.hpp"
 #include "utilities/Quaternion.hpp"
 #include "utilities/Vector3.hpp"
+#include "utilities/Terrain.hpp"
 
 #include <stdexcept>
 #include <algorithm>
@@ -22,6 +23,7 @@
 #include <Jolt/Physics/Collision/Shape/MeshShape.h>
 #include <Jolt/Physics/Collision/Shape/ConvexHullShape.h>
 #include <Jolt/Physics/Collision/Shape/StaticCompoundShape.h>
+#include "Jolt/Physics/Collision/Shape/HeightFieldShape.h"
 #include <Jolt/Geometry/Triangle.h>
 #include <Jolt/Geometry/IndexedTriangle.h>
 #include <Jolt/Core/StreamWrapper.h>
@@ -101,7 +103,7 @@ namespace StevEngine::Physics {
 		: Collider(new JPH::CapsuleShape(0.25,0.5), position, rotation, scale) {}
 
 	//Model collider
-	JPH::Ref<JPH::Shape> ModelToShape(Utilities::Model model, bool convex) {
+	JPH::Ref<JPH::Shape> ModelToShape(const Utilities::Model& model, bool convex) {
 		//Create model shape
 		JPH::StaticCompoundShapeSettings shapeSettings = JPH::StaticCompoundShapeSettings();
 		if(convex) {
@@ -147,8 +149,27 @@ namespace StevEngine::Physics {
 			return NULL;
 		}
 	}
-	ModelCollider::ModelCollider(Utilities::Model model, bool convex, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
+	ModelCollider::ModelCollider(const Utilities::Model& model, bool convex, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
 		: Collider(ModelToShape(model, convex), position, rotation, scale) {}
+
+	//Terrain collider
+	JPH::Ref<JPH::Shape> TerrainToShape(const Utilities::TerrainData& data) {
+		Utilities::Vector3 offset = Utilities::Vector3((int)(data.size / 2) * (-data.step), 0, (int)(data.size / 2) * (-data.step));
+		Utilities::Vector3 scale = Utilities::Vector3(data.step, 1, data.step);
+		float* fPoints = new float[data.size*data.size];
+		for(int i = 0; i < data.size*data.size; i++) fPoints[i] = (float)data.points[i];
+		JPH::HeightFieldShapeSettings settings = JPH::HeightFieldShapeSettings(fPoints, offset, scale, data.size);
+		JPH::ShapeSettings::ShapeResult result = settings.Create();
+		if(result.IsValid()) {
+			return result.Get();
+		}
+		else {
+			Log::Error(result.GetError().c_str(), true);
+			return NULL;
+		}
+	}
+	TerrainCollider::TerrainCollider(const Utilities::TerrainData& data, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
+		: Collider(TerrainToShape(data), position, rotation, scale) {}
 
 	//Export colliders
 	YAML::Node Collider::Export(YAML::Node node) const {
