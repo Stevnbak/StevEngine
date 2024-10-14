@@ -13,8 +13,8 @@ namespace StevEngine {
 
 			public:
 				TerrainRenderer(const Utilities::TerrainData& data, const Utilities::Color& color = Utilities::Color(255, 255, 255, 255), Visuals::Texture surface = Visuals::Texture::empty);
-				TerrainRenderer(YAML::Node node) : data(Utilities::TerrainData(0,0)), RenderComponent(Render::Object({}), "TerrainRenderer") {};
-				YAML::Node Export(YAML::Node node) const { return node; }
+				TerrainRenderer(YAML::Node node);
+				YAML::Node Export(YAML::Node node) const;
 			private:
 				const Utilities::TerrainData data;
 		};

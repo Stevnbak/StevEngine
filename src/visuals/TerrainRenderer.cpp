@@ -9,11 +9,11 @@
 #include <string>
 #include <vector>
 
-using StevEngine::Utilities::Color;
+using namespace StevEngine::Utilities;
 
 namespace StevEngine {
 	namespace Visuals {
-		Render::Object CreateRenderObject(const Utilities::TerrainData& data, Color color, Visuals::Texture surface) {
+		Render::Object CreateRenderObject(const TerrainData& data, Color color, Texture surface) {
 			std::vector<Utilities::Vertex> vertices;
 			std::vector<uint32_t> indices;
 			int halfSize = data.size / 2;
@@ -48,8 +48,15 @@ namespace StevEngine {
 			}
 			return Render::Object(vertices, indices, color, surface);
 		}
-		TerrainRenderer::TerrainRenderer(const Utilities::TerrainData& data, const Color& color, Visuals::Texture surface)
+		TerrainRenderer::TerrainRenderer(const TerrainData& data, const Color& color, Texture surface)
 			: data(data), RenderComponent(CreateRenderObject(data, color, surface), "TerrainRenderer") {}
+		TerrainRenderer::TerrainRenderer(YAML::Node node)
+			: data(TerrainData(node["terrain"])), RenderComponent(CreateRenderObject(data, node["color"].as<Color>(), Texture::empty), node) {}
+		YAML::Node TerrainRenderer::Export(YAML::Node node) const {
+			YAML::Node n = RenderComponent::Export(node);
+			n["texture"] = data.Export();
+			return n;
+		}
 	}
 }
 #endif
