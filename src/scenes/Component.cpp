@@ -32,9 +32,7 @@ namespace StevEngine {
 		if(handlers.empty()) return;
 		GameObject* object = GetParent();
 		if(!object) return;
-		for(auto[id, event] : handlers) {
-			object->Unsubscribe(event, id);
-		}
+		for(auto[id, event] : handlers) object->Unsubscribe(event, id);
 	}
 	//Export/Import component
 	YAML::Node Component::Export() const {

@@ -79,6 +79,7 @@ namespace StevEngine {
 		uint64_t lastUpdateTime = GetTime();
 		running = true;
 		while (running) {
+			events.Publish(PreUpdateEvent());
 			//Event loop
 			while (SDL_PollEvent(&ev) != 0) {
 				events.Publish(SDLEvent(ev));

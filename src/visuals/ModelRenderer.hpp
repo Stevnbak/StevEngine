@@ -3,7 +3,7 @@
 #include "scenes/Component.hpp"
 #include "utilities/Model.hpp"
 
-#include "visuals/render/Component.hpp"
+#include "visuals/render/RenderComponent.hpp"
 #include "visuals/render/Object.hpp"
 
 namespace StevEngine {

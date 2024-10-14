@@ -38,7 +38,7 @@ namespace StevEngine {
 			return *this;
 		}
 		double Vector3::Magnitude() const {
-			return sqrt(exp2(X) + exp2(Y) + exp2(Z));
+			return sqrt(pow(X, 2) + pow(Y, 2) + pow(Z, 2));
 		}
 		Vector3& Vector3::Normalize() {
 			double mag = Magnitude();

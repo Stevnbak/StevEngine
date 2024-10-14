@@ -1,6 +1,6 @@
 #include "glm/ext/matrix_float4x4.hpp"
 #ifdef StevEngine_RENDERER_GL
-#include "Component.hpp"
+#include "RenderComponent.hpp"
 #include "scenes/GameObject.hpp"
 #include "System.hpp"
 #include "utilities/Color.hpp"
@@ -57,7 +57,11 @@ namespace StevEngine {
 		}
 		void RenderComponent::SetTexture(const Visuals::Texture& texture) {
 			object.SetTexture(texture);
-			texturePath = texture.path;
+			texturePath = texture.GetPath();
+		}
+		void RenderComponent::SetNormalMap(const Visuals::Texture& normalMap) {
+			object.SetNormalMap(normalMap);
+			normalMapPath = normalMap.GetPath();
 		}
 		void RenderComponent::AddShader(ShaderProgram program) {
 			object.AddShader(program);

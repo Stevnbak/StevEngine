@@ -16,9 +16,18 @@ namespace StevEngine {
 		Texture::Texture(Resources::Resource file) : path(file.path) {
 			surface = IMG_Load_RW(file.GetSDLData(), true);
 		}
+		Texture::Texture(const Texture& copy) : path(copy.path), GLLocation(copy.GLLocation), surface(copy.surface) {}
+		void Texture::operator=(const Texture& copy) {
+			if(bound) FreeTexture();
+			GLLocation = copy.GLLocation;
+			surface = copy.surface;
+		}
 		Texture::~Texture() {}
-		int Texture::BindTexture() {
-			if(!surface) return 0;
+		void Texture::BindTexture() {
+			if(!surface) {
+				GLLocation = 0;
+				return;
+			};
 			glGenTextures(1, &GLLocation);
 			glBindTexture(GL_TEXTURE_2D, GLLocation);
 			//Genereate texture
@@ -27,10 +36,15 @@ namespace StevEngine {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, convertedSurface->w, convertedSurface->h, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, convertedSurface->pixels);
 			glGenerateMipmap(GL_TEXTURE_2D);
+			//Set bound
+			bound = true;
 			//Free surface data
 			SDL_FreeSurface(surface);
 			SDL_FreeSurface(convertedSurface);
-			return GLLocation;
+		}
+		void Texture::FreeTexture() {
+			glDeleteTextures(1, &GLLocation);
+			bound = false;
 		}
 	}
 }

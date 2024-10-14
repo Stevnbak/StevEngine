@@ -18,6 +18,12 @@ namespace StevEngine {
 			const std::string GetEventType() const override { return GetStaticEventType(); };
 			static const std::string GetStaticEventType() {  return "EngineQuitEvent"; }
 	};
+	class PreUpdateEvent : public Event {
+		public:
+			PreUpdateEvent() {}
+			const std::string GetEventType() const override { return GetStaticEventType(); };
+			static const std::string GetStaticEventType() {  return "PreUpdateEvent"; }
+	};
 	class UpdateEvent : public Event {
 		public:
 			UpdateEvent(double deltaTime) : deltaTime(deltaTime) {}

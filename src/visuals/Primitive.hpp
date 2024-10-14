@@ -1,6 +1,6 @@
 #pragma once
 #ifdef StevEngine_RENDERER_GL
-#include "render/Component.hpp"
+#include "render/RenderComponent.hpp"
 
 namespace StevEngine {
 	namespace Visuals {

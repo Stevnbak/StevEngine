@@ -2,7 +2,8 @@ R"(
 #version 440 core
 
 vec3 GetFragPosition();
-vec3 GetFragNormal();
+vec2 GetFragUV();
+vec3 GetFragNormal(vec2 uv);
 
 //Material
 struct Material {
@@ -101,7 +102,7 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir
 vec3 GetLights()
 {
     //Lights
-    vec3 norm = normalize(-GetFragNormal());
+    vec3 norm = normalize(-GetFragNormal(GetFragUV()));
     vec3 viewDir = normalize(viewPosition - GetFragPosition());
     vec3 lights = objectMaterial.ambient * ambientColor * ambientStrength;
     // Directional lights

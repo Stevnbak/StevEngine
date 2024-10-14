@@ -102,7 +102,7 @@ namespace StevEngine {
 	//Children functions
 	int GameObject::AddChild(const Utilities::ID& id) {
 		children.emplace_back(id);
-		sceneManager.GetScene(scene)->GetObject(id)->parent = this->id;
+		sceneManager.GetScene(scene)->GetObject(id)->SetParent(this->id);
 		int i = children.size() - 1;
 		return i;
 	}
@@ -119,6 +119,19 @@ namespace StevEngine {
 	GameObject* GameObject::GetParent() const {
 		if(!parent.IsNull()) return sceneManager.GetScene(scene)->GetObject(parent);
 		else return nullptr;
+	}
+	void GameObject::SetParent(const Utilities::ID& id) {
+		if(id.IsNull()) return;
+		if(!parent.IsNull()) {
+			GameObject* p = GetParent();
+			for(auto[id, event] : handlers) p->Unsubscribe(event, id);
+		}
+		GameObject* object = sceneManager.GetScene(scene)->GetObject(id);
+		handlers.emplace_back(object->Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); }), UpdateEvent::GetStaticEventType());
+		#ifdef StevEngine_SHOW_WINDOW
+		handlers.emplace_back(object->Subscribe<DrawEvent>([this] (DrawEvent e) { this->Draw(e.transform);  }), DrawEvent::GetStaticEventType());
+		#endif
+		handlers.emplace_back(object->Subscribe<DeactivateEvent>([this] (DeactivateEvent) { this->Deactivate();  }), DeactivateEvent::GetStaticEventType());
 	}
 
 	//Export
@@ -176,6 +189,9 @@ namespace StevEngine {
 	//Destroy
 	GameObject::~GameObject() {
 		///Log::Normal(std::format("Destroying object with id {}", id), true);
+		//Remove event listeners
+		GameObject* p = GetParent();
+		for(auto[id, event] : handlers) p->Unsubscribe(event, id);
 		//Destroy children
 		for (int i = 0; i < children.size(); i++) {
 			sceneManager.GetScene(scene)->DestroyObject(children[i]);

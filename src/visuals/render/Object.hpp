@@ -1,7 +1,7 @@
 #pragma once
-#include <cstdint>
 #ifdef StevEngine_RENDERER_GL
 #include <vector>
+#include <cstdint>
 #include <SDL.h>
 #include <glad/gl.h>
 #include <glm/mat4x4.hpp>
@@ -27,11 +27,13 @@ namespace StevEngine {
 		class Object {
 			friend class RenderSystem;
 			public:
-				Object(const std::vector<Utilities::Vertex>& vertices, Utilities::Color color = Utilities::Color(255, 255, 255, 255), Visuals::Texture textureData = Visuals::Texture::empty);
-				Object(const std::vector<Utilities::Vertex>& vertices, const std::vector<uint32_t>& indices, Utilities::Color color = Utilities::Color(255, 255, 255, 255), Visuals::Texture textureData = Visuals::Texture::empty);
-				Object(const Object& instance, Utilities::Color color = Utilities::Color(255, 255, 255, 255), Visuals::Texture textureData = Visuals::Texture::empty);
-				void SetTexture(Visuals::Texture textureData);
+				Object(const std::vector<Utilities::Vertex>& vertices, const Utilities::Color& color = Utilities::Color(255, 255, 255, 255), const Visuals::Texture& textureData = Visuals::Texture::empty, const Visuals::Texture& normalMapData = Visuals::Texture::empty);
+				Object(const std::vector<Utilities::Vertex>& vertices, const std::vector<uint32_t>& indices, const Utilities::Color& color = Utilities::Color(255, 255, 255, 255), const Visuals::Texture& textureData = Visuals::Texture::empty, const Visuals::Texture& normalMapData = Visuals::Texture::empty);
+				Object(const Object& instance, const Utilities::Color& color = Utilities::Color(255, 255, 255, 255), const Visuals::Texture& textureData = Visuals::Texture::empty, const Visuals::Texture& normalMapData = Visuals::Texture::empty);
+				void SetTexture(const Visuals::Texture& textureData);
+				void SetNormalMap(const Visuals::Texture& normalData);
 				void FreeTexture();
+				void FreeNormalMap();
 				Utilities::Color color;
 				Material material;
 				void AddShader(Render::ShaderProgram program);
@@ -42,8 +44,7 @@ namespace StevEngine {
 				uint32_t* indices;
 				size_t indexCount;
 				std::map<Render::ShaderType, Render::ShaderProgram> shaders;
-				GLuint texture;
-				bool textured;
+				Visuals::Texture texture = Visuals::Texture::empty, normalMap = Visuals::Texture::empty;
 		};
 	}
 }

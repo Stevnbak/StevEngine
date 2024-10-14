@@ -5,7 +5,7 @@
 #include "main/ResourceManager.hpp"
 #include "scenes/Component.hpp"
 #include "visuals/render/Object.hpp"
-#include "visuals/render/Component.hpp"
+#include "visuals/render/RenderComponent.hpp"
 #include "visuals/Texture.hpp"
 #include "utilities/Model.hpp"
 #include "utilities/Color.hpp"

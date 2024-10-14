@@ -12,42 +12,42 @@
 namespace StevEngine {
 	InputManager inputManager = InputManager();
 	void InputManager::HandleSDLEvent(const SDLEvent event) {
-		ResetMouseDelta();
 		SDL_Event ev = event.event;
 		switch(ev.type) {
 			//Input system
 			case SDL_KEYDOWN:
 				inputMap[ev.key.keysym.sym] = true;
-				engine->GetEvents()->Publish(InputKeyDownEvent(ev.key.keysym.sym));
+				events.Publish(InputKeyDownEvent(ev.key.keysym.sym));
 				break;
 			case SDL_KEYUP:
 				inputMap[ev.key.keysym.sym] = false;
-				engine->GetEvents()->Publish(InputKeyUpEvent(ev.key.keysym.sym));
+				events.Publish(InputKeyUpEvent(ev.key.keysym.sym));
 				break;
 			case SDL_MOUSEMOTION:
 				mousePosition = Utilities::Vector2(ev.motion.x, ev.motion.y);
 				///Log::Debug(std::format("Recieved mouse movement. X: {} Y: {}", mousePosition.X, mousePosition.Y), true);
 				mouseDelta = Utilities::Vector2(ev.motion.xrel, ev.motion.yrel);
 				///Log::Debug(std::format("Mouse delta X: {} Mouse delta Y: {}", mouseDelta.X, mouseDelta.Y), true);
-				engine->GetEvents()->Publish(InputMouseMoveEvent(mousePosition.X, mousePosition.Y, mouseDelta.X, mouseDelta.Y));
+				events.Publish(InputMouseMoveEvent(mousePosition.X, mousePosition.Y, mouseDelta.X, mouseDelta.Y));
 				break;
 			case SDL_MOUSEWHEEL:
 				mouseWheelDelta = ev.wheel.preciseY;
-				engine->GetEvents()->Publish(InputMouseWheelEvent(mouseWheelDelta));
+				events.Publish(InputMouseWheelEvent(mouseWheelDelta));
 				break;
 			case SDL_MOUSEBUTTONDOWN:
 				mouseInputMap[ev.button.button] = true;
-				engine->GetEvents()->Publish(InputMouseButtonDownEvent(ev.button.button));
+				events.Publish(InputMouseButtonDownEvent(ev.button.button));
 				break;
 			case SDL_MOUSEBUTTONUP:
 				mouseInputMap[ev.button.button] = false;
-				engine->GetEvents()->Publish(InputMouseButtonUpEvent(ev.button.button));
+				events.Publish(InputMouseButtonUpEvent(ev.button.button));
 				break;
 		}
 	}
 	void InputManager::Init() {
 		engine->GetEvents()->Subscribe<SDLEvent>([this] (SDLEvent e) { this->HandleSDLEvent(e); });
 		engine->GetEvents()->Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); });
+		engine->GetEvents()->Subscribe<PreUpdateEvent>([this] (PreUpdateEvent) { this->ResetMouseDelta(); });
 	}
 	//Key Inputs:
 	bool InputManager::IsKeyPressed(SDL_Keycode key) const {

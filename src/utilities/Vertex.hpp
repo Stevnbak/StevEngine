@@ -5,16 +5,14 @@
 
 namespace StevEngine {
 	namespace Utilities {
-		const int VERTEX_COUNT = (3 + 3 + 2);
+		const int VERTEX_COUNT = (3 + 2 + 3 + 3);
 		const size_t VERTEX_SIZE = (VERTEX_COUNT) * sizeof(float);
 		struct Vertex {
 			Vector3 position;
 			Vector2 uv;
-			Vector3 normal;
-			Vertex(float x, float y, float z, float nX, float nY, float nZ, float u = 0, float v = 0)
-				: position(x, y, z), normal(nX, nY, nZ), uv(u, v) {}
-			Vertex(Vector3 position, Vector3 normal, Vector2 uv = Vector2(0,0))
-					: position(position), normal(normal), uv(uv) {}
+			Vector3 normal, tangent;
+			Vertex(Vector3 position, Vector2 uv, Vector3 normal, Vector3 tangent)
+					: position(position), uv(uv), normal(normal), tangent(tangent) {}
 			Vertex() {};
 			bool operator==(const Vertex o) const;
 		};

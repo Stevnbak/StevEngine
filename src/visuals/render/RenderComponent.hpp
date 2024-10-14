@@ -32,6 +32,7 @@ namespace StevEngine {
 				Object& GetObject() { return object; };
 				void SetColor(const Utilities::Color& color);
 				void SetTexture(const Visuals::Texture& texture);
+				void SetNormalMap(const Visuals::Texture& normalMap);
 				void AddShader(ShaderProgram program);
 				void RemoveShader(ShaderType type);
 				~RenderComponent();
@@ -39,7 +40,7 @@ namespace StevEngine {
 			protected:
 				Object object;
 				Utilities::Color color = Utilities::Color(255, 255, 255, 255);
-				std::string texturePath;
+				std::string texturePath, normalMapPath;
 				std::map<ShaderType, ShaderProgram> shaders;
 			//Main functions
 			private:

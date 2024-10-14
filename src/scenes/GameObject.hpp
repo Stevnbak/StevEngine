@@ -95,6 +95,7 @@ namespace StevEngine {
 				if(parent != nullptr) parent->ChildPublish<EventType>(event, object);
 			}
 			EventManager events;
+			std::vector<std::pair<Utilities::ID, std::string>> handlers;
 		//Children functions
 		public:
 			int AddChild(const Utilities::ID& gameObjectID);
@@ -103,6 +104,7 @@ namespace StevEngine {
 			int GetChildCount() const;
 			GameObject* GetParent() const;
 		private:
+			void SetParent(const Utilities::ID& id);
 			Utilities::ID parent = Utilities::ID::empty;
 			std::vector<Utilities::ID> children;
 		//Component functions

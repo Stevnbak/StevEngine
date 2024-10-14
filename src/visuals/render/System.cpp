@@ -76,12 +76,14 @@ namespace StevEngine {
 			// position layout
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, Utilities::VERTEX_SIZE, (void*)0);
 			glEnableVertexAttribArray(0);
-			// normal layout
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, Utilities::VERTEX_SIZE, (void*)((3) * sizeof(float)));
-			glEnableVertexAttribArray(1);
 			// uv layout
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, Utilities::VERTEX_SIZE, (void*)((3 + 3) * sizeof(float)));
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, Utilities::VERTEX_SIZE, (void*)((3) * sizeof(float)));
+			glEnableVertexAttribArray(1);
+			// Normal and Tangent layout
+			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, Utilities::VERTEX_SIZE, (void*)((3 + 2) * sizeof(float)));
 			glEnableVertexAttribArray(2);
+			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, Utilities::VERTEX_SIZE, (void*)((3 + 2 + 3) * sizeof(float)));
+			glEnableVertexAttribArray(3);
 
 			//Shaders
 			ResetGlobalShader(VERTEX);
@@ -223,11 +225,18 @@ namespace StevEngine {
 			//Update transform
 			vertexShaderProgram.SetShaderUniform("objectTransform", transform);
 			//Update texture
-			fragmentShaderProgram.SetShaderUniform("objectIsTextured", object.textured);
-			if(object.textured) {
+			fragmentShaderProgram.SetShaderUniform("objectIsTextured", object.texture.IsBound());
+			if(object.texture.IsBound()) {
 				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, object.texture);
+				glBindTexture(GL_TEXTURE_2D, object.texture.GetGLLocation());
 				fragmentShaderProgram.SetShaderUniform("objectTexture", 0);
+			}
+			//Update normal map
+			fragmentShaderProgram.SetShaderUniform("objectIsNormalMapped", object.normalMap.IsBound());
+			if(object.normalMap.IsBound()) {
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, object.normalMap.GetGLLocation());
+				fragmentShaderProgram.SetShaderUniform("objectNormalMap", 1);
 			}
 			//Update color
 			fragmentShaderProgram.SetShaderUniform("objectColor", glm::vec4(object.color.r / 255.0f, object.color.g / 255.0f, object.color.b / 255.0f, object.color.a / 255.0f));

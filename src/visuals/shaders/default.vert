@@ -3,8 +3,9 @@ R"(
 
 struct Vertex {
     vec3 position;
-    vec3 normal;
     vec2 uv;
+    vec3 normal;
+    vec3 tangent;
 };
 Vertex getVertex();
 
@@ -24,8 +25,9 @@ void main() {
     gl_Position = getProjectionTransform() * getViewTransform() * getObjectTransform() * vec4(v.position, 1.0);
     setFragInfo(Vertex(
         vec3(getObjectTransform() * vec4(v.position, 1.0)),
-        mat3(transpose(inverse(getObjectTransform()))) * v.normal,
-        v.uv
+        v.uv,
+        normalize(mat3(transpose(inverse(getObjectTransform()))) * v.normal),
+        normalize(mat3(transpose(inverse(getObjectTransform()))) * v.tangent)
     ));
 }
 )"

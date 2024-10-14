@@ -30,15 +30,20 @@ namespace StevEngine {
 				std::vector<Vertex> vertices;
 				std::vector<uint32_t> indices;
 				//Bounding box
-				Utilities::Range3 bounds = Utilities::Range3(assimpMesh->mAABB.mMin, assimpMesh->mAABB.mMax);
-				Utilities::Vector3 center = bounds.GetCenter();
+				Range3 bounds = Range3(assimpMesh->mAABB.mMin, assimpMesh->mAABB.mMax);
+				Vector3 center = bounds.GetCenter();
 				//Vertices
 				vertices.reserve(assimpMesh->mNumVertices);
 				for(int v = 0; v < assimpMesh->mNumVertices; v++) {
-					Utilities::Vector3 coords = ((Utilities::Vector3)assimpMesh->mVertices[v]) - center;
-					Utilities::Vector3 tex = assimpMesh->HasTextureCoords(v) ? assimpMesh->mTextureCoords[0][v] : aiVector3D();
-					Utilities::Vector3 normal = ((Utilities::Vector3)assimpMesh->mNormals[v]);
-					vertices.emplace_back(coords, normal, (Utilities::Vector2)tex);
+					Vector3 coords = ((Vector3)assimpMesh->mVertices[v]) - center;
+					Vector3 tex = assimpMesh->HasTextureCoords(v) ? assimpMesh->mTextureCoords[0][v] : aiVector3D();
+					Vector3 normal = ((Vector3)assimpMesh->mNormals[v]);
+					Vector3 tangent = Vector3(1.0);
+					//Calculate tangent
+					if(assimpMesh->HasTangentsAndBitangents()) {
+						Vector3 tangent = ((Vector3)assimpMesh->mTangents[v]);
+					}
+					vertices.emplace_back(coords, (Vector2)tex, normal, tangent);
 				}
 				//Indices
 				for(int i = 0; i < assimpMesh->mNumFaces; i++)
