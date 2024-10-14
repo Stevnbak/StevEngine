@@ -32,6 +32,7 @@ namespace StevEngine {
 			}
 			if(node["color"]) SetColor(node["color"].as<Color>());
 			if(node["texture"] && node["texture"].as<std::string>() != "") SetTexture(Visuals::Texture(Resources::resourceManager.GetFile(node["texture"].as<std::string>())));
+			if(node["normalMap"] && node["normalMap"].as<std::string>() != "") SetTexture(Visuals::Texture(Resources::resourceManager.GetFile(node["normalMap"].as<std::string>())));
 		}
 		//Destructor
 		RenderComponent::~RenderComponent() {
@@ -78,6 +79,7 @@ namespace StevEngine {
 			node["scale"] = scale;
 			node["color"] = color;
 			node["texture"] = texturePath;
+			node["normalMap"] = normalMapPath;
 			for(auto&[type, program] : shaders)
 				node["shaders"].push_back(program.Export());
 			return node;
