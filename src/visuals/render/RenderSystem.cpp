@@ -1,8 +1,9 @@
 #ifdef StevEngine_RENDERER_GL
-#include "System.hpp"
+#include "RenderSystem.hpp"
 #include "main/Log.hpp"
 #include "main/Engine.hpp"
 #include "main/EngineEvents.hpp"
+#include "main/Settings.hpp"
 #include "scenes/SceneManager.hpp"
 #include "visuals/render/Object.hpp"
 #include "visuals/render/Lights.hpp"
@@ -43,6 +44,8 @@ namespace StevEngine {
 			SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 			SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 			SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 			return SDL_WINDOW_OPENGL;
 		}
 		void RenderSystem::Init(SDL_Window* window) {
@@ -58,12 +61,11 @@ namespace StevEngine {
 				throw std::runtime_error("Failed to initialize GLAD");
 			}
 			Log::Debug(std::format("OpenGL Version: {}.{}", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version)), true);
-		 	Log::Debug(std::format("OpenGL Shading Language Version: {}", (char *)glGetString(GL_SHADING_LANGUAGE_VERSION)), true);
-		 	Log::Debug(std::format("OpenGL Vendor: {}", (char *)glGetString(GL_VENDOR)), true);
-		 	Log::Debug(std::format("OpenGL Renderer: {}", (char *)glGetString(GL_RENDERER)), true);
+			Log::Debug(std::format("OpenGL Shading Language Version: {}", (char *)glGetString(GL_SHADING_LANGUAGE_VERSION)), true);
+			Log::Debug(std::format("OpenGL Vendor: {}", (char *)glGetString(GL_VENDOR)), true);
+			Log::Debug(std::format("OpenGL Renderer: {}", (char *)glGetString(GL_RENDERER)), true);
 			//Enable GL options
 			glEnable(GL_DEPTH_TEST);
-
 			//Clear viewport
 			glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
 			//Buffers
@@ -94,6 +96,8 @@ namespace StevEngine {
 			SetViewSize(gameSettings.WIDTH, gameSettings.HEIGHT);
 			SetVSync(gameSettings.vsync);
 			SetFaceCulling(true);
+			if(gameSettings.MSAA == 0) Render::render.SetMSAA(false);
+			else Render::render.SetMSAA(true, gameSettings.MSAA);
 			//Events
 			engine->GetEvents()->Subscribe<WindowResizeEvent>([this] (WindowResizeEvent i) { return this->SetViewSize (i.width, i.height); });
 			engine->GetEvents()->Subscribe<WindowVSyncEvent>([this] (WindowVSyncEvent i) { return this->SetVSync(i.value); });
@@ -119,6 +123,22 @@ namespace StevEngine {
 				glDisable(GL_CULL_FACE);
 			}
 		}
+
+		void RenderSystem::SetMSAA(bool enable, uint16_t amount) {
+			if(enable) {
+				glEnable(GL_MULTISAMPLE);
+				if(amount < 2) return Log::Error("MultiSampling amount too small.", true);
+				if((amount & (amount - 1)) != 0) return Log::Error("MultiSampling amount is not a power of 2.", true);
+				SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+				SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, amount);
+				settings.Save("MSAA", amount);
+			} else {
+				glDisable(GL_MULTISAMPLE);
+				settings.Save("MSAA", 0);
+			}
+			settings.SaveToFile();
+		}
+
 
 		void RenderSystem::ResetGlobalShader(ShaderType type) {
 			if(type == VERTEX) {

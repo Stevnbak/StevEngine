@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #ifdef StevEngine_RENDERER_GL
 #include "Object.hpp"
 #include "utilities/Color.hpp"
@@ -58,6 +59,7 @@ namespace StevEngine {
 				void SetViewSize(int WIDTH, int HEIGHT);
 				void SetVSync(bool vsync);
 				void SetFaceCulling(bool enable, GLenum face = GL_BACK, bool clockwise = false);
+				void SetMSAA(bool enable, uint16_t amount = 4);
 				//From Lights
 				std::vector<Light*> lights;
 				uint32_t GetLightID(std::string type);

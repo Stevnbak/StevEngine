@@ -1,6 +1,6 @@
 #ifdef StevEngine_RENDERER_GL
 #include "Shader.hpp"
-#include "visuals/render/System.hpp"
+#include "visuals/render/RenderSystem.hpp"
 #include "visuals/render/Object.hpp"
 #include "main/Log.hpp"
 #include "glad/gl.h"

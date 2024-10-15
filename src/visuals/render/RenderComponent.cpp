@@ -1,8 +1,7 @@
-#include "glm/ext/matrix_float4x4.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "RenderComponent.hpp"
 #include "scenes/GameObject.hpp"
-#include "System.hpp"
+#include "RenderSystem.hpp"
 #include "utilities/Color.hpp"
 #include "visuals/Texture.hpp"
 #include "visuals/shaders/Shader.hpp"

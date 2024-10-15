@@ -1,6 +1,6 @@
 #ifdef StevEngine_RENDERER_GL
 #include "Lights.hpp"
-#include "visuals/render/System.hpp"
+#include "visuals/render/RenderSystem.hpp"
 #include "scenes/GameObject.hpp"
 #include "scenes/Component.hpp"
 #include "utilities/Vector3.hpp"

@@ -1,7 +1,7 @@
 #ifdef StevEngine_RENDERER_GL
 #include "Texture.hpp"
 #include "main/ResourceManager.hpp"
-#include "visuals/render/System.hpp"
+#include "visuals/render/RenderSystem.hpp"
 #include <SDL.h>
 #ifdef WINDOWS
 #include <SDL_image.h>

@@ -4,6 +4,7 @@
 #include <SDL_stdinc.h>
 #include <SDL_timer.h>
 #include <SDL_video.h>
+#include <cstdint>
 #include <iostream>
 #include <map>
 #include <chrono>
@@ -12,20 +13,20 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 //Engine
-#include "audio/System.hpp"
+#include "audio/AudioSystem.hpp"
 #include "main/DataManager.hpp"
 #include "main/EventSystem.hpp"
 #include "main/EngineEvents.hpp"
 #include "main/InputSystem.hpp"
 #include "main/ResourceManager.hpp"
 #include "main/Settings.hpp"
-#include "physics/System.hpp"
+#include "physics/PhysicsSystem.hpp"
 #include "scenes/GameObject.hpp"
 #include "main/Log.hpp"
 #include "scenes/Scene.hpp"
 #include "scenes/SceneManager.hpp"
 #include "visuals/Camera.hpp"
-#include "visuals/render/System.hpp"
+#include "visuals/render/RenderSystem.hpp"
 
 //Get current process time in ms
 uint64_t GetTime() {
@@ -183,6 +184,7 @@ namespace StevEngine {
 		if(settings.HasValue("Fullscreen")) gameSettings.fullscreen = settings.Read<bool>("Fullscreen");
 		if(settings.HasValue("WindowWidth")) gameSettings.WIDTH = settings.Read<int>("WindowWidth");
 		if(settings.HasValue("WindowHeight")) gameSettings.HEIGHT = settings.Read<int>("WindowHeight");
+		if(settings.HasValue("MSAA")) gameSettings.MSAA = settings.Read<uint16_t>("MSAA");
 		#endif
 		if(settings.HasValue("TargetFPS")) gameSettings.targetFPS = settings.Read<int>("TargetFPS");
 		//Audio
@@ -198,6 +200,8 @@ namespace StevEngine {
 		SetVSync(newSettings.vsync);
 		SetFullscreen(newSettings.fullscreen);
 		SetWindowSize(newSettings.WIDTH, newSettings.HEIGHT);
+		if(newSettings.MSAA == 0) Render::render.SetMSAA(false);
+		else Render::render.SetMSAA(true, newSettings.MSAA);
 		#endif
 		SetTargetFPS(newSettings.targetFPS);
 		#ifdef StevEngine_SETTINGS

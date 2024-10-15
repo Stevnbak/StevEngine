@@ -2,12 +2,14 @@
 #include "EventSystem.hpp"
 #include "Log.hpp"
 #include <SDL.h>
+#include <sys/types.h>
 
 namespace StevEngine {
 	struct GameSettings {
 		#ifdef StevEngine_SHOW_WINDOW
 		bool vsync = false;
 		bool fullscreen = false;
+		u_int16_t MSAA = 4;
 		int WIDTH = 800;
 		int HEIGHT = 600;
 		#endif

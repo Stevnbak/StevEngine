@@ -1,7 +1,7 @@
 #ifdef StevEngine_PHYSICS
 #include "RigidBody.hpp"
 #include "physics/Colliders.hpp"
-#include "physics/System.hpp"
+#include "physics/PhysicsSystem.hpp"
 #include "main/Engine.hpp"
 #include "physics/Layers.hpp"
 #include "main/Log.hpp"
