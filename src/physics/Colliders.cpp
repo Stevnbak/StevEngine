@@ -154,7 +154,7 @@ namespace StevEngine::Physics {
 
 	//Terrain collider
 	JPH::Ref<JPH::Shape> TerrainToShape(const Utilities::TerrainData& data) {
-		Utilities::Vector3 offset = Utilities::Vector3((int)(data.size / 2) * (-data.step), 0, (int)(data.size / 2) * (-data.step));
+		Utilities::Vector3 offset = Utilities::Vector3(((data.size - 1) / 2.0) * (-data.step), 0, ((data.size - 1) / 2.0) * (-data.step));
 		Utilities::Vector3 scale = Utilities::Vector3(data.step, 1, data.step);
 		float* fPoints = new float[data.size*data.size];
 		for(int i = 0; i < data.size*data.size; i++) fPoints[i] = (float)data.points[i];

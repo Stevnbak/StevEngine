@@ -45,7 +45,7 @@ namespace StevEngine {
 
 	Scene* SceneManager::CreateScene(std::string name) {
 		if(scenes.contains(name)) throw std::runtime_error("Scene \"" + name + "\" already exists!");
-		scenes.insert(std::make_pair(name, Scene(name)));
+		scenes.emplace(name, Scene(name));
 		return &scenes.at(name);
 	}
 
@@ -53,7 +53,7 @@ namespace StevEngine {
 		YAML::Node node = YAML::Load(file.GetRawData());
 		std::string name = node["name"].as<std::string>();
 		if(scenes.contains(name)) throw std::runtime_error("Scene \"" + name + "\" already exists!");
-		scenes.insert(std::make_pair(name, Scene(node)));
+		scenes.emplace(name, Scene(node));
 		return &scenes.at(name);
 	}
 }

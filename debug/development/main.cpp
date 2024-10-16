@@ -78,7 +78,7 @@ void CameraController::Update(double deltaTime) {
 	gameObject->SetPosition(position);
 	//Look around
 	rotation *= Quaternion::FromAngleAxis(-inputManager.GetMouseDelta().X * sensitivity * deltaTime, up);
-	rotation *= Quaternion::FromAngleAxis(inputManager.GetMouseDelta().Y * sensitivity * deltaTime, right);
+	rotation *= Quaternion::FromAngleAxis(-inputManager.GetMouseDelta().Y * sensitivity * deltaTime, right);
 	gameObject->SetRotation(rotation);
 }
 void CameraController::Start() {
@@ -138,6 +138,7 @@ int main(int argc, char** argv) {
 		#endif
 		.targetFPS = 100
 	});
+	Render::render.SetFaceCulling(false);
 	Render::render.SetMSAA(true, 8);
 	engine->GetEvents()->Subscribe<UpdateEvent>(mainUpdate);
 	Render::render.SetFaceCulling(false);
@@ -152,6 +153,10 @@ int main(int argc, char** argv) {
 		cmrc::file file = fs.open("debug/development/assets/" + path);
 		Resources::resourceManager.AddFile(path, file.begin(), file.size());
 	}
+
+	//Create test shader
+	Render::ShaderProgram shader = Render::ShaderProgram(Render::FRAGMENT);
+	shader.AddShader(Render::Shader(Resources::resourceManager.GetFile("test_shader.frag").GetRawData(), Render::FRAGMENT));
 
 	//Create new scene
 	//Scene* importedscene = sceneManager.CreateSceneFromFile(Resources::resourceManager.GetFile("Debug scene.scene"));
@@ -174,51 +179,88 @@ int main(int argc, char** argv) {
 		#endif*/
 	}
 	{
-		ID id = scene->CreateObject("Sphere", Utilities::Vector3(0, 2, 0), Utilities::Quaternion(), Utilities::Vector3(2.0));
-		GameObject* cube = scene->GetObject(id);
+		ID id = scene->CreateObject("Sphere", Utilities::Vector3(0, 0, 0), Utilities::Quaternion(), Utilities::Vector3(1.0));
+		GameObject* object = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
-		Render::RenderComponent* primitive = cube->AddComponent(new SpherePrimitive(Vector3(), Quaternion(), Vector3(1.0), TextureType::REPEAT));
+		Render::RenderComponent* primitive = object->AddComponent(new IcospherePrimitive(Vector3(), Quaternion(), Vector3(1.0), false));
 		primitive->SetColor(Color(255, 255, 255, 255));
-		primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
+		primitive->AddShader(shader);
+		//primitive->SetTexture(Texture(Resources::resourceManager.GetFile("box.png")));
 		//primitive->SetNormalMap(Texture(Resources::resourceManager.GetFile("normal_map.png")));
-		cube->AddComponent(new Rotate(Vector3::up));
-		cube->AddComponent(new Rotate(Vector3::right));
+		//object->AddComponent(new Rotate(Vector3::up));
+		object->AddComponent(new Rotate(Vector3::right));
 		#endif
-		#ifdef StevEngine_PHYSICS
-		//Physics::CubeCollider* collider = cube->AddComponent(new Physics::CubeCollider());
-		//Physics::RigidBody* rb = cube->AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
-		#endif
-		GameObject* parent = scene->GetObject(scene->CreateObject("CubeParent", Utilities::Vector3(0, 0, 0), Utilities::Quaternion(), Utilities::Vector3(1.0)));
-		parent->AddChild(id);
+		//GameObject* parent = scene->GetObject(scene->CreateObject("CubeParent", Utilities::Vector3(0, 0, 0), Utilities::Quaternion(), Utilities::Vector3(1.0)));
+		//parent->AddChild(id);
 	}
+
 	{
 		GameObject* cube = scene->GetObject(scene->CreateObject("Cube", Utilities::Vector3(3, 2, 0), Utilities::Quaternion(), Utilities::Vector3(2.0)));
 		#ifdef StevEngine_RENDERER_GL
-		Render::RenderComponent* primitive = cube->AddComponent(new CubePrimitive(Vector3(), Quaternion(), Vector3(1.0), TextureType::REPEAT));
+		Render::RenderComponent* primitive = cube->AddComponent(new CubePrimitive(Vector3(), Quaternion(), Vector3(1.0)));
 		primitive->SetColor(Color(255, 255, 255, 255));
+		primitive->AddShader(shader);
 		//primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
-		primitive->SetNormalMap(Texture(Resources::resourceManager.GetFile("normal_map.png")));
-		cube->SetRotation(Quaternion::FromAngleAxis(Quaternion::DegreesToRadians(45), Vector3::up));
-		cube->AddComponent(new Rotate(Vector3::up));
+		//primitive->SetNormalMap(Texture(Resources::resourceManager.GetFile("normal_map.png")));
+		//cube->SetRotation(Quaternion::FromAngleAxis(Quaternion::DegreesToRadians(45), Vector3::up));
+		//cube->AddComponent(new Rotate(Vector3::up));
 		//cube->AddComponent(new Rotate(Vector3::right));
 		#endif
 	}
 	{
 		GameObject* cube = scene->GetObject(scene->CreateObject("Cylinder", Utilities::Vector3(-3, 2, 0), Utilities::Quaternion(), Utilities::Vector3(2.0)));
 		#ifdef StevEngine_RENDERER_GL
-		Render::RenderComponent* primitive = cube->AddComponent(new CylinderPrimitive(Vector3(), Quaternion(), Vector3(1.0), TextureType::REPEAT));
+		Render::RenderComponent* primitive = cube->AddComponent(new CylinderPrimitive(Vector3(), Quaternion(), Vector3(1), false));
 		primitive->SetColor(Color(255, 255, 255, 255));
-		primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
-		primitive->SetNormalMap(Texture(Resources::resourceManager.GetFile("normal_map.png")));
-		cube->AddComponent(new Rotate(Vector3::up));
+		primitive->AddShader(shader);
+		//primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
+		//primitive->SetNormalMap(Texture(Resources::resourceManager.GetFile("normal_map.png")));
+		//cube->AddComponent(new Rotate(Vector3::up));
 		//cube->AddComponent(new Rotate(Vector3::right));
 		#endif
 	}
 	{
+		GameObject* cube = scene->GetObject(scene->CreateObject("Capsule", Utilities::Vector3(-6, 2, 0), Utilities::Quaternion(), Utilities::Vector3(2.0)));
+		#ifdef StevEngine_RENDERER_GL
+		Render::RenderComponent* primitive = cube->AddComponent(new CapsulePrimitive(Vector3(), Quaternion(), Vector3(1), false));
+		primitive->SetColor(Color(255, 255, 255, 255));
+		primitive->AddShader(shader);
+		//primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
+		//primitive->SetNormalMap(Texture(Resources::resourceManager.GetFile("normal_map.png")));
+		//cube->AddComponent(new Rotate(Vector3::up));
+		//cube->AddComponent(new Rotate(Vector3::right));
+		#endif
+	}
+	{
+		GameObject* cube = scene->GetObject(scene->CreateObject("Icosphere", Utilities::Vector3(6, 2, 0), Utilities::Quaternion(), Utilities::Vector3(2.0)));
+		#ifdef StevEngine_RENDERER_GL
+		Render::RenderComponent* primitive = cube->AddComponent(new IcospherePrimitive(Vector3(), Quaternion(), Vector3(1), false));
+		primitive->SetColor(Color(255, 255, 255, 255));
+		primitive->AddShader(shader);
+		//primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
+		//primitive->SetNormalMap(Texture(Resources::resourceManager.GetFile("normal_map.png")));
+		//cube->AddComponent(new Rotate(Vector3::up));
+		//cube->AddComponent(new Rotate(Vector3::right));
+		#endif
+	}
+	{
+		GameObject* cube = scene->GetObject(scene->CreateObject("UVSphere", Utilities::Vector3(0, 2, 0), Utilities::Quaternion(), Utilities::Vector3(2.0)));
+		#ifdef StevEngine_RENDERER_GL
+		Render::RenderComponent* primitive = cube->AddComponent(new UVSpherePrimitive());
+		primitive->SetColor(Color(255, 255, 255, 255));
+		primitive->AddShader(shader);
+		//primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
+		//primitive->SetNormalMap(Texture(Resources::resourceManager.GetFile("normal_map.png")));
+		//cube->AddComponent(new Rotate(Vector3::up));
+		//cube->AddComponent(new Rotate(Vector3::right));
+		#endif
+	}
+	//*
+	{
 		ID id = scene->CreateObject("Sphere", Utilities::Vector3(3, 3, 0), Utilities::Quaternion(), Utilities::Vector3(2.0));
 		GameObject* sphere = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
-		SpherePrimitive* primitive = sphere->AddComponent(new SpherePrimitive());
+		UVSpherePrimitive* primitive = sphere->AddComponent(new UVSpherePrimitive());
 		primitive->SetColor(Color(255, 0, 255, 255));
 		//primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
 		#endif
@@ -245,12 +287,12 @@ int main(int argc, char** argv) {
 		#endif
 	}
 	{
-		ID id = scene->CreateObject("Cylinder", Utilities::Vector3(0, 3, 3), Quaternion(), Vector3(1.0, 1.0, 1.0));
+		ID id = scene->CreateObject("Cylinder", Utilities::Vector3(0, 3, 3), Quaternion(), Vector3(2.0));
 		GameObject* obj = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		CylinderPrimitive* primitive = obj->AddComponent(new CylinderPrimitive());
 		primitive->SetColor(Color(255, 255, 255, 255));
-		primitive->SetTexture(Texture(Resources::resourceManager.GetFile("box.png")));
+		//primitive->SetTexture(Texture(Resources::resourceManager.GetFile("box.png")));
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = obj->AddComponent(new Physics::CylinderCollider());
@@ -261,7 +303,7 @@ int main(int argc, char** argv) {
 		ID id = scene->CreateObject("Capsule", Utilities::Vector3(0, 3, 3), Quaternion(), Vector3(1.0, 1.0, 1.0));
 		GameObject* obj = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
-		CapsulePrimitive* primitive = obj->AddComponent(new CapsulePrimitive(Vector3(), Quaternion(), Vector3(1.0), TextureType::COVER));
+		CapsulePrimitive* primitive = obj->AddComponent(new CapsulePrimitive(Vector3(), Quaternion(), Vector3(1.0), true, TextureType::COVER));
 		primitive->SetColor(Color(255, 255, 255, 255));
 		primitive->SetTexture(Texture(Resources::resourceManager.GetFile("box.png")));
 		#endif
@@ -275,28 +317,31 @@ int main(int argc, char** argv) {
 		ID id = scene->CreateObject("Terrain", Utilities::Vector3(0, -1, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward), Utilities::Vector3(10, 1, 10));
 		GameObject* object = scene->GetObject(id);
 		double data[4*4];
-		double height1 = 0;
+		double height1 = 1;
 		double height2 = 0;
 		double height3 = 0;
-		double height4 = 0;
+		double height4 = 1;
 		data[0] = height1;data[1] = height2;data[2] = height3;data[3] = height4;
 		data[4] = height1;data[5] = height2;data[6] = height3;data[7] = height4;
 		data[8] = height1;data[9] = height2;data[10] = height3;data[11] = height4;
 		data[12] = height1;data[13] = height2;data[14] = height3;data[15] = height4;
 		TerrainData terrain(4, 3, data);
 		#ifdef StevEngine_RENDERER_GL
-		TerrainRenderer* primitive = object->AddComponent(new TerrainRenderer(terrain, Color(0, 125, 255, 255 )));
+		TerrainRenderer* primitive = object->AddComponent(new TerrainRenderer(terrain, Color(0, 125, 255, 255 ), true));
+		//primitive->AddShader(shader);
+		primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::TerrainCollider* collider = object->AddComponent(new Physics::TerrainCollider(terrain));
 		Physics::RigidBody* rb = object->AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layer::GetLayerByName("Static")));
 		#endif
 	}
+	//*/
 	//Add Camera controller
 	#ifdef StevEngine_SHOW_WINDOW
 	GameObject* camObj = scene->GetCameraObject();
 	camObj->AddComponent(new CameraController());
-	camObj->SetPosition(Utilities::Vector3(0, 8, 25));
+	camObj->SetPosition(Utilities::Vector3(0, 5, 20));
 	camObj->SetRotation(Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward));
 	#endif
 
@@ -305,8 +350,7 @@ int main(int argc, char** argv) {
 	GameObject* light1 = scene->GetObject(scene->CreateObject("PointLight1", Utilities::Vector3(0, 8, 0)));
 	light1->AddComponent(new Render::PointLight(Vector3(0.5, 1.0, 1.0), Vector3(0.5, 1.0, 1.0) * 0.5));
 	light1->AddComponent(new CubePrimitive(Utilities::Vector3(), Utilities::Quaternion(), Utilities::Vector3(0.1)))->SetColor({255,255,255,255});
-	/*
-	GameObject* light2 = scene->GetObject(scene->CreateObject("PointLight2", Utilities::Vector3(2, 5, 1)));
+	/*GameObject* light2 = scene->GetObject(scene->CreateObject("PointLight2", Utilities::Vector3(2, 5, 1)));
 	light2->AddComponent(new Render::PointLight(Vector3(1.0, 0.5, 0.25), Vector3(1.0, 0.5, 0.25) * 0.5));
 	light2->AddComponent(new CubePrimitive(Utilities::Vector3(), Utilities::Quaternion(), Utilities::Vector3(0.1)));
 	scene->GetObject(scene->CreateObject("DirectionalLight", Utilities::Vector3(0, 0, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(-90), Utilities::Vector3::right)))->AddComponent(new Render::DirectionalLight(Vector3(0.33), Vector3(0.25)));
@@ -319,10 +363,8 @@ int main(int argc, char** argv) {
 
 	//Use test shader
 	#ifdef StevEngine_RENDERER_GL
-	Render::ShaderProgram shader = Render::ShaderProgram(Render::FRAGMENT);
-	shader.AddShader(Render::Shader(Resources::resourceManager.GetFile("test_shader.frag").GetRawData(), Render::FRAGMENT));
 	//Render::render.AddGlobalShader(shader);
-	scene->GetObject(modelObject)->GetComponent<Render::RenderComponent>()->AddShader(shader);
+	//scene->GetObject(modelObject)->GetComponent<Render::RenderComponent>()->AddShader(shader);
 	#endif
 
 	//Test data manager

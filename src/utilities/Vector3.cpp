@@ -4,6 +4,7 @@
 #include "main/Log.hpp"
 
 #include "glm/ext/vector_float3.hpp"
+#include <algorithm>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -171,6 +172,14 @@ namespace StevEngine {
 			s.Z *= b.Z;
 			return s;
 		}
+		Vector3 Vector3::Slerp(const Vector3& a, const Vector3& b, double t) {
+			double dot = Vector3::Dot(a, b);
+			double theta = acos(dot / (a.Magnitude() * b.Magnitude()));
+			double sintheta = sin(theta);
+
+			return (a * (sin((1-t)*theta) / sintheta)) + (b * (sin(t*theta) / sintheta));
+		}
+
 	}
 }
 

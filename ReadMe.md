@@ -110,14 +110,14 @@ git submodule update --init
 Install SDL2, SDL2_Image and SDL2_Mixer system wide:
 
 - SDL2:
-    - Linux: `sudo apt-get install libsdl2-dev`
-    - Windows: Download from https://github.com/libsdl-org/SDL/releases
+	- Linux: `sudo apt-get install libsdl2-dev`
+	- Windows: Download from https://github.com/libsdl-org/SDL/releases
 - SDL2_Mixer
-    - Linux: `sudo apt-get install libsdl2-mixer-dev`
-    - Windows: Download from https://github.com/libsdl-org/SDL_mixer/releases
+	- Linux: `sudo apt-get install libsdl2-mixer-dev`
+	- Windows: Download from https://github.com/libsdl-org/SDL_mixer/releases
 - SDL2_Image
-    - Linux: `sudo apt-get install libsdl2-image-dev` (also see https://trenki2.github.io/blog/2017/07/04/using-sdl2-image-with-cmake/)
-    - Windows: Download from https://github.com/libsdl-org/SDL_image/releases
+	- Linux: `sudo apt-get install libsdl2-image-dev` (also see https://trenki2.github.io/blog/2017/07/04/using-sdl2-image-with-cmake/)
+	- Windows: Download from https://github.com/libsdl-org/SDL_image/releases
 
 > [!IMPORTANT]
 > When downloading for windows make sure to download the `-devel-X.X.X-VC` option.
@@ -125,9 +125,9 @@ Install SDL2, SDL2_Image and SDL2_Mixer system wide:
 Building or installing [glad](https://github.com/Dav1dde/glad):
 > [!WARNING]
 > Building glad requires a python intepreter installed and added to the path.
-> 
+>
 > Alternatively glad can be generated online through this link: https://gen.glad.sh/#generator=c&api=gl%3D4.4&profile=gl%3Dcore%2Cgles1%3Dcommon and the build optiosn `BUILD_GLAD` can be set to `OFF` and `GLAD_DIR` should be set to the directory of the installed GLAD files.
-> 
+>
 > (*This can be done by adding `-DBUILD_GLAD=OFF -DGLAD_DIR=<glad_path>` to the cmake command*)
 
 ## Linux
@@ -218,8 +218,8 @@ The StevEngine::Engine object and all enabled subsystems is created through the 
 Example of creating the engine object inside the main function:
 ```c++
 int main(int argc, char** argv) {
-    StevEngine::CreateEngine("Game title", {});
-    //Rest of the main function...
+	StevEngine::CreateEngine("Game title", {});
+	//Rest of the main function...
 }
 ```
 
@@ -229,9 +229,9 @@ After creating the engine, and any GameObjects used by the project.
 The main loop of the engine can be started by simply calling the Start method of the engine object:
 ```c++
 int main(int argc, char** argv) {
-    StevEngine::CreateEngine("Game title", {});
-    //Rest of the main function...
-    return StevEngine::engine->Start();
+	StevEngine::CreateEngine("Game title", {});
+	//Rest of the main function...
+	return StevEngine::engine->Start();
 }
 ```
 > [!NOTE]

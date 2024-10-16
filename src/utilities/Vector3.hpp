@@ -61,6 +61,7 @@ namespace StevEngine {
 				static Vector3 Cross(const Vector3& a, const Vector3& b);
 				static double Dot(const Vector3& a, const Vector3& b);
 				static Vector3 CombineScale(const Vector3& a, const Vector3& b);
+				static Vector3 Slerp(const Vector3& a, const Vector3& b, double t);
 		};
 	}
 }

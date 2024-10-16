@@ -13,10 +13,10 @@ namespace StevEngine {
 	namespace Visuals {
 		const Texture Texture::empty = Texture();
 
-		Texture::Texture(Resources::Resource file) : path(file.path) {
+		Texture::Texture(Resources::Resource file) : path(file.path), bound(false) {
 			surface = IMG_Load_RW(file.GetSDLData(), true);
 		}
-		Texture::Texture(const Texture& copy) : path(copy.path), GLLocation(copy.GLLocation), surface(copy.surface) {}
+		Texture::Texture(const Texture& copy) : path(copy.path), GLLocation(copy.GLLocation), surface(copy.surface), bound(false) {}
 		void Texture::operator=(const Texture& copy) {
 			if(bound) FreeTexture();
 			GLLocation = copy.GLLocation;

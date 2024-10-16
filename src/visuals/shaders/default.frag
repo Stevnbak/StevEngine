@@ -13,12 +13,12 @@ vec4 GetObjectColor();
 
 //Main
 void main() {
-    //Texture
-    vec4 tex = GetObjectTexture(GetFragUV());
-    //Lights
-    vec3 lights = GetLights();
-    //Final color
-    vec4 color = vec4(lights, 1.0) * tex * GetObjectColor();
-    SetFragColor(color);
+	//Texture
+	vec4 tex = GetObjectTexture(GetFragUV());
+	//Lights
+	vec3 lights = GetLights();
+	//Final color
+	vec4 color = vec4(lights, 1.0) * tex * GetObjectColor();
+	SetFragColor(color);
 }
 )"

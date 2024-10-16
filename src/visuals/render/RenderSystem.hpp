@@ -61,7 +61,6 @@ namespace StevEngine {
 				void SetFaceCulling(bool enable, GLenum face = GL_BACK, bool clockwise = false);
 				void SetMSAA(bool enable, uint16_t amount = 4);
 				//From Lights
-				std::vector<Light*> lights;
 				uint32_t GetLightID(std::string type);
 			private:
 				SDL_GLContext context;
@@ -78,6 +77,10 @@ namespace StevEngine {
 				uint32_t VAO; //Vertex Array Object
 				//Background
 				Utilities::Color backgroundColor = {0, 0, 0, 255};
+				//Lights
+				std::vector<Light*> lights;
+				Utilities::Color ambientLightColor;
+				double ambientLightStrength;
 		};
 
 		extern RenderSystem render;

@@ -2,10 +2,10 @@ R"(
 #version 440 core
 
 struct Vertex {
-    vec3 position;
-    vec2 uv;
-    vec3 normal;
-    vec3 tangent;
+	vec3 position;
+	vec2 uv;
+	vec3 normal;
+	vec3 tangent;
 };
 Vertex getVertex();
 
@@ -21,13 +21,14 @@ out gl_PerVertex
 };
 
 void main() {
-    Vertex v = getVertex();
-    gl_Position = getProjectionTransform() * getViewTransform() * getObjectTransform() * vec4(v.position, 1.0);
-    setFragInfo(Vertex(
-        vec3(getObjectTransform() * vec4(v.position, 1.0)),
-        v.uv,
-        normalize(mat3(transpose(inverse(getObjectTransform()))) * v.normal),
-        normalize(mat3(transpose(inverse(getObjectTransform()))) * v.tangent)
-    ));
+	Vertex v = getVertex();
+	gl_Position = getProjectionTransform() * getViewTransform() * getObjectTransform() * vec4(v.position, 1.0);
+	Vertex o = Vertex(
+		vec3(getObjectTransform() * vec4(v.position, 1.0)), //Position
+		v.uv, //UV
+		normalize(vec3(transpose(inverse(getObjectTransform())) * vec4(v.normal, 1.0))), //Normal
+		normalize(vec3(transpose(inverse(getObjectTransform())) * vec4(v.tangent, 1.0))) //Tangent
+	);
+	setFragInfo(o);
 }
 )"

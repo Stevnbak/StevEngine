@@ -7,14 +7,14 @@ layout(location = 2) in vec3 vertexNormal;
 layout(location = 3) in vec3 vertexTangent;
 
 struct Vertex {
-    vec3 position;
-    vec2 uv;
-    vec3 normal;
-    vec3 tangent;
+	vec3 position;
+	vec2 uv;
+	vec3 normal;
+	vec3 tangent;
 };
 
 Vertex getVertex() {
-    return Vertex(vertexPosition, vertexUV, vertexNormal, vertexTangent);
+	return Vertex(vertexPosition, vertexUV, vertexNormal, vertexTangent);
 }
 
 uniform mat4 objectTransform;
@@ -33,14 +33,14 @@ out VS_OUT {
 
 
 void setFragInfo(Vertex info) {
-    vs_out.Position = info.position;
-    vs_out.UV = info.uv;
-    //Calculate TBN matrix
-    vec3 Tangent = info.tangent;
-    vec3 Normal = info.normal;
-    Tangent = normalize(Tangent - dot(Tangent, Normal) * Normal);
-    vec3 Bitangent = cross(Normal, Tangent);
-    vs_out.TBN = mat3(Tangent, Bitangent, Normal);
-    vs_out.Normal = info.normal;
+	vs_out.Position = info.position;
+	vs_out.UV = info.uv;
+	//Calculate TBN matrix
+	vec3 Tangent = normalize(info.tangent);
+	vec3 Normal = normalize(info.normal);
+	Tangent = normalize(Tangent - dot(Tangent, Normal) * Normal);
+	vec3 Bitangent = cross(Normal, Tangent);
+	vs_out.TBN = mat3(Tangent, Bitangent, Normal);
+	vs_out.Normal = normalize(info.normal);
 }
 )"

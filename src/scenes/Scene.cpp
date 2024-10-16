@@ -20,7 +20,7 @@ namespace StevEngine {
 	}
 	ID Scene::CreateObject(std::string name, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) {
 		ID id;
-		gameObjects.insert({id, GameObject(id, name, this->name)});
+		gameObjects.emplace(id, GameObject(id, name, this->name));
 		GameObject* object = GetObject(id);
 		object->position = position;
 		object->rotation = rotation;
@@ -34,7 +34,7 @@ namespace StevEngine {
 	}
 	Utilities::ID Scene::CreateObject(YAML::Node node) {
 		Utilities::ID id = node["id"] ? node["id"].as<Utilities::ID>() : Utilities::ID();
-		gameObjects.insert({id, GameObject(id, "GameObject", name)});
+		gameObjects.emplace(id, GameObject(id, "GameObject", name));
 		GameObject* object = GetObject(id);
 		object->Import(node);
 		if(active) object->Start();
@@ -61,7 +61,7 @@ namespace StevEngine {
 		return keys;
 	}
 	void Scene::DestroyObject(ID id) {
-		gameObjects.erase(id);
+		if(gameObjects.contains(id)) gameObjects.erase(id);
 	}
 	Scene::Scene(std::string name) : name(name) {
 		//Create main camera

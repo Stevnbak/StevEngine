@@ -16,7 +16,7 @@ objects:
       - 2
       - 2
     components:
-      - type: SpherePrimitive
+      - type: UVSpherePrimitive
         position:
           - 0
           - 0
@@ -149,7 +149,7 @@ objects:
       - 2
       - 2
     components:
-      - type: SpherePrimitive
+      - type: UVSpherePrimitive
         position:
           - 0
           - 0

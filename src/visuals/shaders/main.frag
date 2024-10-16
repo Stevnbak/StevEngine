@@ -2,10 +2,10 @@ R"(
 #version 440 core
 
 in VS_OUT {
-    vec3 Position;
-    vec2 UV;
-    mat3 TBN;
-    vec3 Normal;
+	vec3 Position;
+	vec2 UV;
+	mat3 TBN;
+	vec3 Normal;
 } fs_in;
 
 vec3 GetFragPosition() { return fs_in.Position; }
@@ -17,31 +17,33 @@ vec4 GetObjectColor() { return objectColor; }
 uniform bool objectIsTextured;
 uniform sampler2D objectTexture;
 vec4 GetObjectTexture(vec2 uv) {
-    vec4 tex = vec4(1.0);
-    if(objectIsTextured) {
-        tex = texture(objectTexture, uv);
-    }
-    return tex;
+	vec4 tex = vec4(1.0);
+	if(objectIsTextured) {
+		tex = texture(objectTexture, uv);
+	}
+	return tex;
 }
 uniform bool objectIsNormalMapped;
 uniform sampler2D objectNormalMap;
 vec3 GetFragNormal(vec2 uv) {
 	vec3 normal;
-    if(objectIsNormalMapped) {
-    	//Get RGB values of normal map:
-        normal = texture(objectNormalMap, uv).rgb;
-        // transform normal vector to range [-1,1] and transform according to TBN matrix:
-        normal = normalize(fs_in.TBN * (normal * 2.0 - 1.0));
-    }
-    else {
-    	//Set normal based on TBN matrix:
-    	normal = normalize(fs_in.TBN * vec3(0,0,1));
-    }
-    return normal;
+	if(objectIsNormalMapped) {
+		//Get and transform RGB values of normal map:
+		normal = texture(objectNormalMap, uv).rgb;
+		normal = normal * 2.0 - 1.0;
+		normal = normalize(fs_in.TBN * normal);
+		normal = vec3(0.5);
+	}
+	else {
+		//Set normal based on TBN matrix:
+		normal = normalize(fs_in.TBN * vec3(0,0,1));
+		//normal = fs_in.Normal;
+	}
+	return normal;
 }
 
 out vec4 FragColor;
 void SetFragColor(vec4 color) {
-    FragColor = color;
+	FragColor = color;
 }
 )"

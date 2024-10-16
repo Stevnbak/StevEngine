@@ -18,7 +18,7 @@ namespace StevEngine {
 				std::string GetPath() const { return path; }
 				const static Texture empty;
 			private:
-				Texture() {};
+				Texture() : bound(false), surface(nullptr), GLLocation(0) {};
 				std::string path;
 				SDL_Surface* surface;
 				GLuint GLLocation;

@@ -72,25 +72,25 @@ namespace StevEngine::Render {
 	}
 
 	//Set uniforms
-	void ShaderProgram::SetShaderUniform(const char* name, glm::mat4 value) {
+	void ShaderProgram::SetShaderUniform(const char* name, glm::mat4 value) const {
 		glProgramUniformMatrix4fv(location, glGetUniformLocation(location, name), 1, GL_FALSE, glm::value_ptr(value));
 	}
-	void ShaderProgram::SetShaderUniform(const char* name, glm::vec4 value) {
+	void ShaderProgram::SetShaderUniform(const char* name, glm::vec4 value) const {
 		glProgramUniform4fv(location, glGetUniformLocation(location, name), 1, glm::value_ptr(value));
 	}
-	void ShaderProgram::SetShaderUniform(const char* name, glm::vec3 value) {
+	void ShaderProgram::SetShaderUniform(const char* name, glm::vec3 value) const {
 		glProgramUniform3fv(location, glGetUniformLocation(location, name), 1, glm::value_ptr(value));
 	}
-	void ShaderProgram::SetShaderUniform(const char* name, glm::vec2 value) {
+	void ShaderProgram::SetShaderUniform(const char* name, glm::vec2 value) const {
 		glProgramUniform2fv(location, glGetUniformLocation(location, name), 1, glm::value_ptr(value));
 	}
-	void ShaderProgram::SetShaderUniform(const char* name, bool value) {
+	void ShaderProgram::SetShaderUniform(const char* name, bool value) const {
 		glProgramUniform1i(location, glGetUniformLocation(location, name), value);
 	}
-	void ShaderProgram::SetShaderUniform(const char* name, int value) {
+	void ShaderProgram::SetShaderUniform(const char* name, int value) const {
 		glProgramUniform1i(location, glGetUniformLocation(location, name), value);
 	}
-	void ShaderProgram::SetShaderUniform(const char* name, float value) {
+	void ShaderProgram::SetShaderUniform(const char* name, float value) const {
 		glProgramUniform1f(location, glGetUniformLocation(location, name), value);
 	}
 }

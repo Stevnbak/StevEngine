@@ -12,11 +12,12 @@ namespace StevEngine {
 			friend class StevEngine::GameObject;
 
 			public:
-				TerrainRenderer(const Utilities::TerrainData& data, const Utilities::Color& color = Utilities::Color(255, 255, 255, 255), Visuals::Texture surface = Visuals::Texture::empty);
+				TerrainRenderer(const Utilities::TerrainData& data, const Utilities::Color& color = Utilities::Color(255, 255, 255, 255), bool smooth = true, Visuals::Texture surface = Visuals::Texture::empty);
 				TerrainRenderer(YAML::Node node);
 				YAML::Node Export(YAML::Node node) const;
 			private:
 				const Utilities::TerrainData data;
+				const bool smooth;
 		};
 		inline bool terrainRenderer = CreateComponents::RegisterComponentType<TerrainRenderer>("TerrainRenderer");
 	}

@@ -24,13 +24,13 @@ namespace StevEngine {
 				void RemoveShader(uint32_t location);
 				void RelinkProgram();
 				//Set shader uniforms
-				void SetShaderUniform(const char* name, glm::mat4 value);
-				void SetShaderUniform(const char* name, glm::vec4 value);
-				void SetShaderUniform(const char* name, glm::vec3 value);
-				void SetShaderUniform(const char* name, glm::vec2 value);
-				void SetShaderUniform(const char* name, bool value);
-				void SetShaderUniform(const char* name, int value);
-				void SetShaderUniform(const char* name, float value);
+				void SetShaderUniform(const char* name, glm::mat4 value) const;
+				void SetShaderUniform(const char* name, glm::vec4 value) const;
+				void SetShaderUniform(const char* name, glm::vec3 value) const;
+				void SetShaderUniform(const char* name, glm::vec2 value) const;
+				void SetShaderUniform(const char* name, bool value) const;
+				void SetShaderUniform(const char* name, int value) const;
+				void SetShaderUniform(const char* name, float value) const;
 				//Shader type
 				ShaderType GetType() { return shaderType; };
 				//Export
