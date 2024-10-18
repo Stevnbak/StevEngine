@@ -21,7 +21,8 @@
 		"command": "make",
 		"cwd": "$ZED_WORKTREE_ROOT/build",
 		"reveal": "never",
-		"hide": "on_success"
+		"hide": "on_success",
+		"allow_concurrent_runs": true
 	},
 	{
 		"label": "start",

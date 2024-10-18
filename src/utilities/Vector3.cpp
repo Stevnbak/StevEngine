@@ -151,7 +151,7 @@ namespace StevEngine {
 		//Static stuff
 		Vector3 Vector3::up = Vector3(0,1,0);
 		Vector3 Vector3::right = Vector3(1,0,0);
-		Vector3 Vector3::forward = Vector3(0,0,1);
+		Vector3 Vector3::forward = Vector3(0,0,-1);
 		double Vector3::Distance(const Vector3& a, const Vector3& b) {
 			return sqrt(exp2(a.X - b.X) + exp2(a.Y - b.Y) + exp2(a.Z - b.Z));
 		}

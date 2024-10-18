@@ -195,6 +195,7 @@ namespace StevEngine {
 		#endif
 		//Static methods
 		Quaternion Quaternion::FromAngleAxis(double angle, Vector3 axis) {
+			axis.Normalize();
 			double s = sin(angle / 2);
 			double x = axis.X * s;
 			double y = axis.Y * s;

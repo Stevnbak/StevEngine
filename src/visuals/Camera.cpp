@@ -37,13 +37,18 @@ namespace StevEngine::Visuals {
 
 	glm::mat4x4 Camera::GetView() const {
 		glm::mat4x4 transform = glm::mat4(1.0f);
-		//Move everything else based on camera position
-		Vector3 position = GetParent()->GetWorldPosition();
-		transform = glm::translate(transform, glm::vec3(-position.X, -position.Y, -position.Z));
 
 		//Rotate everything else based on camera rotation
 		Quaternion rotation = Quaternion::Conjugate(GetParent()->GetWorldRotation());
-		transform *= glm::mat4_cast(glm::quat(rotation.W,rotation.X,rotation.Y,rotation.Z));
+		#ifdef GLM_FORCE_QUAT_DATA_XYZW
+		transform *= glm::mat4_cast(glm::quat(rotation.X, rotation.Y, rotation.Z, rotation.W));
+		#else
+		transform *= glm::mat4_cast(glm::quat(rotation.W, rotation.X, rotation.Y, rotation.Z));
+		#endif
+
+		//Move everything else based on camera position
+		Vector3 position = GetParent()->GetWorldPosition();
+		transform = glm::translate(transform, (glm::vec3)(-position));
 
 		return transform;
 	}

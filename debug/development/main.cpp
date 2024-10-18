@@ -3,6 +3,7 @@
 #include "main/Engine.hpp"
 #include "main/EngineEvents.hpp"
 #include "main/InputSystem.hpp"
+#include "main/Log.hpp"
 #include "main/ResourceManager.hpp"
 #include "scenes/Component.hpp"
 #include "scenes/GameObject.hpp"
@@ -25,7 +26,7 @@
 
 #include <yaml-cpp/yaml.h>
 #include <SDL_keycode.h>
-#include <glm/ext/matrix_float4x4.hpp>
+#include <glm/mat4x4.hpp>
 #include <cmrc/cmrc.hpp>
 CMRC_DECLARE(debug_development_assets);
 
@@ -51,17 +52,17 @@ void CameraController::Update(double deltaTime) {
 	}
 	GameObject* gameObject = GetParent();
 	//Move position
-	Utilities::Quaternion rotation = gameObject->GetRotation();
+	Utilities::Quaternion rotation = gameObject->GetWorldRotation();
 	Utilities::Vector3 position = gameObject->GetPosition();
 	Utilities::Vector3 forward = rotation.Forward();
 	Utilities::Vector3 right = rotation.Right();
 	Utilities::Vector3 up = rotation.Up();
 
 	if (inputManager.IsKeyPressed(SDLK_w)) {
-		position -= forward * movementSpeed * deltaTime;
+		position += forward * movementSpeed * deltaTime;
 	}
 	if (inputManager.IsKeyPressed(SDLK_s)) {
-		position += forward * movementSpeed * deltaTime;
+		position -= forward * movementSpeed * deltaTime;
 	}
 	if (inputManager.IsKeyPressed(SDLK_d)) {
 		position += right * movementSpeed * deltaTime;
@@ -77,9 +78,11 @@ void CameraController::Update(double deltaTime) {
 	}
 	gameObject->SetPosition(position);
 	//Look around
-	rotation *= Quaternion::FromAngleAxis(-inputManager.GetMouseDelta().X * sensitivity * deltaTime, up);
-	rotation *= Quaternion::FromAngleAxis(-inputManager.GetMouseDelta().Y * sensitivity * deltaTime, right);
-	gameObject->SetRotation(rotation);
+	auto delta = inputManager.GetMouseDelta();
+	Utilities::Quaternion localRotation = gameObject->GetRotation();
+	localRotation = Quaternion::FromAngleAxis(-inputManager.GetMouseDelta().X * sensitivity * deltaTime, Vector3::up) * localRotation;
+	localRotation = localRotation * Quaternion::FromAngleAxis(-inputManager.GetMouseDelta().Y * sensitivity * deltaTime, Vector3::right);
+	gameObject->SetRotation(localRotation);
 }
 void CameraController::Start() {
 	inputManager.cursorMode = CursorMode::Free;
