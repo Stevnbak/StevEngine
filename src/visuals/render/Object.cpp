@@ -1,15 +1,21 @@
-#include <cstdint>
+
 #ifdef StevEngine_RENDERER_GL
 #include "Object.hpp"
+#include "utilities/Color.hpp"
 #include "utilities/Vertex.hpp"
 #include "visuals/Texture.hpp"
+#include "visuals/render/RenderSystem.hpp"
+#include "visuals/render/Lights.hpp"
+#include "visuals/Camera.hpp"
+#include "scenes/SceneManager.hpp"
 #include "main/Log.hpp"
 
 #include <memory>
 #include <string>
+#include <cstdint>
+#include <algorithm>
 
 #include "glad/gl.h"
-#include <algorithm>
 
 using StevEngine::Utilities::Vertex;
 using StevEngine::Utilities::Color;
@@ -108,6 +114,79 @@ namespace StevEngine {
 		}
 		void Object::RemoveShader(Render::ShaderType type) {
 			shaders.erase(shaders.find(type));
+		}
+
+		//Draw
+		void Object::Draw(glm::mat4x4 transform) const {
+			//Object specific shaders
+			uint32_t pipeline;
+			const ShaderProgram* vertexProgram = &render.GetDefaultVertexShaderProgram();
+			const ShaderProgram* fragmentProgram = &render.GetDefaultFragmentShaderProgram();
+			bool usingCustomShaders = shaders.size() > 0;
+			if(usingCustomShaders) {
+				//Set shader programs
+				glGenProgramPipelines(1, &pipeline);
+				glBindProgramPipeline(pipeline);
+				if(shaders.contains(VERTEX)) {
+					vertexProgram = &shaders.at(VERTEX);
+				}
+				glUseProgramStages(pipeline, GL_VERTEX_SHADER_BIT, vertexProgram->GetLocation());
+				if(shaders.contains(FRAGMENT)) {
+					fragmentProgram = &shaders.at(FRAGMENT);
+				}
+				glUseProgramStages(pipeline, GL_FRAGMENT_SHADER_BIT, fragmentProgram->GetLocation());
+				//Update program with basic info
+				Visuals::Camera* camera = sceneManager.GetActiveScene()->GetCamera();
+				//  View matrix
+				vertexProgram->SetShaderUniform("viewTransform", camera->GetView());
+				fragmentProgram->SetShaderUniform("viewPosition", (glm::vec3)camera->GetParent()->GetWorldPosition());
+				//  Projection matrix
+				vertexProgram->SetShaderUniform("projectionTransform", camera->GetProjection());
+				//  Ambient lighting
+				auto ambientLightColor = render.GetAmbientLightColor();
+				fragmentProgram->SetShaderUniform("ambientColor", glm::vec3(ambientLightColor.r / 255.0f, ambientLightColor.g / 255.0f, ambientLightColor.b / 255.0f));
+				fragmentProgram->SetShaderUniform("ambientStrength", render.GetAmbientLightStrength());
+				//	Other lights
+				for(auto light : render.GetLights()) {
+					light->UpdateShader(*fragmentProgram);
+				}
+			}
+			//Update transform
+			vertexProgram->SetShaderUniform("objectTransform", transform);
+			//Update texture
+			fragmentProgram->SetShaderUniform("objectIsTextured", texture.IsBound());
+			if(texture.IsBound()) {
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texture.GetGLLocation());
+				fragmentProgram->SetShaderUniform("objectTexture", 0);
+			}
+			//Update normal map
+			fragmentProgram->SetShaderUniform("objectIsNormalMapped", normalMap.IsBound());
+			if(normalMap.IsBound()) {
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, normalMap.GetGLLocation());
+				fragmentProgram->SetShaderUniform("objectNormalMap", 1);
+			}
+			//Update color
+			fragmentProgram->SetShaderUniform("objectColor", glm::vec4(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f));
+			//Update material
+			fragmentProgram->SetShaderUniform("objectMaterial.ambient", (glm::vec3)material.ambient);
+			fragmentProgram->SetShaderUniform("objectMaterial.diffuse", (glm::vec3)material.diffuse);
+			fragmentProgram->SetShaderUniform("objectMaterial.specular", (glm::vec3)material.specular);
+			fragmentProgram->SetShaderUniform("objectMaterial.shininess", material.shininess);
+			//Draw object
+			glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(float), vertices, GL_STATIC_DRAW);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+			glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+			//Remove custom pipeline
+			if(usingCustomShaders) {
+				//Reset lights
+				for(Light* light : render.GetLights()) {
+					light->ResetShader(*fragmentProgram);
+				}
+				glBindProgramPipeline(render.GetShaderPipeline());
+				glDeleteProgramPipelines(1, &pipeline);
+			}
 		}
 	}
 }

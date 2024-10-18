@@ -1,5 +1,4 @@
 #pragma once
-#include <cstdint>
 #ifdef StevEngine_RENDERER_GL
 #include "Object.hpp"
 #include "utilities/Color.hpp"
@@ -14,6 +13,7 @@
 #include <array>
 #include <type_traits>
 #include <cstddef>
+#include <cstdint>
 
 namespace StevEngine {
 	namespace Render {
@@ -25,9 +25,12 @@ namespace StevEngine {
 
 		//Object structs
 		struct RenderObject {
-			const Object& object;
+			const CustomObject& object;
 			const glm::mat4x4 transform;
-			RenderObject(const Object& object, const glm::mat4x4& transform) : object(object), transform(transform) {}
+			RenderObject(const CustomObject& object, const glm::mat4x4& transform) : object(object), transform(transform) {}
+			void Draw() {
+				object.Draw(transform);
+			}
 		};
 
 		//Render queues
@@ -48,7 +51,7 @@ namespace StevEngine {
 
 			public:
 				void Init(SDL_Window* window);
-				void DrawObject(const Object& object, glm::mat4x4 transform, RenderQueue queue = STANDARD);
+				void DrawObject(const CustomObject& object, glm::mat4x4 transform, RenderQueue queue = STANDARD);
 				void SetBackground(const Utilities::Color& color);
 				void SetAmbientLight(float strength, const Utilities::Color& color = Utilities::Color(255,255,255,255));
 				void AddGlobalShader(ShaderProgram shader);
@@ -60,13 +63,19 @@ namespace StevEngine {
 				void SetVSync(bool vsync);
 				void SetFaceCulling(bool enable, GLenum face = GL_BACK, bool clockwise = false);
 				void SetMSAA(bool enable, uint16_t amount = 4);
+				//Get info
+				const ShaderProgram& GetDefaultVertexShaderProgram() const { return vertexShaderProgram; }
+				const ShaderProgram& GetDefaultFragmentShaderProgram() const { return fragmentShaderProgram; }
+				uint32_t GetShaderPipeline() const { return shaderPipeline; }
+				Utilities::Color GetAmbientLightColor() const { return ambientLightColor; }
+				float GetAmbientLightStrength() const { return ambientLightStrength; }
 				//From Lights
 				uint32_t GetLightID(std::string type);
+				std::vector<Light*> GetLights() const { return lights; }
 			private:
 				SDL_GLContext context;
 				//Queues
 				std::array<std::vector<RenderObject>, RenderQueue::MUST_BE_LAST> queues;
-				void Draw(const RenderObject& object);
 				//Shader program
 				ShaderProgram vertexShaderProgram;
 				ShaderProgram fragmentShaderProgram;
@@ -80,7 +89,7 @@ namespace StevEngine {
 				//Lights
 				std::vector<Light*> lights;
 				Utilities::Color ambientLightColor;
-				double ambientLightStrength;
+				float ambientLightStrength;
 		};
 
 		extern RenderSystem render;

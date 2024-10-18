@@ -24,7 +24,12 @@ namespace StevEngine {
 			float shininess = 1.0;
 		};
 
-		class Object {
+		class CustomObject {
+			public:
+				virtual void Draw(glm::mat4x4 transform) const = 0;
+		};
+
+		class Object : public CustomObject {
 			friend class RenderSystem;
 			public:
 				Object(const std::vector<Utilities::Vertex>& vertices, const Utilities::Color& color = Utilities::Color(255, 255, 255, 255), const Visuals::Texture& textureData = Visuals::Texture::empty, const Visuals::Texture& normalMapData = Visuals::Texture::empty);
@@ -38,6 +43,7 @@ namespace StevEngine {
 				Material material;
 				void AddShader(Render::ShaderProgram program);
 				void RemoveShader(Render::ShaderType type);
+				void Draw(glm::mat4x4 transform) const;
 			private:
 				float* vertices;
 				size_t vertexCount;

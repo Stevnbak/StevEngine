@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #ifdef StevEngine_RENDERER_GL
 #include "Shader.hpp"
 #include <map>
@@ -14,7 +15,6 @@ namespace StevEngine {
 		class RenderSystem;
 
 		class ShaderProgram {
-			friend class RenderSystem;
 			public:
 				ShaderProgram(ShaderType shaderType);
 				ShaderProgram(YAML::Node node);
@@ -31,8 +31,10 @@ namespace StevEngine {
 				void SetShaderUniform(const char* name, bool value) const;
 				void SetShaderUniform(const char* name, int value) const;
 				void SetShaderUniform(const char* name, float value) const;
-				//Shader type
-				ShaderType GetType() { return shaderType; };
+				//Get info
+				uint32_t GetLocation() const { return location; }
+				bool IsModified() const { return modified; }
+				ShaderType GetType() const { return shaderType; };
 				//Export
 				YAML::Node Export() const;
 			private:

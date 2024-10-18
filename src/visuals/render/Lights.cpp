@@ -24,63 +24,72 @@ namespace StevEngine::Render {
 		Render::render.lights.push_back(this);
 	}
 	//Update shader information functions
-	void DirectionalLight::UpdateShader() {
+	void DirectionalLight::UpdateShader(const ShaderProgram& program) const {
 		std::string part = "directionalLights[" + std::to_string(shaderLightID) + "].";
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "basic.diffuse").c_str(), (glm::vec3)diffuse);
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "basic.specular").c_str(), (glm::vec3)specular);
+		program.SetShaderUniform((part + "basic.diffuse").c_str(), (glm::vec3)diffuse);
+		program.SetShaderUniform((part + "basic.specular").c_str(), (glm::vec3)specular);
 
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "direction").c_str(), (glm::vec3)GetParent()->GetWorldRotation().Forward());
+		program.SetShaderUniform((part + "direction").c_str(), (glm::vec3)GetParent()->GetWorldRotation().Forward());
+	}
+	void DirectionalLight::ResetShader(const ShaderProgram& program) const {
+		std::string part = "directionalLights[" + std::to_string(shaderLightID) + "].";
+		program.SetShaderUniform((part + "basic.diffuse").c_str(), glm::vec3());
+		program.SetShaderUniform((part + "basic.specular").c_str(), glm::vec3());
+
+		program.SetShaderUniform((part + "direction").c_str(), glm::vec3());
 	}
 	DirectionalLight::~DirectionalLight() {
-		std::string part = "directionalLights[" + std::to_string(shaderLightID) + "].";
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "basic.diffuse").c_str(), glm::vec3());
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "basic.specular").c_str(), glm::vec3());
-
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "direction").c_str(), glm::vec3());
+		ResetShader(render.GetDefaultFragmentShaderProgram());
 	}
-	void PointLight::UpdateShader() {
+	void PointLight::UpdateShader(const ShaderProgram& program) const {
 		std::string part = "pointLights[" + std::to_string(shaderLightID) + "].";
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "basic.diffuse").c_str(), (glm::vec3)diffuse);
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "basic.specular").c_str(), (glm::vec3)specular);
+		program.SetShaderUniform((part + "basic.diffuse").c_str(), (glm::vec3)diffuse);
+		program.SetShaderUniform((part + "basic.specular").c_str(), (glm::vec3)specular);
 
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "position").c_str(), (glm::vec3)GetParent()->GetWorldPosition());
+		program.SetShaderUniform((part + "position").c_str(), (glm::vec3)GetParent()->GetWorldPosition());
 
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "constant").c_str(), constant);
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "linear").c_str(), linear);
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "quadratic").c_str(), quadratic);
+		program.SetShaderUniform((part + "constant").c_str(), constant);
+		program.SetShaderUniform((part + "linear").c_str(), linear);
+		program.SetShaderUniform((part + "quadratic").c_str(), quadratic);
+	}
+	void PointLight::ResetShader(const ShaderProgram& program) const {
+		std::string part = "pointLights[" + std::to_string(shaderLightID) + "].";
+		program.SetShaderUniform((part + "basic.diffuse").c_str(), glm::vec3());
+		program.SetShaderUniform((part + "basic.specular").c_str(), glm::vec3());
+
+		program.SetShaderUniform((part + "position").c_str(), glm::vec3());
+
+		program.SetShaderUniform((part + "constant").c_str(), 0);
+		program.SetShaderUniform((part + "linear").c_str(), 0);
+		program.SetShaderUniform((part + "quadratic").c_str(), 0);
 	}
 	PointLight::~PointLight() {
-		std::string part = "pointLights[" + std::to_string(shaderLightID) + "].";
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "basic.diffuse").c_str(), glm::vec3());
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "basic.specular").c_str(), glm::vec3());
-
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "position").c_str(), glm::vec3());
-
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "constant").c_str(), 0);
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "linear").c_str(), 0);
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "quadratic").c_str(), 0);
+		ResetShader(render.GetDefaultFragmentShaderProgram());
 	}
-	void SpotLight::UpdateShader() {
+	void SpotLight::UpdateShader(const ShaderProgram& program) const {
 		std::string part = "spotLights[" + std::to_string(shaderLightID) + "].";
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "basic.diffuse").c_str(), (glm::vec3)diffuse);
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "basic.specular").c_str(), (glm::vec3)specular);
+		program.SetShaderUniform((part + "basic.diffuse").c_str(), (glm::vec3)diffuse);
+		program.SetShaderUniform((part + "basic.specular").c_str(), (glm::vec3)specular);
 
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "position").c_str(), (glm::vec3)GetParent()->GetWorldPosition());
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "position").c_str(), (glm::vec3)GetParent()->GetWorldRotation().Forward());
+		program.SetShaderUniform((part + "position").c_str(), (glm::vec3)GetParent()->GetWorldPosition());
+		program.SetShaderUniform((part + "position").c_str(), (glm::vec3)GetParent()->GetWorldRotation().Forward());
 
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "cutOff").c_str(), cutOff);
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "outerCutOff").c_str(), outerCutOff);
+		program.SetShaderUniform((part + "cutOff").c_str(), cutOff);
+		program.SetShaderUniform((part + "outerCutOff").c_str(), outerCutOff);
+	}
+	void SpotLight::ResetShader(const ShaderProgram& program) const {
+		std::string part = "spotLights[" + std::to_string(shaderLightID) + "].";
+		program.SetShaderUniform((part + "basic.diffuse").c_str(), glm::vec3());
+		program.SetShaderUniform((part + "basic.specular").c_str(), glm::vec3());
+
+		program.SetShaderUniform((part + "position").c_str(), glm::vec3());
+		program.SetShaderUniform((part + "direction").c_str(), glm::vec3());
+
+		program.SetShaderUniform((part + "cutOff").c_str(), 0);
+		program.SetShaderUniform((part + "outerCutOff").c_str(), 0);
 	}
 	SpotLight::~SpotLight() {
-		std::string part = "spotLights[" + std::to_string(shaderLightID) + "].";
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "basic.diffuse").c_str(), glm::vec3());
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "basic.specular").c_str(), glm::vec3());
-
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "position").c_str(), glm::vec3());
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "direction").c_str(), glm::vec3());
-
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "cutOff").c_str(), 0);
-		Render::render.fragmentShaderProgram.SetShaderUniform((part + "outerCutOff").c_str(), 0);
+		ResetShader(render.GetDefaultFragmentShaderProgram());
 	}
 	Light::~Light() {
 		Render::render.lights.erase(std::find(Render::render.lights.begin(), Render::render.lights.end(), this));

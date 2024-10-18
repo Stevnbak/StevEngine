@@ -1,4 +1,5 @@
 #pragma once
+#include "visuals/shaders/ShaderProgram.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "scenes/Component.hpp"
 #include "utilities/Vector3.hpp"
@@ -11,22 +12,23 @@ namespace StevEngine {
 			public:
 				Utilities::Vector3 diffuse;
 				Utilities::Vector3 specular;
+				virtual void UpdateShader(const ShaderProgram& program) const = 0;
+				virtual void ResetShader(const ShaderProgram& program) const = 0;
 			protected:
 				Light(uint32_t shaderID, Utilities::Vector3 diffuse, Utilities::Vector3 specular, std::string type);
 				Light(YAML::Node node);
 				const uint32_t shaderLightID;
-				virtual void UpdateShader() = 0;
 				virtual ~Light();
 		};
 
 		class DirectionalLight final : public Light {
-			friend class StevEngine::Render::RenderSystem;
 			public:
 				DirectionalLight(Utilities::Vector3 diffuse = Utilities::Vector3(1.0), Utilities::Vector3 specular = Utilities::Vector3(1.0));
 				DirectionalLight(YAML::Node node);
 				YAML::Node Export(YAML::Node node) const;
-			private:
-				void UpdateShader();
+
+				void UpdateShader(const ShaderProgram& program) const;
+				void ResetShader(const ShaderProgram& program) const;
 				~DirectionalLight();
 		};
 		inline bool dl = CreateComponents::RegisterComponentType<DirectionalLight>("DirectionalLight");
@@ -41,8 +43,9 @@ namespace StevEngine {
 				float constant;
 				float linear;
 				float quadratic;
-			private:
-				void UpdateShader();
+
+				void UpdateShader(const ShaderProgram& program) const;
+				void ResetShader(const ShaderProgram& program) const;
 				~PointLight();
 		};
 		inline bool pl = CreateComponents::RegisterComponentType<PointLight>("PointLight");
@@ -57,8 +60,9 @@ namespace StevEngine {
 
 				float cutOff;
 				float outerCutOff;
-			private:
-				void UpdateShader();
+
+				void UpdateShader(const ShaderProgram& program) const;
+				void ResetShader(const ShaderProgram& program) const;
 				~SpotLight();
 		};
 		inline bool sl = CreateComponents::RegisterComponentType<SpotLight>("SpotLight");

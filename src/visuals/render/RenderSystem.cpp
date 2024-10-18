@@ -154,28 +154,28 @@ namespace StevEngine {
 			glDeleteProgramPipelines(1, &shaderPipeline);
 			glGenProgramPipelines(1, &shaderPipeline);
 			glBindProgramPipeline(shaderPipeline);
-			glUseProgramStages(shaderPipeline, GL_VERTEX_SHADER_BIT, vertexShaderProgram.location);
-			glUseProgramStages(shaderPipeline, GL_FRAGMENT_SHADER_BIT, fragmentShaderProgram.location);
+			glUseProgramStages(shaderPipeline, GL_VERTEX_SHADER_BIT, vertexShaderProgram.GetLocation());
+			glUseProgramStages(shaderPipeline, GL_FRAGMENT_SHADER_BIT, fragmentShaderProgram.GetLocation());
 		}
 
 		void RenderSystem::AddGlobalShader(ShaderProgram shader) {
 			shader.RelinkProgram();
-			if(shader.shaderType == VERTEX) {
-				glDeleteProgram(vertexShaderProgram.location);
+			if(shader.GetType() == VERTEX) {
+				glDeleteProgram(vertexShaderProgram.GetLocation());
 				vertexShaderProgram = shader;
 			}
 			else {
-				glDeleteProgram(fragmentShaderProgram.location);
+				glDeleteProgram(fragmentShaderProgram.GetLocation());
 				fragmentShaderProgram = shader;
 			}
 			glDeleteProgramPipelines(1, &shaderPipeline);
 			glGenProgramPipelines(1, &shaderPipeline);
 			glBindProgramPipeline(shaderPipeline);
-			glUseProgramStages(shaderPipeline, GL_VERTEX_SHADER_BIT, vertexShaderProgram.location);
-			glUseProgramStages(shaderPipeline, GL_FRAGMENT_SHADER_BIT, fragmentShaderProgram.location);
+			glUseProgramStages(shaderPipeline, GL_VERTEX_SHADER_BIT, vertexShaderProgram.GetLocation());
+			glUseProgramStages(shaderPipeline, GL_FRAGMENT_SHADER_BIT, fragmentShaderProgram.GetLocation());
 		}
 
-		void RenderSystem::DrawObject(const Object& object, glm::mat4x4 transform, RenderQueue queue) {
+		void RenderSystem::DrawObject(const CustomObject& object, glm::mat4x4 transform, RenderQueue queue) {
 			queues[queue].emplace_back(object, transform);
 		};
 
@@ -195,7 +195,7 @@ namespace StevEngine {
 			vertexShaderProgram.SetShaderUniform("projectionTransform", camera->GetProjection());
 			//Lights
 			for(Light* light : lights) {
-				light->UpdateShader();
+				light->UpdateShader(fragmentShaderProgram);
 			}
 
 			//Set background color
@@ -208,7 +208,7 @@ namespace StevEngine {
 				else glDepthMask(GL_TRUE);
 				//Draw objects
 				for(RenderObject& object : queues[i]) {
-					Draw(object);
+					object.Draw();
 				}
 				//Clear queue
 				queues[i].clear();
@@ -229,71 +229,6 @@ namespace StevEngine {
 			ambientLightStrength = strength;
 			fragmentShaderProgram.SetShaderUniform("ambientColor", glm::vec3(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f));
 			fragmentShaderProgram.SetShaderUniform("ambientStrength", strength);
-		}
-
-		void RenderSystem::Draw(const RenderObject& renderObject) {
-			const Object& object = renderObject.object;
-			const glm::mat4x4& transform = renderObject.transform;
-			//Object specific shaders
-			uint32_t pipeline;
-			const ShaderProgram* vertexProgram = &vertexShaderProgram;
-			const ShaderProgram* fragmentProgram = &fragmentShaderProgram;
-			bool usingCustomShaders = object.shaders.size() > 0;
-			if(usingCustomShaders) {
-				//Set shader programs
-				glGenProgramPipelines(1, &pipeline);
-				glBindProgramPipeline(pipeline);
-				if(object.shaders.contains(VERTEX)) {
-					vertexProgram = &object.shaders.at(VERTEX);
-				}
-				glUseProgramStages(pipeline, GL_VERTEX_SHADER_BIT, vertexProgram->location);
-				if(object.shaders.contains(FRAGMENT)) {
-					fragmentProgram = &object.shaders.at(FRAGMENT);
-				}
-				glUseProgramStages(pipeline, GL_FRAGMENT_SHADER_BIT, fragmentProgram->location);
-				//Update program with basic info
-				Visuals::Camera* camera = sceneManager.GetActiveScene()->GetCamera();
-				//  View matrix
-				vertexProgram->SetShaderUniform("viewTransform", camera->GetView());
-				fragmentProgram->SetShaderUniform("viewPosition", (glm::vec3)camera->GetParent()->GetWorldPosition());
-				//  Projection matrix
-				vertexProgram->SetShaderUniform("projectionTransform", camera->GetProjection());
-				//  Ambient lighting
-				fragmentProgram->SetShaderUniform("ambientColor", glm::vec3(ambientLightColor.r / 255.0f, ambientLightColor.g / 255.0f, ambientLightColor.b / 255.0f));
-				fragmentProgram->SetShaderUniform("ambientStrength", (float)ambientLightStrength);
-			}
-			//Update transform
-			vertexProgram->SetShaderUniform("objectTransform", transform);
-			//Update texture
-			fragmentProgram->SetShaderUniform("objectIsTextured", object.texture.IsBound());
-			if(object.texture.IsBound()) {
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, object.texture.GetGLLocation());
-				fragmentProgram->SetShaderUniform("objectTexture", 0);
-			}
-			//Update normal map
-			fragmentProgram->SetShaderUniform("objectIsNormalMapped", object.normalMap.IsBound());
-			if(object.normalMap.IsBound()) {
-				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, object.normalMap.GetGLLocation());
-				fragmentProgram->SetShaderUniform("objectNormalMap", 1);
-			}
-			//Update color
-			fragmentProgram->SetShaderUniform("objectColor", glm::vec4(object.color.r / 255.0f, object.color.g / 255.0f, object.color.b / 255.0f, object.color.a / 255.0f));
-			//Update material
-			fragmentProgram->SetShaderUniform("objectMaterial.ambient", (glm::vec3)object.material.ambient);
-			fragmentProgram->SetShaderUniform("objectMaterial.diffuse", (glm::vec3)object.material.diffuse);
-			fragmentProgram->SetShaderUniform("objectMaterial.specular", (glm::vec3)object.material.specular);
-			fragmentProgram->SetShaderUniform("objectMaterial.shininess", object.material.shininess);
-			//Draw object
-			glBufferData(GL_ARRAY_BUFFER, object.vertexCount * sizeof(float), object.vertices, GL_STATIC_DRAW);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, object.indexCount * sizeof(uint32_t), object.indices, GL_STATIC_DRAW);
-			glDrawElements(GL_TRIANGLES, object.indexCount, GL_UNSIGNED_INT, 0);
-			//Remove custom pipeline
-			if(usingCustomShaders) {
-				glBindProgramPipeline(shaderPipeline);
-				glDeleteProgramPipelines(1, &pipeline);
-			}
 		}
 
 		uint32_t RenderSystem::GetLightID(std::string type) {
