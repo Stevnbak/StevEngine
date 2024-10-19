@@ -182,7 +182,7 @@ int main(int argc, char** argv) {
 		#endif*/
 	}
 	{
-		ID id = scene->CreateObject("Sphere", Utilities::Vector3(0, 0, 0), Utilities::Quaternion(), Utilities::Vector3(1.0));
+		ID id = scene->CreateObject("Sphere", Utilities::Vector3(0, 2, 0), Utilities::Quaternion(), Utilities::Vector3(1.0));
 		GameObject* object = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
 		Renderer::RenderComponent* primitive = object->AddComponent(new IcospherePrimitive(Vector3(), Quaternion(), Vector3(1.0), false));
@@ -193,10 +193,10 @@ int main(int argc, char** argv) {
 		//object->AddComponent(new Rotate(Vector3::up));
 		object->AddComponent(new Rotate(Vector3::right));
 		#endif
-		//GameObject* parent = scene->GetObject(scene->CreateObject("CubeParent", Utilities::Vector3(0, 0, 0), Utilities::Quaternion(), Utilities::Vector3(1.0)));
-		//parent->AddChild(id);
+		GameObject* parent = scene->GetObject(scene->CreateObject("Parent", Utilities::Vector3(0, 3, 0), Utilities::Quaternion(), Utilities::Vector3(1.0)));
+		parent->AddChild(id);
+		parent->AddComponent(new Rotate(Vector3::forward));
 	}
-
 	{
 		GameObject* cube = scene->GetObject(scene->CreateObject("Cube", Utilities::Vector3(3, 2, 0), Utilities::Quaternion(), Utilities::Vector3(2.0)));
 		#ifdef StevEngine_RENDERER_GL
