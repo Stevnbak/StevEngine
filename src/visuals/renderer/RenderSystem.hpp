@@ -23,8 +23,8 @@ namespace StevEngine {
 		//Object structs
 		struct RenderObject {
 			const CustomObject& object;
-			const glm::mat4x4 transform;
-			RenderObject(const CustomObject& object, const glm::mat4x4& transform) : object(object), transform(transform) {}
+			const Utilities::Matrix4 transform;
+			RenderObject(const CustomObject& object, const Utilities::Matrix4& transform) : object(object), transform(transform) {}
 			void Draw() {
 				object.Draw(transform);
 			}
@@ -43,7 +43,7 @@ namespace StevEngine {
 		class RenderSystem {
 			public:
 				void Init(SDL_Window* window);
-				void DrawObject(const CustomObject& object, glm::mat4x4 transform, RenderQueue queue = STANDARD);
+				void DrawObject(const CustomObject& object, Utilities::Matrix4 transform, RenderQueue queue = STANDARD);
 				void SetBackground(const Utilities::Color& color);
 				void SetAmbientLight(float strength, const Utilities::Color& color = Utilities::Color(255,255,255,255));
 				void AddGlobalShader(ShaderProgram shader);

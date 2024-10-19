@@ -36,7 +36,7 @@ namespace StevEngine::Visuals {
 	}
 
 	glm::mat4x4 Camera::GetView() const {
-		glm::mat4x4 transform = glm::mat4(1.0f);
+		glm::mat4x4 transform = glm::mat4x4(1.0f);
 
 		//Rotate everything else based on camera rotation
 		Quaternion rotation = Quaternion::Conjugate(GetParent()->GetWorldRotation());

@@ -1,4 +1,5 @@
 #pragma once
+#include "utilities/Matrix4.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "Shader.hpp"
 #include "utilities/Vector3.hpp"
@@ -22,7 +23,8 @@ namespace StevEngine::Renderer {
 			void RemoveShader(uint32_t location);
 			void RelinkProgram();
 			//Set shader uniforms
-			void SetShaderUniform(const char* name, glm::mat4 value) const;
+			void SetShaderUniform(const char* name, glm::mat4x4 value) const;
+			void SetShaderUniform(const char* name, Utilities::Matrix4 value) const;
 			void SetShaderUniform(const char* name, Utilities::Color value) const;
 			void SetShaderUniform(const char* name, Utilities::Vector3 value) const;
 			void SetShaderUniform(const char* name, Utilities::Vector2 value) const;

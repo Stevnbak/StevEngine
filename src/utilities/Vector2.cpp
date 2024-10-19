@@ -10,18 +10,9 @@
 
 namespace StevEngine::Utilities {
 	//Constructors
-	Vector2::Vector2(double x, double y) {
-		X = x;
-		Y = y;
-	}
-	Vector2::Vector2(const Vector2& from) {
-		X = from.X;
-		Y = from.Y;
-	}
-	Vector2::Vector2() {
-		X = 0;
-		Y = 0;
-	}
+	Vector2::Vector2(double x, double y) : X(x), Y(y) {}
+	Vector2::Vector2(const Vector2& from) : X(from.X), Y(from.Y)  {}
+	Vector2::Vector2() : X(0), Y(0) {}
 	//Functions
 	Vector2 Vector2::Get() const {
 		return *this;
@@ -31,21 +22,14 @@ namespace StevEngine::Utilities {
 	}
 	Vector2& Vector2::Normalize() {
 		double mag = Magnitude();
-		if (mag != 0) Divide(mag);
+		if (mag != 0) {
+			X /= mag;
+			Y /= mag;
+		}
 		return *this;
 	}
 	Vector2 Vector2::Normalized() const {
 		return Get().Normalize();
-	}
-	Vector2& Vector2::Mult(double value) {
-		X *= value;
-		Y *= value;
-		return *this;
-	}
-	Vector2& Vector2::Divide(double value) {
-		X /= value;
-		Y /= value;
-		return *this;
 	}
 	//Operators
 	Vector2 Vector2::operator + (const Vector2& other) const {
@@ -78,7 +62,7 @@ namespace StevEngine::Utilities {
 		return Vector3(X, Y, 0);
 	}
 	Vector2::operator std::string() const {
-		return std::format("[{};{}]", X, Y);
+		return std::format("[{}, {}]", X, Y);
 	}
 	const float* Vector2::data() const {
 		float* data = new float[2];

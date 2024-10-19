@@ -18,7 +18,6 @@ namespace StevEngine::Utilities {
 			//Constructors
 			Vector3(double x, double y, double z);
 			Vector3(const Vector3& from);
-			Vector3(std::string str);
 			Vector3(double v);
 			Vector3();
 			//Functions
@@ -26,8 +25,6 @@ namespace StevEngine::Utilities {
 			double Magnitude() const;
 			Vector3& Normalize();
 			Vector3 Normalized() const;
-			Vector3& Mult(double value);
-			Vector3& Divide(double value);
 			//Operators
 			Vector3  operator   +   (const Vector3& other) const;
 			Vector3  operator   -   (const Vector3& other) const;
@@ -41,6 +38,7 @@ namespace StevEngine::Utilities {
 			explicit operator Vector2() const;
 			explicit operator std::string() const;
 			explicit operator glm::vec3() const;
+			const float* data() const;
 			#ifdef StevEngine_PHYSICS
 			operator JPH::DVec3() const;
 			operator JPH::Vec3() const;
@@ -48,7 +46,6 @@ namespace StevEngine::Utilities {
 			Vector3& operator= (const JPH::DVec3& other);
 			Vector3(const JPH::Vec3& other);
 			Vector3(const JPH::DVec3& other);
-			const float* data() const;
 			#endif
 			#ifdef StevEngine_MODELS
 			operator aiVector3D() const;
@@ -56,7 +53,7 @@ namespace StevEngine::Utilities {
 			Vector3(const aiVector3D& other);
 			#endif
 			//Static stuff
-			static Vector3 up, right, forward;
+			static const Vector3 up , right, forward, identity, zero;
 			static double Distance(const Vector3& a, const Vector3& b);
 			static Vector3 Cross(const Vector3& a, const Vector3& b);
 			static double Dot(const Vector3& a, const Vector3& b);

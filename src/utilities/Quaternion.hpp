@@ -7,6 +7,7 @@
 #include "Vector3.hpp"
 
 namespace StevEngine::Utilities {
+	class Vector4;
 	class Quaternion {
 		public:
 			//Values
@@ -15,20 +16,19 @@ namespace StevEngine::Utilities {
 			Quaternion(double w, double x, double y, double z);
 			Quaternion(double w, Vector3 vector);
 			Quaternion(const Quaternion& from);
-			Quaternion(std::string str);
 			Quaternion();
 			//Directions
 			Vector3 Forward() const;
 			Vector3 Right() const;
 			Vector3 Up() const;
-			Quaternion& Conjugate();
-			Quaternion& Inverse();
 			//Functions
 			Quaternion Get() const;
 			double Magnitude() const;
 			Quaternion& Normalize();
 			Quaternion Normalized() const;
 			std::tuple<double, Vector3> GetAngleAxis() const;
+			Quaternion& Conjugate();
+			Quaternion& Inverse();
 			//Operators
 			Quaternion  operator	+   (const Quaternion& other) const;
 			Quaternion  operator	-   (const Quaternion& other) const;
@@ -41,6 +41,7 @@ namespace StevEngine::Utilities {
 			Vector3 operator*(const Vector3& other) const;
 			//Conversions
 			explicit operator std::string() const;
+			explicit operator Vector4() const;
 			#ifdef StevEngine_PHYSICS
 			operator JPH::Quat() const;
 			Quaternion& operator= (const JPH::Quat& other);

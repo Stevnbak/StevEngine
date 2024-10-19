@@ -4,12 +4,12 @@
 #include <cstdint>
 #include <SDL.h>
 #include <glad/gl.h>
-#include <glm/mat4x4.hpp>
 
 #include "utilities/Vector3.hpp"
 #include "utilities/Quaternion.hpp"
 #include "utilities/Vertex.hpp"
 #include "utilities/Color.hpp"
+#include "utilities/Matrix4.hpp"
 #include "visuals/Texture.hpp"
 #include "visuals/shaders/ShaderProgram.hpp"
 
@@ -25,7 +25,7 @@ namespace StevEngine::Renderer {
 
 	class CustomObject {
 		public:
-			virtual void Draw(glm::mat4x4 transform) const = 0;
+			virtual void Draw(Utilities::Matrix4 transform) const = 0;
 	};
 
 	class Object : public CustomObject {
@@ -42,7 +42,7 @@ namespace StevEngine::Renderer {
 			Material material;
 			void AddShader(Renderer::ShaderProgram program);
 			void RemoveShader(Renderer::ShaderType type);
-			void Draw(glm::mat4x4 transform) const;
+			void Draw(Utilities::Matrix4 transform) const;
 		private:
 			float* vertices;
 			size_t vertexCount;

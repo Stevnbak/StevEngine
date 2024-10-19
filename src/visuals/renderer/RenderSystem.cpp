@@ -176,7 +176,7 @@ namespace StevEngine::Renderer {
 		glUseProgramStages(shaderPipeline, GL_FRAGMENT_SHADER_BIT, fragmentShaderProgram.GetLocation());
 	}
 
-	void RenderSystem::DrawObject(const CustomObject& object, glm::mat4x4 transform, RenderQueue queue) {
+	void RenderSystem::DrawObject(const CustomObject& object, Utilities::Matrix4 transform, RenderQueue queue) {
 		queues[queue].emplace_back(object, transform);
 	};
 

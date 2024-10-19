@@ -6,6 +6,7 @@
 #include "main/SceneManager.hpp"
 #include "main/Component.hpp"
 #include "utilities/ID.hpp"
+#include "utilities/Matrix4.hpp"
 #include "utilities/Quaternion.hpp"
 #include "utilities/Vector3.hpp"
 
@@ -35,13 +36,9 @@ namespace StevEngine {
 		events.Publish(UpdateEvent(deltaTime));
 	}
 	#ifdef StevEngine_SHOW_WINDOW
-	void GameObject::Draw(glm::mat4x4 transform) {
-		//Move
-		transform = glm::translate(transform, (glm::vec3)(position));
-		//Rotate
-		transform *= glm::mat4_cast(glm::quat(rotation.W,rotation.X,rotation.Y,rotation.Z));
-		//Scale
-		transform = glm::scale(transform, (glm::vec3)(scale));
+	void GameObject::Draw(Utilities::Matrix4 transform) {
+		//New transform
+		transform = Utilities::Matrix4::FromTranslationRotationScale(position, rotation, scale) * transform;
 		//Event
 		events.Publish(DrawEvent(transform));
 	}
@@ -72,14 +69,14 @@ namespace StevEngine {
 	Utilities::Vector3 GameObject::GetWorldPosition() {
 		if(!parent.IsNull()) {
 			GameObject* object = GetParent();
-			return ((object->GetRotation() * object->GetWorldPosition()) + position);
+			return (Utilities::Matrix4::FromTranslationRotationScale(object->GetWorldPosition(), object->GetRotation(), object->GetScale()) * position);
 		} else {
 			return position;
 		}
 	}
 	Utilities::Quaternion GameObject::GetWorldRotation() {
 		if(!parent.IsNull()) {
-			return sceneManager.GetScene(scene)->GetObject(parent)->GetWorldRotation() + rotation;
+			return sceneManager.GetScene(scene)->GetObject(parent)->GetWorldRotation() * rotation;
 		} else {
 			return rotation;
 		}

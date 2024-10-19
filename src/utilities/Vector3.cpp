@@ -26,23 +26,15 @@ namespace StevEngine::Utilities {
 	}
 	Vector3& Vector3::Normalize() {
 		double mag = Magnitude();
-		if (mag != 0) Divide(mag);
+		if (mag != 0) {
+			X /= mag;
+			Y /= mag;
+			Z /= mag;
+		}
 		return *this;
 	}
 	Vector3 Vector3::Normalized() const {
 		return Get().Normalize();
-	}
-	Vector3& Vector3::Mult(double value) {
-		X *= value;
-		Y *= value;
-		Z *= value;
-		return *this;
-	}
-	Vector3& Vector3::Divide(double value) {
-		X /= value;
-		Y /= value;
-		Z /= value;
-		return *this;
 	}
 	//Operators
 	Vector3 Vector3::operator + (const Vector3& other) const {
@@ -80,7 +72,7 @@ namespace StevEngine::Utilities {
 		return Vector2(X, Y);
 	}
 	Vector3::operator std::string() const {
-		return std::format("[{};{};{}]", X, Y, Z);
+		return std::format("[{}, {}, {}]", X, Y, Z);
 	}
 	Vector3::operator glm::vec3() const {
 		return glm::vec3(X, Y, Z);
@@ -139,9 +131,11 @@ namespace StevEngine::Utilities {
 	}
 	#endif
 	//Static stuff
-	Vector3 Vector3::up = Vector3(0,1,0);
-	Vector3 Vector3::right = Vector3(1,0,0);
-	Vector3 Vector3::forward = Vector3(0,0,-1);
+	const Vector3 Vector3::up = Vector3(0,1,0);
+	const Vector3 Vector3::right = Vector3(1,0,0);
+	const Vector3 Vector3::forward = Vector3(0,0,-1);
+	const Vector3 Vector3::identity = Vector3(1.0);
+	const Vector3 Vector3::zero = Vector3(0.0);
 	double Vector3::Distance(const Vector3& a, const Vector3& b) {
 		return sqrt(exp2(a.X - b.X) + exp2(a.Y - b.Y) + exp2(a.Z - b.Z));
 	}

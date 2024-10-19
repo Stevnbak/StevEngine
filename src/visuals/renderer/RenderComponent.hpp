@@ -43,7 +43,7 @@ namespace StevEngine::Renderer {
 			std::map<ShaderType, ShaderProgram> shaders;
 		//Main functions
 		private:
-			void Draw(const glm::mat4x4& transform);
+			void Draw(const Utilities::Matrix4& transform);
 	};
 }
 #endif

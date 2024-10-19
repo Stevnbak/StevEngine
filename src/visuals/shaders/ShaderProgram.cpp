@@ -72,9 +72,13 @@ namespace StevEngine::Renderer {
 	}
 
 	//Set uniforms
-	void ShaderProgram::SetShaderUniform(const char* name, glm::mat4 value) const {
+	void ShaderProgram::SetShaderUniform(const char* name, glm::mat4x4 value) const {
 		glProgramUniformMatrix4fv(location, glGetUniformLocation(location, name), 1, GL_FALSE, glm::value_ptr(value));
 	}
+	void ShaderProgram::SetShaderUniform(const char* name, Utilities::Matrix4 value) const {
+		glProgramUniformMatrix4fv(location, glGetUniformLocation(location, name), 1, GL_FALSE, value.data());
+	}
+
 	void ShaderProgram::SetShaderUniform(const char* name, Utilities::Color value) const {
 		glProgramUniform4fv(location, glGetUniformLocation(location, name), 1, value.data());
 	}

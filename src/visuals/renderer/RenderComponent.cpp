@@ -1,3 +1,4 @@
+#include "utilities/Vector3.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "RenderComponent.hpp"
 #include "main/GameObject.hpp"
@@ -38,14 +39,9 @@ namespace StevEngine::Renderer {
 		object.FreeTexture();
 	}
 	//Main draw function
-	void RenderComponent::Draw(const glm::mat4x4& transform) {
-		glm::mat4x4 trnsfm = transform;
-		//Move
-		trnsfm = glm::translate(transform, (glm::vec3)(position));
-		//Rotate
-		trnsfm *= glm::mat4_cast(glm::quat(rotation.W,rotation.X,rotation.Y,rotation.Z));
-		//Scale
-		trnsfm = glm::scale(transform, (glm::vec3)(scale));
+	void RenderComponent::Draw(const Utilities::Matrix4& transform) {
+		//New transform
+		Utilities::Matrix4 trnsfm = Utilities::Matrix4::FromTranslationRotationScale(position, rotation, scale) * transform;
 		//Draw
 		Renderer::render.DrawObject(object, trnsfm);
 	}

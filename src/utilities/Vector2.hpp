@@ -18,8 +18,6 @@ namespace StevEngine::Utilities {
 			double Magnitude() const;
 			Vector2& Normalize();
 			Vector2 Normalized() const;
-			Vector2& Mult(double value);
-			Vector2& Divide(double value);
 			//Operators
 			Vector2  operator   +   (const Vector2& other) const;
 			Vector2  operator   -   (const Vector2& other) const;

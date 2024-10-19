@@ -1,6 +1,7 @@
 #include "Quaternion.hpp"
 
 #include "main/Log.hpp"
+#include "utilities/Vector4.hpp"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -8,48 +9,14 @@
 
 namespace StevEngine::Utilities {
 	//Constructors
-	Quaternion::Quaternion(double w, double x, double y, double z) {
-		W = w;
-		X = x;
-		Y = y;
-		Z = z;
-	}
-	Quaternion::Quaternion(double w, Vector3 vector) {
-		W = w;
-		X = vector.X;
-		Y = vector.Y;
-		Z = vector.Z;
-	}
-	Quaternion::Quaternion(const Quaternion& from) {
-		W = from.W;
-		X = from.X;
-		Y = from.Y;
-		Z = from.Z;
-	}
-	Quaternion::Quaternion(std::string str) {
-		if(!str.starts_with("[") || !str.ends_with("]") || str.find(";") == 0) {
-			Log::Error("Quaternion string not valid.", true);
-			return;
-		}
-		//Create stream
-		std::istringstream ss(str.substr(1, str.length() - 2));
-		std::string s;
-		//Get values
-		std::getline(ss, s, ';');
-		W = stod(s);
-		std::getline(ss, s, ';');
-		X = stod(s);
-		std::getline(ss, s, ';');
-		Y = stod(s);
-		std::getline(ss, s, ';');
-		Z = stod(s);
-	}
-	Quaternion::Quaternion() {
-		W = 1;
-		X = 0;
-		Y = 0;
-		Z = 0;
-	}
+	Quaternion::Quaternion(double w, double x, double y, double z)
+		: W(w), X(x), Y(y), Z(z) {}
+	Quaternion::Quaternion(double w, Vector3 vector)
+		: W(w), X(vector.X), Y(vector.Y), Z(vector.Z) {}
+	Quaternion::Quaternion(const Quaternion& from)
+		: W(from.W), X(from.X), Y(from.Y), Z(from.Z) {}
+	Quaternion::Quaternion()
+		: W(1), X(0), Y(0), Z(0) {}
 	//Directions
 	Vector3 Quaternion::Forward() const {
 		return Get() * Vector3::forward;
@@ -172,7 +139,10 @@ namespace StevEngine::Utilities {
 	}
 	//Conversions
 	Quaternion::operator std::string() const {
-		return std::format("[{};{};{};{}]", W, X, Y, Z);
+		return std::format("[{}, {}, {}, {}]", W, X, Y, Z);
+	}
+	Quaternion::operator Vector4() const {
+		return Vector4(W, X, Y, Z);
 	}
 	#ifdef StevEngine_PHYSICS
 	Quaternion::operator JPH::Quat() const {

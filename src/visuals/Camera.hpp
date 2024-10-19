@@ -1,6 +1,7 @@
 #pragma once
 #ifdef StevEngine_SHOW_WINDOW
 #include "main/Component.hpp"
+#include "glm/mat4x4.hpp"
 
 namespace StevEngine {
 	class GameObject;

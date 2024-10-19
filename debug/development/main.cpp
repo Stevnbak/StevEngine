@@ -1,5 +1,7 @@
 #include "audio/Emitter.hpp"
 #include "data/DataManager.hpp"
+#include "glm/ext/matrix_float4x4.hpp"
+#include "glm/gtc/quaternion.hpp"
 #include "main/Engine.hpp"
 #include "main/EngineEvents.hpp"
 #include "inputs/InputSystem.hpp"
@@ -11,6 +13,8 @@
 #include "physics/Colliders.hpp"
 #include "physics/Layers.hpp"
 #include "main/SceneManager.hpp"
+#include "utilities/Matrix4.hpp"
+#include "utilities/Random.hpp"
 #include "utilities/Terrain.hpp"
 #include "visuals/Primitive.hpp"
 #include "visuals/ModelRenderer.hpp"
@@ -24,9 +28,10 @@
 #include "visuals/renderer/RenderSystem.hpp"
 #include "visuals/shaders/Shader.hpp"
 
+#include <cmath>
+#include <string>
 #include <yaml-cpp/yaml.h>
 #include <SDL_keycode.h>
-#include <glm/mat4x4.hpp>
 #include <cmrc/cmrc.hpp>
 CMRC_DECLARE(debug_development_assets);
 
@@ -104,7 +109,7 @@ class Rotate final : public Component {
 	public:
 		double movementSpeed = 0.5;
 		Vector3 axis = Vector3::right;
-		void Draw(const glm::mat4x4& transform) {}
+		void Draw(const Utilities::Matrix4& transform) {}
 		void Update(double deltaTime) {
 			GameObject* gameObject = GetParent();
 			Utilities::Quaternion rotation = gameObject->GetRotation();

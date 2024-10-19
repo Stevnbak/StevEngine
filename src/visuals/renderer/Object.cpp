@@ -116,7 +116,7 @@ namespace StevEngine::Renderer {
 	}
 
 	//Draw
-	void Object::Draw(glm::mat4x4 transform) const {
+	void Object::Draw(Utilities::Matrix4 transform) const {
 		//Object specific shaders
 		uint32_t pipeline;
 		const ShaderProgram* vertexProgram = &render.GetDefaultVertexShaderProgram();

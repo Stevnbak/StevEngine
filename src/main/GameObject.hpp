@@ -3,13 +3,13 @@
 #include "utilities/ID.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Quaternion.hpp"
+#include "utilities/Matrix4.hpp"
 #include "main/Log.hpp"
 #include "inputs/InputSystem.hpp"
 #include "main/ResourceManager.hpp"
 #include "main/Component.hpp"
 
 #include <yaml-cpp/yaml.h>
-#include <glm/mat4x4.hpp>
 
 #include <map>
 #include <vector>
@@ -69,7 +69,7 @@ namespace StevEngine {
 			void Deactivate();
 			void Update(double deltaTime);
 			#ifdef StevEngine_SHOW_WINDOW
-			void Draw(glm::mat4x4 transform);
+			void Draw(Utilities::Matrix4 transform);
 			#endif
 			GameObject();
 			GameObject(Utilities::ID id, std::string name, std::string scene);
@@ -218,10 +218,10 @@ namespace StevEngine {
 	#ifdef StevEngine_SHOW_WINDOW
 		class DrawEvent : public Event {
 			public:
-				DrawEvent(glm::mat4x4 transform) : transform(transform) {}
+				DrawEvent(Utilities::Matrix4 transform) : transform(transform) {}
 				const std::string GetEventType() const override { return GetStaticEventType(); };
 				static const std::string GetStaticEventType() {  return "DrawEvent"; }
-				glm::mat4x4 transform;
+				Utilities::Matrix4 transform;
 		};
 	#endif
 	class DeactivateEvent : public Event {

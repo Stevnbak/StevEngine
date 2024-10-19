@@ -38,7 +38,7 @@ namespace StevEngine {
 		Scene* scene = sceneManager.GetActiveScene();
 		if (scene->activeCamera == nullptr) return;
 		for (Utilities::ID id : scene->GetAllParentObjects()) {
-			scene->GetObject(id)->Draw(glm::mat4x4(1.0));
+			scene->GetObject(id)->Draw(Utilities::Matrix4::identity);
 		}
 	}
 	#endif
