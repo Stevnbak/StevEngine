@@ -20,7 +20,7 @@ namespace StevEngine::Renderer {
 		if(!success)
 		{
 			glGetShaderInfoLog(location, 512, NULL, infoLog);
-			Log::Error("Shader failed to compile!\n" + std::string(infoLog));
+			Log::Error("Shader " + std::to_string(shaderType) + " failed to compile!\n" + std::string(infoLog));
 		}
 	}
 }

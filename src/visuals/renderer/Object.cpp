@@ -1,4 +1,3 @@
-
 #ifdef StevEngine_RENDERER_GL
 #include "Object.hpp"
 #include "utilities/Color.hpp"
@@ -139,12 +138,12 @@ namespace StevEngine::Renderer {
 			Visuals::Camera* camera = sceneManager.GetActiveScene()->GetCamera();
 			//  View matrix
 			vertexProgram->SetShaderUniform("viewTransform", camera->GetView());
-			fragmentProgram->SetShaderUniform("viewPosition", (glm::vec3)camera->GetParent()->GetWorldPosition());
+			fragmentProgram->SetShaderUniform("viewPosition", camera->GetParent()->GetWorldPosition());
 			//  Projection matrix
 			vertexProgram->SetShaderUniform("projectionTransform", camera->GetProjection());
 			//  Ambient lighting
 			auto ambientLightColor = render.GetAmbientLightColor();
-			fragmentProgram->SetShaderUniform("ambientColor", glm::vec3(ambientLightColor.r / 255.0f, ambientLightColor.g / 255.0f, ambientLightColor.b / 255.0f));
+			fragmentProgram->SetShaderUniform("ambientColor", ambientLightColor);
 			fragmentProgram->SetShaderUniform("ambientStrength", render.GetAmbientLightStrength());
 			//	Other lights
 			for(auto light : render.GetLights()) {
@@ -168,11 +167,11 @@ namespace StevEngine::Renderer {
 			fragmentProgram->SetShaderUniform("objectNormalMap", 1);
 		}
 		//Update color
-		fragmentProgram->SetShaderUniform("objectColor", glm::vec4(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f));
+		fragmentProgram->SetShaderUniform("objectColor", color);
 		//Update material
-		fragmentProgram->SetShaderUniform("objectMaterial.ambient", (glm::vec3)material.ambient);
-		fragmentProgram->SetShaderUniform("objectMaterial.diffuse", (glm::vec3)material.diffuse);
-		fragmentProgram->SetShaderUniform("objectMaterial.specular", (glm::vec3)material.specular);
+		fragmentProgram->SetShaderUniform("objectMaterial.ambient", material.ambient);
+		fragmentProgram->SetShaderUniform("objectMaterial.diffuse", material.diffuse);
+		fragmentProgram->SetShaderUniform("objectMaterial.specular", material.specular);
 		fragmentProgram->SetShaderUniform("objectMaterial.shininess", material.shininess);
 		//Draw object
 		glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(float), vertices, GL_STATIC_DRAW);

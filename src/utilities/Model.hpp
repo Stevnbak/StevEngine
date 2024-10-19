@@ -1,12 +1,10 @@
 #pragma once
-
-#include "Vertex.hpp"
-
 #ifdef StevEngine_MODELS
 #include "assimp/scene.h"
 
 #include "main/ResourceManager.hpp"
 #include "utilities/Color.hpp"
+#include "Vertex.hpp"
 
 #include <vector>
 

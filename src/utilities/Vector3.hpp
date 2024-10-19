@@ -48,6 +48,7 @@ namespace StevEngine::Utilities {
 			Vector3& operator= (const JPH::DVec3& other);
 			Vector3(const JPH::Vec3& other);
 			Vector3(const JPH::DVec3& other);
+			const float* data() const;
 			#endif
 			#ifdef StevEngine_MODELS
 			operator aiVector3D() const;

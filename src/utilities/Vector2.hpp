@@ -31,6 +31,7 @@ namespace StevEngine::Utilities {
 			//Conversions
 			explicit operator Vector3() const;
 			explicit operator std::string() const;
+			const float* data() const;
 			//Static stuff
 			static Vector2 up, right;
 			static double Distance(const Vector2& a, const Vector2& b);

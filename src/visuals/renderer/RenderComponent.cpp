@@ -7,6 +7,7 @@
 #include "visuals/shaders/Shader.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include "glm/gtc/quaternion.hpp"
 #include <yaml-cpp/yaml.h>
 
 using StevEngine::Utilities::Color;
@@ -39,14 +40,12 @@ namespace StevEngine::Renderer {
 	//Main draw function
 	void RenderComponent::Draw(const glm::mat4x4& transform) {
 		glm::mat4x4 trnsfm = transform;
-		//Scale
-		trnsfm = glm::scale(trnsfm, glm::vec3(scale.X, scale.Y, scale.Z));
 		//Move
-		trnsfm = glm::translate(trnsfm, glm::vec3(position.X, position.Y, position.Z));
+		trnsfm = glm::translate(transform, (glm::vec3)(position));
 		//Rotate
-		std::tuple<double, Utilities::Vector3> angleAxis = rotation.GetAngleAxis();
-		Utilities::Vector3 v = std::get<1>(angleAxis);
-		trnsfm = glm::rotate(trnsfm, (float)std::get<0>(angleAxis), glm::vec3(v.X, v.Y, v.Z));
+		trnsfm *= glm::mat4_cast(glm::quat(rotation.W,rotation.X,rotation.Y,rotation.Z));
+		//Scale
+		trnsfm = glm::scale(transform, (glm::vec3)(scale));
 		//Draw
 		Renderer::render.DrawObject(object, trnsfm);
 	}

@@ -15,22 +15,6 @@ namespace StevEngine::Utilities {
 	//Constructors
 	Vector3::Vector3(double x, double y, double z) : X(x), Y(y), Z(z) {}
 	Vector3::Vector3(const Vector3& from) : X(from.X), Y(from.Y), Z(from.Z) {}
-	Vector3::Vector3(std::string str) {
-		if(!str.starts_with("[") || !str.ends_with("]") || str.find(";") == 0) {
-			Log::Error("3D Vector string not valid.", true);
-			return;
-		}
-		//Create stream
-		std::istringstream ss(str.substr(1, str.length() - 2));
-		std::string s;
-		//Get values
-		std::getline(ss, s, ';');
-		X = stod(s);
-		std::getline(ss, s, ';');
-		Y = stod(s);
-		std::getline(ss, s, ';');
-		Z = stod(s);
-	}
 	Vector3::Vector3(double v) : X(v), Y(v), Z(v) {}
 	Vector3::Vector3() : Vector3(0.0) {}
 	//Functions
@@ -100,6 +84,13 @@ namespace StevEngine::Utilities {
 	}
 	Vector3::operator glm::vec3() const {
 		return glm::vec3(X, Y, Z);
+	}
+	const float* Vector3::data() const {
+		float* data = new float[3];
+		data[0] = (float)X;
+		data[1] = (float)Y;
+		data[2] = (float)Z;
+		return data;
 	}
 	#ifdef StevEngine_PHYSICS
 	Vector3::operator JPH::DVec3() const {

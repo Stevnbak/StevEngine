@@ -1,6 +1,6 @@
 #ifdef StevEngine_RENDERER_GL
 #include "ShaderProgram.hpp"
-#include "visuals/shaders/Shader.hpp"
+#include "Shader.hpp"
 #include "main/Log.hpp"
 #include "utilities/ID.hpp"
 
@@ -75,14 +75,14 @@ namespace StevEngine::Renderer {
 	void ShaderProgram::SetShaderUniform(const char* name, glm::mat4 value) const {
 		glProgramUniformMatrix4fv(location, glGetUniformLocation(location, name), 1, GL_FALSE, glm::value_ptr(value));
 	}
-	void ShaderProgram::SetShaderUniform(const char* name, glm::vec4 value) const {
-		glProgramUniform4fv(location, glGetUniformLocation(location, name), 1, glm::value_ptr(value));
+	void ShaderProgram::SetShaderUniform(const char* name, Utilities::Color value) const {
+		glProgramUniform4fv(location, glGetUniformLocation(location, name), 1, value.data());
 	}
-	void ShaderProgram::SetShaderUniform(const char* name, glm::vec3 value) const {
-		glProgramUniform3fv(location, glGetUniformLocation(location, name), 1, glm::value_ptr(value));
+	void ShaderProgram::SetShaderUniform(const char* name, Utilities::Vector3 value) const {
+		glProgramUniform3fv(location, glGetUniformLocation(location, name), 1, value.data());
 	}
-	void ShaderProgram::SetShaderUniform(const char* name, glm::vec2 value) const {
-		glProgramUniform2fv(location, glGetUniformLocation(location, name), 1, glm::value_ptr(value));
+	void ShaderProgram::SetShaderUniform(const char* name, Utilities::Vector2 value) const {
+		glProgramUniform2fv(location, glGetUniformLocation(location, name), 1, value.data());
 	}
 	void ShaderProgram::SetShaderUniform(const char* name, bool value) const {
 		glProgramUniform1i(location, glGetUniformLocation(location, name), value);
@@ -92,6 +92,9 @@ namespace StevEngine::Renderer {
 	}
 	void ShaderProgram::SetShaderUniform(const char* name, float value) const {
 		glProgramUniform1f(location, glGetUniformLocation(location, name), value);
+	}
+	void ShaderProgram::SetShaderUniform(const char* name, double value) const {
+		glProgramUniform1d(location, glGetUniformLocation(location, name), value);
 	}
 }
 #endif

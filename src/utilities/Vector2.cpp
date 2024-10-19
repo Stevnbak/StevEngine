@@ -18,20 +18,6 @@ namespace StevEngine::Utilities {
 		X = from.X;
 		Y = from.Y;
 	}
-	Vector2::Vector2(std::string str) {
-		if(!str.starts_with("[") || !str.ends_with("]") || str.find(";") == 0) {
-			Log::Error("3D Vector string not valid.", true);
-			return;
-		}
-		//Create stream
-		std::istringstream ss(str.substr(1, str.length() - 2));
-		std::string s;
-		//Get values
-		std::getline(ss, s, ';');
-		X = stod(s);
-		std::getline(ss, s, ';');
-		Y = stod(s);
-	}
 	Vector2::Vector2() {
 		X = 0;
 		Y = 0;
@@ -93,6 +79,12 @@ namespace StevEngine::Utilities {
 	}
 	Vector2::operator std::string() const {
 		return std::format("[{};{}]", X, Y);
+	}
+	const float* Vector2::data() const {
+		float* data = new float[2];
+		data[0] = (float)X;
+		data[1] = (float)Y;
+		return data;
 	}
 	//Static stuff
 	Vector2 Vector2::up = Vector2(0,1);

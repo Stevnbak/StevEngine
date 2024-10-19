@@ -12,6 +12,7 @@
 #include <yaml-cpp/yaml.h>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "glm/mat4x4.hpp"
 
 #include <format>
 #include <map>
@@ -36,11 +37,11 @@ namespace StevEngine {
 	#ifdef StevEngine_SHOW_WINDOW
 	void GameObject::Draw(glm::mat4x4 transform) {
 		//Move
-		transform = glm::translate(transform, glm::vec3(position.X, position.Y, position.Z));
+		transform = glm::translate(transform, (glm::vec3)(position));
 		//Rotate
 		transform *= glm::mat4_cast(glm::quat(rotation.W,rotation.X,rotation.Y,rotation.Z));
 		//Scale
-		transform = glm::scale(transform, glm::vec3(scale.X, scale.Y, scale.Z));
+		transform = glm::scale(transform, (glm::vec3)(scale));
 		//Event
 		events.Publish(DrawEvent(transform));
 	}
