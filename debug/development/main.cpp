@@ -1,27 +1,27 @@
 #include "audio/Emitter.hpp"
-#include "main/DataManager.hpp"
+#include "data/DataManager.hpp"
 #include "main/Engine.hpp"
 #include "main/EngineEvents.hpp"
-#include "main/InputSystem.hpp"
+#include "inputs/InputSystem.hpp"
 #include "main/Log.hpp"
 #include "main/ResourceManager.hpp"
-#include "scenes/Component.hpp"
-#include "scenes/GameObject.hpp"
+#include "main/Component.hpp"
+#include "main/GameObject.hpp"
 #include "physics/RigidBody.hpp"
 #include "physics/Colliders.hpp"
 #include "physics/Layers.hpp"
-#include "scenes/SceneManager.hpp"
+#include "main/SceneManager.hpp"
 #include "utilities/Terrain.hpp"
 #include "visuals/Primitive.hpp"
 #include "visuals/ModelRenderer.hpp"
 #include "visuals/TerrainRenderer.hpp"
-#include "visuals/render/RenderComponent.hpp"
-#include "visuals/render/Lights.hpp"
+#include "visuals/renderer/RenderComponent.hpp"
+#include "visuals/Lights.hpp"
 #include "utilities/Quaternion.hpp"
 #include "visuals/Texture.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Color.hpp"
-#include "visuals/render/RenderSystem.hpp"
+#include "visuals/renderer/RenderSystem.hpp"
 #include "visuals/shaders/Shader.hpp"
 
 #include <yaml-cpp/yaml.h>
@@ -141,10 +141,10 @@ int main(int argc, char** argv) {
 		#endif
 		.targetFPS = 100
 	});
-	Render::render.SetFaceCulling(false);
-	Render::render.SetMSAA(true, 8);
+	Renderer::render.SetFaceCulling(false);
+	Renderer::render.SetMSAA(true, 8);
 	engine->GetEvents()->Subscribe<UpdateEvent>(mainUpdate);
-	Render::render.SetFaceCulling(false);
+	Renderer::render.SetFaceCulling(false);
 	//Debug logging:
 	Log::Debug("Debug log");
 	Log::Warning("Warning log");
@@ -158,8 +158,8 @@ int main(int argc, char** argv) {
 	}
 
 	//Create test shader
-	Render::ShaderProgram shader = Render::ShaderProgram(Render::FRAGMENT);
-	shader.AddShader(Render::Shader(Resources::resourceManager.GetFile("test_shader.frag").GetRawData(), Render::FRAGMENT));
+	Renderer::ShaderProgram shader = Renderer::ShaderProgram(Renderer::FRAGMENT);
+	shader.AddShader(Renderer::Shader(Resources::resourceManager.GetFile("test_shader.frag").GetRawData(), Renderer::FRAGMENT));
 
 	//Create new scene
 	//Scene* importedscene = sceneManager.CreateSceneFromFile(Resources::resourceManager.GetFile("Debug scene.scene"));
@@ -185,7 +185,7 @@ int main(int argc, char** argv) {
 		ID id = scene->CreateObject("Sphere", Utilities::Vector3(0, 0, 0), Utilities::Quaternion(), Utilities::Vector3(1.0));
 		GameObject* object = scene->GetObject(id);
 		#ifdef StevEngine_RENDERER_GL
-		Render::RenderComponent* primitive = object->AddComponent(new IcospherePrimitive(Vector3(), Quaternion(), Vector3(1.0), false));
+		Renderer::RenderComponent* primitive = object->AddComponent(new IcospherePrimitive(Vector3(), Quaternion(), Vector3(1.0), false));
 		primitive->SetColor(Color(255, 255, 255, 255));
 		primitive->AddShader(shader);
 		//primitive->SetTexture(Texture(Resources::resourceManager.GetFile("box.png")));
@@ -200,7 +200,7 @@ int main(int argc, char** argv) {
 	{
 		GameObject* cube = scene->GetObject(scene->CreateObject("Cube", Utilities::Vector3(3, 2, 0), Utilities::Quaternion(), Utilities::Vector3(2.0)));
 		#ifdef StevEngine_RENDERER_GL
-		Render::RenderComponent* primitive = cube->AddComponent(new CubePrimitive(Vector3(), Quaternion(), Vector3(1.0)));
+		Renderer::RenderComponent* primitive = cube->AddComponent(new CubePrimitive(Vector3(), Quaternion(), Vector3(1.0)));
 		primitive->SetColor(Color(255, 255, 255, 255));
 		primitive->AddShader(shader);
 		//primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
@@ -213,7 +213,7 @@ int main(int argc, char** argv) {
 	{
 		GameObject* cube = scene->GetObject(scene->CreateObject("Cylinder", Utilities::Vector3(-3, 2, 0), Utilities::Quaternion(), Utilities::Vector3(2.0)));
 		#ifdef StevEngine_RENDERER_GL
-		Render::RenderComponent* primitive = cube->AddComponent(new CylinderPrimitive(Vector3(), Quaternion(), Vector3(1), false));
+		Renderer::RenderComponent* primitive = cube->AddComponent(new CylinderPrimitive(Vector3(), Quaternion(), Vector3(1), false));
 		primitive->SetColor(Color(255, 255, 255, 255));
 		primitive->AddShader(shader);
 		//primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
@@ -225,7 +225,7 @@ int main(int argc, char** argv) {
 	{
 		GameObject* cube = scene->GetObject(scene->CreateObject("Capsule", Utilities::Vector3(-6, 2, 0), Utilities::Quaternion(), Utilities::Vector3(2.0)));
 		#ifdef StevEngine_RENDERER_GL
-		Render::RenderComponent* primitive = cube->AddComponent(new CapsulePrimitive(Vector3(), Quaternion(), Vector3(1), false));
+		Renderer::RenderComponent* primitive = cube->AddComponent(new CapsulePrimitive(Vector3(), Quaternion(), Vector3(1), false));
 		primitive->SetColor(Color(255, 255, 255, 255));
 		primitive->AddShader(shader);
 		//primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
@@ -237,7 +237,7 @@ int main(int argc, char** argv) {
 	{
 		GameObject* cube = scene->GetObject(scene->CreateObject("Icosphere", Utilities::Vector3(6, 2, 0), Utilities::Quaternion(), Utilities::Vector3(2.0)));
 		#ifdef StevEngine_RENDERER_GL
-		Render::RenderComponent* primitive = cube->AddComponent(new IcospherePrimitive(Vector3(), Quaternion(), Vector3(1), false));
+		Renderer::RenderComponent* primitive = cube->AddComponent(new IcospherePrimitive(Vector3(), Quaternion(), Vector3(1), false));
 		primitive->SetColor(Color(255, 255, 255, 255));
 		primitive->AddShader(shader);
 		//primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
@@ -249,7 +249,7 @@ int main(int argc, char** argv) {
 	{
 		GameObject* cube = scene->GetObject(scene->CreateObject("UVSphere", Utilities::Vector3(0, 2, 0), Utilities::Quaternion(), Utilities::Vector3(2.0)));
 		#ifdef StevEngine_RENDERER_GL
-		Render::RenderComponent* primitive = cube->AddComponent(new UVSpherePrimitive());
+		Renderer::RenderComponent* primitive = cube->AddComponent(new UVSpherePrimitive());
 		primitive->SetColor(Color(255, 255, 255, 255));
 		primitive->AddShader(shader);
 		//primitive->SetTexture(Texture(Resources::resourceManager.GetFile("prototype.png")));
@@ -351,12 +351,12 @@ int main(int argc, char** argv) {
 	//Add test lights
 	#ifdef StevEngine_RENDERER_GL
 	GameObject* light1 = scene->GetObject(scene->CreateObject("PointLight1", Utilities::Vector3(0, 8, 0)));
-	light1->AddComponent(new Render::PointLight(Vector3(0.5, 1.0, 1.0), Vector3(0.5, 1.0, 1.0) * 0.5));
+	light1->AddComponent(new Visuals::PointLight(Vector3(0.5, 1.0, 1.0), Vector3(0.5, 1.0, 1.0) * 0.5));
 	light1->AddComponent(new CubePrimitive(Utilities::Vector3(), Utilities::Quaternion(), Utilities::Vector3(0.1)))->SetColor({255,255,255,255});
 	/*GameObject* light2 = scene->GetObject(scene->CreateObject("PointLight2", Utilities::Vector3(2, 5, 1)));
-	light2->AddComponent(new Render::PointLight(Vector3(1.0, 0.5, 0.25), Vector3(1.0, 0.5, 0.25) * 0.5));
+	light2->AddComponent(new Visuals::PointLight(Vector3(1.0, 0.5, 0.25), Vector3(1.0, 0.5, 0.25) * 0.5));
 	light2->AddComponent(new CubePrimitive(Utilities::Vector3(), Utilities::Quaternion(), Utilities::Vector3(0.1)));
-	scene->GetObject(scene->CreateObject("DirectionalLight", Utilities::Vector3(0, 0, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(-90), Utilities::Vector3::right)))->AddComponent(new Render::DirectionalLight(Vector3(0.33), Vector3(0.25)));
+	scene->GetObject(scene->CreateObject("DirectionalLight", Utilities::Vector3(0, 0, 0), Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(-90), Utilities::Vector3::right)))->AddComponent(new Renderer::DirectionalLight(Vector3(0.33), Vector3(0.25)));
 	*/
 	#endif
 	//Test ressource manager
@@ -366,15 +366,15 @@ int main(int argc, char** argv) {
 
 	//Use test shader
 	#ifdef StevEngine_RENDERER_GL
-	//Render::render.AddGlobalShader(shader);
-	//scene->GetObject(modelObject)->GetComponent<Render::RenderComponent>()->AddShader(shader);
+	//Renderer::render.AddGlobalShader(shader);
+	//scene->GetObject(modelObject)->GetComponent<Renderer::RenderComponent>()->AddShader(shader);
 	#endif
 
 	//Test data manager
 	#ifdef StevEngine_PLAYER_DATA
-	Log::Debug("Before: " + data.Read<std::string>("test"));
-	data.Save("test", std::string("test data"));
-	Log::Debug("After: " + data.Read<std::string>("test"));
+	Log::Debug("Before: " + Data::data.Read<std::string>("test"));
+	Data::data.Save("test", std::string("test data"));
+	Log::Debug("After: " + Data::data.Read<std::string>("test"));
 	#endif
 
 	//Play audio
@@ -383,8 +383,6 @@ int main(int argc, char** argv) {
 	GameObject* audioPlayer = scene->GetObject(audioId);
 	Audio::Emitter* emitter = audioPlayer->AddComponent(new Audio::Emitter("audio.wav", false, 0.5));
 	emitter->Play();
-
-	//engine->audio.PlayBackground("audio.wav", true);
 	#endif
 
 	//Test graphics settings
@@ -407,7 +405,7 @@ int main(int argc, char** argv) {
 
 	//Set background
 	#ifdef StevEngine_RENDERER_GL
-	Render::render.SetBackground(Color(0, 0, 0, 255));
+	Renderer::render.SetBackground(Color(0, 0, 0, 255));
 	#endif
 
 	//Start engine

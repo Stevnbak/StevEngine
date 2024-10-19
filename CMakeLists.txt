@@ -41,12 +41,6 @@ if (USE_PLAYER_DATA)
 	set(build_string "${build_string}, PLAYER_DATA")
 endif()
 
-option(USE_SETTINGS "Use the settings manager" ON)
-if (USE_SETTINGS)
-	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_SETTINGS)
-	set(build_string "${build_string}, SETTINGS")
-endif()
-
 option(SHOW_WINDOW "Show the game window" ON)
 if (SHOW_WINDOW)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_SHOW_WINDOW)

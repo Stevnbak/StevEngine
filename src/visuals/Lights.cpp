@@ -1,27 +1,29 @@
 #ifdef StevEngine_RENDERER_GL
 #include "Lights.hpp"
-#include "visuals/render/RenderSystem.hpp"
-#include "scenes/GameObject.hpp"
-#include "scenes/Component.hpp"
+#include "visuals/renderer/RenderSystem.hpp"
+#include "main/GameObject.hpp"
+#include "main/Component.hpp"
 #include "utilities/Vector3.hpp"
 
 #include <glm/gtc/type_ptr.hpp>
 
-namespace StevEngine::Render {
+using namespace StevEngine::Renderer;
+
+namespace StevEngine::Visuals {
 	Light::Light(uint32_t shaderID, Utilities::Vector3 diffuse, Utilities::Vector3 specular, std::string type)
 		: shaderLightID(shaderID), diffuse(diffuse), specular(specular), Component(type) {};
 	//Create light components
 	DirectionalLight::DirectionalLight(Utilities::Vector3 diffuse, Utilities::Vector3 specular)
-		: Light(Render::render.GetLightID("DirectionalLight"), diffuse, specular, "DirectionalLight") {
-		Render::render.lights.push_back(this);
+		: Light(Renderer::render.GetLightID("DirectionalLight"), diffuse, specular, "DirectionalLight") {
+		Renderer::render.AddLight((Light*)this);
 	}
 	PointLight::PointLight(Utilities::Vector3 diffuse, Utilities::Vector3 specular, float constant, float linear, float quadratic)
-		: Light(Render::render.GetLightID("PointLight"), diffuse, specular, "PointLight"), constant(constant), linear(linear), quadratic(quadratic) {
-		Render::render.lights.push_back(this);
+		: Light(Renderer::render.GetLightID("PointLight"), diffuse, specular, "PointLight"), constant(constant), linear(linear), quadratic(quadratic) {
+		Renderer::render.AddLight(this);
 	}
 	SpotLight::SpotLight(Utilities::Vector3 diffuse, Utilities::Vector3 specular, float cutOff, float outerCutOff)
-		: Light(Render::render.GetLightID("SpotLight"), diffuse, specular, "SpotLight"), cutOff(cutOff), outerCutOff(outerCutOff) {
-		Render::render.lights.push_back(this);
+		: Light(Renderer::render.GetLightID("SpotLight"), diffuse, specular, "SpotLight"), cutOff(cutOff), outerCutOff(outerCutOff) {
+		Renderer::render.AddLight(this);
 	}
 	//Update shader information functions
 	void DirectionalLight::UpdateShader(const ShaderProgram& program) const {
@@ -92,15 +94,15 @@ namespace StevEngine::Render {
 		ResetShader(render.GetDefaultFragmentShaderProgram());
 	}
 	Light::~Light() {
-		Render::render.lights.erase(std::find(Render::render.lights.begin(), Render::render.lights.end(), this));
+		Renderer::render.RemoveLight(this);
 	}
 	//Export/Import lights
-	Light::Light(YAML::Node node) : shaderLightID(Render::render.GetLightID(node["type"].as<std::string>())), Component(node) {
+	Light::Light(YAML::Node node) : shaderLightID(Renderer::render.GetLightID(node["type"].as<std::string>())), Component(node) {
 		diffuse = node["diffuse"].as<Utilities::Vector3>();
 		specular = node["specular"].as<Utilities::Vector3>();
 	}
 	DirectionalLight::DirectionalLight(YAML::Node node) : Light(node) {
-		Render::render.lights.push_back(this);
+		Renderer::render.AddLight(this);
 	}
 	YAML::Node DirectionalLight::Export(YAML::Node node) const {
 		node["diffuse"] = diffuse;
@@ -112,7 +114,7 @@ namespace StevEngine::Render {
 		linear = node["linear"].as<float>();
 		quadratic = node["quadratic"].as<float>();
 
-		Render::render.lights.push_back(this);
+		Renderer::render.AddLight(this);
 	}
 	YAML::Node PointLight::Export(YAML::Node node) const {
 		node["diffuse"] = diffuse;
@@ -128,7 +130,7 @@ namespace StevEngine::Render {
 		cutOff = node["cutOff"].as<float>();
 		outerCutOff = node["outerCutOff"].as<float>();
 
-		Render::render.lights.push_back(this);
+		Renderer::render.AddLight(this);
 	}
 	YAML::Node SpotLight::Export(YAML::Node node) const {
 		node["diffuse"] = diffuse;

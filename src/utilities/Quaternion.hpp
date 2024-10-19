@@ -6,61 +6,59 @@
 
 #include "Vector3.hpp"
 
-namespace StevEngine {
-	namespace Utilities {
-		class Quaternion {
-			public:
-				//Values
-				double W, X, Y, Z;
-				//Constructors
-				Quaternion(double w, double x, double y, double z);
-				Quaternion(double w, Vector3 vector);
-				Quaternion(const Quaternion& from);
-				Quaternion(std::string str);
-				Quaternion();
-				//Directions
-				Vector3 Forward() const;
-				Vector3 Right() const;
-				Vector3 Up() const;
-				Quaternion& Conjugate();
-				Quaternion& Inverse();
-				//Functions
-				Quaternion Get() const;
-				double Magnitude() const;
-				Quaternion& Normalize();
-				Quaternion Normalized() const;
-				std::tuple<double, Vector3> GetAngleAxis() const;
-				//Operators
-				Quaternion  operator	+   (const Quaternion& other) const;
-				Quaternion  operator	-   (const Quaternion& other) const;
-				Quaternion  operator	*   (const Quaternion& other) const;
-				Quaternion  operator	*   (const double& other) const;
-				Quaternion  operator	/   (const double& other) const;
-				Quaternion& operator	*=  (const Quaternion& other);
-				bool		operator	==  (const Quaternion& other) const;
-				//Vector operators
-				Vector3 operator*(const Vector3& other) const;
-				//Conversions
-				explicit operator std::string() const;
-				#ifdef StevEngine_PHYSICS
-				operator JPH::Quat() const;
-				Quaternion& operator= (const JPH::Quat& other);
-				Quaternion(const JPH::Quat& other);
-				#endif
-				//Static methods
-				static Quaternion FromAngleAxis(double angle, Vector3 axis);
-				static double Angle(const Quaternion& a, const Quaternion& b);
-				static Quaternion Lerp(const Quaternion& a, const Quaternion& b, double t);
-				static Quaternion Slerp(const Quaternion& a, const Quaternion& b, double t);
-				static Quaternion FromToRotation(Vector3 fromDirection, Vector3 toDirection);
-				static Quaternion LookRotation(Vector3 forward, const Vector3& upwards = Vector3::up);
-				static Quaternion Conjugate(const Quaternion& q);
-				static Quaternion Inverse(const Quaternion& q);
-				static double Dot(const Quaternion& a, const Quaternion& b);
-				static double DegreesToRadians(double degrees);
-				static double RadiansToDegrees(double radians);
-		};
-	}
+namespace StevEngine::Utilities {
+	class Quaternion {
+		public:
+			//Values
+			double W, X, Y, Z;
+			//Constructors
+			Quaternion(double w, double x, double y, double z);
+			Quaternion(double w, Vector3 vector);
+			Quaternion(const Quaternion& from);
+			Quaternion(std::string str);
+			Quaternion();
+			//Directions
+			Vector3 Forward() const;
+			Vector3 Right() const;
+			Vector3 Up() const;
+			Quaternion& Conjugate();
+			Quaternion& Inverse();
+			//Functions
+			Quaternion Get() const;
+			double Magnitude() const;
+			Quaternion& Normalize();
+			Quaternion Normalized() const;
+			std::tuple<double, Vector3> GetAngleAxis() const;
+			//Operators
+			Quaternion  operator	+   (const Quaternion& other) const;
+			Quaternion  operator	-   (const Quaternion& other) const;
+			Quaternion  operator	*   (const Quaternion& other) const;
+			Quaternion  operator	*   (const double& other) const;
+			Quaternion  operator	/   (const double& other) const;
+			Quaternion& operator	*=  (const Quaternion& other);
+			bool		operator	==  (const Quaternion& other) const;
+			//Vector operators
+			Vector3 operator*(const Vector3& other) const;
+			//Conversions
+			explicit operator std::string() const;
+			#ifdef StevEngine_PHYSICS
+			operator JPH::Quat() const;
+			Quaternion& operator= (const JPH::Quat& other);
+			Quaternion(const JPH::Quat& other);
+			#endif
+			//Static methods
+			static Quaternion FromAngleAxis(double angle, Vector3 axis);
+			static double Angle(const Quaternion& a, const Quaternion& b);
+			static Quaternion Lerp(const Quaternion& a, const Quaternion& b, double t);
+			static Quaternion Slerp(const Quaternion& a, const Quaternion& b, double t);
+			static Quaternion FromToRotation(Vector3 fromDirection, Vector3 toDirection);
+			static Quaternion LookRotation(Vector3 forward, const Vector3& upwards = Vector3::up);
+			static Quaternion Conjugate(const Quaternion& q);
+			static Quaternion Inverse(const Quaternion& q);
+			static double Dot(const Quaternion& a, const Quaternion& b);
+			static double DegreesToRadians(double degrees);
+			static double RadiansToDegrees(double radians);
+	};
 }
 
 

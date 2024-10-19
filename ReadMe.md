@@ -17,8 +17,8 @@ Features includes:
 
 - [Modules](#modules)
   - [Base](#base)
-  - [Input Manager](#input-manager)
-  - [Data Manager](#data-manager)
+  - [Inputs](#inputs)
+  - [Data & Settings](#data--settings)
   - [OpenGL Renderer](#opengl-renderer)
   - [Physics](#physics)
   - [Audio](#audio)
@@ -51,25 +51,20 @@ Components are how custom behaviour (both game specific stuff and general stuff 
 
 This is the only module which cannot be disabled.
 
-## **Input Manager**
+## **Inputs**
 
 The input manager handles inputs from the mouse and keyboard through [SDL](https://github.com/libsdl-org/SDL/tree/SDL2) input events.
 
 Can be disabled by setting the cmake build option "USE_INPUTS" to OFF".
 
-## **Data Manager**
+## **Data & Settings**
 
-The data manager handles saving player data to a local folder on the user's machine, which will persist across game restarts.
+The data and settings managers handles saving player data and settings to a local folder on the user's machine, which will persist across game restarts.
 
+The settings manager handles saving player settings to a local file on the user's machine, which will persist across game restarts.
 This is also the system that is used for for logging to a file. It is therefore not recommended to disable this.
 
 Can be disabled by setting the cmake build option "USE_PLAYER_DATA" to OFF".
-
-## **Settings Manager**
-
-The settings manager handles saving player settings to a local file on the user's machine, which will persist across game restarts.
-
-Can be disabled by setting the cmake build option "USE_SETTINGS" to OFF".
 
 ## **OpenGL Renderer**
 

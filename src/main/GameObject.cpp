@@ -1,10 +1,10 @@
 #include "GameObject.hpp"
-#include "main/DataManager.hpp"
+#include "data/DataManager.hpp"
 #include "main/EngineEvents.hpp"
 #include "main/EventSystem.hpp"
 #include "main/Log.hpp"
-#include "scenes/SceneManager.hpp"
-#include "scenes/Component.hpp"
+#include "main/SceneManager.hpp"
+#include "main/Component.hpp"
 #include "utilities/ID.hpp"
 #include "utilities/Quaternion.hpp"
 #include "utilities/Vector3.hpp"
@@ -160,7 +160,7 @@ namespace StevEngine {
 		YAML::Emitter out;
 		out << node;
 		std::ofstream file;
-		file.open(data.GetAppdataPath() + name + ".object");
+		file.open(Data::data.GetAppdataPath() + name + ".object");
 		file << out.c_str();
 	}
 	#endif

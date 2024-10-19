@@ -5,8 +5,8 @@
 #include "main/Engine.hpp"
 #include "physics/Layers.hpp"
 #include "main/Log.hpp"
-#include "scenes/GameObject.hpp"
-#include "scenes/Component.hpp"
+#include "main/GameObject.hpp"
+#include "main/Component.hpp"
 
 #include <math.h>
 #include <iostream>

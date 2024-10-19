@@ -16,13 +16,10 @@
 #include <cstdint>
 
 namespace StevEngine {
-	namespace Render {
-		//Lights
+	namespace Visuals {
 		class Light;
-		class DirectionalLight;
-		class PointLight;
-		class SpotLight;
-
+	}
+	namespace Renderer {
 		//Object structs
 		struct RenderObject {
 			const CustomObject& object;
@@ -44,11 +41,6 @@ namespace StevEngine {
 
 		//System
 		class RenderSystem {
-			friend class StevEngine::Render::Light;
-			friend class StevEngine::Render::DirectionalLight;
-			friend class StevEngine::Render::PointLight;
-			friend class StevEngine::Render::SpotLight;
-
 			public:
 				void Init(SDL_Window* window);
 				void DrawObject(const CustomObject& object, glm::mat4x4 transform, RenderQueue queue = STANDARD);
@@ -71,7 +63,9 @@ namespace StevEngine {
 				float GetAmbientLightStrength() const { return ambientLightStrength; }
 				//From Lights
 				uint32_t GetLightID(std::string type);
-				std::vector<Light*> GetLights() const { return lights; }
+				std::vector<Visuals::Light*> GetLights() const { return lights; }
+				void AddLight(Visuals::Light* light);
+				void RemoveLight(Visuals::Light* light);
 			private:
 				SDL_GLContext context;
 				//Queues
@@ -87,7 +81,7 @@ namespace StevEngine {
 				//Background
 				Utilities::Color backgroundColor = {0, 0, 0, 255};
 				//Lights
-				std::vector<Light*> lights;
+				std::vector<Visuals::Light*> lights;
 				Utilities::Color ambientLightColor;
 				float ambientLightStrength;
 		};

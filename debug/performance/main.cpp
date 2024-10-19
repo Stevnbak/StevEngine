@@ -3,12 +3,12 @@
 #include "main/Log.hpp"
 #include "physics/Colliders.hpp"
 #include "physics/RigidBody.hpp"
-#include "scenes/Scene.hpp"
-#include "scenes/SceneManager.hpp"
+#include "main/Scene.hpp"
+#include "main/SceneManager.hpp"
 #include "utilities/Random.hpp"
 #include "visuals/Camera.hpp"
 #include "visuals/Primitive.hpp"
-#include "visuals/render/Lights.hpp"
+#include "visuals/Lights.hpp"
 
 #include <cstdlib>
 #include <string>
@@ -43,7 +43,7 @@ void SpawnPhysicsObjects(Scene* scene) {
 	for(int i = 0; i < AREA_SIZE; i++) {
 		GameObject* object = scene->GetObject(scene->CreateObject("Light" + std::to_string(i), Vector3(GetRandomDouble(-AREA_SIZE / 2.0, AREA_SIZE / 2.0), 15, GetRandomDouble(-AREA_SIZE / 2.0, AREA_SIZE / 2.0)), Quaternion(), Vector3(1, 1, 1)));
 		#ifdef StevEngine_RENDERER_GL
-		object->AddComponent(new Render::PointLight(Vector3(GetRandomDouble(1), 0, GetRandomDouble(1)), Vector3(GetRandomDouble(0.25), GetRandomDouble(0.25), GetRandomDouble(0.25))));
+		object->AddComponent(new Visuals::PointLight(Vector3(GetRandomDouble(1), 0, GetRandomDouble(1)), Vector3(GetRandomDouble(0.25), GetRandomDouble(0.25), GetRandomDouble(0.25))));
 		#endif
 	}
 }

@@ -4,9 +4,9 @@
 #include "utilities/Vector3.hpp"
 #include "utilities/Quaternion.hpp"
 #include "main/Log.hpp"
-#include "main/InputSystem.hpp"
+#include "inputs/InputSystem.hpp"
 #include "main/ResourceManager.hpp"
-#include "scenes/Component.hpp"
+#include "main/Component.hpp"
 
 #include <yaml-cpp/yaml.h>
 #include <glm/mat4x4.hpp>
@@ -210,7 +210,7 @@ namespace StevEngine {
 	class TransformUpdateEvent : public Event {
 		public:
 			TransformUpdateEvent(bool position = true, bool rotation = true, bool scale = true)
-		 		: position(position), rotation(rotation), scale(scale) {}
+				: position(position), rotation(rotation), scale(scale) {}
 			const std::string GetEventType() const override { return GetStaticEventType(); };
 			static const std::string GetStaticEventType() {  return "TransformUpdateEvent"; }
 			bool position, rotation, scale;

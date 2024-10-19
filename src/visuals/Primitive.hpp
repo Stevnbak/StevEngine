@@ -1,6 +1,6 @@
 #pragma once
 #ifdef StevEngine_RENDERER_GL
-#include "render/RenderComponent.hpp"
+#include "renderer/RenderComponent.hpp"
 
 namespace StevEngine {
 	namespace Visuals {
@@ -8,7 +8,7 @@ namespace StevEngine {
 			REPEAT,
 			COVER
 		};
-		class CubePrimitive : public Render::RenderComponent {
+		class CubePrimitive : public Renderer::RenderComponent {
 			public:
 				CubePrimitive(Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1), TextureType textureType = COVER);
 				CubePrimitive(YAML::Node node);
@@ -16,7 +16,7 @@ namespace StevEngine {
 				const Visuals::TextureType textureType;
 		};
 		inline bool cube = CreateComponents::RegisterComponentType<CubePrimitive>("CubePrimitive");
-		class UVSpherePrimitive : public Render::RenderComponent {
+		class UVSpherePrimitive : public Renderer::RenderComponent {
 			public:
 				UVSpherePrimitive(Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1), bool smooth = true, TextureType textureType = COVER);
 				UVSpherePrimitive(YAML::Node node);
@@ -25,7 +25,7 @@ namespace StevEngine {
 				const bool smooth;
 		};
 		inline bool sphere = CreateComponents::RegisterComponentType<UVSpherePrimitive>("IcospherePrimitive");
-		class IcospherePrimitive : public Render::RenderComponent {
+		class IcospherePrimitive : public Renderer::RenderComponent {
 			public:
 				IcospherePrimitive(Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1), bool smooth = true, TextureType textureType = COVER);
 				IcospherePrimitive(YAML::Node node);
@@ -34,7 +34,7 @@ namespace StevEngine {
 				const bool smooth;
 		};
 		inline bool icosphere = CreateComponents::RegisterComponentType<IcospherePrimitive>("IcospherePrimitive");
-		class CylinderPrimitive : public Render::RenderComponent {
+		class CylinderPrimitive : public Renderer::RenderComponent {
 			public:
 				CylinderPrimitive(Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1), bool smooth = true, TextureType textureType = COVER);
 				CylinderPrimitive(YAML::Node node);
@@ -43,7 +43,7 @@ namespace StevEngine {
 				const bool smooth;
 		};
 		inline bool cylinder = CreateComponents::RegisterComponentType<CylinderPrimitive>("CylinderPrimitive");
-		class CapsulePrimitive : public Render::RenderComponent {
+		class CapsulePrimitive : public Renderer::RenderComponent {
 			public:
 				CapsulePrimitive(Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1), bool smooth = true, TextureType textureType = COVER);
 				CapsulePrimitive(YAML::Node node);

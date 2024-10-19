@@ -1,6 +1,6 @@
 #pragma once
 #ifdef StevEngine_PHYSICS
-#include "scenes/Component.hpp"
+#include "main/Component.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Quaternion.hpp"
 #include "physics/Colliders.hpp"

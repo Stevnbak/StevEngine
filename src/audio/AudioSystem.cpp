@@ -2,7 +2,7 @@
 #include "AudioSystem.hpp"
 #include "main/Log.hpp"
 #include "main/ResourceManager.hpp"
-#include "main/Settings.hpp"
+#include "data/Settings.hpp"
 
 #include <SDL.h>
 #include <SDL_mixer.h>
@@ -87,12 +87,12 @@ namespace StevEngine::Audio {
 
 	void AudioSystem::SetSoundsVolume(double volume) {
 		volumeSounds = volume;
-		settings.Save("audio.soundVolume", volume);
+		Data::settings.Save("audio.soundVolume", volume);
 	}
 
 	void AudioSystem::SetMusicVolume(double volume) {
 		volumeMusic = volume;
-		settings.Save("audio.musicVolume", volume);
+		Data::settings.Save("audio.musicVolume", volume);
 	}
 
 	std::vector<const char*> AudioSystem::GetAudioDevices() {
@@ -109,7 +109,7 @@ namespace StevEngine::Audio {
 	void AudioSystem::SetAudioDevice(const char *device) {
 		CleanUp();
 		audioDevice = device;
-		if(device != NULL) settings.Save("audio.device", std::string(device));
+		if(device != NULL) Data::settings.Save("audio.device", std::string(device));
 		if (Mix_OpenAudioDevice(audioRate, audioFormat, audioChannels, 4096, audioDevice, SDL_AUDIO_ALLOW_CHANNELS_CHANGE | SDL_AUDIO_ALLOW_FREQUENCY_CHANGE) < 0) {
 			throw std::runtime_error(std::format("Couldn't open audio device: %s\n", SDL_GetError()));
 			CleanUp();

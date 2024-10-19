@@ -1,11 +1,11 @@
 #pragma once
 #ifdef StevEngine_SHOW_WINDOW
-#include "scenes/Component.hpp"
+#include "main/Component.hpp"
 
 namespace StevEngine {
 	class GameObject;
 	class Engine;
-	namespace Render {
+	namespace Renderer {
 		class RenderSystem;
 	}
 

@@ -2,7 +2,7 @@
 #include "Emitter.hpp"
 #include "audio/AudioSystem.hpp"
 #include "main/ResourceManager.hpp"
-#include "scenes/Component.hpp"
+#include "main/Component.hpp"
 
 #include <SDL.h>
 #include <SDL_mixer.h>

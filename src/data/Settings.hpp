@@ -1,5 +1,5 @@
 #pragma once
-#ifdef StevEngine_SETTINGS
+#ifdef StevEngine_PLAYER_DATA
 #include <string>
 #include <map>
 #include <fstream>
@@ -7,7 +7,7 @@
 
 #include "main/Log.hpp"
 
-namespace StevEngine {
+namespace StevEngine::Data {
 	class Settings {
 		public:
 			void Init(std::string title);

@@ -40,7 +40,7 @@ namespace StevEngine {
 			double currentFPS;
 			SDL_Event ev;
 			GameSettings gameSettings;
-			#ifdef StevEngine_SETTINGS
+			#ifdef StevEngine_PLAYER_DATA
 			void SetGameSettingsFromFile();
 			#endif
 	};

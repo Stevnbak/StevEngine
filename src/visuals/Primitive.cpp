@@ -1,14 +1,14 @@
 #ifdef StevEngine_RENDERER_GL
 #include "Primitive.hpp"
-#include "visuals/render/Object.hpp"
+#include "visuals/renderer/Object.hpp"
 #include "main/Log.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Vector2.hpp"
 #include "utilities/Vertex.hpp"
 #include "utilities/Quaternion.hpp"
-#include "scenes/GameObject.hpp"
-#include "scenes/Component.hpp"
-#include "visuals/render/RenderComponent.hpp"
+#include "main/GameObject.hpp"
+#include "main/Component.hpp"
+#include "visuals/renderer/RenderComponent.hpp"
 
 #include <SDL.h>
 #include <glad/gl.h>
@@ -16,7 +16,7 @@
 #include <array>
 #include <vector>
 
-using namespace StevEngine::Render;
+using namespace StevEngine::Renderer;
 using namespace StevEngine::Utilities;
 
 namespace StevEngine {
@@ -103,8 +103,8 @@ namespace StevEngine {
 				).Normalized();
 				//Combine to vertices
 				for(int i = 0; i < 6; i++) {
-					if(a == 1) 	vertices[side * 6 + i] = Vertex(sideVertices[i] * r, sideUVs[i], normal, tangent);
-					else 		vertices[side * 6 + i] = Vertex(sideVertices[5 - i] * r, sideUVs[5 - i], normal, tangent);
+					if(a == 1)	vertices[side * 6 + i] = Vertex(sideVertices[i] * r, sideUVs[i], normal, tangent);
+					else		vertices[side * 6 + i] = Vertex(sideVertices[5 - i] * r, sideUVs[5 - i], normal, tangent);
 				}
 			}
 			return std::vector<Vertex>(vertices.begin(), vertices.end());

@@ -6,7 +6,7 @@
 #include <filesystem>
 #include <algorithm>
 
-namespace StevEngine {
+namespace StevEngine::Data {
 	GameData data = GameData();
 	std::string GetHomePath() {
 		const char* homePath = std::getenv("HOME");

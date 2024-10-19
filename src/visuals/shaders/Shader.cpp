@@ -1,13 +1,13 @@
 #ifdef StevEngine_RENDERER_GL
 #include "Shader.hpp"
-#include "visuals/render/RenderSystem.hpp"
-#include "visuals/render/Object.hpp"
+#include "visuals/renderer/RenderSystem.hpp"
+#include "visuals/renderer/Object.hpp"
 #include "main/Log.hpp"
 #include "glad/gl.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
 
-namespace StevEngine::Render {
+namespace StevEngine::Renderer {
 	Shader::Shader(const char* source, ShaderType shaderType) : shaderType(shaderType), source(source) {
 		//Create
 		location = glCreateShader(shaderType == VERTEX ? GL_VERTEX_SHADER : GL_FRAGMENT_SHADER);

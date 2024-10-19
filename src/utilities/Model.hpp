@@ -10,25 +10,22 @@
 
 #include <vector>
 
-namespace StevEngine {
-	namespace Utilities {
+namespace StevEngine::Utilities {
+	struct Mesh {
+		std::vector<Vertex> vertices;
+		std::vector<uint32_t> indices;
+		Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices)
+			: vertices(vertices), indices(indices) {}
+	};
 
-		struct Mesh {
-			std::vector<Vertex> vertices;
-			std::vector<uint32_t> indices;
-			Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices)
-				: vertices(vertices), indices(indices) {}
-		};
-
-		class Model {
-			public:
-				Model(Resources::Resource file);
-				const std::string path;
-				std::vector<Mesh> GetMeshes() const;
-			private:
-				const aiScene* assimpScene;
-				std::vector<Mesh> meshes;
-		};
-	}
+	class Model {
+		public:
+			Model(Resources::Resource file);
+			const std::string path;
+			std::vector<Mesh> GetMeshes() const;
+		private:
+			const aiScene* assimpScene;
+			std::vector<Mesh> meshes;
+	};
 }
 #endif

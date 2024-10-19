@@ -1,6 +1,6 @@
 #pragma once
 #include "main/ResourceManager.hpp"
-#include "scenes/GameObject.hpp"
+#include "main/GameObject.hpp"
 #include "visuals/Camera.hpp"
 
 #include <yaml-cpp/yaml.h>

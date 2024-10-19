@@ -5,9 +5,7 @@
 #include <fstream>
 #include <yaml-cpp/yaml.h>
 
-namespace StevEngine {
-	class Engine;
-
+namespace StevEngine::Data {
 	class GameData {
 		public:
 			void Init(std::string title);

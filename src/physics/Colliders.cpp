@@ -1,8 +1,8 @@
 #ifdef StevEngine_PHYSICS
 #include "Colliders.hpp"
-#include "scenes/Scene.hpp"
-#include "scenes/GameObject.hpp"
-#include "scenes/Component.hpp"
+#include "main/Scene.hpp"
+#include "main/GameObject.hpp"
+#include "main/Component.hpp"
 #include "main/ResourceManager.hpp"
 #include "utilities/Model.hpp"
 #include "utilities/Quaternion.hpp"

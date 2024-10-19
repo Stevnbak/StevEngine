@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <string>
 
-namespace StevEngine::Render {
+namespace StevEngine::Renderer {
 	const char* vertexMainSource =
 		#include "visuals/shaders/main.vert"
 	;

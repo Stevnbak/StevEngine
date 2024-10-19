@@ -3,22 +3,24 @@
 #include "main/Log.hpp"
 #include "main/Engine.hpp"
 #include "main/EngineEvents.hpp"
-#include "main/Settings.hpp"
-#include "scenes/SceneManager.hpp"
-#include "visuals/render/Object.hpp"
-#include "visuals/render/Lights.hpp"
+#include "data/Settings.hpp"
+#include "main/SceneManager.hpp"
+#include "visuals/renderer/Object.hpp"
+#include "visuals/Lights.hpp"
 #include "visuals/shaders/Shader.hpp"
 #include "visuals/shaders/ShaderProgram.hpp"
 #include "visuals/Camera.hpp"
 
+#include <algorithm>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include "glm/ext/vector_float3.hpp"
+#include <glm/mat4x4.hpp>
+#include "glm/vec3.hpp"
 #include <glm/gtc/type_ptr.hpp>
 #include <glad/gl.h>
 
 namespace StevEngine {
-	namespace Render {
+	using namespace Visuals;
+	namespace Renderer {
 		const char* vertexShaderSource =
 			#include "visuals/shaders/default.vert"
 		;
@@ -96,8 +98,8 @@ namespace StevEngine {
 			SetViewSize(gameSettings.WIDTH, gameSettings.HEIGHT);
 			SetVSync(gameSettings.vsync);
 			SetFaceCulling(true);
-			if(gameSettings.MSAA == 0) Render::render.SetMSAA(false);
-			else Render::render.SetMSAA(true, gameSettings.MSAA);
+			if(gameSettings.MSAA == 0) Renderer::render.SetMSAA(false);
+			else Renderer::render.SetMSAA(true, gameSettings.MSAA);
 			SetAmbientLight(0.5, Utilities::Color(255));
 			//Events
 			engine->GetEvents()->Subscribe<WindowResizeEvent>([this] (WindowResizeEvent i) { return this->SetViewSize (i.width, i.height); });
@@ -132,12 +134,12 @@ namespace StevEngine {
 				if((amount & (amount - 1)) != 0) return Log::Error("MultiSampling amount is not a power of 2.", true);
 				SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 				SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, amount);
-				settings.Save("MSAA", amount);
+				Data::settings.Save("MSAA", amount);
 			} else {
 				glDisable(GL_MULTISAMPLE);
-				settings.Save("MSAA", 0);
+				Data::settings.Save("MSAA", 0);
 			}
-			settings.SaveToFile();
+			Data::settings.SaveToFile();
 		}
 
 
@@ -233,9 +235,9 @@ namespace StevEngine {
 
 		uint32_t RenderSystem::GetLightID(std::string type) {
 			uint32_t next = 0;
-			for(Light* light : lights) {
-				if(light->type == type) {
-					if(next == light->shaderLightID) {
+			for(Visuals::Light* light : lights) {
+				if(light->GetType() == type) {
+					if(next == light->GetShaderLightID()) {
 						next++;
 					} else {
 						break;
@@ -244,6 +246,15 @@ namespace StevEngine {
 			}
 			return next;
 		}
+
+		void RenderSystem::AddLight(Visuals::Light* light) {
+			lights.push_back(light);
+		}
+
+		void RenderSystem::RemoveLight(Visuals::Light* light) {
+			lights.erase(std::find(lights.begin(), lights.end(), light));
+		}
+
 	}
 }
 #endif

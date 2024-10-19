@@ -1,6 +1,6 @@
 #include "Scene.hpp"
-#include "main/DataManager.hpp"
-#include "scenes/Component.hpp"
+#include "data/DataManager.hpp"
+#include "main/Component.hpp"
 #include "utilities/ID.hpp"
 
 #include <memory>
@@ -95,7 +95,7 @@ namespace StevEngine {
 		YAML::Emitter out;
 		out << node;
 		std::ofstream file;
-		file.open(data.GetAppdataPath() + name + ".scene");
+		file.open(Data::data.GetAppdataPath() + name + ".scene");
 		file << out.c_str();
 	}
 	#endif

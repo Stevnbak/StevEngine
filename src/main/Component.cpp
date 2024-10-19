@@ -1,7 +1,7 @@
 #include "Component.hpp"
 #include "main/EngineEvents.hpp"
-#include "scenes/GameObject.hpp"
-#include "scenes/SceneManager.hpp"
+#include "main/GameObject.hpp"
+#include "main/SceneManager.hpp"
 #include "main/Log.hpp"
 #include <cstddef>
 #include <cstdint>
