@@ -5,8 +5,6 @@
 #include "main/Component.hpp"
 #include "utilities/Vector3.hpp"
 
-#include <glm/gtc/type_ptr.hpp>
-
 using namespace StevEngine::Renderer;
 
 namespace StevEngine::Visuals {

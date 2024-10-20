@@ -4,9 +4,6 @@
 [submodule "libs/yaml-cpp"]
 	path = libs/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp.git
-[submodule "libs/glm"]
-	path = libs/glm
-	url = https://github.com/g-truc/glm.git
 [submodule "libs/uuidv7-h"]
 	path = libs/uuidv7-h
 	url = https://github.com/LiosK/uuidv7-h.git

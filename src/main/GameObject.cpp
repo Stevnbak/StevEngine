@@ -11,9 +11,6 @@
 #include "utilities/Vector3.hpp"
 
 #include <yaml-cpp/yaml.h>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include "glm/mat4x4.hpp"
 
 #include <format>
 #include <map>

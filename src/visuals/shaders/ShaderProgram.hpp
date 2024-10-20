@@ -10,7 +10,6 @@
 #include <cstdint>
 #include <glad/gl.h>
 #include <yaml-cpp/yaml.h>
-#include "glm/mat4x4.hpp"
 
 namespace StevEngine::Renderer {
 	class ShaderProgram {
@@ -23,7 +22,6 @@ namespace StevEngine::Renderer {
 			void RemoveShader(uint32_t location);
 			void RelinkProgram();
 			//Set shader uniforms
-			void SetShaderUniform(const char* name, glm::mat4x4 value) const;
 			void SetShaderUniform(const char* name, Utilities::Matrix4 value) const;
 			void SetShaderUniform(const char* name, Utilities::Color value) const;
 			void SetShaderUniform(const char* name, Utilities::Vector3 value) const;

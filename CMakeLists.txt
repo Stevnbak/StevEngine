@@ -88,9 +88,6 @@ if(USE_RENDERER_GL)
 	endif()
 endif()
 
-# # glm
-target_include_directories(${PROJECT_NAME} PUBLIC libs/glm)
-
 # # Jolt
 if(USE_PHYSICS)
 	set(ENABLE_OBJECT_STREAM OFF)

@@ -4,26 +4,25 @@
 #include "main/Component.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Quaternion.hpp"
+#include "utilities/Matrix4.hpp"
 #include "main/Log.hpp"
 #include "main/GameObject.hpp"
 
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include <math.h>
 using namespace StevEngine;
 using namespace StevEngine::Utilities;
 
 namespace StevEngine::Visuals {
-	Camera::Camera(bool orthographic, double fov, double zoomValue)
-		: Component("Camera"), isOrthographic(orthographic), fov(fov), zoom(zoomValue) {}
+	Camera::Camera(bool orthographic, float fov, float zoomValue, float nearClip, float farClip)
+		: Component("Camera"), isOrthographic(orthographic), fov(fov), zoom(zoomValue), nearClip(nearClip), farClip(farClip) {}
 
 	Camera::Camera(YAML::Node node)
 		: Component(node),
 		isOrthographic(node["orthographic"].as<bool>()),
-		zoom(node["zoom"].as<double>()),
-		fov(node["fov"].as<double>()),
-		farClip(node["farClip"].as<double>()),
-		nearClip(node["nearClip"].as<double>())
+		zoom(node["zoom"].as<float>()),
+		fov(node["fov"].as<float>()),
+		farClip(node["farClip"].as<float>()),
+		nearClip(node["nearClip"].as<float>())
 	{}
 
 	YAML::Node Camera::Export(YAML::Node node) const {
@@ -35,39 +34,31 @@ namespace StevEngine::Visuals {
 		return node;
 	}
 
-	glm::mat4x4 Camera::GetView() const {
-		glm::mat4x4 transform = glm::mat4x4(1.0f);
-
+	Matrix4 Camera::GetView() const {
 		//Rotate everything else based on camera rotation
-		Quaternion rotation = Quaternion::Conjugate(GetParent()->GetWorldRotation());
-		#ifdef GLM_FORCE_QUAT_DATA_XYZW
-		transform *= glm::mat4_cast(glm::quat(rotation.X, rotation.Y, rotation.Z, rotation.W));
-		#else
-		transform *= glm::mat4_cast(glm::quat(rotation.W, rotation.X, rotation.Y, rotation.Z));
-		#endif
+		Matrix4 rotation = Matrix4::FromRotation(Quaternion::Conjugate(GetParent()->GetWorldRotation()));
 
 		//Move everything else based on camera position
-		Vector3 position = GetParent()->GetWorldPosition();
-		transform = glm::translate(transform, (glm::vec3)(-position));
+		Matrix4 translation = Matrix4::FromTranslation(-GetParent()->GetWorldPosition());
 
-		return transform;
+		return rotation * translation;
 	}
 
-	glm::mat4x4 Camera::GetProjection() const {
+	Matrix4 Camera::GetProjection() const {
 		GameSettings s = engine->GetGameSettings();
-		double aspect = (double)s.WIDTH / s.HEIGHT;
+		float aspect = (float)s.WIDTH / s.HEIGHT;
 		if (isOrthographic)
 		{
 			Vector3 position = GetParent()->GetWorldPosition();
 			double width = (1 * aspect) / (zoom / position.Z);
 			double height = (1) / (zoom / position.Z);
-			//Set up an orthographic projection with the same near clip plane
-			return glm::ortho(-width, width, -height, height, nearClip, farClip);
+			//Set up an orthographic projection
+			return Matrix4::FromOrthographic(width, height, nearClip, farClip);
 		}
 		else
 		{
-			//Set the perspective with the appropriate aspect ratio
-			return glm::perspective(glm::radians(fov / aspect), aspect, nearClip, farClip);
+			//Set the perspective projection
+			return Matrix4::FromPerspective(fov / zoom, aspect, nearClip * zoom, farClip * zoom);
 		}
 	}
 }

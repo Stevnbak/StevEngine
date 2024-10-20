@@ -1,7 +1,10 @@
 #include "Matrix4.hpp"
+#include "main/Log.hpp"
+#include "utilities/Quaternion.hpp"
 #include "utilities/Vector2.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Vector4.hpp"
+#include <cmath>
 #include <functional>
 #include <string>
 
@@ -267,11 +270,32 @@ namespace StevEngine::Utilities {
 		//Combined
 		return (translationMatrix * (rotationMatrix * scaleMatrix));
 	}
-	Matrix4 Matrix4::FromOrthographic(float left, float right, float bottom, float top, float clipNear, float clipFar) {
-		//MISSING
+	Matrix4 Matrix4::FromOrthographic(float width, float height, float clipNear, float clipFar) {
+		return Matrix4({
+			{2.0/width, 0, 0, 0},
+			{0, 2.0/width, 0, 0},
+			{0, 0, (-2)/(clipFar - clipNear), -((clipNear + clipFar)/(clipFar - clipNear))},
+			{0, 0, 0, 1},
+		});
 	}
-	Matrix4 Matrix4::FromPerspective(float fov, float aspect, float clipNear, float clipFar) {
-		//MISSING
+	Matrix4 Matrix4::FromOrthographic(float left, float right, float bottom, float top, float clipNear, float clipFar) {
+		return Matrix4({
+			{2.0/(right - left), 0, 0, -((right + left)/(right - left))},
+			{0, 2.0/(top - bottom), 0, -((top + bottom)/(top - bottom))},
+			{0, 0, (-2)/(clipFar - clipNear), -((clipNear + clipFar)/(clipFar - clipNear))},
+			{0, 0, 0, 1},
+		});
+	}
+	Matrix4 Matrix4::FromPerspective(float fovx, float aspect, float clipNear, float clipFar) {
+		float tanFovX = std::tan(Quaternion::DegreesToRadians(fovx) * 0.5);
+		float tanFovY = std::tan(Quaternion::DegreesToRadians(fovx / aspect) * 0.5);
+
+		return Matrix4({
+			{1.0/tanFovX, 0, 0, 0},
+			{0, 1.0/tanFovY, 0, 0},
+			{0, 0, (-(clipNear + clipFar))/(clipFar - clipNear), (-2 * clipNear * clipFar)/(clipFar - clipNear)},
+			{0, 0, -1, 0},
+		});
 	}
 	//Static matrices
 	const Matrix4 Matrix4::identity = Matrix4(

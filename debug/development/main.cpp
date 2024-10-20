@@ -1,7 +1,5 @@
 #include "audio/Emitter.hpp"
 #include "data/DataManager.hpp"
-#include "glm/ext/matrix_float4x4.hpp"
-#include "glm/gtc/quaternion.hpp"
 #include "main/Engine.hpp"
 #include "main/EngineEvents.hpp"
 #include "inputs/InputSystem.hpp"
@@ -351,6 +349,9 @@ int main(int argc, char** argv) {
 	camObj->AddComponent(new CameraController());
 	camObj->SetPosition(Utilities::Vector3(0, 5, 20));
 	camObj->SetRotation(Utilities::Quaternion::FromAngleAxis(Utilities::Quaternion::DegreesToRadians(0), Utilities::Vector3::forward));
+	Camera* cam = scene->GetCamera();
+	cam->isOrthographic = false;
+	cam->zoom = 1;
 	#endif
 
 	//Add test lights

@@ -7,8 +7,6 @@
 #include "visuals/Texture.hpp"
 #include "visuals/shaders/Shader.hpp"
 
-#include <glm/gtc/matrix_transform.hpp>
-#include "glm/gtc/quaternion.hpp"
 #include <yaml-cpp/yaml.h>
 
 using StevEngine::Utilities::Color;

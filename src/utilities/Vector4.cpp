@@ -3,7 +3,6 @@
 
 #include "main/Log.hpp"
 
-#include "glm/vec3.hpp"
 #include "utilities/Quaternion.hpp"
 #include <algorithm>
 

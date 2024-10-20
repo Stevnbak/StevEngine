@@ -34,8 +34,9 @@ namespace StevEngine::Utilities {
 			static Matrix4 FromRotation(const Quaternion& rotation);
 			static Matrix4 FromScale(const Vector3& scale);
 			static Matrix4 FromTranslationRotationScale(const Vector3& position, const Quaternion& rotation, const Vector3& scale);
+			static Matrix4 FromOrthographic(float width, float height, float clipNear, float clipFar);
 			static Matrix4 FromOrthographic(float left, float right, float bottom, float top, float clipNear, float clipFar);
-			static Matrix4 FromPerspective(float fov, float aspect, float clipNear, float clipFar);
+			static Matrix4 FromPerspective(float fovx, float aspect, float clipNear, float clipFar);
 			//Static matrices
 			static const Matrix4 identity, zero;
 		private:

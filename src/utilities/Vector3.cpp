@@ -3,7 +3,6 @@
 
 #include "main/Log.hpp"
 
-#include "glm/vec3.hpp"
 #include <algorithm>
 
 #define _USE_MATH_DEFINES
@@ -73,9 +72,6 @@ namespace StevEngine::Utilities {
 	}
 	Vector3::operator std::string() const {
 		return std::format("[{}, {}, {}]", X, Y, Z);
-	}
-	Vector3::operator glm::vec3() const {
-		return glm::vec3(X, Y, Z);
 	}
 	const float* Vector3::data() const {
 		float* data = new float[3];

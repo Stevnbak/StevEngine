@@ -7,7 +7,6 @@
 #include "main/EventSystem.hpp"
 
 #include <SDL.h>
-#include <glm/mat4x4.hpp>
 
 #include <vector>
 #include <array>

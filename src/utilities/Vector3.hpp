@@ -2,7 +2,6 @@
 #ifdef StevEngine_PHYSICS
 #include <Jolt/Jolt.h>
 #endif
-#include "glm/vec3.hpp"
 #ifdef StevEngine_MODELS
 #include "assimp/mesh.h"
 #endif
@@ -37,7 +36,6 @@ namespace StevEngine::Utilities {
 			//Conversions
 			explicit operator Vector2() const;
 			explicit operator std::string() const;
-			explicit operator glm::vec3() const;
 			const float* data() const;
 			#ifdef StevEngine_PHYSICS
 			operator JPH::DVec3() const;
