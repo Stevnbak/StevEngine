@@ -1,7 +1,7 @@
 #pragma once
-#include "glad/gl.h"
 #ifdef StevEngine_RENDERER_GL
 #include "main/ResourceManager.hpp"
+#include "glad/gl.h"
 
 namespace StevEngine::Visuals {
 	class Texture {

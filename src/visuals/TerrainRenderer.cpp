@@ -1,8 +1,9 @@
+#include "main/Log.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "TerrainRenderer.hpp"
 #include "visuals/renderer/Object.hpp"
 #include "visuals/Texture.hpp"
-#include "utilities/Color.hpp"
+#include "visuals/Material.hpp"
 #include "utilities/Vector2.hpp"
 #include "utilities/Vector3.hpp"
 
@@ -12,7 +13,7 @@
 using namespace StevEngine::Utilities;
 
 namespace StevEngine::Visuals {
-	Renderer::Object CreateRenderObject(const TerrainData& data, Color color, bool smooth, Texture surface) {
+	Renderer::Object CreateRenderObject(const TerrainData& data, Material material, bool smooth) {
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
 		double halfSize = (data.size - 1) / 2.0;
@@ -92,12 +93,12 @@ namespace StevEngine::Visuals {
 				}
 			}
 		}
-		return Renderer::Object(vertices, indices, color, surface);
+		return Renderer::Object(vertices, indices, material);
 	}
-	TerrainRenderer::TerrainRenderer(const TerrainData& data, const Color& color, bool smooth, Texture surface)
-		: data(data), smooth(smooth), RenderComponent(CreateRenderObject(data, color, smooth, surface), "TerrainRenderer") {}
+	TerrainRenderer::TerrainRenderer(const TerrainData& data, Material material, bool smooth)
+		: data(data), smooth(smooth), RenderComponent(CreateRenderObject(data, material, smooth), "TerrainRenderer") {}
 	TerrainRenderer::TerrainRenderer(YAML::Node node)
-		: data(TerrainData(node["terrain"])), smooth(node["smooth"].as<bool>()), RenderComponent(CreateRenderObject(data, node["color"].as<Color>(), node["smooth"].as<bool>(), Texture::empty), node) {}
+		: data(TerrainData(node["terrain"])), smooth(node["smooth"].as<bool>()), RenderComponent(CreateRenderObject(data, Material(node["material"]), node["smooth"].as<bool>()), node) {}
 	YAML::Node TerrainRenderer::Export(YAML::Node node) const {
 		YAML::Node n = RenderComponent::Export(node);
 		n["texture"] = data.Export();

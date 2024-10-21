@@ -2,6 +2,7 @@
 
 void SetFragColor(vec4 color);
 vec3 GetFragNormal(vec2 uv);
+vec3 GetFragPosition();
 vec2 GetFragUV();
 
 void TestNormals() {
@@ -17,6 +18,7 @@ void TestUV() {
 }
 
 void main() {
+	//SetFragColor(vec4(normalize(GetFragPosition()) * 0.5 + 0.5, 1.0));
 	TestNormals();
 	//TestUV();
 }

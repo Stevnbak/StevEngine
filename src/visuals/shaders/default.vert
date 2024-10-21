@@ -1,12 +1,6 @@
 R"(
 #version 440 core
 
-struct Vertex {
-	vec3 position;
-	vec2 uv;
-	vec3 normal;
-	vec3 tangent;
-};
 Vertex getVertex();
 
 mat4 getObjectTransform();

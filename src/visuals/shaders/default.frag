@@ -3,22 +3,21 @@ R"(
 
 void SetFragColor(vec4 color);
 
-vec3 GetLights();
+vec4 GetLights(vec4 objectColor);
 
 vec2 GetFragUV();
 
-vec4 GetObjectTexture(vec2 uv);
+vec4 GetObjectAlbedo(vec2 uv);
 vec4 GetObjectColor();
-
+Material GetObjectMaterial();
 
 //Main
 void main() {
 	//Texture
-	vec4 tex = GetObjectTexture(GetFragUV());
+	vec4 tex = GetObjectAlbedo(GetFragUV());
 	//Lights
-	vec3 lights = GetLights();
+	vec4 lights = GetLights(GetObjectColor() * tex);
 	//Final color
-	vec4 color = vec4(lights, 1.0) * tex * GetObjectColor();
-	SetFragColor(color);
+	SetFragColor(lights);
 }
 )"

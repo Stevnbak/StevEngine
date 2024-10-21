@@ -95,7 +95,7 @@ namespace StevEngine::Renderer {
 		SetFaceCulling(true);
 		if(gameSettings.MSAA == 0) Renderer::render.SetMSAA(false);
 		else Renderer::render.SetMSAA(true, gameSettings.MSAA);
-		SetAmbientLight(0.5, Utilities::Color(255));
+		SetAmbientLight(0.1, Utilities::Color(255));
 		//Events
 		engine->GetEvents()->Subscribe<WindowResizeEvent>([this] (WindowResizeEvent i) { return this->SetViewSize (i.width, i.height); });
 		engine->GetEvents()->Subscribe<WindowVSyncEvent>([this] (WindowVSyncEvent i) { return this->SetVSync(i.value); });
@@ -136,7 +136,6 @@ namespace StevEngine::Renderer {
 		}
 		Data::settings.SaveToFile();
 	}
-
 
 	void RenderSystem::ResetGlobalShader(ShaderType type) {
 		if(type == VERTEX) {
@@ -188,6 +187,7 @@ namespace StevEngine::Renderer {
 		//  View matrix
 		vertexShaderProgram.SetShaderUniform("viewTransform", camera->GetView());
 		fragmentShaderProgram.SetShaderUniform("viewPosition", camera->GetParent()->GetWorldPosition());
+		fragmentShaderProgram.SetShaderUniform("viewDirection", camera->GetParent()->GetWorldRotation().Forward());
 		//  Projection matrix
 		vertexShaderProgram.SetShaderUniform("projectionTransform", camera->GetProjection());
 		//Lights

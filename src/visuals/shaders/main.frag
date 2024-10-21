@@ -1,47 +1,51 @@
 R"(
 #version 440 core
 
+//Input
 in VS_OUT {
 	vec3 Position;
 	vec2 UV;
 	mat3 TBN;
-	vec3 Normal;
 } fs_in;
-
 vec3 GetFragPosition() { return fs_in.Position; }
 vec2 GetFragUV() { return fs_in.UV; }
 mat3 GetFragTBN() { return fs_in.TBN; }
+uniform vec3 viewPosition;
+uniform vec3 viewDirection;
+vec3 GetViewPosition() { return viewPosition; }
+vec3 GetViewDirection() { return viewDirection; }
 
-uniform vec4 objectColor;
-vec4 GetObjectColor() { return objectColor; }
-uniform bool objectIsTextured;
-uniform sampler2D objectTexture;
-vec4 GetObjectTexture(vec2 uv) {
-	vec4 tex = vec4(1.0);
-	if(objectIsTextured) {
-		tex = texture(objectTexture, uv);
+//Material
+uniform Material objectMaterial;
+Material GetObjectMaterial() { return objectMaterial; }
+vec4 GetObjectColor() { return objectMaterial.color; }
+//Textures
+uniform sampler2D albedoTexture;
+uniform bool usingAlbedoTexture;
+uniform sampler2D normalTexture;
+uniform bool usingNormalTexture;
+vec4 GetObjectAlbedo(vec2 uv) {
+	vec4 albedo = vec4(1.0);
+	if(usingAlbedoTexture) {
+		albedo = texture(albedoTexture, uv);
 	}
-	return tex;
+	return albedo;
 }
-uniform bool objectIsNormalMapped;
-uniform sampler2D objectNormalMap;
 vec3 GetFragNormal(vec2 uv) {
 	vec3 normal;
-	if(objectIsNormalMapped) {
+	if(usingNormalTexture) {
 		//Get and transform RGB values of normal map:
-		normal = texture(objectNormalMap, uv).rgb;
-		normal = normal * 2.0 - 1.0;
+		normal = texture(normalTexture, uv).rgb * 2.0 - 1.0;
 		normal = normalize(fs_in.TBN * normal);
-		normal = vec3(0.5);
 	}
 	else {
 		//Set normal based on TBN matrix:
 		normal = normalize(fs_in.TBN * vec3(0,0,1));
-		//normal = fs_in.Normal;
 	}
 	return normal;
 }
 
+//Output
 out vec4 FragColor;
 void SetFragColor(vec4 color) {
 	FragColor = color;

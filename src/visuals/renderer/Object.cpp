@@ -1,8 +1,8 @@
 #ifdef StevEngine_RENDERER_GL
 #include "Object.hpp"
-#include "utilities/Color.hpp"
 #include "utilities/Vertex.hpp"
 #include "visuals/Texture.hpp"
+#include "visuals/Material.hpp"
 #include "visuals/renderer/RenderSystem.hpp"
 #include "visuals/Lights.hpp"
 #include "visuals/Camera.hpp"
@@ -17,7 +17,6 @@
 #include "glad/gl.h"
 
 using StevEngine::Utilities::Vertex;
-using StevEngine::Utilities::Color;
 using namespace StevEngine::Visuals;
 
 namespace StevEngine::Renderer {
@@ -41,8 +40,8 @@ namespace StevEngine::Renderer {
 		}
 		return result;
 	}
-	Object::Object(const std::vector<Vertex>& vertices, const Color& color, const Visuals::Texture& textureData, const Visuals::Texture& normalMapData)
-		: texture(textureData), normalMap(normalMapData) {
+	Object::Object(const std::vector<Vertex>& vertices, const Visuals::Material& material)
+		: material(material) {
 		//Create indices and filter out duplicates
 		std::vector<Vertex> uniqueVertices;
 		std::vector<uint32_t> newIndices;
@@ -66,11 +65,9 @@ namespace StevEngine::Renderer {
 		for(int i = 0; i < indexCount; i++) {
 			this->indices[i] = newIndices[i];
 		}
-		//Bind texture
-		SetTexture(textureData);
 	}
-	Object::Object(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, const Utilities::Color& color, const Visuals::Texture& textureData, const Visuals::Texture& normalMapData)
-		: vertices(new float[vertices.size()]), vertexCount(vertices.size()), indices(new uint32_t[indices.size()]), indexCount(indices.size())
+	Object::Object(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices,  const Visuals::Material& material)
+		: vertices(new float[vertices.size()]), vertexCount(vertices.size()), indices(new uint32_t[indices.size()]), indexCount(indices.size()), material(material)
 	{
 		auto floatVertices = ToFloatList(vertices);
 		vertexCount = floatVertices.size();
@@ -83,29 +80,11 @@ namespace StevEngine::Renderer {
 		for(int i = 0; i < indexCount; i++) {
 			this->indices[i] = indices[i];
 		}
-		SetTexture(textureData);
-		SetTexture(normalMapData);
 	}
-	Object::Object(const Object& instance, const Color& color, const Visuals::Texture& textureData, const Visuals::Texture& normalMapData)
-		: indices(instance.indices), indexCount(instance.indexCount), vertices(instance.vertices), vertexCount(instance.vertexCount), color(color)
-	{
-		SetTexture(textureData);
-		SetTexture(normalMapData);
-	}
-	void Object::SetTexture(const Visuals::Texture& textureData) {
-		texture = textureData;
-		texture.BindTexture();
-	}
-	void Object::SetNormalMap(const Visuals::Texture& normalData) {
-		normalMap = normalData;
-		normalMap.BindTexture();
-	}
-	void Object::FreeTexture() {
-		texture.FreeTexture();
-	}
-	void Object::FreeNormalMap() {
-		normalMap.FreeTexture();
-	}
+	Object::Object(const Object& instance)
+		: indices(instance.indices), indexCount(instance.indexCount), vertices(instance.vertices), vertexCount(instance.vertexCount), material(instance.material) {}
+
+	//Shaders
 	void Object::AddShader(Renderer::ShaderProgram program) {
 		if(shaders.contains(program.GetType())) RemoveShader(program.GetType());
 		program.RelinkProgram();
@@ -122,6 +101,7 @@ namespace StevEngine::Renderer {
 		const ShaderProgram* vertexProgram = &render.GetDefaultVertexShaderProgram();
 		const ShaderProgram* fragmentProgram = &render.GetDefaultFragmentShaderProgram();
 		bool usingCustomShaders = shaders.size() > 0;
+		bool usingCustomFragmentShader = false;
 		if(usingCustomShaders) {
 			//Set shader programs
 			glGenProgramPipelines(1, &pipeline);
@@ -132,6 +112,7 @@ namespace StevEngine::Renderer {
 			glUseProgramStages(pipeline, GL_VERTEX_SHADER_BIT, vertexProgram->GetLocation());
 			if(shaders.contains(FRAGMENT)) {
 				fragmentProgram = &shaders.at(FRAGMENT);
+				usingCustomFragmentShader = true;
 			}
 			glUseProgramStages(pipeline, GL_FRAGMENT_SHADER_BIT, fragmentProgram->GetLocation());
 			//Update program with basic info
@@ -139,11 +120,11 @@ namespace StevEngine::Renderer {
 			//  View matrix
 			vertexProgram->SetShaderUniform("viewTransform", camera->GetView());
 			fragmentProgram->SetShaderUniform("viewPosition", camera->GetParent()->GetWorldPosition());
+			fragmentProgram->SetShaderUniform("viewDirection", camera->GetParent()->GetWorldRotation().Forward());
 			//  Projection matrix
 			vertexProgram->SetShaderUniform("projectionTransform", camera->GetProjection());
 			//  Ambient lighting
-			auto ambientLightColor = render.GetAmbientLightColor();
-			fragmentProgram->SetShaderUniform("ambientColor", ambientLightColor);
+			fragmentProgram->SetShaderUniform("ambientColor", render.GetAmbientLightColor());
 			fragmentProgram->SetShaderUniform("ambientStrength", render.GetAmbientLightStrength());
 			//	Other lights
 			for(auto light : render.GetLights()) {
@@ -153,21 +134,25 @@ namespace StevEngine::Renderer {
 		//Update transform
 		vertexProgram->SetShaderUniform("objectTransform", transform);
 		//Update texture
-		fragmentProgram->SetShaderUniform("objectIsTextured", texture.IsBound());
-		if(texture.IsBound()) {
+		const Visuals::Texture& albedo = material.GetAlbedo();
+		bool isAlbedoTextured = albedo.IsBound();
+		fragmentProgram->SetShaderUniform("usingAlbedoTexture", isAlbedoTextured);
+		if(isAlbedoTextured) {
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture.GetGLLocation());
-			fragmentProgram->SetShaderUniform("objectTexture", 0);
+			glBindTexture(GL_TEXTURE_2D, albedo.GetGLLocation());
+			fragmentProgram->SetShaderUniform("albedoTexture", 0);
 		}
 		//Update normal map
-		fragmentProgram->SetShaderUniform("objectIsNormalMapped", normalMap.IsBound());
-		if(normalMap.IsBound()) {
+		const Visuals::Texture& normalMap = material.GetNormal();
+		bool isNormalTextured = normalMap.IsBound();
+		fragmentProgram->SetShaderUniform("usingNormalTexture", isNormalTextured);
+		if(isNormalTextured) {
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, normalMap.GetGLLocation());
-			fragmentProgram->SetShaderUniform("objectNormalMap", 1);
+			fragmentProgram->SetShaderUniform("normalTexture", 1);
 		}
 		//Update color
-		fragmentProgram->SetShaderUniform("objectColor", color);
+		fragmentProgram->SetShaderUniform("objectMaterial.color", material.color);
 		//Update material
 		fragmentProgram->SetShaderUniform("objectMaterial.ambient", material.ambient);
 		fragmentProgram->SetShaderUniform("objectMaterial.diffuse", material.diffuse);
@@ -180,8 +165,10 @@ namespace StevEngine::Renderer {
 		//Remove custom pipeline
 		if(usingCustomShaders) {
 			//Reset lights
-			for(Light* light : render.GetLights()) {
-				light->ResetShader(*fragmentProgram);
+			if(usingCustomFragmentShader) {
+				for(Light* light : render.GetLights()) {
+					light->ResetShader(*fragmentProgram);
+				}
 			}
 			glBindProgramPipeline(render.GetShaderPipeline());
 			glDeleteProgramPipelines(1, &pipeline);

@@ -6,13 +6,6 @@ layout(location = 1) in vec2 vertexUV;
 layout(location = 2) in vec3 vertexNormal;
 layout(location = 3) in vec3 vertexTangent;
 
-struct Vertex {
-	vec3 position;
-	vec2 uv;
-	vec3 normal;
-	vec3 tangent;
-};
-
 Vertex getVertex() {
 	return Vertex(vertexPosition, vertexUV, vertexNormal, vertexTangent);
 }
@@ -28,7 +21,6 @@ out VS_OUT {
 	out vec3 Position;
 	out vec2 UV;
 	out mat3 TBN;
-	out vec3 Normal;
 } vs_out;
 
 
@@ -41,6 +33,5 @@ void setFragInfo(Vertex info) {
 	Tangent = normalize(Tangent - dot(Tangent, Normal) * Normal);
 	vec3 Bitangent = cross(Normal, Tangent);
 	vs_out.TBN = mat3(Tangent, Bitangent, Normal);
-	vs_out.Normal = normalize(info.normal);
 }
 )"
