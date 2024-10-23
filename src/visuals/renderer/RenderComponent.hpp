@@ -15,8 +15,6 @@
 
 namespace StevEngine::Renderer {
 	class RenderComponent : public Component {
-		friend class StevEngine::GameObject;
-
 		public:
 			RenderComponent(const Object& object, std::string type);
 			RenderComponent(const Object& object, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, std::string type);
