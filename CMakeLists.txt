@@ -69,6 +69,12 @@ if (USE_AUDIO)
 	set(build_string "${build_string}, AUDIO")
 endif()
 
+option(USE_GUI "Use the Graphical User Interface system" ON)
+if (USE_GUI AND SHOW_WINDOW)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_GUI)
+	set(build_string "${build_string}, GUI")
+endif()
+
 message("Building ${build_string}")
 
 # external libraries
@@ -166,6 +172,11 @@ if(USE_RENDERER_GL OR USE_PHYSICS)
 	if(WIN32)
 		set_property(TARGET assimp PROPERTY MSVC_RUNTIME_LIBRARY ${MSVC_LIBRARY})
 	endif()
+endif()
+
+# # Nuklear
+if (USE_GUI)
+	target_include_directories(${PROJECT_NAME} PUBLIC libs/Nuklear)
 endif()
 
 # # YAML

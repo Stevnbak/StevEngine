@@ -16,3 +16,6 @@
 [submodule "libs/glad"]
 	path = libs/glad
 	url = https://github.com/Dav1dde/glad.git
+[submodule "libs/Nuklear"]
+	path = libs/Nuklear
+	url = https://github.com/Immediate-Mode-UI/Nuklear.git
