@@ -31,16 +31,17 @@ namespace StevEngine {
 				events.Publish(InputMouseMoveEvent(mousePosition.X, mousePosition.Y, mouseDelta.X, mouseDelta.Y));
 				break;
 			case SDL_MOUSEWHEEL:
-				mouseWheelDelta = ev.wheel.preciseY;
-				events.Publish(InputMouseWheelEvent(mouseWheelDelta));
+				mouseWheelDelta.X = ev.wheel.preciseX;
+				mouseWheelDelta.Y = ev.wheel.preciseY;
+				events.Publish(InputMouseWheelEvent(ev.wheel.preciseX, ev.wheel.preciseY));
 				break;
 			case SDL_MOUSEBUTTONDOWN:
 				mouseInputMap[ev.button.button] = true;
-				events.Publish(InputMouseButtonDownEvent(ev.button.button));
+				events.Publish(InputMouseButtonDownEvent(ev.button.button, ev.button.x, ev.button.y, ev.button.clicks));
 				break;
 			case SDL_MOUSEBUTTONUP:
 				mouseInputMap[ev.button.button] = false;
-				events.Publish(InputMouseButtonUpEvent(ev.button.button));
+				events.Publish(InputMouseButtonUpEvent(ev.button.button, ev.button.x, ev.button.y, ev.button.clicks));
 				break;
 		}
 	}

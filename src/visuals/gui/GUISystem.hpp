@@ -1,4 +1,5 @@
 #pragma once
+#include <SDL_keycode.h>
 #ifdef StevEngine_GUI
 #include "visuals/shaders/ShaderProgram.hpp"
 #include "utilities/Matrix4.hpp"
@@ -16,8 +17,8 @@ namespace StevEngine::Visuals {
 		public:
 			GUISystem();
 			void Init();
-			void DrawCanvas();
 			nk_command_buffer* GetCanvas() { return canvas; }
+			nk_context* GetContext() { return &ctx; }
 			nk_user_font* GetDefaultFont() const { return &font->handle; }
 			~GUISystem();
 		private:
@@ -33,7 +34,10 @@ namespace StevEngine::Visuals {
 			nk_command_buffer* canvas; //Nuklear canvas buffer
 			//Functions
 			void SetViewSize(int width, int height);
+			void DrawCanvas();
 			void Update(double deltaTime);
+			void HandleKeyInput(SDL_Keycode key, bool down);
+			void HandleMouseButtonInput(uint8_t button, int x, int y, uint8_t clicks, bool down);
 	};
 
 	extern GUISystem guiSystem;

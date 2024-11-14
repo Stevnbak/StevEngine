@@ -1,3 +1,6 @@
+#include "inputs/InputSystem.hpp"
+#include "main/EventSystem.hpp"
+#include <SDL_keycode.h>
 #ifdef StevEngine_GUI
 #define NK_IMPLEMENTATION
 #include "GUISystem.hpp"
@@ -75,16 +78,16 @@ namespace StevEngine::Visuals {
 		nk_font_atlas_end(&atlas, nk_handle_id((int)font_texture), &tex_null);
 		//Init Nuklear
 		int vs = sizeof(struct UI_Vertex);
-        size_t vp = offsetof(struct UI_Vertex, position);
-        size_t vt = offsetof(struct UI_Vertex, uv);
-        size_t vc = offsetof(struct UI_Vertex, col);
+		size_t vp = offsetof(struct UI_Vertex, position);
+		size_t vt = offsetof(struct UI_Vertex, uv);
+		size_t vc = offsetof(struct UI_Vertex, col);
 		nk_init_default(&ctx, &font->handle);
 		static const nk_draw_vertex_layout_element vertex_layout[] = {
-            {NK_VERTEX_POSITION, NK_FORMAT_FLOAT, NK_OFFSETOF(struct UI_Vertex, position)},
-            {NK_VERTEX_TEXCOORD, NK_FORMAT_FLOAT, NK_OFFSETOF(struct UI_Vertex, uv)},
-            {NK_VERTEX_COLOR, NK_FORMAT_R8G8B8A8, NK_OFFSETOF(struct UI_Vertex, col)},
-            {NK_VERTEX_LAYOUT_END}
-        };
+			{NK_VERTEX_POSITION, NK_FORMAT_FLOAT, NK_OFFSETOF(struct UI_Vertex, position)},
+			{NK_VERTEX_TEXCOORD, NK_FORMAT_FLOAT, NK_OFFSETOF(struct UI_Vertex, uv)},
+			{NK_VERTEX_COLOR, NK_FORMAT_R8G8B8A8, NK_OFFSETOF(struct UI_Vertex, col)},
+			{NK_VERTEX_LAYOUT_END}
+		};
 		cfg.shape_AA = NK_ANTI_ALIASING_ON;
 		cfg.line_AA = NK_ANTI_ALIASING_ON;
 		cfg.vertex_layout = vertex_layout;
@@ -97,8 +100,8 @@ namespace StevEngine::Visuals {
 
 		struct nk_rect rect = nk_rect(0, 0, settings.WIDTH, settings.HEIGHT);
 		ctx.style.window.spacing = nk_vec2(0,0);
-	    ctx.style.window.padding = nk_vec2(0,0);
-	    ctx.style.window.fixed_background = nk_style_item_color(nk_rgba(0, 0, 0, 0));
+		ctx.style.window.padding = nk_vec2(0,0);
+		ctx.style.window.fixed_background = nk_style_item_color(nk_rgba(0, 0, 0, 0));
 		nk_begin(&ctx, "Canvas", rect, NK_WINDOW_OPTIONS);
 		canvas = nk_window_get_canvas(&ctx);
 		//Initialize buffers
@@ -122,11 +125,41 @@ namespace StevEngine::Visuals {
 		glVertexArrayAttribBinding(VAO, 2, 0);
 
 		glVertexArrayElementBuffer(VAO, EBO);
-        glVertexArrayVertexBuffer(VAO, 0, VBO, 0, vs);
-		//Event listener
-		engine->GetEvents()->Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { return this->DrawCanvas(); });
-		engine->GetEvents()->Subscribe<UpdateEvent>([this] (UpdateEvent e) { return this->Update(e.deltaTime); });
-		engine->GetEvents()->Subscribe<WindowResizeEvent>([this] (WindowResizeEvent i) { return this->SetViewSize (i.width, i.height); });
+		glVertexArrayVertexBuffer(VAO, 0, VBO, 0, vs);
+		//Event listeners
+		EventManager* engineEvents = engine->GetEvents();
+		engineEvents->Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { return DrawCanvas(); });
+		engineEvents->Subscribe<UpdateEvent>([this] (UpdateEvent e) { return Update(e.deltaTime); });
+		engineEvents->Subscribe<WindowResizeEvent>([this] (WindowResizeEvent i) { return SetViewSize (i.width, i.height); });
+
+		//Input events
+		engineEvents->Subscribe<PreUpdateEvent>([this] (PreUpdateEvent) {
+			nk_input_begin(&ctx);
+		});
+		#ifdef StevEngine_INPUTS
+		EventManager* inputEvents = inputManager.GetEvents();
+		//Keyboard inputs
+		inputEvents->Subscribe<InputKeyDownEvent>([this](InputKeyDownEvent e) {
+			HandleKeyInput(e.key, true);
+		});
+		inputEvents->Subscribe<InputKeyUpEvent>([this](InputKeyUpEvent e) {
+			HandleKeyInput(e.key, false);
+		});
+		//Mouse inputs
+		inputEvents->Subscribe<InputMouseButtonDownEvent>([this](InputMouseButtonDownEvent e) {
+			HandleMouseButtonInput(e.button, e.x, e.y, e.clicks, true);
+		});
+		inputEvents->Subscribe<InputMouseButtonUpEvent>([this](InputMouseButtonUpEvent e) {
+			HandleMouseButtonInput(e.button, e.x, e.y, e.clicks, false);
+		});
+		inputEvents->Subscribe<InputMouseMoveEvent>([this](InputMouseMoveEvent e) {
+			nk_input_motion(&ctx, e.x, e.y);
+		});
+		inputEvents->Subscribe<InputMouseWheelEvent>([this](InputMouseWheelEvent e) {
+			nk_input_scroll(&ctx, nk_vec2(e.x, e.y));
+		});
+		//TODO: Add text input event!!
+		#endif
 	}
 
 	GUISystem::~GUISystem() {
@@ -141,6 +174,60 @@ namespace StevEngine::Visuals {
 
 	void GUISystem::Update(double deltaTime) {
 		ctx.delta_time_seconds = deltaTime;
+		nk_input_end(&ctx);
+	}
+
+	void GUISystem::HandleKeyInput(SDL_Keycode key, bool down) {
+		const uint8_t* state = SDL_GetKeyboardState(0);
+		switch(key)
+		{
+			case SDLK_RSHIFT: /* RSHIFT & LSHIFT share same routine */
+			case SDLK_LSHIFT:		nk_input_key(&ctx, NK_KEY_SHIFT, down); break;
+			case SDLK_DELETE:		nk_input_key(&ctx, NK_KEY_DEL, down); break;
+			case SDLK_RETURN:		nk_input_key(&ctx, NK_KEY_ENTER, down); break;
+			case SDLK_TAB:			nk_input_key(&ctx, NK_KEY_TAB, down); break;
+			case SDLK_BACKSPACE:	nk_input_key(&ctx, NK_KEY_BACKSPACE, down); break;
+			case SDLK_HOME:			nk_input_key(&ctx, NK_KEY_TEXT_START, down);
+									nk_input_key(&ctx, NK_KEY_SCROLL_START, down); break;
+			case SDLK_END:	   		nk_input_key(&ctx, NK_KEY_TEXT_END, down);
+									nk_input_key(&ctx, NK_KEY_SCROLL_END, down); break;
+			case SDLK_PAGEDOWN:  	nk_input_key(&ctx, NK_KEY_SCROLL_DOWN, down); break;
+			case SDLK_PAGEUP:		nk_input_key(&ctx, NK_KEY_SCROLL_UP, down); break;
+			case SDLK_z:		 	nk_input_key(&ctx, NK_KEY_TEXT_UNDO, down && state[SDL_SCANCODE_LCTRL]); break;
+			case SDLK_r:		 	nk_input_key(&ctx, NK_KEY_TEXT_REDO, down && state[SDL_SCANCODE_LCTRL]); break;
+			case SDLK_c:		 	nk_input_key(&ctx, NK_KEY_COPY, down && state[SDL_SCANCODE_LCTRL]); break;
+			case SDLK_v:		 	nk_input_key(&ctx, NK_KEY_PASTE, down && state[SDL_SCANCODE_LCTRL]); break;
+			case SDLK_x:		 	nk_input_key(&ctx, NK_KEY_CUT, down && state[SDL_SCANCODE_LCTRL]); break;
+			case SDLK_b:		 	nk_input_key(&ctx, NK_KEY_TEXT_LINE_START, down && state[SDL_SCANCODE_LCTRL]); break;
+			case SDLK_e:		 	nk_input_key(&ctx, NK_KEY_TEXT_LINE_END, down && state[SDL_SCANCODE_LCTRL]); break;
+			case SDLK_UP:			nk_input_key(&ctx, NK_KEY_UP, down); break;
+			case SDLK_DOWN:	  		nk_input_key(&ctx, NK_KEY_DOWN, down); break;
+			case SDLK_LEFT:
+				if (state[SDL_SCANCODE_LCTRL])
+					nk_input_key(&ctx, NK_KEY_TEXT_WORD_LEFT, down);
+				else nk_input_key(&ctx, NK_KEY_LEFT, down);
+				break;
+			case SDLK_RIGHT:
+				if (state[SDL_SCANCODE_LCTRL])
+					nk_input_key(&ctx, NK_KEY_TEXT_WORD_RIGHT, down);
+				else nk_input_key(&ctx, NK_KEY_RIGHT, down);
+				break;
+		}
+	}
+	void GUISystem::HandleMouseButtonInput(uint8_t button, int x, int y, uint8_t clicks, bool down) {
+        switch(button)
+        {
+            case SDL_BUTTON_LEFT:
+                if (clicks > 1) nk_input_button(&ctx, NK_BUTTON_DOUBLE, x, y, down);
+                nk_input_button(&ctx, NK_BUTTON_LEFT, x, y, down);
+                break;
+            case SDL_BUTTON_MIDDLE:
+            	nk_input_button(&ctx, NK_BUTTON_MIDDLE, x, y, down);
+             	break;
+            case SDL_BUTTON_RIGHT:
+            	nk_input_button(&ctx, NK_BUTTON_RIGHT, x, y, down);
+             	break;
+        }
 	}
 
 	#ifdef StevEngine_RENDERER_GL

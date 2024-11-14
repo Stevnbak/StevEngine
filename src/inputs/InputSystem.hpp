@@ -37,7 +37,7 @@ namespace StevEngine {
 			std::unordered_map<Uint8, bool> mouseInputMap;
 			Utilities::Vector2 mousePosition;
 			Utilities::Vector2 mouseDelta;
-			double mouseWheelDelta;
+			Utilities::Vector2 mouseWheelDelta;
 			void HandleSDLEvent(const SDLEvent event);
 			void Update(double deltaTime);
 			void ResetMouseDelta();
@@ -70,24 +70,28 @@ namespace StevEngine {
 	};
 	class InputMouseWheelEvent : public Event {
 		public:
-			InputMouseWheelEvent(float value) : value(value) {}
+			InputMouseWheelEvent(float x, float y) : x(x), y(y) {}
 			const std::string GetEventType() const override { return GetStaticEventType(); };
 			static const std::string GetStaticEventType() {  return "InputMouseWheelEvent"; }
-			float value;
+			float x, y;
 	};
 	class InputMouseButtonDownEvent : public Event {
 		public:
-			InputMouseButtonDownEvent(Uint8 button) : button(button) {}
+			InputMouseButtonDownEvent(Uint8 button, int x, int y, Uint8 clicks)
+				: button(button), x(x), y(y), clicks(clicks) {}
 			const std::string GetEventType() const override { return GetStaticEventType(); };
 			static const std::string GetStaticEventType() {  return "InputMouseButtonDownEvent"; }
-			Uint8 button;
+			Uint8 button, clicks;
+			int x, y;
 	};
 	class InputMouseButtonUpEvent : public Event {
 		public:
-			InputMouseButtonUpEvent(Uint8 button) : button(button) {}
+			InputMouseButtonUpEvent(Uint8 button, int x, int y, Uint8 clicks)
+				: button(button), x(x), y(y), clicks(clicks) {}
 			const std::string GetEventType() const override { return GetStaticEventType(); };
 			static const std::string GetStaticEventType() {  return "InputMouseButtonUpEvent"; }
-			Uint8 button;
+			Uint8 button, clicks;
+			int x, y;
 	};
 	#endif
 }
