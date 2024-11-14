@@ -23,7 +23,7 @@ namespace StevEngine {
 		engine->GetEvents()->Subscribe<EngineStartEvent>([this] (EngineStartEvent) { this->ActivateDefault(); });
 		engine->GetEvents()->Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); });
 		#ifdef StevEngine_SHOW_WINDOW
-		engine->GetEvents()->Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { this->Draw(); });
+		engine->GetEvents()->Subscribe<EnginePreDrawEvent>([this] (EnginePreDrawEvent) { this->Draw(); });
 		#endif
 	}
 

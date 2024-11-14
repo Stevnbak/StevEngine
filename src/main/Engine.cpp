@@ -25,6 +25,7 @@
 #include "main/SceneManager.hpp"
 #include "visuals/Camera.hpp"
 #include "visuals/renderer/RenderSystem.hpp"
+#include "visuals/gui/GUISystem.hpp"
 
 //Get current process time in ms
 uint64_t GetTime() {
@@ -140,7 +141,9 @@ namespace StevEngine {
 
 			//Draw the frame
 			#ifdef StevEngine_SHOW_WINDOW
+			events.Publish(EnginePreDrawEvent());
 			events.Publish(EngineDrawEvent());
+			events.Publish(EnginePostDrawEvent());
 			#endif
 
 			//Calculate FPS:
@@ -272,6 +275,9 @@ namespace StevEngine {
 		sceneManager.Init();
 		#ifdef StevEngine_RENDERER_GL
 			Renderer::render.Init(engine->window);
+		#endif
+		#ifdef StevEngine_GUI
+			Visuals::guiSystem.Init();
 		#endif
 		#ifdef StevEngine_AUDIO
 			Audio::audio.Init();

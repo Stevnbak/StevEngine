@@ -1,3 +1,4 @@
+#include <string>
 #ifdef StevEngine_RENDERER_GL
 #include "RenderSystem.hpp"
 #include "main/Log.hpp"
@@ -61,8 +62,6 @@ namespace StevEngine::Renderer {
 		Log::Debug(std::format("OpenGL Shading Language Version: {}", (char *)glGetString(GL_SHADING_LANGUAGE_VERSION)), true);
 		Log::Debug(std::format("OpenGL Vendor: {}", (char *)glGetString(GL_VENDOR)), true);
 		Log::Debug(std::format("OpenGL Renderer: {}", (char *)glGetString(GL_RENDERER)), true);
-		//Enable GL options
-		glEnable(GL_DEPTH_TEST);
 		//Clear viewport
 		glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
 		//Buffers
@@ -100,6 +99,7 @@ namespace StevEngine::Renderer {
 		engine->GetEvents()->Subscribe<WindowResizeEvent>([this] (WindowResizeEvent i) { return this->SetViewSize (i.width, i.height); });
 		engine->GetEvents()->Subscribe<WindowVSyncEvent>([this] (WindowVSyncEvent i) { return this->SetVSync(i.value); });
 		engine->GetEvents()->Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { return this->DrawFrame(); });
+		engine->GetEvents()->Subscribe<EnginePostDrawEvent>([this] (EnginePostDrawEvent) { return this->NextFrame(); });
 
 		Log::Debug("Renderer has been initialized!", true);
 	}
@@ -120,6 +120,9 @@ namespace StevEngine::Renderer {
 		} else {
 			glDisable(GL_CULL_FACE);
 		}
+		faceCulling = enable;
+		cullFace = face;
+		cullClockWise = clockwise;
 	}
 
 	void RenderSystem::SetMSAA(bool enable, uint16_t amount) {
@@ -179,8 +182,12 @@ namespace StevEngine::Renderer {
 		//Clear color and depth buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//Bind vertex array
+		//Bind buffers & reset gl settings
 		glBindVertexArray(VAO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBindProgramPipeline(shaderPipeline);
+		SetFaceCulling(faceCulling, cullFace, cullClockWise);
 
 		//Camera matrices
 		Visuals::Camera* camera = sceneManager.GetActiveScene()->GetCamera();
@@ -201,8 +208,14 @@ namespace StevEngine::Renderer {
 		//Render objects from each render queue
 		for(int i = 0; i < queues.size(); i++) {
 			//Enable depth masking?
-			if(i == RenderQueue::TRANSPARENT) glDepthMask(GL_FALSE);
-			else glDepthMask(GL_TRUE);
+			if(i == RenderQueue::TRANSPARENT) {
+				glDepthMask(GL_FALSE);
+				glDisable(GL_DEPTH_TEST);
+			}
+			else {
+				glDepthMask(GL_TRUE);
+				glEnable(GL_DEPTH_TEST);
+			}
 			//Draw objects
 			for(RenderObject& object : queues[i]) {
 				object.Draw();
@@ -210,9 +223,13 @@ namespace StevEngine::Renderer {
 			//Clear queue
 			queues[i].clear();
 		}
-
 		//Cleanup
 		glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	}
+
+	void RenderSystem::NextFrame() {
 		// Refresh OpenGL window
 		SDL_GL_SwapWindow(engine->window);
 	}

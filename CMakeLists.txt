@@ -12,6 +12,7 @@ file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS "src/*.hpp")
 add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADERS})
 target_include_directories(${PROJECT_NAME} PUBLIC src)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
+target_compile_options(${PROJECT_NAME} PRIVATE "-Wno-conversion-null")
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
 	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_DEBUGGING)
@@ -177,6 +178,7 @@ endif()
 # # Nuklear
 if (USE_GUI)
 	target_include_directories(${PROJECT_NAME} PUBLIC libs/Nuklear)
+	target_compile_options(${PROJECT_NAME} PRIVATE "-Wno-deprecated-enum-enum-conversion")
 endif()
 
 # # YAML

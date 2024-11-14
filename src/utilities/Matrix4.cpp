@@ -273,7 +273,7 @@ namespace StevEngine::Utilities {
 	Matrix4 Matrix4::FromOrthographic(float width, float height, float clipNear, float clipFar) {
 		return Matrix4({
 			{2.0/width, 0, 0, 0},
-			{0, 2.0/width, 0, 0},
+			{0, 2.0/height, 0, 0},
 			{0, 0, (-2)/(clipFar - clipNear), -((clipNear + clipFar)/(clipFar - clipNear))},
 			{0, 0, 0, 1},
 		});

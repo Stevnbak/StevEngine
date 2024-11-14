@@ -18,6 +18,8 @@
 #include "visuals/Primitive.hpp"
 #include "visuals/ModelRenderer.hpp"
 #include "visuals/TerrainRenderer.hpp"
+#include "visuals/gui/GUISystem.hpp"
+#include "visuals/gui/GUIRectangle.hpp"
 #include "visuals/renderer/RenderComponent.hpp"
 #include "visuals/Lights.hpp"
 #include "utilities/Quaternion.hpp"
@@ -148,7 +150,6 @@ int main(int argc, char** argv) {
 	Renderer::render.SetFaceCulling(false);
 	Renderer::render.SetMSAA(true, 8);
 	engine->GetEvents()->Subscribe<UpdateEvent>(mainUpdate);
-	Renderer::render.SetFaceCulling(false);
 	//Debug logging:
 	Log::Debug("Debug log");
 	Log::Warning("Warning log");
@@ -394,6 +395,20 @@ int main(int argc, char** argv) {
 	});*/
 	#endif
 
+	//Draw canvas
+	#ifdef StevEngine_GUI
+	engine->GetEvents()->Subscribe<EnginePreDrawEvent>([](EnginePreDrawEvent) {
+		nk_command_buffer* canvas = Visuals::guiSystem.GetCanvas();
+	    nk_fill_rect(canvas, nk_rect(15,15,210,210), 5, nk_rgb(247, 230, 154));
+	    nk_fill_rect(canvas, nk_rect(20,20,200,200), 5, nk_rgb(188, 174, 118));
+	    nk_draw_text(canvas, nk_rect(30, 30, 150, 20), "Text to draw", 12, Visuals::guiSystem.GetDefaultFont(), nk_rgb(188,174,118), nk_rgb(0,0,0));
+	    nk_fill_rect(canvas, nk_rect(250,20,100,100), 0, nk_rgb(0,0,255));
+	    nk_fill_circle(canvas, nk_rect(20,250,100,100), nk_rgb(255,0,0));
+	    nk_fill_triangle(canvas, 250, 250, 350, 250, 300, 350, nk_rgb(0,255,0));
+	    nk_fill_arc(canvas, 300, 180, 50, 0, 3.141592654f * 3.0f / 4.0f, nk_rgb(255,255,0));
+	});
+	#endif
+
 	//Export scene
 	#ifdef StevEngine_PLAYER_DATA
 	scene->ExportToFile();
@@ -402,7 +417,7 @@ int main(int argc, char** argv) {
 
 	//Set background
 	#ifdef StevEngine_RENDERER_GL
-	Renderer::render.SetBackground(Color(0, 0, 0, 255));
+	Renderer::render.SetBackground(Color(0,0,0,255));
 	#endif
 
 	//Start engine

@@ -17,14 +17,16 @@ namespace StevEngine::Renderer {
 	const char* lightSource =
 		#include "visuals/shaders/lights.frag"
 	;
-	ShaderProgram::ShaderProgram(ShaderType shaderType) : shaderType(shaderType), modified(true), location(glCreateProgram()) {
+	ShaderProgram::ShaderProgram(ShaderType shaderType, bool includeDefaults) : shaderType(shaderType), modified(true), location(glCreateProgram()) {
 		glProgramParameteri(location, GL_PROGRAM_SEPARABLE, GL_TRUE);
-		//Add main shaders
-		if(shaderType == VERTEX) {
-			AddShader(Shader(vertexMainSource, shaderType));
-		} else {
-			AddShader(Shader(fragmentMainSource, shaderType));
-			AddShader(Shader(lightSource, shaderType));
+		//Add default shaders
+		if(includeDefaults) {
+			if(shaderType == VERTEX) {
+				AddShader(Shader(vertexMainSource, shaderType));
+			} else {
+				AddShader(Shader(fragmentMainSource, shaderType));
+				AddShader(Shader(lightSource, shaderType));
+			}
 		}
 	}
 
@@ -73,7 +75,6 @@ namespace StevEngine::Renderer {
 	void ShaderProgram::SetShaderUniform(const char* name, Utilities::Matrix4 value) const {
 		glProgramUniformMatrix4fv(location, glGetUniformLocation(location, name), 1, GL_FALSE, value.data());
 	}
-
 	void ShaderProgram::SetShaderUniform(const char* name, Utilities::Color value) const {
 		glProgramUniform4fv(location, glGetUniformLocation(location, name), 1, value.data());
 	}

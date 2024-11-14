@@ -49,7 +49,6 @@ namespace StevEngine {
 				void ResetGlobalShader(ShaderType type);
 				//For Engine
 				static const Uint32 WindowType();
-				void DrawFrame();
 				void SetViewSize(int WIDTH, int HEIGHT);
 				void SetVSync(bool vsync);
 				void SetFaceCulling(bool enable, GLenum face = GL_BACK, bool clockwise = false);
@@ -66,6 +65,11 @@ namespace StevEngine {
 				void AddLight(Visuals::Light* light);
 				void RemoveLight(Visuals::Light* light);
 			private:
+				//Functions
+				void DrawFrame();
+				void NextFrame();
+
+				//Context
 				SDL_GLContext context;
 				//Queues
 				std::array<std::vector<RenderObject>, RenderQueue::MUST_BE_LAST> queues;
@@ -78,11 +82,14 @@ namespace StevEngine {
 				uint32_t EBO; //Element Buffer Object
 				uint32_t VAO; //Vertex Array Object
 				//Background
-				Utilities::Color backgroundColor = {0, 0, 0, 255};
+				Utilities::Color backgroundColor = Utilities::Color(0, 0, 0, 255);
 				//Lights
 				std::vector<Visuals::Light*> lights;
 				Utilities::Color ambientLightColor;
 				float ambientLightStrength;
+				//Settings
+				bool faceCulling, cullClockWise;
+				GLenum cullFace;
 		};
 
 		extern RenderSystem render;

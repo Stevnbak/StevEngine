@@ -38,6 +38,18 @@ namespace StevEngine {
 				const std::string GetEventType() const override { return GetStaticEventType(); };
 				static const std::string GetStaticEventType() {  return "EngineDrawEvent"; }
 		};
+		class EnginePreDrawEvent : public Event {
+			public:
+				EnginePreDrawEvent() {}
+				const std::string GetEventType() const override { return GetStaticEventType(); };
+				static const std::string GetStaticEventType() {  return "EnginePreDrawEvent"; }
+		};
+		class EnginePostDrawEvent : public Event {
+			public:
+				EnginePostDrawEvent() {}
+				const std::string GetEventType() const override { return GetStaticEventType(); };
+				static const std::string GetStaticEventType() {  return "EnginePostDrawEvent"; }
+		};
 	#endif
 	class SDLEvent : public Event {
 		public:

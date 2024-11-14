@@ -1,10 +1,10 @@
 #pragma once
-#include "utilities/Matrix4.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "Shader.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Vector2.hpp"
 #include "utilities/Color.hpp"
+#include "utilities/Matrix4.hpp"
 
 #include <map>
 #include <cstdint>
@@ -14,7 +14,7 @@
 namespace StevEngine::Renderer {
 	class ShaderProgram {
 		public:
-			ShaderProgram(ShaderType shaderType);
+			ShaderProgram(ShaderType shaderType, bool includeDefaults = true);
 			ShaderProgram(YAML::Node node);
 			ShaderProgram() {};
 			//Set shaders
