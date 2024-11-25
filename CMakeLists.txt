@@ -81,7 +81,7 @@ message("Building ${build_string}")
 # external libraries
 set(BUILD_SHARED_LIBS OFF)
 
-# # GLAD
+## GLAD
 if(USE_RENDERER_GL)
 	option(BUILD_GLAD "Build GLAD as part of the build process" ON)
 	if(BUILD_GLAD)
@@ -95,7 +95,7 @@ if(USE_RENDERER_GL)
 	endif()
 endif()
 
-# # Jolt
+## Jolt
 if(USE_PHYSICS)
 	set(ENABLE_OBJECT_STREAM OFF)
 	set(USE_ASSERTS OFF)
@@ -105,6 +105,7 @@ if(USE_PHYSICS)
 	set(GENERATE_DEBUG_SYMBOLS OFF)
 	set(DOUBLE_PRECISION ON)
 	add_subdirectory(libs/JoltPhysics/Build)
+	set_property(DIRECTORY "libs/JoltPhysics/Build" APPEND PROPERTY COMPILE_OPTIONS "-Wno-dev")
 	target_link_libraries(${PROJECT_NAME} PRIVATE Jolt)
 	target_include_directories(${PROJECT_NAME} PUBLIC libs/JoltPhysics)
 	if(WIN32)
@@ -112,7 +113,7 @@ if(USE_PHYSICS)
 	endif()
 endif()
 
-# # SDL2
+## SDL2
 find_package(SDL2 REQUIRED)
 if(TARGET SDL2::SDL2main)
 	target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2main)
@@ -130,7 +131,7 @@ else()
 	endif()
 endif()
 
-# # SDL_Mixer
+## SDL_Mixer
 if(USE_AUDIO)
 	find_package(SDL2_mixer REQUIRED)
 	target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_mixer::SDL2_mixer)
@@ -143,7 +144,7 @@ if(USE_AUDIO)
 	endif()
 endif()
 
-# # SDL_Image
+## SDL_Image
 if(USE_RENDERER_GL)
 	find_package(SDL2_image REQUIRED)
 
@@ -160,7 +161,7 @@ if(USE_RENDERER_GL)
 	endif()
 endif()
 
-# # Assimp
+## Assimp
 if(USE_RENDERER_GL OR USE_PHYSICS)
 	message("Configurating Assimp...")
 	set(ASSIMP_NO_EXPORT ON)
@@ -175,17 +176,17 @@ if(USE_RENDERER_GL OR USE_PHYSICS)
 	endif()
 endif()
 
-# # Nuklear
+## Nuklear
 if (USE_GUI)
 	target_include_directories(${PROJECT_NAME} PUBLIC libs/Nuklear)
 	target_compile_options(${PROJECT_NAME} PRIVATE "-Wno-deprecated-enum-enum-conversion")
 endif()
 
-# # YAML
+## YAML
 add_subdirectory(libs/yaml-cpp)
 target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
 
-# # uuidv7
+## uuidv7
 target_include_directories(${PROJECT_NAME} PUBLIC libs/uuidv7-h)
 
 # Debug executable
