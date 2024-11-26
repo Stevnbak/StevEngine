@@ -2,7 +2,6 @@
 #include <SDL_keycode.h>
 #ifdef StevEngine_GUI
 #include "visuals/shaders/ShaderProgram.hpp"
-#include "utilities/Matrix4.hpp"
 #define NK_INCLUDE_FIXED_TYPES
 #define NK_INCLUDE_DEFAULT_ALLOCATOR
 #define NK_INCLUDE_STANDARD_IO

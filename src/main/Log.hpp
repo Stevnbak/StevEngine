@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <format>
+
 namespace Log {
 	void Normal(std::string msg, bool fromEngine = false);
 	void Debug(std::string msg, bool fromEngine = false);

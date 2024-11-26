@@ -1,11 +1,9 @@
 #include "Quaternion.hpp"
-
-#include "main/Log.hpp"
 #include "utilities/Vector4.hpp"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include <sstream>
+#include <format>
 
 namespace StevEngine::Utilities {
 	//Constructors

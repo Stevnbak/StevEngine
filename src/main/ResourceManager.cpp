@@ -1,10 +1,10 @@
 #include "ResourceManager.hpp"
-#include "Engine.hpp"
+#include "main/Log.hpp"
 
 #include <cstddef>
-#include <filesystem>
+#include <sstream>
+#include <vector>
 #include <fstream>
-#include <algorithm>
 #include <string>
 #include <stdio.h>
 #include <string.h>

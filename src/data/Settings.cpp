@@ -1,11 +1,10 @@
 #ifdef StevEngine_PLAYER_DATA
-#include "main/Engine.hpp"
 #include "Settings.hpp"
 #include "DataManager.hpp"
 
 #include <string>
 #include <filesystem>
-#include <algorithm>
+#include <fstream>
 
 namespace StevEngine::Data {
 	Settings settings = Settings();

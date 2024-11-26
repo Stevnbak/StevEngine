@@ -1,12 +1,9 @@
 #include "Log.hpp"
-#include "Engine.hpp"
 
 #include <iostream>
 #include <fstream>
 #include <filesystem>
 #include <ctime>
-#include <algorithm>
-#include <filesystem>
 
 namespace Log {
 	//Engine log?

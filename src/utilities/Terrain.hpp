@@ -2,6 +2,7 @@
 
 #include "yaml-cpp/yaml.h"
 #include <cstdint>
+
 namespace StevEngine::Utilities {
 	struct TerrainData {
 			TerrainData(uint32_t size, double step, double* data);

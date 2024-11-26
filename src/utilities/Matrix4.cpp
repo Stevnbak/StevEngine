@@ -1,11 +1,9 @@
 #include "Matrix4.hpp"
-#include "main/Log.hpp"
 #include "utilities/Quaternion.hpp"
 #include "utilities/Vector2.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Vector4.hpp"
 #include <cmath>
-#include <functional>
 #include <string>
 
 namespace StevEngine::Utilities {

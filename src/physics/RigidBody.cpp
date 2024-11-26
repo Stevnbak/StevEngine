@@ -2,14 +2,12 @@
 #include "RigidBody.hpp"
 #include "physics/Colliders.hpp"
 #include "physics/PhysicsSystem.hpp"
-#include "main/Engine.hpp"
 #include "physics/Layers.hpp"
 #include "main/Log.hpp"
 #include "main/GameObject.hpp"
 #include "main/Component.hpp"
 
 #include <math.h>
-#include <iostream>
 
 namespace StevEngine::Physics {
 	//Constructor

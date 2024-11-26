@@ -4,14 +4,11 @@
 #include "utilities/Color.hpp"
 #include "visuals/shaders/Shader.hpp"
 #include "visuals/shaders/ShaderProgram.hpp"
-#include "main/EventSystem.hpp"
 
 #include <SDL.h>
 
 #include <vector>
 #include <array>
-#include <type_traits>
-#include <cstddef>
 #include <cstdint>
 
 namespace StevEngine {

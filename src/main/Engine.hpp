@@ -1,6 +1,5 @@
 #pragma once
 #include "EventSystem.hpp"
-#include "Log.hpp"
 #include <SDL.h>
 #include <sys/types.h>
 

@@ -1,14 +1,9 @@
 #include "Vector3.hpp"
 #include "Vector2.hpp"
 
-#include "main/Log.hpp"
-
-#include <algorithm>
-
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <format>
-#include <sstream>
 
 namespace StevEngine::Utilities {
 	//Constructors

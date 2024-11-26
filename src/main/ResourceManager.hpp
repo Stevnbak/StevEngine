@@ -1,12 +1,7 @@
 #pragma once
 #include <SDL.h>
-#include <cstddef>
 #include <string>
-#include <filesystem>
-#include <fstream>
-#include <algorithm>
 #include <map>
-#include <vector>
 
 namespace StevEngine {
 	namespace Resources {

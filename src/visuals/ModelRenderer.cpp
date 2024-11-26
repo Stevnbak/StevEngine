@@ -1,14 +1,11 @@
 #ifdef StevEngine_RENDERER_GL
 #include "ModelRenderer.hpp"
-#include "main/Engine.hpp"
-#include "main/Log.hpp"
 #include "main/ResourceManager.hpp"
 #include "main/Component.hpp"
 #include "visuals/renderer/RenderSystem.hpp"
 #include "visuals/renderer/Object.hpp"
 #include "visuals/Material.hpp"
 #include "utilities/Model.hpp"
-#include "utilities/Color.hpp"
 #include <vector>
 
 using namespace StevEngine::Renderer;

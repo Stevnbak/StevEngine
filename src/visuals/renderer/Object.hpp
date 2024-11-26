@@ -5,12 +5,8 @@
 #include <SDL.h>
 #include <glad/gl.h>
 
-#include "utilities/Vector3.hpp"
-#include "utilities/Quaternion.hpp"
 #include "utilities/Vertex.hpp"
-#include "utilities/Color.hpp"
 #include "utilities/Matrix4.hpp"
-#include "visuals/Texture.hpp"
 #include "visuals/Material.hpp"
 #include "visuals/shaders/ShaderProgram.hpp"
 

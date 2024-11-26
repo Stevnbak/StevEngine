@@ -1,15 +1,13 @@
 #include "inputs/InputSystem.hpp"
 #include "main/EventSystem.hpp"
+#include "utilities/Matrix4.hpp"
 #include <SDL_keycode.h>
 #ifdef StevEngine_GUI
 #define NK_IMPLEMENTATION
 #include "GUISystem.hpp"
 #include "main/Engine.hpp"
 #include "main/EngineEvents.hpp"
-#include "main/Log.hpp"
 #include "utilities/Matrix4.hpp"
-#include "visuals/renderer/Object.hpp"
-#include "visuals/renderer/RenderSystem.hpp"
 #include "visuals/shaders/Shader.hpp"
 
 #include "glad/gl.h"

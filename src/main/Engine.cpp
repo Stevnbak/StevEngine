@@ -5,10 +5,6 @@
 #include <SDL_timer.h>
 #include <SDL_video.h>
 #include <cstdint>
-#include <iostream>
-#include <map>
-#include <chrono>
-#include <algorithm>
 
 //Engine
 #include "audio/AudioSystem.hpp"
@@ -16,14 +12,12 @@
 #include "main/EventSystem.hpp"
 #include "main/EngineEvents.hpp"
 #include "inputs/InputSystem.hpp"
-#include "main/ResourceManager.hpp"
 #include "data/Settings.hpp"
 #include "physics/PhysicsSystem.hpp"
 #include "main/GameObject.hpp"
 #include "main/Log.hpp"
 #include "main/Scene.hpp"
 #include "main/SceneManager.hpp"
-#include "visuals/Camera.hpp"
 #include "visuals/renderer/RenderSystem.hpp"
 #include "visuals/gui/GUISystem.hpp"
 

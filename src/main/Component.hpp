@@ -1,6 +1,4 @@
 #pragma once
-#include "main/EventSystem.hpp"
-#include "main/Log.hpp"
 #include "utilities/ID.hpp"
 #include "utilities/Matrix4.hpp"
 
@@ -8,8 +6,6 @@
 
 #include <sys/types.h>
 #include <functional>
-#include <typeindex>
-#include <typeinfo>
 #include <unordered_map>
 
 namespace StevEngine {

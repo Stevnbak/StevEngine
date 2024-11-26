@@ -6,7 +6,6 @@
 #include "utilities/Vector3.hpp"
 
 #include <math.h>
-#include <iostream>
 #include <cstdarg>
 
 #include <Jolt/Core/Memory.h>
