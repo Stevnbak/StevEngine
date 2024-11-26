@@ -3,6 +3,7 @@
 #include "main/Log.hpp"
 
 #include <string>
+#include <fstream>
 #include <filesystem>
 #include <algorithm>
 

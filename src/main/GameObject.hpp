@@ -5,15 +5,11 @@
 #include "utilities/Quaternion.hpp"
 #include "utilities/Matrix4.hpp"
 #include "main/Log.hpp"
-#include "inputs/InputSystem.hpp"
-#include "main/ResourceManager.hpp"
 #include "main/Component.hpp"
 
 #include <yaml-cpp/yaml.h>
 
-#include <map>
 #include <vector>
-#include <array>
 #include <type_traits>
 
 namespace StevEngine {

@@ -7,10 +7,7 @@
 #include "visuals/Lights.hpp"
 #include "visuals/Camera.hpp"
 #include "main/SceneManager.hpp"
-#include "main/Log.hpp"
 
-#include <memory>
-#include <string>
 #include <cstdint>
 #include <algorithm>
 

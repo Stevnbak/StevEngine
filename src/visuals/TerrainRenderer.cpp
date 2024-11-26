@@ -1,8 +1,6 @@
-#include "main/Log.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "TerrainRenderer.hpp"
 #include "visuals/renderer/Object.hpp"
-#include "visuals/Texture.hpp"
 #include "visuals/Material.hpp"
 #include "utilities/Vector2.hpp"
 #include "utilities/Vector3.hpp"

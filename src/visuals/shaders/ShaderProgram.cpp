@@ -2,9 +2,7 @@
 #include "ShaderProgram.hpp"
 #include "Shader.hpp"
 #include "main/Log.hpp"
-#include "utilities/ID.hpp"
 
-#include <algorithm>
 #include <string>
 
 namespace StevEngine::Renderer {

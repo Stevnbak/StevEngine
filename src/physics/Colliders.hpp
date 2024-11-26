@@ -1,7 +1,6 @@
 #pragma once
 #ifdef StevEngine_PHYSICS
 #include "main/EventSystem.hpp"
-#include "main/ResourceManager.hpp"
 #include "main/Component.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Range3.hpp"

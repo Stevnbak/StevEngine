@@ -2,7 +2,6 @@
 #include "data/DataManager.hpp"
 #include "main/EngineEvents.hpp"
 #include "main/EventSystem.hpp"
-#include "main/Log.hpp"
 #include "main/SceneManager.hpp"
 #include "main/Component.hpp"
 #include "utilities/ID.hpp"
@@ -11,13 +10,7 @@
 #include "utilities/Vector3.hpp"
 
 #include <yaml-cpp/yaml.h>
-
-#include <format>
-#include <map>
-#include <list>
-#include <stdexcept>
-#include <type_traits>
-#include <iostream>
+#include <fstream>
 
 namespace StevEngine {
 	//Main functions

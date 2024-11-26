@@ -1,17 +1,13 @@
 #ifdef StevEngine_PHYSICS
 #include "Colliders.hpp"
-#include "main/Scene.hpp"
 #include "main/GameObject.hpp"
 #include "main/Component.hpp"
-#include "main/ResourceManager.hpp"
 #include "utilities/Model.hpp"
 #include "utilities/Quaternion.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Terrain.hpp"
 
-#include <stdexcept>
 #include <algorithm>
-#include <iostream>
 #include <sstream>
 
 #include <yaml-cpp/yaml.h>

@@ -3,11 +3,8 @@
 #include "main/Component.hpp"
 #include "utilities/ID.hpp"
 
-#include <memory>
+#include <fstream>
 #include <yaml-cpp/yaml.h>
-
-#include <format>
-#include <regex>
 
 using namespace StevEngine::Utilities;
 

@@ -4,7 +4,6 @@
 #include "utilities/Terrain.hpp"
 
 #include "visuals/renderer/RenderComponent.hpp"
-#include "visuals/renderer/Object.hpp"
 
 namespace StevEngine::Visuals {
 	/**

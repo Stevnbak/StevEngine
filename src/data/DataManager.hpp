@@ -1,8 +1,6 @@
 #pragma once
 #ifdef StevEngine_PLAYER_DATA
 #include <string>
-#include <map>
-#include <fstream>
 #include <yaml-cpp/yaml.h>
 
 namespace StevEngine::Data {

@@ -5,7 +5,6 @@
 #include <Jolt/Jolt.h>
 #include <Jolt/Geometry/AABox.h>
 #endif
-#include <string>
 
 namespace StevEngine::Utilities {
 	class Vector3;

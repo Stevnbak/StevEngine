@@ -1,5 +1,4 @@
 #include "Vertex.hpp"
-#include <array>
 
 namespace StevEngine::Utilities {
 	bool Vertex::operator== (const Vertex o) const {

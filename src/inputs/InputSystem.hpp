@@ -6,8 +6,6 @@
 
 #include <SDL.h>
 
-#include <functional>
-
 namespace StevEngine {
 	/**
 	 * @brief Defines cursor behavior modes

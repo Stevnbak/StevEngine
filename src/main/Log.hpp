@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <format>
+
 namespace Log {
 	/**
 	 * @brief Log a normal/info message

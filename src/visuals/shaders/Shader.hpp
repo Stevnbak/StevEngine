@@ -1,7 +1,6 @@
 #pragma once
 #ifdef StevEngine_RENDERER_GL
 #include <cstdint>
-#include <string>
 
 namespace StevEngine::Renderer {
 	class ShaderProgram;

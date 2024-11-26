@@ -1,13 +1,9 @@
 #ifdef StevEngine_INPUTS
 #include "inputs/InputSystem.hpp"
-#include "main/Log.hpp"
 #include "main/Engine.hpp"
 #include "main/EngineEvents.hpp"
 
 #include <SDL.h>
-
-#include <map>
-#include <vector>
 
 namespace StevEngine {
 	InputManager inputManager = InputManager();

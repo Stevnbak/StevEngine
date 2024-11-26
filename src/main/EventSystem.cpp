@@ -1,6 +1,4 @@
 #include "EventSystem.hpp"
-#include "main/Log.hpp"
-#include <memory>
 
 namespace StevEngine {
 	Utilities::ID EventManager::Subscribe(const std::string eventId, EventHandlerBase* handler) {

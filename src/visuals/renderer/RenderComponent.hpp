@@ -3,10 +3,7 @@
 #include "Object.hpp"
 #include "main/Component.hpp"
 #include "utilities/Vector3.hpp"
-#include "utilities/Vertex.hpp"
 #include "utilities/Quaternion.hpp"
-#include "utilities/Color.hpp"
-#include "visuals/Texture.hpp"
 #include "visuals/shaders/Shader.hpp"
 
 #include <SDL.h>

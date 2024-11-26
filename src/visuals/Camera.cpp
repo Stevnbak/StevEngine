@@ -5,7 +5,6 @@
 #include "utilities/Vector3.hpp"
 #include "utilities/Quaternion.hpp"
 #include "utilities/Matrix4.hpp"
-#include "main/Log.hpp"
 #include "main/GameObject.hpp"
 
 #include <math.h>

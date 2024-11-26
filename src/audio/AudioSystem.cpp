@@ -7,7 +7,6 @@
 #include <SDL.h>
 #include <SDL_mixer.h>
 
-#include <algorithm>
 #include <stdexcept>
 
 static void SDLCALL StaticChannelCompleted (int channel)

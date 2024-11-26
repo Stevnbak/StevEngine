@@ -3,7 +3,6 @@
 #include "assimp/scene.h"
 
 #include "main/ResourceManager.hpp"
-#include "utilities/Color.hpp"
 #include "utilities/Vertex.hpp"
 #include "visuals/Material.hpp"
 

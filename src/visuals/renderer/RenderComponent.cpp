@@ -1,9 +1,6 @@
 #ifdef StevEngine_RENDERER_GL
 #include "RenderComponent.hpp"
 #include "RenderSystem.hpp"
-#include "main/GameObject.hpp"
-#include "utilities/Color.hpp"
-#include "visuals/Texture.hpp"
 #include "visuals/shaders/Shader.hpp"
 #include "utilities/Vector3.hpp"
 

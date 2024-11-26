@@ -3,6 +3,7 @@
 #include "audio/AudioSystem.hpp"
 #include "main/ResourceManager.hpp"
 #include "main/Component.hpp"
+#include "main/Log.hpp"
 
 #include <SDL.h>
 #include <SDL_mixer.h>
