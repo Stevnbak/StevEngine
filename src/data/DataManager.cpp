@@ -40,8 +40,8 @@ namespace StevEngine::Data {
 	void GameData::Init(std::string title) {
 		//Get and create data folder
 		std::replace(title.begin(), title.end(), ' ', '-');
-		appdataPath = std::format("{}{}\\", GetDataPath(), title);
-		logPath = std::format("{}{}\\{}\\", GetDataPath(), title, "logs");
+		appdataPath = std::format("{}{}/", GetDataPath(), title);
+		logPath = std::format("{}{}/{}/", GetDataPath(), title, "logs");
 		std::filesystem::create_directories(appdataPath);
 		std::filesystem::create_directories(logPath);
 		//Read or create data file
