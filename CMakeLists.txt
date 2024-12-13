@@ -3,7 +3,8 @@ cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(StevEngine VERSION 0.1 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 
 # build StevEngine as static library
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
@@ -98,7 +99,6 @@ if(USE_PHYSICS)
 	set(GENERATE_DEBUG_SYMBOLS OFF)
 	set(DOUBLE_PRECISION ON)
 	add_subdirectory(libs/JoltPhysics/Build)
-	target_compile_options(Jolt PRIVATE "-Wno-dev")
 	target_link_libraries(${PROJECT_NAME} PRIVATE Jolt)
 	target_include_directories(${PROJECT_NAME} PUBLIC libs/JoltPhysics)
 	if(WIN32)
