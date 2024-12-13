@@ -110,39 +110,53 @@ set(_sdl_cmake_module_path "${CMAKE_MODULE_PATH}")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 
 ## SDL2
-find_package(SDL2 REQUIRED CONFIG)
+set(BUILD_SHARED_LIBS OFF)
+set(SDL_SHARED OFF)
+set(SDL_STATIC ON)
+set(SDL2_DISABLE_INSTALL OFF)
+set(SDL_TEST OFF)
+add_subdirectory(libs/SDL2)
 if(TARGET SDL2::SDL2main)
 	target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2main)
 endif()
 if(TARGET SDL2::SDL2-static)
 	target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2-static)
 else()
+	message(WARNING "Can't find SDL2-static, using SDL2 shared instead!")
 	target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2)
-	if (WIN32)
-		add_custom_command(
-			TARGET ${PROJECT_NAME} POST_BUILD
-			COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2::SDL2>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
-			VERBATIM
-		)
-	endif()
+endif()
+if (WIN32)
+	add_custom_command(
+		TARGET ${PROJECT_NAME} POST_BUILD
+		COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2::SDL2>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+		VERBATIM
+	)
 endif()
 
 ## SDL_Mixer
 if(USE_AUDIO)
-	find_package(SDL2_mixer REQUIRED CONFIG)
-	target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_mixer::SDL2_mixer)
+	set(SDL2MIXER_VENDORED ON)
+	set(SDL2MIXER_MOD OFF)
+	set(SDL2MIXER_MIDI OFF)
+	set(SDL2MIXER_OPUS OFF)
+	set(SDL2MIXER_WAVPACK OFF)
+	add_subdirectory(libs/SDL2_mixer)
+	target_include_directories(${PROJECT_NAME} PUBLIC libs/SDL2_mixer/include)
 	if (WIN32)
+		target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_mixer::SDL2_mixer)
 		add_custom_command(
 			TARGET ${PROJECT_NAME} POST_BUILD
 			COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2_mixer::SDL2_mixer>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
 			VERBATIM
 		)
+	else()
+		target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_mixer)
 	endif()
 endif()
 
 ## SDL_Image
 if(USE_RENDERER_GL)
-	find_package(SDL2_image REQUIRED CONFIG)
+	add_subdirectory(libs/SDL2_image)
 
 	if (WIN32)
 		target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image::SDL2_image)

@@ -102,21 +102,6 @@ Clone and initialize submodules by running:
 git submodule update --init
 ```
 
-Install SDL2, SDL2_Image and SDL2_Mixer system wide:
-
-- SDL2:
-	- Linux: `sudo apt-get install libsdl2-dev`
-	- Windows: Download from https://github.com/libsdl-org/SDL/releases
-- SDL2_Mixer
-	- Linux: `sudo apt-get install libsdl2-mixer-dev`
-	- Windows: Download from https://github.com/libsdl-org/SDL_mixer/releases
-- SDL2_Image
-	- Linux: `sudo apt-get install libsdl2-image-dev` (also see https://trenki2.github.io/blog/2017/07/04/using-sdl2-image-with-cmake/)
-	- Windows: Download from https://github.com/libsdl-org/SDL_image/releases
-
-> [!IMPORTANT]
-> When downloading for windows make sure to download the `-devel-X.X.X-VC` option.
-
 Building or installing [glad](https://github.com/Dav1dde/glad):
 > [!WARNING]
 > Building glad requires a python intepreter installed and added to the path.
