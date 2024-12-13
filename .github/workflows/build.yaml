@@ -22,17 +22,17 @@ jobs:
       matrix:
         os: [ubuntu] # add "windows" to build on windows
         build_type: [Release]
-        c_compiler: [clang, cl]
+        c_compiler: [clang-18, cl]
         include:
           #- os: windows
           #  c_compiler: cl
           #  cpp_compiler: cl
           - os: ubuntu
-            c_compiler: clang
-            cpp_compiler: clang++
+            c_compiler: clang-18
+            cpp_compiler: clang++-18
         exclude:
           #- os: windows
-          #  c_compiler: clang
+          #  c_compiler: clang-18
           - os: ubuntu
             c_compiler: cl
 
@@ -41,8 +41,8 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: 'true'
-    - name: Install clang 14
-      run: sudo apt install clang && clang -v
+    - name: Install Clang 18
+      run: wget https://apt.llvm.org/llvm.sh -O - | sudo bash -s 18
     - name: Configure CMake
       run: >
         cmake -B ${{ github.workspace }}/build
@@ -63,5 +63,5 @@ jobs:
     - name: Deploy to output branch
       uses: EndBug/add-and-commit@v9
       with:
-        add: "build/libStevEngine.a"
+        add: "libStevEngine.a"
         new_branch: output

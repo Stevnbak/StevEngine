@@ -6,6 +6,10 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 
+if(CMAKE_BUILD_TYPE MATCHES "Debug")
+	set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+endif()
+
 # build StevEngine as static library
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS "src/*.hpp")
@@ -15,7 +19,6 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
 	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_DEBUGGING)
-	set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 endif()
 
 # Windows?
@@ -110,7 +113,6 @@ set(_sdl_cmake_module_path "${CMAKE_MODULE_PATH}")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 
 ## SDL2
-set(BUILD_SHARED_LIBS OFF)
 set(SDL_SHARED OFF)
 set(SDL_STATIC ON)
 set(SDL2_DISABLE_INSTALL OFF)
@@ -187,6 +189,8 @@ if(USE_RENDERER_GL OR USE_PHYSICS)
 endif()
 
 ## YAML
+set(YAML_CPP_BUILD_CONTRIB OFF)
+set(YAML_CPP_BUILD_TOOLS OFF)
 add_subdirectory(libs/yaml-cpp)
 target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
 
