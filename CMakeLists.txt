@@ -4,7 +4,6 @@ project(StevEngine VERSION 0.1 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # build StevEngine as static library
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
@@ -15,6 +14,7 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
 	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_DEBUGGING)
+	set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 endif()
 
 # Windows?
@@ -74,7 +74,7 @@ message("Building ${build_string}")
 # external libraries
 set(BUILD_SHARED_LIBS OFF)
 
-# # GLAD
+## GLAD
 if(USE_RENDERER_GL)
 	option(BUILD_GLAD "Build GLAD as part of the build process" ON)
 	if(BUILD_GLAD)
@@ -88,7 +88,7 @@ if(USE_RENDERER_GL)
 	endif()
 endif()
 
-# # Jolt
+## Jolt
 if(USE_PHYSICS)
 	set(ENABLE_OBJECT_STREAM OFF)
 	set(USE_ASSERTS OFF)
@@ -98,6 +98,7 @@ if(USE_PHYSICS)
 	set(GENERATE_DEBUG_SYMBOLS OFF)
 	set(DOUBLE_PRECISION ON)
 	add_subdirectory(libs/JoltPhysics/Build)
+	target_compile_options(Jolt PRIVATE "-Wno-dev")
 	target_link_libraries(${PROJECT_NAME} PRIVATE Jolt)
 	target_include_directories(${PROJECT_NAME} PUBLIC libs/JoltPhysics)
 	if(WIN32)
@@ -105,8 +106,11 @@ if(USE_PHYSICS)
 	endif()
 endif()
 
-# # SDL2
-find_package(SDL2 REQUIRED)
+set(_sdl_cmake_module_path "${CMAKE_MODULE_PATH}")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
+
+## SDL2
+find_package(SDL2 REQUIRED CONFIG)
 if(TARGET SDL2::SDL2main)
 	target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2main)
 endif()
@@ -123,9 +127,9 @@ else()
 	endif()
 endif()
 
-# # SDL_Mixer
+## SDL_Mixer
 if(USE_AUDIO)
-	find_package(SDL2_mixer REQUIRED)
+	find_package(SDL2_mixer REQUIRED CONFIG)
 	target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_mixer::SDL2_mixer)
 	if (WIN32)
 		add_custom_command(
@@ -136,9 +140,9 @@ if(USE_AUDIO)
 	endif()
 endif()
 
-# # SDL_Image
+## SDL_Image
 if(USE_RENDERER_GL)
-	find_package(SDL2_image REQUIRED)
+	find_package(SDL2_image REQUIRED CONFIG)
 
 	if (WIN32)
 		target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image::SDL2_image)
@@ -153,7 +157,7 @@ if(USE_RENDERER_GL)
 	endif()
 endif()
 
-# # Assimp
+## Assimp
 if(USE_RENDERER_GL OR USE_PHYSICS)
 	message("Configurating Assimp...")
 	set(ASSIMP_NO_EXPORT ON)
@@ -168,11 +172,11 @@ if(USE_RENDERER_GL OR USE_PHYSICS)
 	endif()
 endif()
 
-# # YAML
+## YAML
 add_subdirectory(libs/yaml-cpp)
 target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
 
-# # uuidv7
+## uuidv7
 target_include_directories(${PROJECT_NAME} PUBLIC libs/uuidv7-h)
 
 # Debug executable
