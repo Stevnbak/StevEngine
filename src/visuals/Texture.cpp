@@ -3,11 +3,7 @@
 #include "main/ResourceManager.hpp"
 #include "visuals/renderer/RenderSystem.hpp"
 #include <SDL.h>
-#ifdef WINDOWS
 #include <SDL_image.h>
-#else
-#include <SDL2/SDL_image.h>
-#endif
 
 namespace StevEngine::Visuals {
 	const Texture Texture::empty = Texture();
