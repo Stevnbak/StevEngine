@@ -58,10 +58,10 @@ jobs:
         restore-keys: ${{ runner.os }}.
     - name: Build project
       run: cmake --build ${{ github.workspace }}/build --config ${{ matrix.build_type }}
-    - name: Move library file
-      run: mv build/libStevEngine.a libStevEngine.a
     - name: Deploy to output branch
-      uses: EndBug/add-and-commit@v9
-      with:
-        add: "libStevEngine.a"
-        new_branch: output
+      uses: s0/git-publish-subdir-action@develop
+      env:
+        REPO: self
+        BRANCH: output
+        FOLDER: ./build/out
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

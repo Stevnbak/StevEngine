@@ -220,3 +220,19 @@ if(DEBUG_EXECUTABLE)
 	ENDFOREACH()
 endif()
 
+# Copy files
+if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
+	set(OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/out)
+	make_directory(${OUTPUT_DIR})
+	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}>  ${OUTPUT_DIR}/lib${PROJECT_NAME}.a
+	)
+	make_directory(${OUTPUT_DIR}/include)
+	foreach(header IN LISTS HEADERS)
+		cmake_path(RELATIVE_PATH header BASE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/ OUTPUT_VARIABLE header_output)
+		message(${header_output})
+		add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy ${header} ${OUTPUT_DIR}/include/${header_output}
+		)
+	endforeach()
+endif()
