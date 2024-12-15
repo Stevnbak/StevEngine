@@ -112,17 +112,17 @@ Building or installing [glad](https://github.com/Dav1dde/glad):
 
 ## Linux
 
-Build StevEngine and all other external libraries by running CMake with the following command:
+Build StevEngine and all other external libraries by running CMake with the following commands:
 ```shell
-cd build && CXX=<compiler> cmake .. --build -DCMAKE_BUILD_TYPE=<type>
+CXX=<compiler> cmake -S . -B build -Wno-dev -DCMAKE_BUILD_TYPE=<type>
+cmake --build build
 ```
-
 > [!IMPORTANT]
 > - Replace  `<compiler>` with your c++ compiler such as g++ or clang++.
 > - Replace `<type>` with `Release` or `Debug`.
 
 > [!NOTE]
-> The different build options can be set by adding `-DOPTION=VALUE` to the end of the command.
+> The different build options can be set by adding `-DOPTION=VALUE` to the end of the first command.
 
 > [!NOTE]
 > This can take a few minutes on the first build, as it will be building dependencies.
@@ -131,11 +131,10 @@ cd build && CXX=<compiler> cmake .. --build -DCMAKE_BUILD_TYPE=<type>
 
 Create a Visual Studio solution with all dependencies and build process setup by running CMake with the following command:
 ```shell
-cmake -S . -B VS2022 -G "Visual Studio 17 2022" -A x64 -DCMAKE_PREFIX_PATH="<cmake_module_path>" -DCMAKE_BUILD_TYPE=<type>
+cmake -S . -B VS2022 -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=<type>
 ```
 
 > [!IMPORTANT]
-> - Replace `<cmake_module_path>` with the path to the previously downloaded SDL libraries.
 > - Replace `<type>` with `Release` or `Debug`.
 > - Replace `Visual Studio 17 2022` with your Visual Studio version.
 
@@ -143,7 +142,6 @@ cmake -S . -B VS2022 -G "Visual Studio 17 2022" -A x64 -DCMAKE_PREFIX_PATH="<cma
 > The different build options can be set by adding `-DOPTION=VALUE` to the end of the command.
 
 This solution can now be found in the folder `VS2022` and building the project can be done from Visual Studio.
-
 
 ## Build options
 
