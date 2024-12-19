@@ -92,6 +92,13 @@ namespace StevEngine::Physics {
 			 */
 			JPH::Ref<JPH::Shape> GetShape() const { return shape; }
 
+			/**
+			 * @brief Serialize collider to YAML
+			 * @param node YAML node to serialize into
+			 * @return Updated YAML node containing collider data
+			 */
+			YAML::Node Export(YAML::Node node) const;
+
 		protected:
 			Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1);   ///< Local scale
 			Utilities::Vector3 position = Utilities::Vector3();		///< Local position
