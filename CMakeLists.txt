@@ -10,6 +10,8 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
 	set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 endif()
 
+include(CMakeDependentOption)
+
 # build StevEngine as static library
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS "src/*.hpp")
@@ -18,7 +20,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC src)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
+	set(IS_DEBUG ON)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_DEBUGGING)
+else()
+	set(IS_DEBUG OFF)
 endif()
 
 # Windows?
@@ -30,7 +35,6 @@ if (WIN32)
 endif()
 
 # modularity options
-
 set(build_string "StevEngine with BASE")
 
 option(USE_INPUTS "Use the input manager" ON)
@@ -51,8 +55,8 @@ if (SHOW_WINDOW)
 	set(build_string "${build_string}, WINDOW")
 endif()
 
-option(USE_RENDERER_GL "Use the OpenGL renderer" ON)
-if (USE_RENDERER_GL AND SHOW_WINDOW)
+cmake_dependent_option(USE_RENDERER_GL "Use the OpenGL renderer" ON "SHOW_WINDOW" OFF)
+if (USE_RENDERER_GL)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_RENDERER_GL)
 	set(build_string "${build_string}, RENDERER_GL")
 endif()
@@ -79,15 +83,17 @@ message("Building ${build_string}")
 set(BUILD_SHARED_LIBS OFF)
 
 ## GLAD
+cmake_dependent_option(BUILD_GLAD "Build GLAD as part of the build process" ON "USE_RENDERER_GL" OFF)
+cmake_dependent_option(GLAD_DIR "Directory to find the glad files in" ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad "NOT BUILD_GLAD" OFF)
 if(USE_RENDERER_GL)
-	option(BUILD_GLAD "Build GLAD as part of the build process" ON)
 	if(BUILD_GLAD)
 		add_subdirectory(libs/glad/cmake)
 		glad_add_library(glad STATIC QUIET REPRODUCIBLE API gl:core=4.4)
 		target_link_libraries(${PROJECT_NAME} PUBLIC glad)
 	else()
-		option(GLAD_DIR "Directory to find the glad files in" ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad)
 		target_include_directories(${PROJECT_NAME} PUBLIC ${GLAD_DIR}/include)
+		list(APPEND external_libs_names /)
+		list(APPEND external_libs_include ${GLAD_DIR}/include)
 		target_sources(${PROJECT_NAME} PRIVATE ${GLAD_DIR}/src/gl.c)
 	endif()
 endif()
@@ -104,13 +110,12 @@ if(USE_PHYSICS)
 	add_subdirectory(libs/JoltPhysics/Build)
 	target_link_libraries(${PROJECT_NAME} PRIVATE Jolt)
 	target_include_directories(${PROJECT_NAME} PUBLIC libs/JoltPhysics)
+	list(APPEND external_libs_names Jolt/)
+	list(APPEND external_libs_include libs/JoltPhysics/Jolt)
 	if(WIN32)
 		set_property(TARGET Jolt PROPERTY MSVC_RUNTIME_LIBRARY ${MSVC_LIBRARY})
 	endif()
 endif()
-
-set(_sdl_cmake_module_path "${CMAKE_MODULE_PATH}")
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 
 ## SDL2
 set(SDL_SHARED OFF)
@@ -127,6 +132,9 @@ else()
 	message(WARNING "Can't find SDL2-static, using SDL2 shared instead!")
 	target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2)
 endif()
+target_include_directories(${PROJECT_NAME} PUBLIC libs/SDL2/include)
+list(APPEND external_libs_names SDL2/)
+list(APPEND external_libs_include libs/SDL2/include)
 if (WIN32)
 	add_custom_command(
 		TARGET ${PROJECT_NAME} POST_BUILD
@@ -144,6 +152,8 @@ if(USE_AUDIO)
 	set(SDL2MIXER_WAVPACK OFF)
 	add_subdirectory(libs/SDL2_mixer)
 	target_include_directories(${PROJECT_NAME} PUBLIC libs/SDL2_mixer/include)
+	list(APPEND external_libs_names SDL2_mixer/)
+	list(APPEND external_libs_include libs/SDL2_mixer/include)
 	if (WIN32)
 		target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_mixer::SDL2_mixer)
 		add_custom_command(
@@ -159,7 +169,9 @@ endif()
 ## SDL_Image
 if(USE_RENDERER_GL)
 	add_subdirectory(libs/SDL2_image)
-
+	target_include_directories(${PROJECT_NAME} PUBLIC libs/SDL2_image/include)
+	list(APPEND external_libs_names SDL2_image/)
+	list(APPEND external_libs_include libs/SDL2_image/include)
 	if (WIN32)
 		target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image::SDL2_image)
 
@@ -183,6 +195,10 @@ if(USE_RENDERER_GL OR USE_PHYSICS)
 	add_subdirectory(libs/assimp)
 	target_link_libraries(${PROJECT_NAME} PRIVATE assimp)
 	target_include_directories(${PROJECT_NAME} PUBLIC libs/assimp/include ${CMAKE_CURRENT_BINARY_DIR}/libs/assimp/include)
+	list(APPEND external_libs_names assimp/)
+	list(APPEND external_libs_include ${CMAKE_CURRENT_BINARY_DIR}/libs/assimp/include/assimp)
+	list(APPEND external_libs_names assimp/)
+	list(APPEND external_libs_include libs/assimp/include/assimp)
 	if(WIN32)
 		set_property(TARGET assimp PROPERTY MSVC_RUNTIME_LIBRARY ${MSVC_LIBRARY})
 	endif()
@@ -191,14 +207,20 @@ endif()
 ## YAML
 set(YAML_CPP_BUILD_CONTRIB OFF)
 set(YAML_CPP_BUILD_TOOLS OFF)
+set(YAML_BUILD_SHARED_LIBS OFF)
 add_subdirectory(libs/yaml-cpp)
-target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp::yaml-cpp)
+target_include_directories(${PROJECT_NAME} PUBLIC libs/yaml-cpp/include)
+list(APPEND external_libs_names yaml-cpp/)
+list(APPEND external_libs_include libs/yaml-cpp/include/yaml-cpp)
 
 ## uuidv7
 target_include_directories(${PROJECT_NAME} PUBLIC libs/uuidv7-h)
+list(APPEND external_libs_names "")
+list(APPEND external_libs_include libs/uuidv7-h)
 
 # Debug executable
-option(DEBUG_EXECUTABLE "Build the debug programs for testing the engine." OFF)
+cmake_dependent_option(DEBUG_EXECUTABLE "Build the debug programs for testing the engine." ON "IS_DEBUG" OFF)
 if(DEBUG_EXECUTABLE)
 	set(executables "development" "performance")
 	FOREACH (executable IN LISTS executables)
@@ -221,7 +243,7 @@ if(DEBUG_EXECUTABLE)
 endif()
 
 # Copy files
-if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
+if(NOT IS_DEBUG)
 	set(OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/out)
 	make_directory(${OUTPUT_DIR})
 	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
@@ -230,9 +252,25 @@ if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
 	make_directory(${OUTPUT_DIR}/include)
 	foreach(header IN LISTS HEADERS)
 		cmake_path(RELATIVE_PATH header BASE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/ OUTPUT_VARIABLE header_output)
-		message(${header_output})
 		add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 			COMMAND ${CMAKE_COMMAND} -E copy ${header} ${OUTPUT_DIR}/include/${header_output}
 		)
+	endforeach()
+
+	list(LENGTH external_libs_names libCount)
+	math(EXPR libCount "${libCount} - 1")
+	foreach(i RANGE ${libCount})
+		list(GET external_libs_names ${i} libName)
+		list(GET external_libs_include ${i} libFolder)
+		cmake_path(ABSOLUTE_PATH libFolder)
+		make_directory(${OUTPUT_DIR}/include/${libName})
+		file(GLOB_RECURSE EXTERNAL_HEADERS CONFIGURE_DEPENDS "${libFolder}/*.h")
+		foreach(ext_header IN LISTS EXTERNAL_HEADERS)
+			cmake_path(RELATIVE_PATH ext_header BASE_DIRECTORY ${libFolder} OUTPUT_VARIABLE ext_header_output)
+			#message("${ext_header} => ${ext_header_output}")
+			add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+				COMMAND ${CMAKE_COMMAND} -E copy ${ext_header} ${OUTPUT_DIR}/include/${libName}${ext_header_output}
+			)
+		endforeach()
 	endforeach()
 endif()

@@ -18,7 +18,7 @@ namespace StevEngine::Utilities {
 		return *this;
 	}
 	double Vector2::Magnitude() const {
-		return sqrt(exp2(X) + exp2(Y));
+		return sqrt(pow(X, 2) + pow(Y, 2));
 	}
 	Vector2& Vector2::Normalize() {
 		double mag = Magnitude();
@@ -74,7 +74,7 @@ namespace StevEngine::Utilities {
 	Vector2 Vector2::up = Vector2(0,1);
 	Vector2 Vector2::right = Vector2(1,0);
 	double Vector2::Distance(const Vector2& a, const Vector2& b) {
-		return sqrt(exp2(a.X - b.X) + exp2(a.Y - b.Y));
+		return sqrt(pow(a.X - b.X, 2) + pow(a.Y - b.Y, 2));
 	}
 	double Vector2::Dot(const Vector2& a, const Vector2& b) {
 		return (a.X * b.X) + (a.Y * b.Y);

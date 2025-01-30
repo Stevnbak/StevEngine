@@ -2,24 +2,24 @@
 	{
 		"label": "debug",
 		"type": "shell",
-		"command": "CXX=clang cmake .. -DCMAKE_BUILD_TYPE=Debug -DDEBUG_EXECUTABLE=ON",
-		"cwd": "$ZED_WORKTREE_ROOT/build",
+		"command": "CXX=clang cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DDEBUG_EXECUTABLE=ON",
+		"cwd": "$ZED_WORKTREE_ROOT",
 		"reveal": "always"
 	},
 	{
 		"label": "release",
 		"type": "shell",
-		"command": "CXX=clang cmake .. -DCMAKE_BUILD_TYPE=Release -DDEBUG_EXECUTABLE=OFF",
+		"command": "CXX=clang cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DDEBUG_EXECUTABLE=OFF",
 		"options": {
-			"cwd": "$ZED_WORKTREE_ROOT/build"
+			"cwd": "$ZED_WORKTREE_ROOT"
 		},
 		"reveal": "always"
 	},
 	{
 		"label": "build",
 		"type": "shell",
-		"command": "make",
-		"cwd": "$ZED_WORKTREE_ROOT/build",
+		"command": "cmake --build build",
+		"cwd": "$ZED_WORKTREE_ROOT",
 		"reveal": "never",
 		"hide": "on_success",
 		"allow_concurrent_runs": true
@@ -27,8 +27,8 @@
 	{
 		"label": "start",
 		"type": "shell",
-		"command": "make && gdb -ex run ./debug_development",
-		"cwd": "$ZED_WORKTREE_ROOT/build",
+		"command": "cmake --build build && gdb -ex run ./build/debug_development",
+		"cwd": "$ZED_WORKTREE_ROOT",
 		"reveal": "never",
 		"hide": "never",
 		"allow_concurrent_runs": true
@@ -36,8 +36,8 @@
 	{
 		"label": "test",
 		"type": "shell",
-		"command": "make && ./debug_performance",
-		"cwd": "$ZED_WORKTREE_ROOT/build",
+		"command": "cmake --build build && ./build/debug_performance",
+		"cwd": "$ZED_WORKTREE_ROOT",
 		"reveal": "never",
 		"hide": "never",
 		"allow_concurrent_runs": true

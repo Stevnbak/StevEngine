@@ -133,7 +133,7 @@ namespace StevEngine::Utilities {
 	const Vector3 Vector3::identity = Vector3(1.0);
 	const Vector3 Vector3::zero = Vector3(0.0);
 	double Vector3::Distance(const Vector3& a, const Vector3& b) {
-		return sqrt(exp2(a.X - b.X) + exp2(a.Y - b.Y) + exp2(a.Z - b.Z));
+		return sqrt(pow(a.X - b.X, 2) + pow(a.Y - b.Y, 2) + pow(a.Z - b.Z, 2));
 	}
 	Vector3 Vector3::Cross(const Vector3& a, const Vector3& b) {
 		return Vector3(

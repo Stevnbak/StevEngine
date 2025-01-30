@@ -53,7 +53,7 @@ namespace StevEngine::Utilities {
 		return *this;
 	}
 	double Quaternion::Magnitude() const {
-		return sqrt(exp2(W) +exp2(X) + exp2(Y) + exp2(Z));
+		return sqrt(pow(W, 2) + pow(X, 2) + pow(Y, 2) + pow(Z, 2));
 	}
 	Quaternion& Quaternion::Normalize() {
 		double mag = Magnitude();

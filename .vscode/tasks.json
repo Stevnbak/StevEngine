@@ -3,7 +3,7 @@
 		{
             "label": "debug",
             "type": "shell",
-            "command": "CXX=clang cmake .. -DCMAKE_BUILD_TYPE=Debug -DDEBUG_EXECUTABLE=ON",
+            "command": "CXX=clang cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DDEBUG_EXECUTABLE=ON",
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },
@@ -12,7 +12,7 @@
         {
             "label": "release",
             "type": "shell",
-            "command": "CXX=clang cmake .. -DCMAKE_BUILD_TYPE=Release -DDEBUG_EXECUTABLE=OFF",
+            "command": "CXX=clang cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DDEBUG_EXECUTABLE=OFF",
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },
@@ -21,7 +21,7 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "make",
+            "command": "cmake --build build",
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },
