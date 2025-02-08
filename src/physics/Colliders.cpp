@@ -14,7 +14,7 @@
 #include <iostream>
 #include <sstream>
 
-#include <yaml-cpp/binary.h>
+#include <yaml-cpp/yaml.h>
 #include <Jolt/Physics/Collision/Shape/ScaledShape.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
