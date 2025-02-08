@@ -1,5 +1,6 @@
 #include "Range3.hpp"
 #include "Vector3.hpp"
+#include "utilities/Serializable.hpp"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -37,6 +38,30 @@ namespace StevEngine::Utilities {
 		High = other.mMax;
 	}
 	#endif
+}
+
+namespace StevEngine {
+	//Read from text stream
+	template <> Utilities::Range3 TextSerializableStream::Read<Utilities::Range3>() {
+		Utilities::Range3 value;
+		char s;
+		*this >> value.Low >> s >> value.High >> s;
+		return value;
+	}
+	//Write to text stream
+	template <> void TextSerializableStream::Write<Utilities::Range3>(const Utilities::Range3& data) {
+		*this << data.Low << ';' << data.High << ';';
+	}
+	//Read from text stream
+	template <> Utilities::Range3 BinarySerializableStream::Read<Utilities::Range3>() {
+		Utilities::Range3 value;
+		*this >> value.Low >> value.High;
+		return value;
+	}
+	//Write to text stream
+	template <> void BinarySerializableStream::Write<Utilities::Range3>(const Utilities::Range3& data) {
+		*this << data.Low << data.High;
+	}
 }
 
 namespace YAML {

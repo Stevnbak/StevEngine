@@ -11,9 +11,12 @@
 #include "physics/Colliders.hpp"
 #include "physics/Layers.hpp"
 #include "main/SceneManager.hpp"
+#include "utilities/ID.hpp"
 #include "utilities/Matrix4.hpp"
 #include "utilities/Random.hpp"
+#include "utilities/Serializable.hpp"
 #include "utilities/Terrain.hpp"
+#include "utilities/Vector2.hpp"
 #include "visuals/Material.hpp"
 #include "visuals/Primitive.hpp"
 #include "visuals/ModelRenderer.hpp"
@@ -28,6 +31,8 @@
 #include "visuals/shaders/Shader.hpp"
 
 #include <cmath>
+#include <fstream>
+#include <iostream>
 #include <string>
 #include <yaml-cpp/yaml.h>
 #include <SDL_keycode.h>
@@ -123,6 +128,58 @@ class Rotate final : public Component {
 };
 bool rotate = CreateComponents::RegisterComponentType<Rotate>("Rotate");
 
+void TestSerializeStuff() {
+	Utilities::Vector3 a(2,3.523,8.92);
+	Utilities::Vector3 b(5,0,9.9999);
+	Utilities::Vector3 c(1,-20,0);
+	ID id;
+
+	Log::Debug("Text stream test:");
+	TextSerializableStream ts;
+
+	Log::Debug("Original: " + (std::string)a);
+	ts.Write(a);
+	Log::Debug("Txt stream: " + (std::string)ts.Read<Utilities::Vector3>());
+
+	Log::Debug("Original: " + (std::string)b);
+	ts << b;
+
+	Log::Debug("Original: " + (std::string)c);
+	ts.Write(c);
+
+	Log::Debug("Txt stream: " + (std::string)ts.Read<Utilities::Vector3>());
+	Log::Debug("Txt stream: " + (std::string)ts.Read<Utilities::Vector3>());
+
+	Log::Debug("Original: " + id.GetString());
+	ts << id;
+	Log::Debug("Txt stream: " + ts.Read<Utilities::ID>().GetString());
+
+	ts.WriteToFile("TestExport.txt");
+
+	Log::Debug("Binary stream test:");
+	BinarySerializableStream bs;
+
+	Log::Debug("Original: " + (std::string)a);
+	bs.Write(a);
+	Log::Debug("Bin stream: " + (std::string)bs.Read<Utilities::Vector3>());
+
+	Log::Debug("Original: " + (std::string)b);
+	bs.Write(b);
+
+	Log::Debug("Original: " + (std::string)c);
+	bs.Write(c);
+
+	Log::Debug("Bin stream: " + (std::string)bs.Read<Utilities::Vector3>());
+	Log::Debug("Bin stream: " + (std::string)bs.Read<Utilities::Vector3>());
+
+	Log::Debug("Original: " + id.GetString());
+	bs << id;
+	Log::Debug("Bin stream: " + bs.Read<Utilities::ID>().GetString());
+	bs.Write<Vector3>(Vector3(1.52,2,3));
+	Log::Debug("Bin stream: " + (std::string)bs.Read<Vector3>());
+	bs.WriteToFile("TestExport.bin");
+}
+
 ID modelObject;
 
 void mainUpdate(UpdateEvent event) {
@@ -145,6 +202,11 @@ int main(int argc, char** argv) {
 		#endif
 		.targetFPS = 100
 	});
+
+	TestSerializeStuff();
+
+	return 0;
+
 	Renderer::render.SetFaceCulling(false);
 	Renderer::render.SetMSAA(true, 8);
 	engine->GetEvents()->Subscribe<UpdateEvent>(mainUpdate);

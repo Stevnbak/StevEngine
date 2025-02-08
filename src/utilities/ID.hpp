@@ -79,6 +79,8 @@ namespace StevEngine::Utilities {
 			/** @brief Null/empty ID value */
 			static ID empty;
 
+			const uint8_t* GetRaw() const { return raw; }
+
 		private:
 			uint8_t raw[16];	 ///< Raw UUID bytes
 			std::string string;   ///< String representation

@@ -1,5 +1,6 @@
 #include "Vector3.hpp"
 #include "Vector2.hpp"
+#include "utilities/Serializable.hpp"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -153,6 +154,30 @@ namespace StevEngine::Utilities {
 		double sintheta = sin(theta);
 
 		return (a * (sin((1-t)*theta) / sintheta)) + (b * (sin(t*theta) / sintheta));
+	}
+}
+
+namespace StevEngine {
+	//Read from text stream
+	template <> Utilities::Vector3 TextSerializableStream::Read<Utilities::Vector3>() {
+		Utilities::Vector3 value;
+		char s;
+		*this >> value.X >> s >> value.Y >> s >> value.Z >> s;
+		return value;
+	}
+	//Write to text stream
+	template <> void TextSerializableStream::Write<Utilities::Vector3>(const Utilities::Vector3& data) {
+		*this << data.X << ';' << data.Y << ';' << data.Z << ';';
+	}
+	//Read from text stream
+	template <> Utilities::Vector3 BinarySerializableStream::Read<Utilities::Vector3>() {
+		Utilities::Vector3 value;
+		*this >> value.X >> value.Y >> value.Z;
+		return value;
+	}
+	//Write to text stream
+	template <> void BinarySerializableStream::Write<Utilities::Vector3>(const Utilities::Vector3& data) {
+		*this << data.X << data.Y << data.Z;
 	}
 }
 

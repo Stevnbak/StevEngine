@@ -1,8 +1,12 @@
 #include "ID.hpp"
+#include "utilities/Random.hpp"
+#include "utilities/Serializable.hpp"
 
 #include <cstdint>
 #include <stdlib.h>
 #include <chrono>
+
+bool seededRand = StevEngine::Utilities::SetRandomSeed();
 
 uint8_t last[16];
 namespace StevEngine::Utilities {
@@ -36,6 +40,9 @@ namespace StevEngine::Utilities {
 	ID::ID (uint8_t* raw) {
 		for(int i = 0; i < 16; i++)
 			this->raw[i] = raw[i];
+		char text[37];
+		uuidv7_to_string(raw, text);
+		string = std::string(text);
 	}
 	ID::ID (std::string string) {
 		this->string = string;
@@ -59,6 +66,31 @@ namespace StevEngine::Utilities {
 	}
 	bool ID::operator() (const ID& lhs, const ID& rhs) const {
 		return lhs.string < rhs.string;
+	}
+}
+
+namespace StevEngine {
+	//Read from text stream
+	template <> Utilities::ID TextSerializableStream::Read<Utilities::ID>() {
+		char text[37];
+		for(int i = 0; i < 36; i++)
+			*this >> text[i];
+		text[36] = '\000';
+		return Utilities::ID(std::string(text));
+	}
+	//Write to text stream
+	template <> void TextSerializableStream::Write<Utilities::ID>(const Utilities::ID& data) {
+		*this << data.GetString();
+	}
+	//Read from text stream
+	template <> Utilities::ID BinarySerializableStream::Read<Utilities::ID>() {
+		uint8_t value[16];
+		for(int i = 0; i < 16; i++) *this >> value[i];
+		return Utilities::ID(value);
+	}
+	//Write to text stream
+	template <> void BinarySerializableStream::Write<Utilities::ID>(const Utilities::ID& data) {
+		for(int i = 0; i < 16; i++) *this << data.GetRaw()[i];
 	}
 }
 

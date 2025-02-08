@@ -1,6 +1,7 @@
 #include "Vector4.hpp"
 #include "Vector3.hpp"
 #include "utilities/Quaternion.hpp"
+#include "utilities/Serializable.hpp"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -83,6 +84,30 @@ namespace StevEngine::Utilities {
 		data[2] = (float)Y;
 		data[3] = (float)Z;
 		return data;
+	}
+}
+
+namespace StevEngine {
+	//Read from text stream
+	template <> Utilities::Vector4 TextSerializableStream::Read<Utilities::Vector4>() {
+		Utilities::Vector4 value;
+		char s;
+		*this >> value.W >> s >> value.X >> s >> value.Y >> s >> value.Z >> s;
+		return value;
+	}
+	//Write to text stream
+	template <> void TextSerializableStream::Write<Utilities::Vector4>(const Utilities::Vector4& data) {
+		*this << data.W << ';' << data.X << ';' << data.Y << ';' << data.Z << ';';
+	}
+	//Read from text stream
+	template <> Utilities::Vector4 BinarySerializableStream::Read<Utilities::Vector4>() {
+		Utilities::Vector4 value;
+		*this >> value.W >> value.X >> value.Y >> value.Z;
+		return value;
+	}
+	//Write to text stream
+	template <> void BinarySerializableStream::Write<Utilities::Vector4>(const Utilities::Vector4& data) {
+		*this << data.W << data.X << data.Y << data.Z;
 	}
 }
 

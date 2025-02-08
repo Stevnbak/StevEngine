@@ -31,4 +31,6 @@ namespace StevEngine::Utilities {
 	 * @return Random integer between 0 and max
 	 */
 	int GetRandomInt(int max);
+
+	const bool SetRandomSeed();
 }

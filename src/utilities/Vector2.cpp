@@ -1,5 +1,6 @@
 #include "Vector2.hpp"
 #include "Vector3.hpp"
+#include "utilities/Serializable.hpp"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -75,6 +76,30 @@ namespace StevEngine::Utilities {
 	}
 	double Vector2::Dot(const Vector2& a, const Vector2& b) {
 		return (a.X * b.X) + (a.Y * b.Y);
+	}
+}
+
+namespace StevEngine {
+	//Read from text stream
+	template <> Utilities::Vector2 TextSerializableStream::Read<Utilities::Vector2>() {
+		Utilities::Vector2 value;
+		char s;
+		*this >> value.X >> s >> value.Y >> s;
+		return value;
+	}
+	//Write to text stream
+	template <> void TextSerializableStream::Write<Utilities::Vector2>(const Utilities::Vector2& data) {
+		*this << data.X << ';' << data.Y << ';';
+	}
+	//Read from text stream
+	template <> Utilities::Vector2 BinarySerializableStream::Read<Utilities::Vector2>() {
+		Utilities::Vector2 value;
+		*this >> value.X >> value.Y;
+		return value;
+	}
+	//Write to text stream
+	template <> void BinarySerializableStream::Write<Utilities::Vector2>(const Utilities::Vector2& data) {
+		*this << data.X << data.Y;
 	}
 }
 

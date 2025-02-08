@@ -1,4 +1,5 @@
 #include "Quaternion.hpp"
+#include "utilities/Serializable.hpp"
 #include "utilities/Vector4.hpp"
 
 #define _USE_MATH_DEFINES
@@ -225,6 +226,31 @@ namespace StevEngine::Utilities {
 		return radians * (180.0 / M_PI);
 	}
 }
+
+namespace StevEngine {
+	//Read from text stream
+	template <> Utilities::Quaternion TextSerializableStream::Read<Utilities::Quaternion>() {
+		Utilities::Quaternion value;
+		char s;
+		*this >> value.W >> s >> value.X >> s >> value.Y >> s >> value.Z >> s;
+		return value;
+	}
+	//Write to text stream
+	template <> void TextSerializableStream::Write<Utilities::Quaternion>(const Utilities::Quaternion& data) {
+		*this << data.W << ';' << data.X << ';' << data.Y << ';' << data.Z << ';';
+	}
+	//Read from text stream
+	template <> Utilities::Quaternion BinarySerializableStream::Read<Utilities::Quaternion>() {
+		Utilities::Quaternion value;
+		*this >> value.W >> value.X >> value.Y >> value.Z;
+		return value;
+	}
+	//Write to text stream
+	template <> void BinarySerializableStream::Write<Utilities::Quaternion>(const Utilities::Quaternion& data) {
+		*this << data.W << data.X << data.Y << data.Z;
+	}
+}
+
 
 namespace YAML {
 	Node convert<StevEngine::Utilities::Quaternion>::encode(const StevEngine::Utilities::Quaternion& rhs) {

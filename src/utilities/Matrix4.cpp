@@ -1,5 +1,6 @@
 #include "Matrix4.hpp"
 #include "utilities/Quaternion.hpp"
+#include "utilities/Serializable.hpp"
 #include "utilities/Vector2.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Vector4.hpp"
@@ -303,4 +304,30 @@ namespace StevEngine::Utilities {
 		Vector4(0,0,0,1)
 	);
 	const Matrix4 Matrix4::zero = Matrix4(0.0);
+}
+
+namespace StevEngine {
+	//Read from text stream
+	template <> Utilities::Matrix4 TextSerializableStream::Read<Utilities::Matrix4>() {
+		double raw[4][4];
+		char s;
+		for(int i = 0; i < 4; i++) for(int j = 0; j < 4; j++) *this >> raw[j][i] >> s;
+		return Utilities::Matrix4(raw);
+	}
+	//Write to text stream
+	template <> void TextSerializableStream::Write<Utilities::Matrix4>(const Utilities::Matrix4& data) {
+		auto raw = data.data();
+		for(int i = 0; i < 4 * 4; i++) *this << raw[i] << ';';
+	}
+	//Read from text stream
+	template <> Utilities::Matrix4 BinarySerializableStream::Read<Utilities::Matrix4>() {
+		double raw[4][4];
+		for(int i = 0; i < 4; i++) for(int j = 0; j < 4; j++) *this >> raw[j][i];
+		return Utilities::Matrix4(raw);
+	}
+	//Write to text stream
+	template <> void BinarySerializableStream::Write<Utilities::Matrix4>(const Utilities::Matrix4& data) {
+		auto raw = data.data();
+		for(int i = 0; i < 4 * 4; i++) *this << raw[i];
+	}
 }
