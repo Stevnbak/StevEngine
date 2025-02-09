@@ -1,7 +1,8 @@
 #ifdef StevEngine_RENDERER_GL
 #include "ModelRenderer.hpp"
 #include "main/ResourceManager.hpp"
-#include "main/Component.hpp"
+
+#include "utilities/Serializable.hpp"
 #include "visuals/renderer/RenderSystem.hpp"
 #include "visuals/renderer/Object.hpp"
 #include "visuals/Material.hpp"
@@ -29,14 +30,24 @@ namespace StevEngine::Visuals {
 		return objects;
 	}
 	ModelRenderer::ModelRenderer(const Utilities::Model& model, const Material& material, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
-		: model(model), objects(CreateRenderObjects(model, material)), Component("ModelRenderer") {}
-	ModelRenderer::ModelRenderer(YAML::Node node)
-		: model(Utilities::Model(Resources::resourceManager.GetFile(node["model"].as<std::string>()))), objects(CreateRenderObjects(Utilities::Model(Resources::resourceManager.GetFile(node["model"].as<std::string>())), Material(node["material"]))), Component(node)
+	  : model(model), objects(CreateRenderObjects(model, material)) {}
+	ModelRenderer::ModelRenderer(Stream& stream)
+	  : model(Utilities::Model(Resources::resourceManager.GetFile(stream.Read<std::string>()))),
+		objects(CreateRenderObjects(model,
+		Material(stream.Read<Material>())))
 	{
-		if(node["shaders"].IsSequence()) {
-			for(int i = 0; i < node["shaders"].size(); i++)
-				AddShader(ShaderProgram(node["shaders"][i]));
-		}
+		uint shaderCount = stream.Read<uint>();
+		for(int i = 0; i < shaderCount; i++)
+			AddShader(ShaderProgram(stream));
+	}
+
+	Stream ModelRenderer::Export(StreamType type) const {
+		Stream stream(type);
+		stream << model.path << position << rotation << scale;
+		stream << (uint)shaders.size();
+		for(auto&[_, program] : shaders)
+			stream << program.Export(type);
+		return stream;
 	}
 
 	//Destructor
@@ -63,16 +74,6 @@ namespace StevEngine::Visuals {
 	void ModelRenderer::RemoveShader(ShaderType type) {
 		for(auto& object : objects) object.RemoveShader(type);
 		if(shaders.contains(type)) shaders.erase(type);
-	}
-
-	YAML::Node ModelRenderer::Export(YAML::Node node) const {
-		node["position"] = position;
-		node["rotation"] = rotation;
-		node["scale"] = scale;
-		node["model"] = model.path;
-		for(auto&[type, program] : shaders)
-			node["shaders"].push_back(program.Export());
-		return node;
 	}
 }
 #endif

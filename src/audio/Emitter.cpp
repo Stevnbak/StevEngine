@@ -2,14 +2,13 @@
 #include "Emitter.hpp"
 #include "audio/AudioSystem.hpp"
 #include "main/ResourceManager.hpp"
-#include "main/Component.hpp"
 #include "main/Log.hpp"
 
 #include <SDL.h>
 #include <SDL_mixer.h>
 
 namespace StevEngine::Audio {
-	Emitter::Emitter(std::string audioPath, bool loop, double volume): Component("Emitter") {
+	Emitter::Emitter(std::string audioPath, bool loop, double volume) {
 		//Set basic variables
 		this->audioPath = audioPath;
 		this->audioData = NULL;
@@ -42,23 +41,19 @@ namespace StevEngine::Audio {
 		if(channel != -1) audio.Stop(channel);
 	}
 
-	Emitter::Emitter(YAML::Node node) : Component(node) {
+	Emitter::Emitter(Stream& stream) {
 		//Set basic variables
-		audioPath = node["file"].as<std::string>();
+		stream >> audioPath >> loop >> volume;
 		audioData = NULL;
-		loop = node["loop"].as<bool>();
-		volume = node["volume"].as<double>();
 		channel = -1;
-		//Load audo file
+		//Load audio file
 		ChangeSource(audioPath);
 	}
-	YAML::Node Emitter::Export(YAML::Node node) const {
-		node["file"] = audioPath;
-		node["loop"] = loop;
-		node["volume"] = volume;
-		return node;
+	Stream Emitter::Export(StreamType type) const {
+		Stream stream(type);
+		stream << audioPath << loop << volume;
+		return stream;
 	}
-
 	Emitter::~Emitter() {
 		if (audioData) {
 			Mix_FreeChunk(audioData);

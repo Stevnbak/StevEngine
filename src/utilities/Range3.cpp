@@ -42,24 +42,13 @@ namespace StevEngine::Utilities {
 
 namespace StevEngine {
 	//Read from text stream
-	template <> Utilities::Range3 TextStream::Read<Utilities::Range3>() {
-		Utilities::Range3 value;
-		char s;
-		*this >> value.Low >> value.High;
-		return value;
-	}
-	//Write to text stream
-	template <> void TextStream::Write<Utilities::Range3>(const Utilities::Range3& data) {
-		*this << data.Low << data.High;
-	}
-	//Read from text stream
-	template <> Utilities::Range3 BinaryStream::Read<Utilities::Range3>() {
+	template <> Utilities::Range3 Stream::Read<Utilities::Range3>() {
 		Utilities::Range3 value;
 		*this >> value.Low >> value.High;
 		return value;
 	}
 	//Write to text stream
-	template <> void BinaryStream::Write<Utilities::Range3>(const Utilities::Range3& data) {
+	template <> void Stream::Write<Utilities::Range3>(const Utilities::Range3& data) {
 		*this << data.Low << data.High;
 	}
 }

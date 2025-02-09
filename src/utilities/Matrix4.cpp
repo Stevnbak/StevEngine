@@ -308,25 +308,13 @@ namespace StevEngine::Utilities {
 
 namespace StevEngine {
 	//Read from text stream
-	template <> Utilities::Matrix4 TextStream::Read<Utilities::Matrix4>() {
-		double raw[4][4];
-		char s;
-		for(int i = 0; i < 4; i++) for(int j = 0; j < 4; j++) *this >> raw[j][i];
-		return Utilities::Matrix4(raw);
-	}
-	//Write to text stream
-	template <> void TextStream::Write<Utilities::Matrix4>(const Utilities::Matrix4& data) {
-		auto raw = data.data();
-		for(int i = 0; i < 4 * 4; i++) *this << raw[i];
-	}
-	//Read from text stream
-	template <> Utilities::Matrix4 BinaryStream::Read<Utilities::Matrix4>() {
+	template <> Utilities::Matrix4 Stream::Read<Utilities::Matrix4>() {
 		double raw[4][4];
 		for(int i = 0; i < 4; i++) for(int j = 0; j < 4; j++) *this >> raw[j][i];
 		return Utilities::Matrix4(raw);
 	}
 	//Write to text stream
-	template <> void BinaryStream::Write<Utilities::Matrix4>(const Utilities::Matrix4& data) {
+	template <> void Stream::Write<Utilities::Matrix4>(const Utilities::Matrix4& data) {
 		auto raw = data.data();
 		for(int i = 0; i < 4 * 4; i++) *this << raw[i];
 	}

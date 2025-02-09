@@ -1,7 +1,10 @@
 #pragma once
 #ifdef StevEngine_AUDIO
+#include "utilities/Serializable.hpp"
 #include "main/Component.hpp"
 #include <SDL_mixer.h>
+
+#define EMITTER_TYPE "Emitter"
 
 namespace StevEngine::Audio {
 
@@ -40,17 +43,23 @@ namespace StevEngine::Audio {
 			Emitter(std::string audioPath, bool loop = false, double volume = 1);
 
 			/**
-			 * @brief Create emitter from serialized data
-			 * @param node YAML node containing serialized emitter data
+			 * @brief Create emitter from text serialized data
+			 * @param stream Stream containing serialized component data
 			 */
-			Emitter(YAML::Node node);
+			Emitter(Stream& stream);
 
 			/**
-			 * @brief Serialize emitter to YAML
-			 * @param node YAML node to serialize into
-			 * @return Updated YAML node containing emitter data
+			 * @brief Get component type
+			 * @return Type identifier string
 			 */
-			YAML::Node Export(YAML::Node node) const;
+			std::string GetType() const { return EMITTER_TYPE; }
+
+			/**
+			 * @brief Serialize component to a text stream
+			 * @param type Type of stream to export to
+			 * @return Serialized stream
+			 */
+			Stream Export(StreamType type) const;
 
 			/**
 			 * @brief Play the sound
@@ -93,6 +102,6 @@ namespace StevEngine::Audio {
 	};
 
 	/** Register Emitter as a component type */
-	inline bool emitter = CreateComponents::RegisterComponentType<Emitter>("Emitter");
+	inline bool emitter = CreateComponents::RegisterComponentType<Emitter>(EMITTER_TYPE);
 }
 #endif

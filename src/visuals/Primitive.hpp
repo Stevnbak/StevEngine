@@ -3,6 +3,12 @@
 #include "renderer/RenderComponent.hpp"
 #include "visuals/Material.hpp"
 
+#define CUBE_PRIMITIVE_TYPE "CubePrimitive"
+#define UVSPHERE_PRIMITIVE_TYPE "UVSpherePrimitive"
+#define ICOSPHERE_PRIMITIVE_TYPE "IcoSpherePrimitive"
+#define CYLINDER_PRIMITIVE_TYPE "CylinderPrimitive"
+#define CAPSULE_PRIMITIVE_TYPE "CapsulePrimitive"
+
 namespace StevEngine {
 	namespace Visuals {
 		/**
@@ -36,17 +42,23 @@ namespace StevEngine {
 							  TextureType textureType = REPEAT);
 
 				/**
-				 * @brief Create from serialized data
-				 * @param node YAML node with primitive data
+				 * @brief Create cube from serialized data
+				 * @param stream Stream containing serialized component data
 				 */
-				CubePrimitive(YAML::Node node);
+				CubePrimitive(Stream& stream);
 
 				/**
-				 * @brief Serialize to YAML
-				 * @param node Node to serialize into
-				 * @return Updated YAML node
+				 * @brief Get component type
+				 * @return Type identifier string
 				 */
-				YAML::Node Export(YAML::Node node) const;
+				std::string GetType() const { return CUBE_PRIMITIVE_TYPE; }
+
+				/**
+				 * @brief Serialize component to a text stream
+				 * @param type Type of stream to export to
+				 * @return Serialized stream
+				 */
+				Stream Export(StreamType type) const;
 
 				const Visuals::TextureType textureType;  ///< Texture mapping mode
 		};
@@ -75,8 +87,25 @@ namespace StevEngine {
 								  bool smooth = true,
 								  TextureType textureType = COVER);
 
-				UVSpherePrimitive(YAML::Node node);
-				YAML::Node Export(YAML::Node node) const;
+				/**
+				 * @brief Create cube from serialized data
+				 * @param stream Stream containing serialized component data
+				 */
+				UVSpherePrimitive(Stream& stream);
+
+				/**
+				 * @brief Get component type
+				 * @return Type identifier string
+				 */
+				std::string GetType() const { return UVSPHERE_PRIMITIVE_TYPE; }
+
+				/**
+				 * @brief Serialize component to a text stream
+				 * @param type Type of stream to export to
+				 * @return Serialized stream
+				 */
+				Stream Export(StreamType type) const;
+
 				const Visuals::TextureType textureType;  ///< Texture mapping mode
 				const bool smooth;					   ///< Whether to use smooth shading
 		};
@@ -105,8 +134,25 @@ namespace StevEngine {
 								   bool smooth = true,
 								   TextureType textureType = COVER);
 
-				IcospherePrimitive(YAML::Node node);
-				YAML::Node Export(YAML::Node node) const;
+				/**
+				 * @brief Create cube from serialized data
+				 * @param stream Stream containing serialized component data
+				 */
+				IcospherePrimitive(Stream& stream);
+
+				/**
+				 * @brief Get component type
+				 * @return Type identifier string
+				 */
+				std::string GetType() const { return ICOSPHERE_PRIMITIVE_TYPE; }
+
+				/**
+				 * @brief Serialize component to a text stream
+				 * @param type Type of stream to export to
+				 * @return Serialized stream
+				 */
+				Stream Export(StreamType type) const;
+
 				const Visuals::TextureType textureType;  ///< Texture mapping mode
 				const bool smooth;					   ///< Whether to use smooth shading
 		};
@@ -135,8 +181,25 @@ namespace StevEngine {
 								  bool smooth = true,
 								  TextureType textureType = COVER);
 
-				CylinderPrimitive(YAML::Node node);
-				YAML::Node Export(YAML::Node node) const;
+				/**
+				 * @brief Create cube from serialized data
+				 * @param stream Stream containing serialized component data
+				 */
+				CylinderPrimitive(Stream& stream);
+
+				/**
+				 * @brief Get component type
+				 * @return Type identifier string
+				 */
+				std::string GetType() const { return CYLINDER_PRIMITIVE_TYPE; }
+
+				/**
+				 * @brief Serialize component to a text stream
+				 * @param type Type of stream to export to
+				 * @return Serialized stream
+				 */
+				Stream Export(StreamType type) const;
+
 				const Visuals::TextureType textureType;  ///< Texture mapping mode
 				const bool smooth;					   ///< Whether to use smooth shading
 		};
@@ -165,18 +228,35 @@ namespace StevEngine {
 								 bool smooth = true,
 								 TextureType textureType = COVER);
 
-				CapsulePrimitive(YAML::Node node);
-				YAML::Node Export(YAML::Node node) const;
+				/**
+				 * @brief Create capsule from serialized data
+				 * @param stream Stream containing serialized component data
+				 */
+				CapsulePrimitive(Stream& stream);
+
+				/**
+				 * @brief Get component type
+				 * @return Type identifier string
+				 */
+				std::string GetType() const { return CAPSULE_PRIMITIVE_TYPE; }
+
+				/**
+				 * @brief Serialize component to a text stream
+				 * @param type Type of stream to export to
+				 * @return Serialized stream
+				 */
+				Stream Export(StreamType type) const;
+
 				const Visuals::TextureType textureType;  ///< Texture mapping mode
 				const bool smooth;					   ///< Whether to use smooth shading
 		};
 
 		/** @brief Register primitive components */
-		inline bool cube = CreateComponents::RegisterComponentType<CubePrimitive>("CubePrimitive");
-		inline bool sphere = CreateComponents::RegisterComponentType<UVSpherePrimitive>("IcospherePrimitive");
-		inline bool icosphere = CreateComponents::RegisterComponentType<IcospherePrimitive>("IcospherePrimitive");
-		inline bool cylinder = CreateComponents::RegisterComponentType<CylinderPrimitive>("CylinderPrimitive");
-		inline bool capsule = CreateComponents::RegisterComponentType<CapsulePrimitive>("CapsulePrimitive");
+		inline bool cube = CreateComponents::RegisterComponentType<CubePrimitive>(CUBE_PRIMITIVE_TYPE);
+		inline bool sphere = CreateComponents::RegisterComponentType<UVSpherePrimitive>(UVSPHERE_PRIMITIVE_TYPE);
+		inline bool icosphere = CreateComponents::RegisterComponentType<IcospherePrimitive>(ICOSPHERE_PRIMITIVE_TYPE);
+		inline bool cylinder = CreateComponents::RegisterComponentType<CylinderPrimitive>(CYLINDER_PRIMITIVE_TYPE);
+		inline bool capsule = CreateComponents::RegisterComponentType<CapsulePrimitive>(CAPSULE_PRIMITIVE_TYPE);
 	}
 }
 #endif

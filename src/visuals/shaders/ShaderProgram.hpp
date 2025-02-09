@@ -1,15 +1,15 @@
 #pragma once
-#include "utilities/Matrix4.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "Shader.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Vector2.hpp"
 #include "utilities/Color.hpp"
+#include "utilities/Matrix4.hpp"
+#include "utilities/Serializable.hpp"
 
 #include <map>
 #include <cstdint>
 #include <glad/gl.h>
-#include <yaml-cpp/yaml.h>
 
 namespace StevEngine::Renderer {
 	/**
@@ -28,9 +28,9 @@ namespace StevEngine::Renderer {
 
 			/**
 			 * @brief Create from serialized data
-			 * @param node YAML node with program data
+			 * @param stream Stream containing serialized component data
 			 */
-			ShaderProgram(YAML::Node node);
+			ShaderProgram(Stream& stream);
 
 			/** @brief Create empty program */
 			ShaderProgram() {};
@@ -127,10 +127,11 @@ namespace StevEngine::Renderer {
 			ShaderType GetType() const { return shaderType; };
 
 			/**
-			 * @brief Serialize program to YAML
-			 * @return YAML node with program data
+			 * @brief Serialize shader program to a text stream
+			 * @param type Type of stream to export to
+			 * @return Serialized stream
 			 */
-			YAML::Node Export() const;
+			Stream Export(StreamType type) const;
 
 		private:
 			uint32_t location;	  ///< OpenGL program ID

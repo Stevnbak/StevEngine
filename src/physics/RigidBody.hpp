@@ -1,4 +1,5 @@
 #pragma once
+#include "utilities/Serializable.hpp"
 #ifdef StevEngine_PHYSICS
 #include "main/Component.hpp"
 #include "utilities/Vector3.hpp"
@@ -12,6 +13,8 @@
 #include <Jolt/Physics/Collision/Shape/StaticCompoundShape.h>
 #include <Jolt/Physics/Body/BodyManager.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
+
+#define RIGIDBODY_TYPE "RigidBody"
 
 namespace StevEngine::Physics {
 	/**
@@ -84,10 +87,23 @@ namespace StevEngine::Physics {
 			RigidBody(JPH::EMotionType motionType, Layer* layer, float mass = 1000);
 
 			/**
-			 * @brief Create from serialized data
-			 * @param node YAML node with body data
+			 * @brief Create rigidbody from text serialized data
+			 * @param stream Stream containing serialized component data
 			 */
-			RigidBody(YAML::Node node);
+			RigidBody(Stream& stream);
+
+			/**
+			 * @brief Get component type
+			 * @return Type identifier string
+			 */
+			std::string GetType() const { return RIGIDBODY_TYPE; }
+
+			/**
+			 * @brief Serialize component to a text stream
+			 * @param type Type of stream to export to
+			 * @return Serialized stream
+			 */
+			Stream Export(StreamType type) const;
 
 			/**
 			 * @brief Initialize component
@@ -274,6 +290,6 @@ namespace StevEngine::Physics {
 	};
 
 	/** Register RigidBody as a component type */
-	inline bool body = CreateComponents::RegisterComponentType<RigidBody>("RigidBody");
+	inline bool body = CreateComponents::RegisterComponentType<RigidBody>(RIGIDBODY_TYPE);
 }
 #endif

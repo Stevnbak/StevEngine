@@ -38,7 +38,7 @@ namespace StevEngine::Renderer {
 		return result;
 	}
 	Object::Object(const std::vector<Vertex>& vertices, const Visuals::Material& material)
-		: material(material) {
+	  : material(material) {
 		//Create indices and filter out duplicates
 		std::vector<Vertex> uniqueVertices;
 		std::vector<uint32_t> newIndices;
@@ -64,7 +64,7 @@ namespace StevEngine::Renderer {
 		}
 	}
 	Object::Object(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices,  const Visuals::Material& material)
-		: vertices(new float[vertices.size()]), vertexCount(vertices.size()), indices(new uint32_t[indices.size()]), indexCount(indices.size()), material(material)
+	  : vertices(new float[vertices.size()]), vertexCount(vertices.size()), indices(new uint32_t[indices.size()]), indexCount(indices.size()), material(material)
 	{
 		auto floatVertices = ToFloatList(vertices);
 		vertexCount = floatVertices.size();
@@ -79,7 +79,7 @@ namespace StevEngine::Renderer {
 		}
 	}
 	Object::Object(const Object& instance)
-		: indices(instance.indices), indexCount(instance.indexCount), vertices(instance.vertices), vertexCount(instance.vertexCount), material(instance.material) {}
+	  : indices(instance.indices), indexCount(instance.indexCount), vertices(instance.vertices), vertexCount(instance.vertexCount), material(instance.material) {}
 
 	//Shaders
 	void Object::AddShader(Renderer::ShaderProgram program) {

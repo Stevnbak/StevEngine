@@ -4,8 +4,8 @@
 #include "visuals/Material.hpp"
 #include "utilities/Vector2.hpp"
 #include "utilities/Vector3.hpp"
+#include "utilities/Terrain.hpp"
 
-#include <string>
 #include <vector>
 
 using namespace StevEngine::Utilities;
@@ -94,14 +94,18 @@ namespace StevEngine::Visuals {
 		return Renderer::Object(vertices, indices, material);
 	}
 	TerrainRenderer::TerrainRenderer(const TerrainData& data, Material material, bool smooth)
-		: data(data), smooth(smooth), RenderComponent(CreateRenderObject(data, material, smooth), "TerrainRenderer") {}
-	TerrainRenderer::TerrainRenderer(YAML::Node node)
-		: data(TerrainData(node["terrain"])), smooth(node["smooth"].as<bool>()), RenderComponent(CreateRenderObject(data, Material(node["material"]), node["smooth"].as<bool>()), node) {}
-	YAML::Node TerrainRenderer::Export(YAML::Node node) const {
-		YAML::Node n = RenderComponent::Export(node);
-		n["texture"] = data.Export();
-		n["smooth"] = smooth;
-		return n;
+	  : data(data), smooth(smooth), RenderComponent(CreateRenderObject(data, material, smooth)) {}
+
+	TerrainRenderer::TerrainRenderer(Stream& stream)
+	  : RenderComponent(Renderer::Object({}, {}), stream), data(TerrainData(stream.Read<TerrainData>())), smooth(stream.Read<bool>())
+	{
+		object = CreateRenderObject(data, object.material, smooth);
+	}
+
+	Stream TerrainRenderer::Export(StreamType type) const {
+		Stream stream(type);
+		stream << RenderComponent::Export(type) << data << smooth;
+		return stream;
 	}
 }
 #endif

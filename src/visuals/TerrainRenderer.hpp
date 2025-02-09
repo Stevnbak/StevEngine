@@ -5,6 +5,8 @@
 
 #include "visuals/renderer/RenderComponent.hpp"
 
+#define TERRAIN_RENDERER_TYPE "TerrainRenderer"
+
 namespace StevEngine::Visuals {
 	/**
 	 * @brief Component for rendering heightmap terrain
@@ -25,17 +27,23 @@ namespace StevEngine::Visuals {
 			TerrainRenderer(const Utilities::TerrainData& data, Material material = Material(), bool smooth = true);
 
 			/**
-			 * @brief Create from serialized data
-			 * @param node YAML node with terrain data
+			 * @brief Create terrain renderer from serialized data
+			 * @param stream Stream containing serialized component data
 			 */
-			TerrainRenderer(YAML::Node node);
+			TerrainRenderer(Stream& stream);
 
 			/**
-			 * @brief Serialize to YAML
-			 * @param node Node to serialize into
-			 * @return Updated YAML node
+			 * @brief Get component type
+			 * @return Type identifier string
 			 */
-			YAML::Node Export(YAML::Node node) const;
+			std::string GetType() const { return TERRAIN_RENDERER_TYPE; }
+
+			/**
+			 * @brief Serialize component to a text stream
+			 * @param type Type of stream to export to
+			 * @return Serialized stream
+			 */
+			Stream Export(StreamType type) const;
 
 		private:
 			const Utilities::TerrainData data;  ///< Heightmap terrain data
@@ -43,6 +51,6 @@ namespace StevEngine::Visuals {
 	};
 
 	/** @brief Register TerrainRenderer as a component type */
-	inline bool terrainRenderer = CreateComponents::RegisterComponentType<TerrainRenderer>("TerrainRenderer");
+	inline bool terrainRenderer = CreateComponents::RegisterComponentType<TerrainRenderer>(TERRAIN_RENDERER_TYPE);
 }
 #endif

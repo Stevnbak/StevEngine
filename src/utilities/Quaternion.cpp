@@ -9,13 +9,13 @@
 namespace StevEngine::Utilities {
 	//Constructors
 	Quaternion::Quaternion(double w, double x, double y, double z)
-		: W(w), X(x), Y(y), Z(z) {}
+	  : W(w), X(x), Y(y), Z(z) {}
 	Quaternion::Quaternion(double w, Vector3 vector)
-		: W(w), X(vector.X), Y(vector.Y), Z(vector.Z) {}
+	  : W(w), X(vector.X), Y(vector.Y), Z(vector.Z) {}
 	Quaternion::Quaternion(const Quaternion& from)
-		: W(from.W), X(from.X), Y(from.Y), Z(from.Z) {}
+	  : W(from.W), X(from.X), Y(from.Y), Z(from.Z) {}
 	Quaternion::Quaternion()
-		: W(1), X(0), Y(0), Z(0) {}
+	  : W(1), X(0), Y(0), Z(0) {}
 	//Directions
 	Vector3 Quaternion::Forward() const {
 		return Get() * Vector3::forward;
@@ -229,24 +229,13 @@ namespace StevEngine::Utilities {
 
 namespace StevEngine {
 	//Read from text stream
-	template <> Utilities::Quaternion TextStream::Read<Utilities::Quaternion>() {
-		Utilities::Quaternion value;
-		char s;
-		*this >> value.W >> value.X >> value.Y >> value.Z;
-		return value;
-	}
-	//Write to text stream
-	template <> void TextStream::Write<Utilities::Quaternion>(const Utilities::Quaternion& data) {
-		*this << data.W << data.X << data.Y << data.Z;
-	}
-	//Read from text stream
-	template <> Utilities::Quaternion BinaryStream::Read<Utilities::Quaternion>() {
+	template <> Utilities::Quaternion Stream::Read<Utilities::Quaternion>() {
 		Utilities::Quaternion value;
 		*this >> value.W >> value.X >> value.Y >> value.Z;
 		return value;
 	}
 	//Write to text stream
-	template <> void BinaryStream::Write<Utilities::Quaternion>(const Utilities::Quaternion& data) {
+	template <> void Stream::Write<Utilities::Quaternion>(const Utilities::Quaternion& data) {
 		*this << data.W << data.X << data.Y << data.Z;
 	}
 }

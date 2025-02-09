@@ -28,7 +28,7 @@ uint64_t GetTime() {
 namespace StevEngine {
 	Engine* engine = nullptr;
 	Engine::Engine(std::string title, GameSettings gameSettings)
-		: title(title), running(false),gameSettings(gameSettings), events(EventManager())
+	  : title(title), running(false),gameSettings(gameSettings), events(EventManager())
 	{
 		//Initialize logging
 		#ifdef StevEngine_PLAYER_DATA

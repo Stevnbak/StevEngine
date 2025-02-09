@@ -30,7 +30,7 @@ namespace StevEngine::Utilities {
 		 * @param tangent Tangent vector
 		 */
 		Vertex(Vector3 position, Vector2 uv, Vector3 normal, Vector3 tangent)
-				: position(position), uv(uv), normal(normal), tangent(tangent) {}
+			  : position(position), uv(uv), normal(normal), tangent(tangent) {}
 
 		/** @brief Create empty vertex */
 		Vertex() {};

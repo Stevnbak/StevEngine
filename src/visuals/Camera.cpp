@@ -13,24 +13,20 @@ using namespace StevEngine::Utilities;
 
 namespace StevEngine::Visuals {
 	Camera::Camera(bool orthographic, float fov, float zoomValue, float nearClip, float farClip)
-		: Component("Camera"), isOrthographic(orthographic), fov(fov), zoom(zoomValue), nearClip(nearClip), farClip(farClip) {}
+	  : isOrthographic(orthographic), fov(fov), zoom(zoomValue), nearClip(nearClip), farClip(farClip) {}
 
-	Camera::Camera(YAML::Node node)
-		: Component(node),
-		isOrthographic(node["orthographic"].as<bool>()),
-		zoom(node["zoom"].as<float>()),
-		fov(node["fov"].as<float>()),
-		farClip(node["farClip"].as<float>()),
-		nearClip(node["nearClip"].as<float>())
+	Camera::Camera(Stream& stream)
+	  : isOrthographic(stream.Read<bool>()),
+		zoom(stream.Read<float>()),
+		fov(stream.Read<float>()),
+		farClip(stream.Read<float>()),
+		nearClip(stream.Read<float>())
 	{}
 
-	YAML::Node Camera::Export(YAML::Node node) const {
-		node["orthographic"] = isOrthographic;
-		node["fov"] = fov;
-		node["zoom"] = zoom;
-		node["farClip"] = farClip;
-		node["nearClip"] = nearClip;
-		return node;
+	Stream Camera::Export(StreamType type) const {
+		Stream stream(type);
+		stream << isOrthographic << fov << zoom << farClip << nearClip;
+		return stream;
 	}
 
 	Matrix4 Camera::GetView() const {

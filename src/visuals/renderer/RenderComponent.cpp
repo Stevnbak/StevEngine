@@ -4,21 +4,19 @@
 #include "visuals/shaders/Shader.hpp"
 #include "utilities/Vector3.hpp"
 
-#include <yaml-cpp/yaml.h>
-
 namespace StevEngine::Renderer {
 	//Constructor
-	RenderComponent::RenderComponent(const Object& object, std::string type)
-		: Component(type), object(object) {}
-	RenderComponent::RenderComponent(const Object& object, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, std::string type)
-		: Component(type), position(position), rotation(rotation), scale(scale), object(object) {}
-	RenderComponent::RenderComponent(const Object& object, YAML::Node node)
-		: Component(node), object(object), position(node["position"].as<Utilities::Vector3>()), rotation(node["rotation"].as<Utilities::Quaternion>()), scale(node["scale"].as<Utilities::Vector3>())
+	RenderComponent::RenderComponent(const Object& object)
+	  : object(object) {}
+	RenderComponent::RenderComponent(const Object& object, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
+	  : position(position), rotation(rotation), scale(scale), object(object) {}
+	RenderComponent::RenderComponent(const Object& object, Stream& stream)
+	  : object(object), position(stream.Read<Utilities::Vector3>()), rotation(stream.Read<Utilities::Quaternion>()), scale(stream.Read<Utilities::Vector3>())
 	{
-		if(node["shaders"].IsSequence()) {
-			for(int i = 0; i < node["shaders"].size(); i++)
-				AddShader(ShaderProgram(node["shaders"][i]));
-		}
+		stream >> this->object.material;
+		uint shaderCount = stream.Read<uint>();
+		for(int i = 0; i < shaderCount; i++)
+			AddShader(ShaderProgram(stream));
 	}
 	//Destructor
 	RenderComponent::~RenderComponent() {
@@ -41,14 +39,15 @@ namespace StevEngine::Renderer {
 		object.RemoveShader(type);
 		if(shaders.contains(type)) shaders.erase(type);
 	}
-	YAML::Node RenderComponent::Export(YAML::Node node) const {
-		node["position"] = position;
-		node["rotation"] = rotation;
-		node["scale"] = scale;
-		node["material"] = object.material.Export();
-		for(auto&[type, program] : shaders)
-			node["shaders"].push_back(program.Export());
-		return node;
+	Stream RenderComponent::Export(StreamType type) const {
+		Stream stream(type);
+		stream << position << rotation << scale << object.material;
+
+		stream << (uint)shaders.size();
+		for(auto&[_, program] : shaders)
+			stream << program.Export(type);
+
+		return stream;
 	}
 }
 #endif

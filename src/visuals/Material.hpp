@@ -89,20 +89,6 @@ namespace StevEngine::Visuals {
 		private:
 			Texture albedo = Texture::empty;  ///< Albedo/color texture
 			Texture normal = Texture::empty;  ///< Normal map texture
-
-		//Import/Export
-		public:
-			/**
-			 * @brief Create material from serialized data
-			 * @param node YAML node with material data
-			 */
-			Material(YAML::Node node);
-
-			/**
-			 * @brief Serialize material to YAML
-			 * @return YAML node containing material data
-			 */
-			YAML::Node Export() const;
 	};
 }
 #endif

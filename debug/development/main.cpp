@@ -51,8 +51,10 @@ class CameraController final : public Component {
 		void Update(double deltaTime);
 		void Start();
 		void Deactivate() {};
-		CameraController() : Component("CameraController") {};
-		CameraController(YAML::Node node) : Component(node) {};
+		CameraController() {};
+		CameraController(Stream& stream) {};
+		std::string GetType() const { return "Rotate"; }
+		Stream Export(StreamType type) const { return Stream(type); }
 };
 bool camController = CreateComponents::RegisterComponentType<CameraController>("CameraController");
 void CameraController::Update(double deltaTime) {
@@ -122,9 +124,11 @@ class Rotate final : public Component {
 		}
 		void Start() {};
 		void Deactivate() {};
-		Rotate() : Component("Rotate") {};
-		Rotate(Vector3 axis, double movementSpeed = 0.5) : axis(axis), movementSpeed(movementSpeed), Component("Rotate") {};
-		Rotate(YAML::Node node) : Component(node) {};
+		std::string GetType() const { return "Rotate"; }
+		Stream Export(StreamType type) const { return Stream(type); }
+		Rotate() {};
+		Rotate(Vector3 axis, double movementSpeed = 0.5) : axis(axis), movementSpeed(movementSpeed) {};
+		Rotate(Stream& node) {};
 };
 bool rotate = CreateComponents::RegisterComponentType<Rotate>("Rotate");
 
@@ -458,7 +462,7 @@ int main(int argc, char** argv) {
 
 	//Export scene
 	#ifdef StevEngine_PLAYER_DATA
-	scene->ExportToFile();
+	scene->Export(Text).WriteToFile(scene->name.c_str());
 	#endif
 	//*/
 

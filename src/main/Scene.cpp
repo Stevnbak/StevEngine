@@ -82,6 +82,7 @@ namespace StevEngine {
 		for(const auto& [id, obj] : gameObjects) {
 			stream << obj.Export(type);
 		}
+		return stream;
 	}
 	void Scene::Activate() {
 		active = true;

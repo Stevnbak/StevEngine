@@ -1,4 +1,5 @@
 #include "Color.hpp"
+#include "utilities/Serializable.hpp"
 
 namespace StevEngine::Utilities {
 	const float* Color::data() const {
@@ -8,6 +9,19 @@ namespace StevEngine::Utilities {
 		data[2] = b / 255.0f;
 		data[3] = a / 255.0f;
 		return data;
+	}
+}
+
+namespace StevEngine {
+	//Read from text stream
+	template <> Utilities::Color Stream::Read<Utilities::Color>() {
+		Utilities::Color value;
+		*this >> value.r >> value.g >> value.b >> value.a;;
+		return value;
+	}
+	//Write to text stream
+	template <> void Stream::Write<Utilities::Color>(const Utilities::Color& data) {
+		*this << data.r << data.g << data.b << data.a;
 	}
 }
 

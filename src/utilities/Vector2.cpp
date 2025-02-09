@@ -81,24 +81,13 @@ namespace StevEngine::Utilities {
 
 namespace StevEngine {
 	//Read from text stream
-	template <> Utilities::Vector2 TextStream::Read<Utilities::Vector2>() {
-		Utilities::Vector2 value;
-		char s;
-		*this >> value.X >> value.Y;
-		return value;
-	}
-	//Write to text stream
-	template <> void TextStream::Write<Utilities::Vector2>(const Utilities::Vector2& data) {
-		*this << data.X << data.Y;
-	}
-	//Read from text stream
-	template <> Utilities::Vector2 BinaryStream::Read<Utilities::Vector2>() {
+	template <> Utilities::Vector2 Stream::Read<Utilities::Vector2>() {
 		Utilities::Vector2 value;
 		*this >> value.X >> value.Y;
 		return value;
 	}
 	//Write to text stream
-	template <> void BinaryStream::Write<Utilities::Vector2>(const Utilities::Vector2& data) {
+	template <> void Stream::Write<Utilities::Vector2>(const Utilities::Vector2& data) {
 		*this << data.X << data.Y;
 	}
 }

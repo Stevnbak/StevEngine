@@ -12,7 +12,7 @@
 namespace StevEngine::Physics {
 	//Constructor
 	RigidBody::RigidBody(JPH::EMotionType motionType, Layer* layer, float mass)
-		: Component("RigidBody"), motionType(motionType), layer(layer), mass(mass), body(nullptr) {};
+	  : motionType(motionType), layer(layer), mass(mass), body(nullptr) {};
 
 	void RigidBody::Start() {
 		//Create shape
@@ -103,12 +103,12 @@ namespace StevEngine::Physics {
 		if(shape) shape->Release();
 	}
 
-	YAML::Node RigidBody::Export(YAML::Node node) const {
-		node["mass"] = mass;
-		node["motionType"] = (uint32_t)motionType;
-		node["layer"] = layer->id;
-		return node;
+	Stream RigidBody::Export(StreamType type) const {
+		Stream stream(type);
+		stream << mass << (uint32_t)motionType << layer->id;
+		return stream;
 	}
-	RigidBody::RigidBody(YAML::Node node) : Component(node), mass(node["mass"].as<double>()), motionType((JPH::EMotionType)node["motionType"].as<uint32_t>()), layer(StevEngine::Physics::Layer::GetLayerById(node["layer"].as<int>())), body(nullptr) {}
+	RigidBody::RigidBody(Stream& stream)
+	  : mass(stream.Read<double>()), motionType((JPH::EMotionType)stream.Read<uint32_t>()), layer(StevEngine::Physics::Layer::GetLayerById(stream.Read<int>())), body(nullptr) {}
 }
 #endif

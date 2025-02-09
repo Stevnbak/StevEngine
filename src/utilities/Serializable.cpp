@@ -1,5 +1,6 @@
 #include "Serializable.hpp"
 #include "data/DataManager.hpp"
+#include "main/Log.hpp"
 #include <cstdio>
 #include <fstream>
 #include <iostream>
@@ -27,7 +28,7 @@ namespace StevEngine {
 		if(data.type != type) throw("Stream types are not matching!");
 		stream << data.stream.rdbuf();
 	}
-	//Read char from text stream
+	//Read char from stream
 	template <> char Stream::Read<char>() {
 		if(stream.eof()) return (char)NULL;
 		char value;
@@ -41,8 +42,33 @@ namespace StevEngine {
 		}
 		return value;
 	}
-	//Write char to text stream
+	//Write char to stream
 	template <> void Stream::Write<char>(const char& data) {
+		switch(type) {
+			case Text:
+				stream << data;
+				break;
+			case Binary:
+				stream.write((char*)&data, sizeof(data));
+				break;
+		}
+	}
+	//Read bool from stream
+	template <> bool Stream::Read<bool>() {
+		if(stream.eof()) return (bool)NULL;
+		bool value;
+		switch(type) {
+			case Text:
+				stream >> value;
+				break;
+			case Binary:
+				stream.read((char*)&value, sizeof(value));
+				break;
+		}
+		return value;
+	}
+	//Write bool to stream
+	template <> void Stream::Write<bool>(const bool& data) {
 		switch(type) {
 			case Text:
 				stream << data;
@@ -71,7 +97,7 @@ namespace StevEngine {
 				break;
 		}
 	}
-	//Read uint8 from text stream
+	//Read uint8 from stream
 	template <> uint8_t Stream::Read<uint8_t>() {
 		if(stream.eof()) return (uint8_t)NULL;
 		uint8_t value;
@@ -86,7 +112,7 @@ namespace StevEngine {
 		}
 		return value;
 	}
-	//Write uint8 to text stream
+	//Write uint8 to stream
 	template <> void Stream::Write<uint8_t>(const uint8_t& data) {
 		switch(type) {
 			case Text:
@@ -97,10 +123,10 @@ namespace StevEngine {
 				break;
 		}
 	}
-	//Read uint from text stream
-	template <> uint Stream::Read<uint>() {
-		if(stream.eof()) return (uint)NULL;
-		uint value;
+	//Read uint8 from stream
+	template <> uint16_t Stream::Read<uint16_t>() {
+		if(stream.eof()) return (uint16_t)NULL;
+		uint16_t value;
 		switch(type) {
 			case Text:
 				char c;
@@ -112,8 +138,8 @@ namespace StevEngine {
 		}
 		return value;
 	}
-	//Write uint to text stream
-	template <> void Stream::Write<uint>(const uint& data) {
+	//Write uint8 to stream
+	template <> void Stream::Write<uint16_t>(const uint16_t& data) {
 		switch(type) {
 			case Text:
 				stream << data << ';';
@@ -123,7 +149,33 @@ namespace StevEngine {
 				break;
 		}
 	}
-	//Read int from text stream
+	//Read uint from stream
+	template <> uint32_t Stream::Read<uint32_t>() {
+		if(stream.eof()) return (uint32_t)NULL;
+		uint32_t value;
+		switch(type) {
+			case Text:
+				char c;
+				stream >> value >> c;
+				break;
+			case Binary:
+				stream.read((char*)&value, sizeof(value));
+				break;
+		}
+		return value;
+	}
+	//Write uint to stream
+	template <> void Stream::Write<uint32_t>(const uint32_t& data) {
+		switch(type) {
+			case Text:
+				stream << data << ';';
+				break;
+			case Binary:
+				stream.write((char*)&data, sizeof(data));
+				break;
+		}
+	}
+	//Read int from stream
 	template <> int Stream::Read<int>() {
 		if(stream.eof()) return (int)NULL;
 		int value;
@@ -138,7 +190,7 @@ namespace StevEngine {
 		}
 		return value;
 	}
-	//Write int to text stream
+	//Write int to stream
 	template <> void Stream::Write<int>(const int& data) {
 		switch(type) {
 			case Text:
@@ -149,7 +201,7 @@ namespace StevEngine {
 				break;
 		}
 	}
-	//Read long from text stream
+	//Read long from stream
 	template <> long Stream::Read<long>() {
 		if(stream.eof()) return (long)NULL;
 		long value;
@@ -164,7 +216,7 @@ namespace StevEngine {
 		}
 		return value;
 	}
-	//Write long to text stream
+	//Write long to stream
 	template <> void Stream::Write<long>(const long& data) {
 		switch(type) {
 			case Text:
@@ -175,9 +227,9 @@ namespace StevEngine {
 				break;
 		}
 	}
-	//Read long from text stream
-	template <> ulong Stream::Read<ulong>() {
-		if(stream.eof()) return (ulong)NULL;
+	//Read long from stream
+	template <> uint64_t Stream::Read<uint64_t>() {
+		if(stream.eof()) return (uint64_t)NULL;
 		long value;
 		switch(type) {
 			case Text:
@@ -190,8 +242,8 @@ namespace StevEngine {
 		}
 		return value;
 	}
-	//Write long to text stream
-	template <> void Stream::Write<ulong>(const ulong& data) {
+	//Write long to stream
+	template <> void Stream::Write<uint64_t>(const uint64_t& data) {
 		switch(type) {
 			case Text:
 				stream << data << ';';
@@ -201,7 +253,7 @@ namespace StevEngine {
 				break;
 		}
 	}
-	//Read float from text stream
+	//Read float from stream
 	template <> float Stream::Read<float>() {
 		if(stream.eof()) return (float)NULL;
 		float value;
@@ -216,7 +268,7 @@ namespace StevEngine {
 		}
 		return value;
 	}
-	//Write float to text stream
+	//Write float to stream
 	template <> void Stream::Write<float>(const float& data) {
 		switch(type) {
 			case Text:
@@ -227,7 +279,7 @@ namespace StevEngine {
 				break;
 		}
 	}
-	//Read double from text stream
+	//Read double from stream
 	template <> double Stream::Read<double>() {
 		if(stream.eof()) return (double)NULL;
 		double value;
@@ -242,7 +294,7 @@ namespace StevEngine {
 		}
 		return value;
 	}
-	//Write double to text stream
+	//Write double to stream
 	template <> void Stream::Write<double>(const double& data) {
 		switch(type) {
 			case Text:

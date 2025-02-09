@@ -53,18 +53,19 @@ namespace StevEngine::Renderer {
 		modified = false;
 	}
 
-	YAML::Node ShaderProgram::Export() const {
-		YAML::Node node;
-		node["type"] = (int)shaderType;
-		for(auto&[loc, shader] : shaders) node["shaders"].push_back(std::string(shader.source));
-		return node;
+	Stream ShaderProgram::Export(StreamType type) const {
+		Stream stream(type);
+		stream << (uint8_t)shaderType << (uint)shaders.size();
+
+		for(auto&[loc, shader] : shaders) stream << (std::string(shader.source));
+
+		return stream;
 	}
-	ShaderProgram::ShaderProgram(YAML::Node node) : shaderType((ShaderType)node["type"].as<int>()), modified(true), location(glCreateProgram()) {
+	ShaderProgram::ShaderProgram(Stream& stream) : shaderType((ShaderType)stream.Read<uint8_t>()), modified(true), location(glCreateProgram()) {
 		glProgramParameteri(location, GL_PROGRAM_SEPARABLE, GL_TRUE);
-		if(node["shaders"].IsSequence()) {
-			for(int i = 0; i < node["shaders"].size(); i++)
-				AddShader(Shader(node["shaders"][i].as<std::string>().c_str(), shaderType));
-		}
+		uint size = stream.Read<uint>();
+		for(int i = 0; i < size; i++)
+			AddShader(Shader(stream.Read<std::string>().c_str(), shaderType));
 	}
 
 	//Set uniforms

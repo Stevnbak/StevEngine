@@ -7,10 +7,11 @@
 #include "utilities/Quaternion.hpp"
 #include "utilities/Model.hpp"
 #include "utilities/Terrain.hpp"
-#include <yaml-cpp/yaml.h>
 //Jolt:
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Collision/Shape/Shape.h>
+
+#define COLLIDER_TYPE "Collider"
 
 namespace StevEngine::Physics {
 	/**
@@ -33,10 +34,23 @@ namespace StevEngine::Physics {
 			Collider(JPH::Ref<JPH::Shape> shape, Utilities::Vector3 position = Utilities::Vector3(), Utilities::Quaternion rotation = Utilities::Quaternion(), Utilities::Vector3 scale = Utilities::Vector3(1,1,1));
 
 			/**
-			 * @brief Create collider from serialized data
-			 * @param node YAML node with collider data
+			 * @brief Create collider from text serialized data
+			 * @param stream Stream containing serialized component data
 			 */
-			Collider(YAML::Node);
+			Collider(Stream& stream);
+
+			/**
+			 * @brief Get component type
+			 * @return Type identifier string
+			 */
+			std::string GetType() const { return COLLIDER_TYPE; }
+
+			/**
+			 * @brief Serialize component to a text stream
+			 * @param type Type of stream to export to
+			 * @return Serialized stream
+			 */
+			Stream Export(StreamType type) const;
 
 			~Collider();
 
@@ -90,13 +104,6 @@ namespace StevEngine::Physics {
 			 * @return Reference to Jolt shape
 			 */
 			JPH::Ref<JPH::Shape> GetShape() const { return shape; }
-
-			/**
-			 * @brief Serialize collider to YAML
-			 * @param node YAML node to serialize into
-			 * @return Updated YAML node containing collider data
-			 */
-			YAML::Node Export(YAML::Node node) const;
 
 		protected:
 			Utilities::Vector3 scale = Utilities::Vector3(1, 1, 1);   ///< Local scale
@@ -250,5 +257,8 @@ namespace StevEngine::Physics {
 			static const std::string GetStaticEventType() {  return "ColliderUpdateEvent"; }
 			Collider* collider;  ///< Modified collider
 	};
+
+	/** Register RigidBody as a component type */
+	inline bool collider = CreateComponents::RegisterComponentType<Collider>(COLLIDER_TYPE);
 }
 #endif

@@ -8,7 +8,6 @@
 
 #include <SDL.h>
 #include <glad/gl.h>
-#include <yaml-cpp/yaml.h>
 
 namespace StevEngine::Renderer {
 	/**
@@ -22,9 +21,8 @@ namespace StevEngine::Renderer {
 			/**
 			 * @brief Create render component
 			 * @param object Renderable object
-			 * @param type Component type string
 			 */
-			RenderComponent(const Object& object, std::string type);
+			RenderComponent(const Object& object);
 
 			/**
 			 * @brief Create render component with transform
@@ -32,16 +30,21 @@ namespace StevEngine::Renderer {
 			 * @param position Local position offset
 			 * @param rotation Local rotation offset
 			 * @param scale Local scale modifier
-			 * @param type Component type string
 			 */
-			RenderComponent(const Object& object, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale, std::string type);
+			RenderComponent(const Object& object, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale);
 
 			/**
 			 * @brief Create from serialized data
 			 * @param object Renderable object
-			 * @param node YAML node with component data
+			 * @param stream Stream containing serialized component data
 			 */
-			RenderComponent(const Object& object, YAML::Node node);
+			RenderComponent(const Object& object, Stream& stream);
+
+			/**
+			 * @brief Get component type
+			 * @return Type identifier string
+			 */
+			virtual std::string GetType() const { return "RenderComponent"; }
 
 
 			Utilities::Vector3 position = Utilities::Vector3(); /// Local position offset
@@ -78,11 +81,11 @@ namespace StevEngine::Renderer {
 			~RenderComponent();
 
 			/**
-			 * @brief Serialize component to YAML
-			 * @param node Node to serialize into
-			 * @return Updated YAML node
+			 * @brief Serialize component to a text stream
+			 * @param type Type of stream to export to
+			 * @return Serialized stream
 			 */
-			virtual YAML::Node Export(YAML::Node node) const;
+			virtual Stream Export(StreamType type) const;
 
 		protected:
 			/** @brief Renderable object */

@@ -25,7 +25,7 @@ namespace StevEngine::Utilities {
 		 * @param material Material data
 		 */
 		Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, Visuals::Material material)
-			: vertices(vertices), indices(indices), material(material) {}
+		  : vertices(vertices), indices(indices), material(material) {}
 		#else
 		/**
 		 * @brief Create mesh without material
@@ -33,7 +33,7 @@ namespace StevEngine::Utilities {
 		 * @param indices Index array
 		 */
 		Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices)
-			: vertices(vertices), indices(indices) {}
+		  : vertices(vertices), indices(indices) {}
 		#endif
 	};
 

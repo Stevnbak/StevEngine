@@ -4,6 +4,10 @@
 #include "utilities/Vector3.hpp"
 #include "visuals/shaders/ShaderProgram.hpp"
 
+#define DIRECTIONAL_LIGHT_TYPE "DirectionalLight"
+#define POINT_LIGHT_TYPE "PointLight"
+#define SPOT_LIGHT_TYPE "SpotLight"
+
 namespace StevEngine::Visuals {
 	/**
 	 * @brief Base class for light components
@@ -36,7 +40,7 @@ namespace StevEngine::Visuals {
 
 		protected:
 			Light(uint32_t shaderID, Utilities::Vector3 diffuse, Utilities::Vector3 specular, std::string type);
-			Light(YAML::Node node);
+			Light(Stream& stream, std::string type);
 			const uint32_t shaderLightID;  ///< Light index in shader
 			virtual ~Light();
 	};
@@ -55,8 +59,25 @@ namespace StevEngine::Visuals {
 			 * @param specular Specular light color
 			 */
 			DirectionalLight(Utilities::Vector3 diffuse = Utilities::Vector3(1.0), Utilities::Vector3 specular = Utilities::Vector3(1.0));
-			DirectionalLight(YAML::Node node);
-			YAML::Node Export(YAML::Node node) const;
+
+			/**
+			 * @brief Create directional light from text serialized data
+			 * @param stream Stream containing serialized component data
+			 */
+			DirectionalLight(Stream& stream);
+
+			/**
+			 * @brief Get component type
+			 * @return Type identifier string
+			 */
+			std::string GetType() const { return DIRECTIONAL_LIGHT_TYPE; }
+
+			/**
+			 * @brief Serialize component to a text stream
+			 * @param type Type of stream to export to
+			 * @return Serialized stream
+			 */
+			Stream Export(StreamType type) const;
 
 			void UpdateShader(const Renderer::ShaderProgram& program) const;
 			void ResetShader(const Renderer::ShaderProgram& program) const;
@@ -80,8 +101,25 @@ namespace StevEngine::Visuals {
 			 * @param quadratic Quadratic attenuation factor
 			 */
 			PointLight(Utilities::Vector3 diffuse = Utilities::Vector3(1.0), Utilities::Vector3 specular = Utilities::Vector3(1.0), float constant = 1.0, float linear = 0.02, float quadratic = 0.0017);
-			PointLight(YAML::Node node);
-			YAML::Node Export(YAML::Node node) const;
+
+			/**
+			 * @brief Create point light from text serialized data
+			 * @param stream Stream containing serialized component data
+			 */
+			PointLight(Stream& stream);
+
+			/**
+			 * @brief Get component type
+			 * @return Type identifier string
+			 */
+			std::string GetType() const { return POINT_LIGHT_TYPE; }
+
+			/**
+			 * @brief Serialize component to a text stream
+			 * @param type Type of stream to export to
+			 * @return Serialized stream
+			 */
+			Stream Export(StreamType type) const;
 
 			float constant;	///< Constant attenuation factor
 			float linear;	 ///< Linear attenuation factor
@@ -108,8 +146,25 @@ namespace StevEngine::Visuals {
 			 * @param outerCutOff Outer cone angle in degrees
 			 */
 			SpotLight(Utilities::Vector3 diffuse = Utilities::Vector3(1.0), Utilities::Vector3 specular = Utilities::Vector3(1.0), float cutOff = 12.5, float outerCutOff = 17.5);
-			SpotLight(YAML::Node node);
-			YAML::Node Export(YAML::Node node) const;
+
+			/**
+			 * @brief Create spot light from text serialized data
+			 * @param stream Stream containing serialized component data
+			 */
+			SpotLight(Stream& stream);
+
+			/**
+			 * @brief Get component type
+			 * @return Type identifier string
+			 */
+			std::string GetType() const { return SPOT_LIGHT_TYPE; }
+
+			/**
+			 * @brief Serialize component to a text stream
+			 * @param type Type of stream to export to
+			 * @return Serialized stream
+			 */
+			Stream Export(StreamType type) const;
 
 			float cutOff;		///< Inner cone angle in degrees
 			float outerCutOff;   ///< Outer cone angle in degrees
@@ -120,8 +175,8 @@ namespace StevEngine::Visuals {
 	};
 
 	// Register light components
-	inline bool dl = CreateComponents::RegisterComponentType<DirectionalLight>("DirectionalLight");
-	inline bool pl = CreateComponents::RegisterComponentType<PointLight>("PointLight");
-	inline bool sl = CreateComponents::RegisterComponentType<SpotLight>("SpotLight");
+	inline bool dl = CreateComponents::RegisterComponentType<DirectionalLight>(DIRECTIONAL_LIGHT_TYPE);
+	inline bool pl = CreateComponents::RegisterComponentType<PointLight>(POINT_LIGHT_TYPE);
+	inline bool sl = CreateComponents::RegisterComponentType<SpotLight>(SPOT_LIGHT_TYPE);
 }
 #endif

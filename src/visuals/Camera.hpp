@@ -3,6 +3,8 @@
 #ifdef StevEngine_SHOW_WINDOW
 #include "main/Component.hpp"
 
+#define CAMERA_TYPE "Camera"
+
 namespace StevEngine {
 	namespace Visuals {
 		/**
@@ -24,17 +26,23 @@ namespace StevEngine {
 				Camera(bool orthographic = false, float fov = 70, float zoomValue = 1, float nearClip = 0.01, float farClip = 1000);
 
 				/**
-				 * @brief Create from serialized data
-				 * @param node YAML node containing camera data
+				 * @brief Create camera from text serialized data
+				 * @param stream Stream containing serialized component data
 				 */
-				Camera(YAML::Node node);
+				Camera(Stream& stream);
 
 				/**
-				 * @brief Serialize camera to YAML
-				 * @param node Node to serialize into
-				 * @return Updated YAML node
+				 * @brief Get component type
+				 * @return Type identifier string
 				 */
-				YAML::Node Export(YAML::Node node) const;
+				std::string GetType() const { return CAMERA_TYPE; }
+
+				/**
+				 * @brief Serialize component to a text stream
+				 * @param type Type of stream to export to
+				 * @return Serialized stream
+				 */
+				Stream Export(StreamType type) const;
 
 				/**
 				 * @brief Get view matrix for camera
@@ -57,7 +65,7 @@ namespace StevEngine {
 		};
 
 		/* Register Camera as component type */
-		inline bool camera = CreateComponents::RegisterComponentType<Camera>("Camera");
+		inline bool camera = CreateComponents::RegisterComponentType<Camera>(CAMERA_TYPE);
 
 	}
 }

@@ -108,13 +108,18 @@ namespace StevEngine {
 			return std::vector<Vertex>(vertices.begin(), vertices.end());
 		}
 		CubePrimitive::CubePrimitive(Vector3 position, Quaternion rotation, Vector3 scale, const Material& material, TextureType textureType)
-			: RenderComponent(Object(CubeVertices(textureType), material), position, rotation, scale, "CubePrimitive"), textureType(textureType) {}
-		CubePrimitive::CubePrimitive(YAML::Node node)
-			: RenderComponent(Object(CubeVertices((TextureType)node["textureType"].as<uint32_t>()), Material(node["material"])), node), textureType((TextureType)node["textureType"].as<uint32_t>()) {}
-		YAML::Node CubePrimitive::Export(YAML::Node node) const {
-			YAML::Node n = RenderComponent::Export(node);
-			n["textureType"] = (uint32_t)textureType;
-			return n;
+		  : RenderComponent(Object(CubeVertices(textureType), material), position, rotation, scale), textureType(textureType) {}
+
+		CubePrimitive::CubePrimitive(Stream& stream)
+		  : RenderComponent(Object({}, {}), stream), textureType((TextureType)stream.Read<uint32_t>())
+		{
+			object = Object(CubeVertices(textureType), object.material);
+		}
+
+		Stream CubePrimitive::Export(StreamType type) const {
+			Stream stream(type);
+			stream << RenderComponent::Export(type) << (uint32_t)textureType;
+			return stream;
 		}
 
 		//Sphere
@@ -246,14 +251,18 @@ namespace StevEngine {
 			return vertices;
 		}
 		UVSpherePrimitive::UVSpherePrimitive(Vector3 position, Quaternion rotation, Vector3 scale, Material material, bool smooth, TextureType textureType)
-			: RenderComponent(Object(UVSphereVertices(textureType, smooth), material), position, rotation, scale, "UVSpherePrimitive"), textureType(textureType), smooth(smooth) {}
-		UVSpherePrimitive::UVSpherePrimitive(YAML::Node node)
-			: RenderComponent(Object(UVSphereVertices((TextureType)node["textureType"].as<uint32_t>(), node["smooth"].as<bool>()), Material(node["material"])), node), textureType((TextureType)node["textureType"].as<uint32_t>()), smooth(node["smooth"].as<bool>()) {}
-		YAML::Node UVSpherePrimitive::Export(YAML::Node node) const {
-			YAML::Node n = RenderComponent::Export(node);
-			n["textureType"] = (uint32_t)textureType;
-			n["smooth"] = smooth;
-			return n;
+		  : RenderComponent(Object(UVSphereVertices(textureType, smooth), material), position, rotation, scale), textureType(textureType), smooth(smooth) {}
+
+		UVSpherePrimitive::UVSpherePrimitive(Stream& stream)
+		  : RenderComponent(Object({}, {}), stream), textureType((TextureType)stream.Read<uint32_t>()), smooth(stream.Read<bool>())
+		{
+			object = Object(UVSphereVertices(textureType, smooth), object.material);
+		}
+
+		Stream UVSpherePrimitive::Export(StreamType type) const {
+			Stream stream(type);
+			stream << RenderComponent::Export(type) << (uint32_t)textureType << smooth;
+			return stream;
 		}
 		//Icosphere
 		/**
@@ -435,14 +444,18 @@ namespace StevEngine {
 			return vertices;
 		}
 		IcospherePrimitive::IcospherePrimitive(Vector3 position, Quaternion rotation, Vector3 scale, Material material, bool smooth, TextureType textureType)
-			: RenderComponent(Object(IcosphereVertices(textureType, smooth), material), position, rotation, scale, "UVSpherePrimitive"), textureType(textureType), smooth(smooth) {}
-		IcospherePrimitive::IcospherePrimitive(YAML::Node node)
-			: RenderComponent(Object(IcosphereVertices((TextureType)node["textureType"].as<uint32_t>(), node["smooth"].as<bool>()), Material(node["material"])), node), textureType((TextureType)node["textureType"].as<uint32_t>()), smooth(node["smooth"].as<bool>()) {}
-		YAML::Node IcospherePrimitive::Export(YAML::Node node) const {
-			YAML::Node n = RenderComponent::Export(node);
-			n["textureType"] = (uint32_t)textureType;
-			n["smooth"] = smooth;
-			return n;
+		  : RenderComponent(Object(IcosphereVertices(textureType, smooth), material), position, rotation, scale), textureType(textureType), smooth(smooth) {}
+
+		IcospherePrimitive::IcospherePrimitive(Stream& stream)
+		  : RenderComponent(Object({}, {}), stream), textureType((TextureType)stream.Read<uint32_t>()), smooth(stream.Read<bool>())
+		{
+			object = Object(UVSphereVertices(textureType, smooth), object.material);
+		}
+
+		Stream IcospherePrimitive::Export(StreamType type) const {
+			Stream stream(type);
+			stream << RenderComponent::Export(type) << (uint32_t)textureType << smooth;
+			return stream;
 		}
 
 		//Cylinder
@@ -563,14 +576,17 @@ namespace StevEngine {
 			return vertices;
 		}
 		CylinderPrimitive::CylinderPrimitive(Vector3 position, Quaternion rotation, Vector3 scale, Material material, bool smooth, TextureType textureType)
-			: RenderComponent(Object(CylinderVertices(textureType, smooth), material), position, rotation, scale, "CylinderPrimitive"), textureType(textureType), smooth(smooth) {}
-		CylinderPrimitive::CylinderPrimitive(YAML::Node node)
-			: RenderComponent(Object(CylinderVertices((TextureType)node["textureType"].as<uint32_t>(), node["smooth"].as<bool>()), Material(node["material"])), node), textureType((TextureType)node["textureType"].as<uint32_t>()), smooth(node["smooth"].as<bool>()) {}
-		YAML::Node CylinderPrimitive::Export(YAML::Node node) const {
-			YAML::Node n = RenderComponent::Export(node);
-			n["textureType"] = (uint32_t)textureType;
-			n["smooth"] = smooth;
-			return n;
+		  : RenderComponent(Object(CylinderVertices(textureType, smooth), material), position, rotation, scale), textureType(textureType), smooth(smooth) {}
+		CylinderPrimitive::CylinderPrimitive(Stream& stream)
+		  : RenderComponent(Object({}, {}), stream), textureType((TextureType)stream.Read<uint32_t>()), smooth(stream.Read<bool>())
+		{
+			object = Object(UVSphereVertices(textureType, smooth), object.material);
+		}
+
+		Stream CylinderPrimitive::Export(StreamType type) const {
+			Stream stream(type);
+			stream << RenderComponent::Export(type) << (uint32_t)textureType << smooth;
+			return stream;
 		}
 
 		//Capsule
@@ -630,14 +646,16 @@ namespace StevEngine {
 			return vertices;
 		}
 		CapsulePrimitive::CapsulePrimitive(Vector3 position, Quaternion rotation, Vector3 scale, Material material, bool smooth, TextureType textureType)
-			: RenderComponent(Object(CapsuleVertices(textureType, smooth), material), position, rotation, scale, "CapsulePrimitive"), textureType(textureType), smooth(smooth) {}
-		CapsulePrimitive::CapsulePrimitive(YAML::Node node)
-			: RenderComponent(Object(CapsuleVertices((TextureType)node["textureType"].as<uint32_t>(), node["smooth"].as<bool>()), Material(node["material"])), node), textureType((TextureType)node["textureType"].as<uint32_t>()), smooth(node["smooth"].as<bool>()) {}
-		YAML::Node CapsulePrimitive::Export(YAML::Node node) const {
-			YAML::Node n = RenderComponent::Export(node);
-			n["textureType"] = (uint32_t)textureType;
-			n["smooth"] = smooth;
-			return n;
+		  : RenderComponent(Object(CapsuleVertices(textureType, smooth), material), position, rotation, scale), textureType(textureType), smooth(smooth) {}
+		CapsulePrimitive::CapsulePrimitive(Stream& stream)
+		  : RenderComponent(Object({}, {}), stream), textureType((TextureType)stream.Read<uint32_t>()), smooth(stream.Read<bool>())
+		{
+			object = Object(UVSphereVertices(textureType, smooth), object.material);
+		}
+		Stream CapsulePrimitive::Export(StreamType type) const {
+			Stream stream(type);
+			stream << RenderComponent::Export(type) << (uint32_t)textureType << smooth;
+			return stream;
 		}
 	}
 }

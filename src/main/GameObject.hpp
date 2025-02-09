@@ -419,7 +419,7 @@ namespace StevEngine {
 			 * @param scale Whether scale changed
 			 */
 			TransformUpdateEvent(bool position = true, bool rotation = true, bool scale = true)
-				: position(position), rotation(rotation), scale(scale) {}
+			  : position(position), rotation(rotation), scale(scale) {}
 			const std::string GetEventType() const override { return GetStaticEventType(); };
 			static const std::string GetStaticEventType() {  return "TransformUpdateEvent"; }
 			bool position, rotation, scale;  ///< Which transform components changed

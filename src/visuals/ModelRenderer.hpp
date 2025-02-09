@@ -8,6 +8,8 @@
 #include "visuals/Material.hpp"
 #include <cstddef>
 
+#define MODEL_RENDERER_TYPE "ModelRenderer"
+
 namespace StevEngine::Visuals {
 	/**
 	 * @brief Component for rendering 3D models
@@ -29,13 +31,27 @@ namespace StevEngine::Visuals {
 				 		  const Material& material = Material(),
 						  Utilities::Vector3 position = Utilities::Vector3(),
 						  Utilities::Quaternion rotation = Utilities::Quaternion(),
-						  Utilities::Vector3 scale = Utilities::Vector3(1));
+						  Utilities::Vector3 scale = Utilities::Vector3(1)
+			);
 
 			/**
-			 * @brief Create from serialized data
-			 * @param node YAML node with component data
+			 * @brief Create model renderer from text serialized data
+			 * @param stream Stream containing serialized component data
 			 */
-			ModelRenderer(YAML::Node node);
+			ModelRenderer(Stream& stream);
+
+			/**
+			 * @brief Get component type
+			 * @return Type identifier string
+			 */
+			std::string GetType() const { return MODEL_RENDERER_TYPE; }
+
+			/**
+			 * @brief Serialize component to a text stream
+			 * @param type Type of stream to export to
+			 * @return Serialized stream
+			 */
+			Stream Export(StreamType type) const;
 
 			/** @brief Local position offset */
 			Utilities::Vector3 position = Utilities::Vector3();
@@ -77,13 +93,6 @@ namespace StevEngine::Visuals {
 			void RemoveShader(Renderer::ShaderType type);
 
 			/**
-			 * @brief Serialize component to YAML
-			 * @param node Node to serialize into
-			 * @return Updated YAML node
-			 */
-			YAML::Node Export(YAML::Node node) const;
-
-			/**
 			 * @brief Draw model with transform
 			 * @param transform World transform matrix
 			 */
@@ -95,12 +104,12 @@ namespace StevEngine::Visuals {
 			~ModelRenderer();
 
 		private:
+			Utilities::Model model;				 	///< Source 3D model data
 			std::vector<Renderer::Object> objects;  ///< Renderable objects for each mesh
-			Utilities::Model model;				 ///< Source 3D model data
 			std::map<Renderer::ShaderType, Renderer::ShaderProgram> shaders;  ///< Shader programs by type
 	};
 
 	/** @brief Register ModelRenderer as a component type */
-	inline bool modelRenderer = CreateComponents::RegisterComponentType<ModelRenderer>("ModelRenderer");
+	inline bool modelRenderer = CreateComponents::RegisterComponentType<ModelRenderer>(MODEL_RENDERER_TYPE);
 }
 #endif

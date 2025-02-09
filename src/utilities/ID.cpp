@@ -71,26 +71,23 @@ namespace StevEngine::Utilities {
 
 namespace StevEngine {
 	//Read from text stream
-	template <> Utilities::ID TextStream::Read<Utilities::ID>() {
-		char text[37];
-		for(int i = 0; i < 36; i++)
-			*this >> text[i];
-		text[36] = '\000';
-		return Utilities::ID(std::string(text));
+	template <> Utilities::ID Stream::Read<Utilities::ID>() {
+		if(type == Text) {
+			char text[37];
+			for(int i = 0; i < 36; i++)
+				*this >> text[i];
+			text[36] = '\000';
+			return Utilities::ID(std::string(text));
+		} else {
+			uint8_t value[16];
+			for(int i = 0; i < 16; i++) *this >> value[i];
+			return Utilities::ID(value);
+		}
 	}
 	//Write to text stream
-	template <> void TextStream::Write<Utilities::ID>(const Utilities::ID& data) {
-		*this << data.GetString();
-	}
-	//Read from text stream
-	template <> Utilities::ID BinaryStream::Read<Utilities::ID>() {
-		uint8_t value[16];
-		for(int i = 0; i < 16; i++) *this >> value[i];
-		return Utilities::ID(value);
-	}
-	//Write to text stream
-	template <> void BinaryStream::Write<Utilities::ID>(const Utilities::ID& data) {
-		for(int i = 0; i < 16; i++) *this << data.GetRaw()[i];
+	template <> void Stream::Write<Utilities::ID>(const Utilities::ID& data) {
+		if(type == Text) *this << data.GetString();
+		else for(int i = 0; i < 16; i++) *this << data.GetRaw()[i];
 	}
 }
 

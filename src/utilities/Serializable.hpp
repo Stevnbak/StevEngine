@@ -9,6 +9,7 @@ namespace StevEngine {
 	};
 	class Stream {
 		public:
+			const StreamType type;
 			Stream(StreamType type) : type(type) {};
 
 			template <typename T> T Read();
@@ -49,6 +50,5 @@ namespace StevEngine {
 			virtual ~Stream() = default;
 		protected:
 			std::stringstream stream;
-			const StreamType type;
 	};
 }

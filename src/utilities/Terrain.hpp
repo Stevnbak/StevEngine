@@ -1,5 +1,4 @@
 #pragma once
-#include "yaml-cpp/yaml.h"
 #include <cstdint>
 
 namespace StevEngine::Utilities {
@@ -24,18 +23,6 @@ namespace StevEngine::Utilities {
 			 * @param step Grid spacing
 			 */
 			TerrainData(uint32_t size, double step);
-
-			/**
-			 * @brief Serialize terrain to YAML
-			 * @return YAML node containing terrain data
-			 */
-			YAML::Node Export() const;
-
-			/**
-			 * @brief Create terrain from serialized data
-			 * @param node YAML node containing terrain data
-			 */
-			TerrainData(YAML::Node node);
 
 			const uint32_t size;  ///< Grid size (NxN)
 			const double step;	///< Grid spacing
