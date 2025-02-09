@@ -1,6 +1,6 @@
 #include "Matrix4.hpp"
 #include "utilities/Quaternion.hpp"
-#include "utilities/Serializable.hpp"
+#include "utilities/Stream.hpp"
 #include "utilities/Vector2.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Vector4.hpp"

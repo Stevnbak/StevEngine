@@ -1,7 +1,7 @@
 #pragma once
 #include "Scene.hpp"
 #include "main/ResourceManager.hpp"
-#include "utilities/Serializable.hpp"
+#include "utilities/Stream.hpp"
 
 #include <string>
 

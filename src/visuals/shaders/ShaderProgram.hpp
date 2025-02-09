@@ -5,7 +5,7 @@
 #include "utilities/Vector2.hpp"
 #include "utilities/Color.hpp"
 #include "utilities/Matrix4.hpp"
-#include "utilities/Serializable.hpp"
+#include "utilities/Stream.hpp"
 
 #include <map>
 #include <cstdint>

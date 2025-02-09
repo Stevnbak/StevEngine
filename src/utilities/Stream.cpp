@@ -1,10 +1,8 @@
-#include "Serializable.hpp"
+#include "Stream.hpp"
 #include "data/DataManager.hpp"
-#include "main/Log.hpp"
+#include <cstdint>
 #include <cstdio>
 #include <fstream>
-#include <iostream>
-#include <sstream>
 
 namespace StevEngine {
 	//Write stream to file
@@ -80,20 +78,27 @@ namespace StevEngine {
 	}
 	//Read string from stream
 	template <> std::string Stream::Read<std::string>() {
-		std::string value;
-		getline(stream, value, '\000');
-		return value;
+		uint32_t size;
+		*this >> size;
+		char* text = new char[size];
+		if(type == Text) {
+			stream.read(text, size);
+		} else {
+			for(uint32_t i = 0; i < size; i++) {
+				*this >> text[i];
+			}
+		}
+		return std::string(text, size);
 	}
-
-	//Write string to text stream
+	//Write string to stream
 	template <> void Stream::Write<std::string>(const std::string& data) {
+		*this << (uint32_t)data.size();
 		switch(type) {
 			case Text:
-				stream << data << '\000';
+				stream << data;
 				break;
 			case Binary:
-				stream.write((char*)&data, sizeof(data));
-				stream << '\000';
+				for(uint32_t i = 0; i < data.size(); i++) *this << data[i];
 				break;
 		}
 	}

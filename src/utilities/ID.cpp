@@ -1,6 +1,6 @@
 #include "ID.hpp"
 #include "utilities/Random.hpp"
-#include "utilities/Serializable.hpp"
+#include "utilities/Stream.hpp"
 
 #include <cstdint>
 #include <stdlib.h>
@@ -86,7 +86,10 @@ namespace StevEngine {
 	}
 	//Write to text stream
 	template <> void Stream::Write<Utilities::ID>(const Utilities::ID& data) {
-		if(type == Text) *this << data.GetString();
+		if(type == Text) {
+			std::string str = data.GetString();
+			for(int i = 0; i < 36; i++) *this << str[i];
+		}
 		else for(int i = 0; i < 16; i++) *this << data.GetRaw()[i];
 	}
 }

@@ -1,6 +1,6 @@
 #pragma once
 #ifdef StevEngine_AUDIO
-#include "utilities/Serializable.hpp"
+#include "utilities/Stream.hpp"
 #include "main/Component.hpp"
 #include <SDL_mixer.h>
 

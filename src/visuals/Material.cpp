@@ -2,7 +2,7 @@
 #include "Material.hpp"
 #include "visuals/Texture.hpp"
 #include "utilities/Vector3.hpp"
-#include "utilities/Serializable.hpp"
+#include "utilities/Stream.hpp"
 
 using namespace StevEngine::Utilities;
 

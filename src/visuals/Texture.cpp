@@ -1,4 +1,4 @@
-#include "utilities/Serializable.hpp"
+#include "utilities/Stream.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "Texture.hpp"
 #include "main/ResourceManager.hpp"

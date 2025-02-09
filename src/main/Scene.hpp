@@ -1,7 +1,7 @@
 #pragma once
 #include "main/ResourceManager.hpp"
 #include "main/GameObject.hpp"
-#include "utilities/Serializable.hpp"
+#include "utilities/Stream.hpp"
 #include "visuals/Camera.hpp"
 
 #include <unordered_map>

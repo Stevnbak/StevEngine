@@ -1,5 +1,5 @@
 #include "Color.hpp"
-#include "utilities/Serializable.hpp"
+#include "utilities/Stream.hpp"
 
 namespace StevEngine::Utilities {
 	const float* Color::data() const {

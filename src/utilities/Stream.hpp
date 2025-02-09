@@ -1,5 +1,6 @@
 #pragma once
 #include "main/ResourceManager.hpp"
+
 #include <sstream>
 
 namespace StevEngine {

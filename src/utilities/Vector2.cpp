@@ -1,6 +1,6 @@
 #include "Vector2.hpp"
 #include "Vector3.hpp"
-#include "utilities/Serializable.hpp"
+#include "utilities/Stream.hpp"
 
 #define _USE_MATH_DEFINES
 #include <math.h>

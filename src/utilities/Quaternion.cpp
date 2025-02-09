@@ -1,5 +1,5 @@
 #include "Quaternion.hpp"
-#include "utilities/Serializable.hpp"
+#include "utilities/Stream.hpp"
 #include "utilities/Vector4.hpp"
 
 #define _USE_MATH_DEFINES

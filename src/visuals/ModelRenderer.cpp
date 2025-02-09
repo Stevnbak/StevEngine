@@ -2,7 +2,7 @@
 #include "ModelRenderer.hpp"
 #include "main/ResourceManager.hpp"
 
-#include "utilities/Serializable.hpp"
+#include "utilities/Stream.hpp"
 #include "visuals/renderer/RenderSystem.hpp"
 #include "visuals/renderer/Object.hpp"
 #include "visuals/Material.hpp"

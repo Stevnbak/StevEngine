@@ -1,5 +1,5 @@
 #pragma once
-#include "utilities/Serializable.hpp"
+#include "utilities/Stream.hpp"
 #ifdef StevEngine_PHYSICS
 #include "main/Component.hpp"
 #include "utilities/Vector3.hpp"

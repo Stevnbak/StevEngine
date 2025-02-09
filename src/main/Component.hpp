@@ -1,7 +1,7 @@
 #pragma once
 #include "utilities/ID.hpp"
 #include "utilities/Matrix4.hpp"
-#include "utilities/Serializable.hpp"
+#include "utilities/Stream.hpp"
 
 #include <sys/types.h>
 #include <functional>

@@ -14,7 +14,7 @@
 #include "utilities/ID.hpp"
 #include "utilities/Matrix4.hpp"
 #include "utilities/Random.hpp"
-#include "utilities/Serializable.hpp"
+#include "utilities/Stream.hpp"
 #include "utilities/Terrain.hpp"
 #include "utilities/Vector2.hpp"
 #include "visuals/Material.hpp"
@@ -154,6 +154,12 @@ void TestSerializeStuff() {
 	Log::Debug("Txt stream: " + (std::string)ts.Read<Utilities::Vector3>());
 	Log::Debug("Txt stream: " + (std::string)ts.Read<Utilities::Vector3>());
 
+	std::string str("This is a test string!");
+	Log::Debug("Original: " + str);
+	ts << str;
+	Log::Debug("Txt stream: " + ts.Read<std::string>());
+
+
 	Log::Debug("Original: " + id.GetString());
 	ts << id;
 	Log::Debug("Txt stream: " + ts.Read<Utilities::ID>().GetString());
@@ -162,6 +168,10 @@ void TestSerializeStuff() {
 
 	Log::Debug("Binary stream test:");
 	Stream bs(Binary);
+	char chr = 'T';
+	Log::Debug(std::string("Original: ") + chr);
+	bs << chr;
+	Log::Debug(std::string("Bin stream: ") + bs.Read<char>());
 
 	Log::Debug("Original: " + (std::string)a);
 	bs.Write(a);
@@ -175,6 +185,10 @@ void TestSerializeStuff() {
 
 	Log::Debug("Bin stream: " + (std::string)bs.Read<Utilities::Vector3>());
 	Log::Debug("Bin stream: " + (std::string)bs.Read<Utilities::Vector3>());
+
+	Log::Debug("Original: " + str);
+	bs << str;
+	Log::Debug("Bin stream: " + bs.Read<std::string>());
 
 	Log::Debug("Original: " + id.GetString());
 	bs << id;

@@ -2,7 +2,7 @@
 #include "main/Engine.hpp"
 #include "main/EngineEvents.hpp"
 #include "utilities/ID.hpp"
-#include "utilities/Serializable.hpp"
+#include "utilities/Stream.hpp"
 
 namespace StevEngine {
 	SceneManager sceneManager = SceneManager();

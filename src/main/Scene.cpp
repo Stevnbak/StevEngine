@@ -1,7 +1,7 @@
 #include "Scene.hpp"
 #include "main/Component.hpp"
 #include "utilities/ID.hpp"
-#include "utilities/Serializable.hpp"
+#include "utilities/Stream.hpp"
 
 using namespace StevEngine::Utilities;
 
