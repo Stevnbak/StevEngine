@@ -7,8 +7,6 @@
 #include "main/Log.hpp"
 #include "main/Component.hpp"
 
-#include <yaml-cpp/yaml.h>
-
 #include <vector>
 #include <type_traits>
 
@@ -130,25 +128,29 @@ namespace StevEngine {
 		public:
 			~GameObject();
 
-			#ifdef StevEngine_PLAYER_DATA
 			/**
-			 * @brief Save object to file
-			 * @param name Filename to save as
+			 * @brief Serialize object to a text stream
+			 * @return Text stream
 			 */
-			void ExportToFile(std::string name) const;
-			#endif
+			TextStream ExportText() const;
 
 			/**
-			 * @brief Serialize object to YAML
-			 * @return YAML node containing object data
+			 * @brief Serialize object to a binary stream
+			 * @return Binary stream
 			 */
-			YAML::Node Export() const;
+			BinaryStream ExportBinary() const;
 
 			/**
 			 * @brief Load object from serialized data
-			 * @param node YAML node containing object data
+			 * @param stream Text stream containing serialized object data
 			 */
-			void Import(YAML::Node node);
+			void Import(TextStream& stream);
+
+			/**
+			 * @brief Load object from serialized data
+			 * @param stream Binary stream containing object data
+			 */
+			void Import(BinaryStream& stream);
 
 		private:
 			/**
@@ -255,7 +257,7 @@ namespace StevEngine {
 			 * @brief Get number of children
 			 * @return Child count
 			 */
-			int GetChildCount() const;
+			uint GetChildCount() const;
 
 			/**
 			 * @brief Get parent object
@@ -318,6 +320,14 @@ namespace StevEngine {
 				}
 				//Return null
 				return foundComponents;
+			}
+
+			/**
+			 * @brief Get all components of any type
+			 * @return Vector of all components
+			 */
+			std::vector<Component*> GetAllComponents() const {
+				return components;
 			}
 
 			/**

@@ -1,9 +1,8 @@
 #include "Scene.hpp"
-#include "data/DataManager.hpp"
 #include "main/Component.hpp"
 #include "utilities/ID.hpp"
+#include "utilities/Serializable.hpp"
 
-#include <fstream>
 #include <yaml-cpp/yaml.h>
 
 using namespace StevEngine::Utilities;
@@ -26,14 +25,25 @@ namespace StevEngine {
 		return id;
 	}
 	Utilities::ID Scene::CreateObject(Resources::Resource file) {
-		YAML::Node node = YAML::Load(file.GetRawData());
-		return CreateObject(node);
+		TextStream stream;
+		stream.ReadFromFile(file);
+		return CreateObject(stream);
 	}
-	Utilities::ID Scene::CreateObject(YAML::Node node) {
-		Utilities::ID id = node["id"] ? node["id"].as<Utilities::ID>() : Utilities::ID();
+	Utilities::ID Scene::CreateObject(TextStream& stream) {
+		Utilities::ID id;
+		stream >> id;
 		gameObjects.emplace(id, GameObject(id, "GameObject", name));
 		GameObject* object = GetObject(id);
-		object->Import(node);
+		object->Import(stream);
+		if(active) object->Start();
+		return id;
+	}
+	Utilities::ID Scene::CreateObject(BinaryStream& stream) {
+		Utilities::ID id;
+		stream >> id;
+		gameObjects.emplace(id, GameObject(id, "GameObject", name));
+		GameObject* object = GetObject(id);
+		object->Import(stream);
 		if(active) object->Start();
 		return id;
 	}
@@ -66,36 +76,28 @@ namespace StevEngine {
 		activeCamera = GetObject(CreateObject("Main Camera"))->AddComponent(new Visuals::Camera());
 		#endif
 	}
-	Scene::Scene(YAML::Node node) : name(node["name"].as<std::string>()) {
+	Scene::Scene(std::string name, TextStream& stream) : name(name) {
 		//Create objects
-		for(YAML::Node obj : node["objects"]) {
-			CreateObject(obj);
+		uint objects = stream.Read<uint>();
+		for(uint i = 0; i < objects; i++) {
+			CreateObject(stream);
 		}
 		//Set camera
 		#ifdef StevEngine_SHOW_WINDOW
-		activeCamera = GetObject(node["camera"].as<Utilities::ID>())->GetComponent<Visuals::Camera>();
+		activeCamera = GetObject(stream.Read<ID>())->GetComponent<Visuals::Camera>();
 		#endif
 	}
-	#ifdef StevEngine_PLAYER_DATA
-	void Scene::ExportToFile() {
-		YAML::Node node;
-		node["name"] = name;
-		#ifdef StevEngine_SHOW_WINDOW
-		node["camera"] = activeCamera->GetParent()->Id();
-		#endif
-
-		for(auto&[id, object] : gameObjects) {
-			if(!object.parent.IsNull()) continue;
-			node["objects"].push_back(object.Export());
+	Scene::Scene(std::string name, BinaryStream& stream) : name(name) {
+		//Create objects
+		uint objects = stream.Read<uint>();
+		for(uint i = 0; i < objects; i++) {
+			CreateObject(stream);
 		}
-
-		YAML::Emitter out;
-		out << node;
-		std::ofstream file;
-		file.open(Data::data.GetAppdataPath() + name + ".scene");
-		file << out.c_str();
+		//Set camera
+		#ifdef StevEngine_SHOW_WINDOW
+		activeCamera = GetObject(stream.Read<ID>())->GetComponent<Visuals::Camera>();
+		#endif
 	}
-	#endif
 	void Scene::Activate() {
 		active = true;
 		for(auto&[id, object] : gameObjects) {

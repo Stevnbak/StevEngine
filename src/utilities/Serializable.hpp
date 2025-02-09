@@ -3,7 +3,7 @@
 #include <sstream>
 
 namespace StevEngine {
-	class SerializableStream {
+	class Stream {
 		public:
 			#ifdef StevEngine_PLAYER_DATA
 			//Write stream to file
@@ -16,12 +16,12 @@ namespace StevEngine {
 			std::stringstream& GetStream() { return stream; }
 
 			//Destructor default
-			virtual ~SerializableStream() = default;
+			virtual ~Stream() = default;
 		protected:
 			std::stringstream stream;
 	};
 
-	class TextSerializableStream : public SerializableStream {
+	class TextStream : public Stream {
 		public:
 			template <typename T> T Read();
 			template <typename T> void Write(const T& data);
@@ -30,14 +30,14 @@ namespace StevEngine {
 			/*
 			  Write to stream
 		 	*/
-			template <typename T> TextSerializableStream& operator << (const T& data) {
+			template <typename T> TextStream& operator << (const T& data) {
 				Write<T>(data);
 				return *this;
 			}
 			/*
 			  Read from stream
 		 	*/
-			template <typename T> TextSerializableStream& operator >> (T& out) {
+			template <typename T> TextStream& operator >> (T& out) {
 				out = Read<T>();
 				return *this;
 			}
@@ -48,7 +48,7 @@ namespace StevEngine {
 			#endif
 			void ReadFromFile(const Resources::Resource& file);
 	};
-	class BinarySerializableStream : public SerializableStream {
+	class BinaryStream : public Stream {
 		public:
 			template <typename T> T Read();
 			template <typename T> void Write(const T& data);
@@ -57,14 +57,14 @@ namespace StevEngine {
 			/*
 			  Write to stream
 		 	*/
-			template <typename T> BinarySerializableStream& operator << (const T& data) {
+			template <typename T> BinaryStream& operator << (const T& data) {
 				Write<T>(data);
 				return *this;
 			}
 			/*
 			  Read from stream
 		 	*/
-			template <typename T> BinarySerializableStream& operator >> (T& out) {
+			template <typename T> BinaryStream& operator >> (T& out) {
 				out = Read<T>();
 				return *this;
 			}

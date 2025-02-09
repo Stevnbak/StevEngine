@@ -1,8 +1,7 @@
 #pragma once
 #include "utilities/ID.hpp"
 #include "utilities/Matrix4.hpp"
-
-#include <yaml-cpp/yaml.h>
+#include "utilities/Serializable.hpp"
 
 #include <sys/types.h>
 #include <functional>
@@ -19,7 +18,7 @@ namespace StevEngine {
 	 * They can respond to events, be serialized, and manage resources.
 	 */
 	class Component {
-		friend class GameObject;
+		friend class StevEngine::GameObject;
 		//Properties
 		private:
 			/** @brief ID of parent GameObject */
@@ -31,17 +30,12 @@ namespace StevEngine {
 			/** @brief Whether only one instance can exist per GameObject */
 			static const bool unique = false;
 
-		protected:
-			/** @brief Type identifier for this component */
-			std::string type;
-
 		//Functions
 		public:
 			/**
 			 * @brief Create new component
-			 * @param type Type identifier string
 			 */
-			Component(std::string type);
+			Component();
 
 			/**
 			 * @brief Clean up component resources
@@ -64,33 +58,26 @@ namespace StevEngine {
 			 * @brief Get component type
 			 * @return Type identifier string
 			 */
-			std::string GetType() const { return type; }
+			virtual std::string GetType() const = 0;
 
 			/**
-			 * @brief Serialize component to YAML
-			 * @param node Node to serialize into
-			 * @return Updated node
+			 * @brief Serialize component to a text stream
+			 * @return Serialized stream
 			 */
-			virtual YAML::Node Export(YAML::Node node) const;
+			virtual TextStream ExportText() const = 0;
 
 			/**
-			 * @brief Serialize component to new YAML node
-			 * @return New node containing serialized data
+			 * @brief Serialize component to a binary stream
+			 * @return Serialized stream
 			 */
-			YAML::Node Export() const;
+			virtual BinaryStream ExportBinary() const = 0;
 
-			/**
-			 * @brief Create component from serialized data
-			 * @param node YAML node containing component data
-			 */
-			Component(YAML::Node node);
-
-		private:
 			/**
 			 * @brief Initialize component after creation
 			 */
 			virtual void Start() {};
 
+		private:
 			/**
 			 * @brief Clean up when component is deactivated
 			 */
@@ -126,20 +113,30 @@ namespace StevEngine {
 	/**
 	 * @brief Factory system for creating components from serialized data
 	 *
-	 * Manages component type registration and instantiation from YAML data.
+	 * Manages component type registration and instantiation from serialization data.
 	 * Allows components to be created dynamically at runtime.
 	 */
 	class CreateComponents {
 		/** @brief Map of registered component factory functions */
-		static inline std::unordered_map<std::string, std::function<Component*(YAML::Node node)>> factories = std::unordered_map<std::string, std::function<Component*(YAML::Node node)>>();
+		static inline std::unordered_map<std::string, std::function<Component*(TextStream& stream)>> textFactories = std::unordered_map<std::string, std::function<Component*(TextStream& stream)>>();
+		static inline std::unordered_map<std::string, std::function<Component*(BinaryStream& stream)>> binaryFactories = std::unordered_map<std::string, std::function<Component*(BinaryStream& stream)>>();
 
 		public:
 			/**
 			 * @brief Create component from serialized data
-			 * @param node YAML node containing component data
+			 * @param type type string of the component to create
+			 * @param stream text serializable stream containing component data
 			 * @return Pointer to created component
 			 */
-			static Component* Create(YAML::Node node);
+			static Component* Create(const std::string& type, TextStream& stream);
+
+			/**
+			 * @brief Create component from serialized data
+			 * @param type type string of the component to create
+			 * @param stream binary serializable stream containing component data
+			 * @return Pointer to created component
+			 */
+			static Component* Create(const std::string& type, BinaryStream& stream);
 
 			/**
 			 * @brief Register a component type for creation
@@ -148,9 +145,12 @@ namespace StevEngine {
 			 * @return true if registration succeeded, false if type already registered
 			 */
 			template <class T> static bool RegisterComponentType(std::string type) {
-				if(factories.contains(type)) return false;
-				factories.insert({type, [](YAML::Node node) -> Component*  {
-					return (Component*) (new T(node));
+				if(textFactories.contains(type)) return false;
+				textFactories.insert({type, [](TextStream& stream) -> Component*  {
+					return (Component*) (new T(stream));
+				}});
+				binaryFactories.insert({type, [](BinaryStream& stream) -> Component*  {
+					return (Component*) (new T(stream));
 				}});
 				return true;
 			}

@@ -229,24 +229,24 @@ namespace StevEngine::Utilities {
 
 namespace StevEngine {
 	//Read from text stream
-	template <> Utilities::Quaternion TextSerializableStream::Read<Utilities::Quaternion>() {
+	template <> Utilities::Quaternion TextStream::Read<Utilities::Quaternion>() {
 		Utilities::Quaternion value;
 		char s;
-		*this >> value.W >> s >> value.X >> s >> value.Y >> s >> value.Z >> s;
+		*this >> value.W >> value.X >> value.Y >> value.Z;
 		return value;
 	}
 	//Write to text stream
-	template <> void TextSerializableStream::Write<Utilities::Quaternion>(const Utilities::Quaternion& data) {
-		*this << data.W << ';' << data.X << ';' << data.Y << ';' << data.Z << ';';
+	template <> void TextStream::Write<Utilities::Quaternion>(const Utilities::Quaternion& data) {
+		*this << data.W << data.X << data.Y << data.Z;
 	}
 	//Read from text stream
-	template <> Utilities::Quaternion BinarySerializableStream::Read<Utilities::Quaternion>() {
+	template <> Utilities::Quaternion BinaryStream::Read<Utilities::Quaternion>() {
 		Utilities::Quaternion value;
 		*this >> value.W >> value.X >> value.Y >> value.Z;
 		return value;
 	}
 	//Write to text stream
-	template <> void BinarySerializableStream::Write<Utilities::Quaternion>(const Utilities::Quaternion& data) {
+	template <> void BinaryStream::Write<Utilities::Quaternion>(const Utilities::Quaternion& data) {
 		*this << data.W << data.X << data.Y << data.Z;
 	}
 }

@@ -1,9 +1,8 @@
 #pragma once
 #include "main/ResourceManager.hpp"
 #include "main/GameObject.hpp"
+#include "utilities/Serializable.hpp"
 #include "visuals/Camera.hpp"
-
-#include <yaml-cpp/yaml.h>
 
 #include <unordered_map>
 #include <string>
@@ -52,10 +51,17 @@ namespace StevEngine {
 
 			/**
 			 * @brief Create GameObject from serialized data
-			 * @param node YAML node containing object data
+			 * @param stream Text stream containing serialized object data
 			 * @return ID of created object
 			 */
-			Utilities::ID CreateObject(YAML::Node node);
+			Utilities::ID CreateObject(TextStream& stream);
+
+			/**
+			 * @brief Create GameObject from serialized data
+			 * @param stream Binary stream containing serialized object data
+			 * @return ID of created object
+			 */
+			Utilities::ID CreateObject(BinaryStream& stream);
 
 			/**
 			 * @brief Get object by ID
@@ -96,12 +102,17 @@ namespace StevEngine {
 			 */
 			void DestroyObject(Utilities::ID id);
 
-			#ifdef StevEngine_PLAYER_DATA
 			/**
-			 * @brief Save entire scene to file
+			 * @brief Export entire scene
+			 * @return Text stream containing serialized object data
 			 */
-			void ExportToFile();
-			#endif
+			TextStream ExportText();
+
+			/**
+			 * @brief Export entire scene
+			 * @return Binary stream containing serialized scene data
+			 */
+			BinaryStream ExportBinary();
 
 		private:
 			/**
@@ -112,9 +123,17 @@ namespace StevEngine {
 
 			/**
 			 * @brief Create scene from serialized data
-			 * @param node YAML node containing scene data
+			 * @param name Name of the scene
+			 * @param stream Text stream containing serialized object data
 			 */
-			Scene(YAML::Node);
+			Scene(std::string name, TextStream& stream);
+
+			/**
+			 * @brief Create scene from serialized data
+			 * @param name Name of the scene
+			 * @param stream Binary stream containing serialized object data
+			 */
+			Scene(std::string name, BinaryStream& stream);
 
 			bool active = false;  ///< Whether scene is currently active
 

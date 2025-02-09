@@ -1,5 +1,4 @@
 #include "GameObject.hpp"
-#include "data/DataManager.hpp"
 #include "main/EngineEvents.hpp"
 #include "main/EventSystem.hpp"
 #include "main/SceneManager.hpp"
@@ -7,10 +6,10 @@
 #include "utilities/ID.hpp"
 #include "utilities/Matrix4.hpp"
 #include "utilities/Quaternion.hpp"
+#include "utilities/Serializable.hpp"
 #include "utilities/Vector3.hpp"
 
-#include <yaml-cpp/yaml.h>
-#include <fstream>
+#include <cstdio>
 
 namespace StevEngine {
 	//Main functions
@@ -101,7 +100,7 @@ namespace StevEngine {
 	GameObject* GameObject::GetChild(int index) const {
 		return sceneManager.GetScene(scene)->GetObject(children[index]);
 	}
-	int GameObject::GetChildCount() const {
+	uint GameObject::GetChildCount() const {
 		return children.size();
 	}
 	GameObject* GameObject::GetParent() const {
@@ -123,56 +122,69 @@ namespace StevEngine {
 		parent = id;
 	}
 
-	//Export
-	YAML::Node GameObject::Export() const {
-		YAML::Node node;
+	//Export to text stream
+	TextStream GameObject::ExportText() const {
+		TextStream stream;
 		//Basic info
-		node["id"] = id;
-		node["name"] = name;
-		//Transform info
-		node["position"] = position;
-		node["rotation"] = rotation;
-		node["scale"] = scale;
-		//Components
-		for(Component* component : components) {
-			node["components"].push_back(component->Export());
+		stream << id << name;
+		stream << position << rotation << scale;
+		//Components and children
+		stream << (uint)components.size() << GetChildCount();
+		for(auto component : components) {
+			stream << component->GetType() << component->ExportText();
 		}
-		//Children
-		for(int i = 0; i < children.size(); i++) {
-			node["children"].push_back(GetChild(i)->Export());
+		for(int i = 0; i < GetChildCount(); i++) {
+			stream << GetChild(i)->ExportText();
 		}
-		return node;
+		return stream;
 	}
-	#ifdef StevEngine_PLAYER_DATA
-	void GameObject::ExportToFile(std::string name) const {
-		YAML::Node node = Export();
-		YAML::Emitter out;
-		out << node;
-		std::ofstream file;
-		file.open(Data::data.GetAppdataPath() + name + ".object");
-		file << out.c_str();
-	}
-	#endif
-	//Import from yaml
-	void GameObject::Import(YAML::Node node)
-	{
+	//Import from binary stream
+	void GameObject::Import(TextStream& stream) {
+		char c;
 		//Basic info
-		name = node["name"].as<std::string>();
-		//Transform info
-		position = node["position"].as<Utilities::Vector3>();
-		rotation = node["rotation"].as<Utilities::Quaternion>();
-		scale = node["scale"].as<Utilities::Vector3>();
-		//Components
-		if(node["components"]) {
-			for(YAML::Node component : node["components"]) {
-				AddComponent(CreateComponents::Create(component));
-			}
+		stream >> name >> position >> c >> rotation >> c >> scale >> c;
+		//Components and children
+		uint components, children;
+		stream >> components >> c >> children >> c;
+		for(int i = 0; i < components; i++) {
+			std::string type;
+			stream >> type;
+			AddComponent(CreateComponents::Create(type, stream));
 		}
-		//Children
-		if(node["children"]) {
-			for(YAML::Node childNode : node["children"]) {
-				AddChild(sceneManager.GetScene(scene)->CreateObject(childNode));
-			}
+		for(int i = 0; i < children; i++) {
+			sceneManager.GetScene(scene)->CreateObject(stream);
+		}
+	}
+	//Export to binary stream
+	BinaryStream GameObject::ExportBinary() const {
+		BinaryStream stream;
+		//Basic info
+		stream << id << name;
+		stream << position << rotation << scale;
+		//Components and children
+		stream << (uint)components.size() << GetChildCount();
+		for(auto component : components) {
+			stream << component->GetType() << component->ExportBinary();
+		}
+		for(int i = 0; i < GetChildCount(); i++) {
+			stream << GetChild(i)->ExportBinary();
+		}
+		return stream;
+	}
+	//Import from binary stream
+	void GameObject::Import(BinaryStream& stream) {
+		//Basic info
+		stream >> name >> position >> rotation >> scale;
+		//Components and children
+		uint components, children;
+		stream >> components >> children;
+		for(int i = 0; i < components; i++) {
+			std::string type;
+			stream >> type;
+			AddComponent(CreateComponents::Create(type, stream));
+		}
+		for(int i = 0; i < children; i++) {
+			sceneManager.GetScene(scene)->CreateObject(stream);
 		}
 	}
 	//Destroy

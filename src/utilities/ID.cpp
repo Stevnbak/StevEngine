@@ -71,7 +71,7 @@ namespace StevEngine::Utilities {
 
 namespace StevEngine {
 	//Read from text stream
-	template <> Utilities::ID TextSerializableStream::Read<Utilities::ID>() {
+	template <> Utilities::ID TextStream::Read<Utilities::ID>() {
 		char text[37];
 		for(int i = 0; i < 36; i++)
 			*this >> text[i];
@@ -79,17 +79,17 @@ namespace StevEngine {
 		return Utilities::ID(std::string(text));
 	}
 	//Write to text stream
-	template <> void TextSerializableStream::Write<Utilities::ID>(const Utilities::ID& data) {
+	template <> void TextStream::Write<Utilities::ID>(const Utilities::ID& data) {
 		*this << data.GetString();
 	}
 	//Read from text stream
-	template <> Utilities::ID BinarySerializableStream::Read<Utilities::ID>() {
+	template <> Utilities::ID BinaryStream::Read<Utilities::ID>() {
 		uint8_t value[16];
 		for(int i = 0; i < 16; i++) *this >> value[i];
 		return Utilities::ID(value);
 	}
 	//Write to text stream
-	template <> void BinarySerializableStream::Write<Utilities::ID>(const Utilities::ID& data) {
+	template <> void BinaryStream::Write<Utilities::ID>(const Utilities::ID& data) {
 		for(int i = 0; i < 16; i++) *this << data.GetRaw()[i];
 	}
 }
