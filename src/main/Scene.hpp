@@ -47,21 +47,14 @@ namespace StevEngine {
 			 * @param file Resource containing serialized object data
 			 * @return ID of created object
 			 */
-			Utilities::ID CreateObject(Resources::Resource file);
+			Utilities::ID CreateObject(Resources::Resource file, StreamType type);
 
 			/**
 			 * @brief Create GameObject from serialized data
-			 * @param stream Text stream containing serialized object data
+			 * @param stream Stream containing serialized object data
 			 * @return ID of created object
 			 */
-			Utilities::ID CreateObject(TextStream& stream);
-
-			/**
-			 * @brief Create GameObject from serialized data
-			 * @param stream Binary stream containing serialized object data
-			 * @return ID of created object
-			 */
-			Utilities::ID CreateObject(BinaryStream& stream);
+			Utilities::ID CreateObject(Stream& stream);
 
 			/**
 			 * @brief Get object by ID
@@ -104,15 +97,10 @@ namespace StevEngine {
 
 			/**
 			 * @brief Export entire scene
-			 * @return Text stream containing serialized object data
+			 * @param type Type of stream to export to
+			 * @return Stream containing serialized object data
 			 */
-			TextStream ExportText();
-
-			/**
-			 * @brief Export entire scene
-			 * @return Binary stream containing serialized scene data
-			 */
-			BinaryStream ExportBinary();
+			Stream Export(StreamType type);
 
 		private:
 			/**
@@ -124,16 +112,9 @@ namespace StevEngine {
 			/**
 			 * @brief Create scene from serialized data
 			 * @param name Name of the scene
-			 * @param stream Text stream containing serialized object data
+			 * @param stream Stream containing serialized object data
 			 */
-			Scene(std::string name, TextStream& stream);
-
-			/**
-			 * @brief Create scene from serialized data
-			 * @param name Name of the scene
-			 * @param stream Binary stream containing serialized object data
-			 */
-			Scene(std::string name, BinaryStream& stream);
+			Scene(std::string name, Stream& stream);
 
 			bool active = false;  ///< Whether scene is currently active
 

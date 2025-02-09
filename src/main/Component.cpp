@@ -33,18 +33,11 @@ namespace StevEngine {
 		for(auto[id, event] : handlers) object->Unsubscribe(event, id);
 	}
 	//Export/Import component
-	Component* CreateComponents::Create(const std::string& type, TextStream& stream) {
-		if(!textFactories.contains(type)) {
+	Component* CreateComponents::Create(const std::string& type, Stream& stream) {
+		if(!factories.contains(type)) {
 			Log::Error("Component of type \"" + type + "\" is not registered as text importable.", true);
 			return nullptr;
 		}
-		return textFactories[type](stream);
-	}
-	Component* CreateComponents::Create(const std::string& type, BinaryStream& stream) {
-		if(!binaryFactories.contains(type)) {
-			Log::Error("Component of type \"" + type + "\" is not registered as binary importable.", true);
-			return nullptr;
-		}
-		return binaryFactories[type](stream);
+		return factories[type](stream);
 	}
 }

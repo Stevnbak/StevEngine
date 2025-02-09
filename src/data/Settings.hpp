@@ -31,7 +31,7 @@ namespace StevEngine::Data {
 				//Get line if key exists
 				if(!settings[name]) {
 					Log::Error(std::format("Game data with key '{}' not found!", name), true);
-					return NULL;
+					return (T)NULL;
 				}
 				//Get data
 				return settings[name].as<T>();

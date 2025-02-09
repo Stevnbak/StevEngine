@@ -62,15 +62,10 @@ namespace StevEngine {
 
 			/**
 			 * @brief Serialize component to a text stream
+			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */
-			virtual TextStream ExportText() const = 0;
-
-			/**
-			 * @brief Serialize component to a binary stream
-			 * @return Serialized stream
-			 */
-			virtual BinaryStream ExportBinary() const = 0;
+			virtual Stream Export(StreamType stream) const = 0;
 
 			/**
 			 * @brief Initialize component after creation
@@ -118,8 +113,7 @@ namespace StevEngine {
 	 */
 	class CreateComponents {
 		/** @brief Map of registered component factory functions */
-		static inline std::unordered_map<std::string, std::function<Component*(TextStream& stream)>> textFactories = std::unordered_map<std::string, std::function<Component*(TextStream& stream)>>();
-		static inline std::unordered_map<std::string, std::function<Component*(BinaryStream& stream)>> binaryFactories = std::unordered_map<std::string, std::function<Component*(BinaryStream& stream)>>();
+		static inline std::unordered_map<std::string, std::function<Component*(Stream& stream)>> factories = std::unordered_map<std::string, std::function<Component*(Stream& stream)>>();
 
 		public:
 			/**
@@ -128,15 +122,7 @@ namespace StevEngine {
 			 * @param stream text serializable stream containing component data
 			 * @return Pointer to created component
 			 */
-			static Component* Create(const std::string& type, TextStream& stream);
-
-			/**
-			 * @brief Create component from serialized data
-			 * @param type type string of the component to create
-			 * @param stream binary serializable stream containing component data
-			 * @return Pointer to created component
-			 */
-			static Component* Create(const std::string& type, BinaryStream& stream);
+			static Component* Create(const std::string& type, Stream& stream);
 
 			/**
 			 * @brief Register a component type for creation
@@ -145,11 +131,8 @@ namespace StevEngine {
 			 * @return true if registration succeeded, false if type already registered
 			 */
 			template <class T> static bool RegisterComponentType(std::string type) {
-				if(textFactories.contains(type)) return false;
-				textFactories.insert({type, [](TextStream& stream) -> Component*  {
-					return (Component*) (new T(stream));
-				}});
-				binaryFactories.insert({type, [](BinaryStream& stream) -> Component*  {
+				if(factories.contains(type)) return false;
+				factories.insert({type, [](Stream& stream) -> Component*  {
 					return (Component*) (new T(stream));
 				}});
 				return true;

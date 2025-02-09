@@ -135,7 +135,7 @@ void TestSerializeStuff() {
 	ID id;
 
 	Log::Debug("Text stream test:");
-	TextStream ts;
+	Stream ts(Text);
 
 	Log::Debug("Original: " + (std::string)a);
 	ts.Write(a);
@@ -157,7 +157,7 @@ void TestSerializeStuff() {
 	ts.WriteToFile("TestExport.txt");
 
 	Log::Debug("Binary stream test:");
-	BinaryStream bs;
+	Stream bs(Binary);
 
 	Log::Debug("Original: " + (std::string)a);
 	bs.Write(a);

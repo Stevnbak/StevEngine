@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene.hpp"
 #include "main/ResourceManager.hpp"
+#include "utilities/Serializable.hpp"
 
 #include <string>
 
@@ -36,7 +37,7 @@ namespace StevEngine {
 			 * @param file Resource containing scene data
 			 * @return Pointer to created scene
 			 */
-			Scene* CreateSceneFromFile(Resources::Resource file);
+			Scene* CreateSceneFromFile(Resources::Resource file, StreamType type);
 
 			/**
 			 * @brief Create empty scene

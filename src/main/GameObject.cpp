@@ -123,56 +123,23 @@ namespace StevEngine {
 	}
 
 	//Export to text stream
-	TextStream GameObject::ExportText() const {
-		TextStream stream;
+	Stream GameObject::Export(StreamType type) const {
+		Stream stream(type);
 		//Basic info
 		stream << id << name;
 		stream << position << rotation << scale;
 		//Components and children
 		stream << (uint)components.size() << GetChildCount();
 		for(auto component : components) {
-			stream << component->GetType() << component->ExportText();
+			stream << component->GetType() << component->Export(type);
 		}
 		for(int i = 0; i < GetChildCount(); i++) {
-			stream << GetChild(i)->ExportText();
+			stream << GetChild(i)->Export(type);
 		}
 		return stream;
 	}
 	//Import from binary stream
-	void GameObject::Import(TextStream& stream) {
-		char c;
-		//Basic info
-		stream >> name >> position >> c >> rotation >> c >> scale >> c;
-		//Components and children
-		uint components, children;
-		stream >> components >> c >> children >> c;
-		for(int i = 0; i < components; i++) {
-			std::string type;
-			stream >> type;
-			AddComponent(CreateComponents::Create(type, stream));
-		}
-		for(int i = 0; i < children; i++) {
-			sceneManager.GetScene(scene)->CreateObject(stream);
-		}
-	}
-	//Export to binary stream
-	BinaryStream GameObject::ExportBinary() const {
-		BinaryStream stream;
-		//Basic info
-		stream << id << name;
-		stream << position << rotation << scale;
-		//Components and children
-		stream << (uint)components.size() << GetChildCount();
-		for(auto component : components) {
-			stream << component->GetType() << component->ExportBinary();
-		}
-		for(int i = 0; i < GetChildCount(); i++) {
-			stream << GetChild(i)->ExportBinary();
-		}
-		return stream;
-	}
-	//Import from binary stream
-	void GameObject::Import(BinaryStream& stream) {
+	void GameObject::Import(Stream& stream) {
 		//Basic info
 		stream >> name >> position >> rotation >> scale;
 		//Components and children

@@ -129,28 +129,17 @@ namespace StevEngine {
 			~GameObject();
 
 			/**
-			 * @brief Serialize object to a text stream
-			 * @return Text stream
+			 * @brief Serialize object to a stream
+			 * @param type Type of stream to export to
+			 * @return Stream containing serialized object data
 			 */
-			TextStream ExportText() const;
-
-			/**
-			 * @brief Serialize object to a binary stream
-			 * @return Binary stream
-			 */
-			BinaryStream ExportBinary() const;
+			Stream Export(StreamType type) const;
 
 			/**
 			 * @brief Load object from serialized data
-			 * @param stream Text stream containing serialized object data
+			 * @param stream Stream containing serialized object data
 			 */
-			void Import(TextStream& stream);
-
-			/**
-			 * @brief Load object from serialized data
-			 * @param stream Binary stream containing object data
-			 */
-			void Import(BinaryStream& stream);
+			void Import(Stream& stream);
 
 		private:
 			/**

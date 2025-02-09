@@ -3,8 +3,6 @@
 #include "utilities/ID.hpp"
 #include "utilities/Serializable.hpp"
 
-#include <yaml-cpp/yaml.h>
-
 using namespace StevEngine::Utilities;
 
 namespace StevEngine {
@@ -24,21 +22,12 @@ namespace StevEngine {
 		if(active) object->Start();
 		return id;
 	}
-	Utilities::ID Scene::CreateObject(Resources::Resource file) {
-		TextStream stream;
+	Utilities::ID Scene::CreateObject(Resources::Resource file, StreamType type) {
+		Stream stream(type);
 		stream.ReadFromFile(file);
 		return CreateObject(stream);
 	}
-	Utilities::ID Scene::CreateObject(TextStream& stream) {
-		Utilities::ID id;
-		stream >> id;
-		gameObjects.emplace(id, GameObject(id, "GameObject", name));
-		GameObject* object = GetObject(id);
-		object->Import(stream);
-		if(active) object->Start();
-		return id;
-	}
-	Utilities::ID Scene::CreateObject(BinaryStream& stream) {
+	Utilities::ID Scene::CreateObject(Stream& stream) {
 		Utilities::ID id;
 		stream >> id;
 		gameObjects.emplace(id, GameObject(id, "GameObject", name));
@@ -76,7 +65,7 @@ namespace StevEngine {
 		activeCamera = GetObject(CreateObject("Main Camera"))->AddComponent(new Visuals::Camera());
 		#endif
 	}
-	Scene::Scene(std::string name, TextStream& stream) : name(name) {
+	Scene::Scene(std::string name, Stream& stream) : name(name) {
 		//Create objects
 		uint objects = stream.Read<uint>();
 		for(uint i = 0; i < objects; i++) {
@@ -87,16 +76,12 @@ namespace StevEngine {
 		activeCamera = GetObject(stream.Read<ID>())->GetComponent<Visuals::Camera>();
 		#endif
 	}
-	Scene::Scene(std::string name, BinaryStream& stream) : name(name) {
-		//Create objects
-		uint objects = stream.Read<uint>();
-		for(uint i = 0; i < objects; i++) {
-			CreateObject(stream);
+	Stream Scene::Export(StreamType type) {
+		Stream stream(type);
+		stream << name << (uint)gameObjects.size();
+		for(const auto& [id, obj] : gameObjects) {
+			stream << obj.Export(type);
 		}
-		//Set camera
-		#ifdef StevEngine_SHOW_WINDOW
-		activeCamera = GetObject(stream.Read<ID>())->GetComponent<Visuals::Camera>();
-		#endif
 	}
 	void Scene::Activate() {
 		active = true;
