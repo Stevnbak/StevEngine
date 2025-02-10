@@ -1,7 +1,8 @@
 #pragma once
 #ifdef StevEngine_PLAYER_DATA
+#include "utilities/Stream.hpp"
+#include <map>
 #include <string>
-#include <yaml-cpp/yaml.h>
 
 namespace StevEngine::Data {
 
@@ -68,8 +69,8 @@ namespace StevEngine::Data {
 			/** @brief Path to log directory */
 			std::string logPath;
 
-			/** @brief YAML node containing all saved data */
-			YAML::Node data;
+			/** @brief Map containing all saved data streams */
+			std::map<std::string, Stream> data;
 
 			/**
 			 * @brief Save all data to disk

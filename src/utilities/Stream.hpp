@@ -1,6 +1,7 @@
 #pragma once
 #include "main/ResourceManager.hpp"
 
+#include <fstream>
 #include <sstream>
 
 namespace StevEngine {
@@ -74,6 +75,12 @@ namespace StevEngine {
 			 * @param file File to read from
 			 */
 			void ReadFromFile(const Resources::Resource& file);
+
+			/**
+			 * @brief Read content from an input file stream to stream
+			 * @param file Input file stream to read from
+			 */
+			void ReadFromFile(std::ifstream& file);
 
 			/**
 			 * @brief Get underlying std::stringstream object

@@ -223,8 +223,6 @@ int main(int argc, char** argv) {
 
 	TestSerializeStuff();
 
-	return 0;
-
 	Renderer::render.SetFaceCulling(false);
 	Renderer::render.SetMSAA(true, 8);
 	engine->GetEvents()->Subscribe<UpdateEvent>(mainUpdate);
@@ -450,7 +448,7 @@ int main(int argc, char** argv) {
 	//Test data manager
 	#ifdef StevEngine_PLAYER_DATA
 	Log::Debug("Before: " + Data::data.Read<std::string>("test"));
-	Data::data.Save("test", std::string("test data"));
+	Data::data.Save<std::string>("test", std::string("test data"));
 	Log::Debug("After: " + Data::data.Read<std::string>("test"));
 	#endif
 

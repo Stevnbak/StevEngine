@@ -20,6 +20,17 @@ namespace StevEngine {
 		size_t size = file.GetSize();
 		for(int i = 0; i < size; i++) *this << (char)data[i];
 	}
+	//Read from file stream
+	void Stream::ReadFromFile(std::ifstream& file) {
+		if(!file.is_open()) return;
+		size_t size = file.seekg(0, std::ios::end).tellg();
+		if(size > 0) {
+			char* data = new char[size];
+			file.seekg(0, std::ios::beg).read(data, size);
+			for(int i = 0; i < size; i++) *this << (char)data[i];
+		}
+		file.close();
+	}
 
 	//Write stream to stream
 	template <> void Stream::Write(const Stream& data) {

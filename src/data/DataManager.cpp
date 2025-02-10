@@ -46,20 +46,32 @@ namespace StevEngine::Data {
 		std::filesystem::create_directories(appdataPath);
 		std::filesystem::create_directories(logPath);
 		//Read or create data file
-		std::ifstream start;
-		start.open(appdataPath + "game.data");
-		data = YAML::Load(start);
+		std::ifstream start(GetAppdataPath() + "game.data");
+		Stream stream(Text);
+		stream.ReadFromFile(start);
+		uint32_t keys;
+		stream >> keys;
+		for(uint32_t i = 0; i < keys; i++) {
+			std::string key = stream.Read<std::string>();
+			Stream keyStream(Text);
+			std::string v;
+			getline(stream.GetStream(), v, '\n');
+			for(char c : v) keyStream << c;
+			data.emplace(key, keyStream);
+		}
 	}
 	template<typename T> T GameData::Read(std::string name) {
 		//Get line if key exists
-		if(!data[name]) {
+		if(!data.contains(name)) {
 			Log::Error(std::format("Game data with key '{}' not found!", name), true);
 			return T();
 		}
 		//Get data
-		return data[name].as<T>();
+		//TODO: Fix this mess with creating a new stream to read value!
+		Stream stream(Text);
+		stream.GetStream() << data.at(name).GetStream().str();
+		return stream.Read<T>();
 	}
-	template YAML::Node GameData::Read(std::string name);
 	template std::string GameData::Read(std::string name);
 	template bool GameData::Read(std::string name);
 	template int GameData::Read(std::string name);
@@ -68,10 +80,14 @@ namespace StevEngine::Data {
 	template float GameData::Read(std::string name);
 
 	template<typename T> void GameData::Save(std::string name, T input) {
-		data[name] = input;
+		if(data.contains(name)) {
+			data.erase(name);
+		}
+		Stream stream(Text);
+		stream << input;
+		data.emplace(name, stream);
 		SaveToFile();
 	}
-	template void GameData::Save(std::string name, YAML::Node input);
 	template void GameData::Save(std::string name, std::string input);
 	template void GameData::Save(std::string name, bool input);
 	template void GameData::Save(std::string name, int input);
@@ -81,16 +97,15 @@ namespace StevEngine::Data {
 
 
 	void GameData::Delete(std::string name) {
-		data.remove(name);
+		data.erase(name);
 	}
 	void GameData::SaveToFile() {
-		std::ofstream file;
-		file.open(appdataPath + "game.data");
-		file.clear();
-		YAML::Emitter out;
-		out << data;
-		file << out.c_str();
-		file.close();
+		Stream stream(Text);
+		stream << (uint32_t)data.size();
+		for(const auto& [key, str] : data) {
+			stream << key << str << '\n';
+		}
+		stream.WriteToFile(std::string("game.data").c_str());
 	}
 }
 #endif
