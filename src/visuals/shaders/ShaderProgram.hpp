@@ -127,7 +127,7 @@ namespace StevEngine::Renderer {
 			ShaderType GetType() const { return shaderType; };
 
 			/**
-			 * @brief Serialize shader program to a text stream
+			 * @brief Serialize shader program to a stream
 			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */

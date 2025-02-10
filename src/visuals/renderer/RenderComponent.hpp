@@ -81,7 +81,7 @@ namespace StevEngine::Renderer {
 			~RenderComponent();
 
 			/**
-			 * @brief Serialize component to a text stream
+			 * @brief Serialize component to a stream
 			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */

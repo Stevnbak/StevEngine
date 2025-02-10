@@ -122,7 +122,7 @@ namespace StevEngine {
 		parent = id;
 	}
 
-	//Export to text stream
+	//Export to stream
 	Stream GameObject::Export(StreamType type) const {
 		Stream stream(type);
 		//Basic info
@@ -138,7 +138,7 @@ namespace StevEngine {
 		}
 		return stream;
 	}
-	//Import from binary stream
+	//Import from stream
 	void GameObject::Import(Stream& stream) {
 		//Basic info
 		stream >> name >> position >> rotation >> scale;

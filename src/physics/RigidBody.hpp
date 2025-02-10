@@ -7,7 +7,6 @@
 #include "physics/Colliders.hpp"
 #include "physics/Layers.hpp"
 
-#include <yaml-cpp/yaml.h>
 //Jolt imports
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Collision/Shape/StaticCompoundShape.h>
@@ -99,7 +98,7 @@ namespace StevEngine::Physics {
 			std::string GetType() const { return RIGIDBODY_TYPE; }
 
 			/**
-			 * @brief Serialize component to a text stream
+			 * @brief Serialize component to a stream
 			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */
@@ -125,13 +124,6 @@ namespace StevEngine::Physics {
 			 * @brief Clean up resources
 			 */
 			~RigidBody();
-
-			/**
-			 * @brief Serialize to YAML
-			 * @param node Node to serialize into
-			 * @return Updated YAML node
-			 */
-			YAML::Node Export(YAML::Node node) const;
 
 			/**
 			 * @brief Set motion properties

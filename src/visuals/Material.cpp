@@ -36,7 +36,7 @@ namespace StevEngine::Visuals {
 }
 
 namespace StevEngine {
-	//Read from text stream
+	//Read from stream
 	template <> Visuals::Material Stream::Read<Visuals::Material>() {
 		return Visuals::Material(
 			Read<Color>(),
@@ -48,7 +48,7 @@ namespace StevEngine {
 			Read<Visuals::Texture>()
 		);
 	}
-	//Write to text stream
+	//Write to stream
 	template <> void Stream::Write<Visuals::Material>(const Visuals::Material& data) {
 		*this << data.color << data.ambient << data.diffuse << data.specular << data.shininess << data.GetAlbedo() << data.GetNormal();
 	}

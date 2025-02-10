@@ -228,13 +228,13 @@ namespace StevEngine::Utilities {
 }
 
 namespace StevEngine {
-	//Read from text stream
+	//Read from stream
 	template <> Utilities::Quaternion Stream::Read<Utilities::Quaternion>() {
 		Utilities::Quaternion value;
 		*this >> value.W >> value.X >> value.Y >> value.Z;
 		return value;
 	}
-	//Write to text stream
+	//Write to stream
 	template <> void Stream::Write<Utilities::Quaternion>(const Utilities::Quaternion& data) {
 		*this << data.W << data.X << data.Y << data.Z;
 	}

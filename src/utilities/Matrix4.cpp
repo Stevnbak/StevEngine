@@ -307,13 +307,13 @@ namespace StevEngine::Utilities {
 }
 
 namespace StevEngine {
-	//Read from text stream
+	//Read from stream
 	template <> Utilities::Matrix4 Stream::Read<Utilities::Matrix4>() {
 		double raw[4][4];
 		for(int i = 0; i < 4; i++) for(int j = 0; j < 4; j++) *this >> raw[j][i];
 		return Utilities::Matrix4(raw);
 	}
-	//Write to text stream
+	//Write to stream
 	template <> void Stream::Write<Utilities::Matrix4>(const Utilities::Matrix4& data) {
 		auto raw = data.data();
 		for(int i = 0; i < 4 * 4; i++) *this << raw[i];

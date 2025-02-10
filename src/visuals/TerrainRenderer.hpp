@@ -39,7 +39,7 @@ namespace StevEngine::Visuals {
 			std::string GetType() const { return TERRAIN_RENDERER_TYPE; }
 
 			/**
-			 * @brief Serialize component to a text stream
+			 * @brief Serialize component to a stream
 			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */

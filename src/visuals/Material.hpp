@@ -3,7 +3,6 @@
 #include "utilities/Vector3.hpp"
 #include "utilities/Color.hpp"
 #include "visuals/Texture.hpp"
-#include <yaml-cpp/yaml.h>
 
 namespace StevEngine::Visuals {
 	/**

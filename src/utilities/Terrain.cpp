@@ -11,7 +11,7 @@ namespace StevEngine::Utilities {
 }
 
 namespace StevEngine {
-	//Read from text stream
+	//Read from stream
 	template <> Utilities::TerrainData Stream::Read<Utilities::TerrainData>() {
 		uint32_t size = Read<uint32_t>();
 		double step = Read<double>();
@@ -19,7 +19,7 @@ namespace StevEngine {
 		for(int i = 0; i < size * size; i++) *this >> data[i];
 		return Utilities::TerrainData(size, step, data);
 	}
-	//Write to text stream
+	//Write to stream
 	template <> void Stream::Write<Utilities::TerrainData>(const Utilities::TerrainData& data) {
 		*this << data.size << data.step;
 		for(int i = 0; i < data.size * data.size; i++) *this << data.points[i];

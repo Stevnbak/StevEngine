@@ -70,7 +70,7 @@ namespace StevEngine::Utilities {
 }
 
 namespace StevEngine {
-	//Read from text stream
+	//Read from stream
 	template <> Utilities::ID Stream::Read<Utilities::ID>() {
 		if(type == Text) {
 			char text[37];
@@ -84,7 +84,7 @@ namespace StevEngine {
 			return Utilities::ID(value);
 		}
 	}
-	//Write to text stream
+	//Write to stream
 	template <> void Stream::Write<Utilities::ID>(const Utilities::ID& data) {
 		if(type == Text) {
 			std::string str = data.GetString();

@@ -13,13 +13,13 @@ namespace StevEngine::Utilities {
 }
 
 namespace StevEngine {
-	//Read from text stream
+	//Read from stream
 	template <> Utilities::Color Stream::Read<Utilities::Color>() {
 		Utilities::Color value;
 		*this >> value.r >> value.g >> value.b >> value.a;;
 		return value;
 	}
-	//Write to text stream
+	//Write to stream
 	template <> void Stream::Write<Utilities::Color>(const Utilities::Color& data) {
 		*this << data.r << data.g << data.b << data.a;
 	}

@@ -73,7 +73,7 @@ namespace StevEngine::Visuals {
 			std::string GetType() const { return DIRECTIONAL_LIGHT_TYPE; }
 
 			/**
-			 * @brief Serialize component to a text stream
+			 * @brief Serialize component to a stream
 			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */
@@ -115,7 +115,7 @@ namespace StevEngine::Visuals {
 			std::string GetType() const { return POINT_LIGHT_TYPE; }
 
 			/**
-			 * @brief Serialize component to a text stream
+			 * @brief Serialize component to a stream
 			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */
@@ -160,7 +160,7 @@ namespace StevEngine::Visuals {
 			std::string GetType() const { return SPOT_LIGHT_TYPE; }
 
 			/**
-			 * @brief Serialize component to a text stream
+			 * @brief Serialize component to a stream
 			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */

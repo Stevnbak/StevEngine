@@ -41,13 +41,13 @@ namespace StevEngine::Utilities {
 }
 
 namespace StevEngine {
-	//Read from text stream
+	//Read from stream
 	template <> Utilities::Range3 Stream::Read<Utilities::Range3>() {
 		Utilities::Range3 value;
 		*this >> value.Low >> value.High;
 		return value;
 	}
-	//Write to text stream
+	//Write to stream
 	template <> void Stream::Write<Utilities::Range3>(const Utilities::Range3& data) {
 		*this << data.Low << data.High;
 	}

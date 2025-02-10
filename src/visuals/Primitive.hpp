@@ -54,7 +54,7 @@ namespace StevEngine {
 				std::string GetType() const { return CUBE_PRIMITIVE_TYPE; }
 
 				/**
-				 * @brief Serialize component to a text stream
+				 * @brief Serialize component to a stream
 				 * @param type Type of stream to export to
 				 * @return Serialized stream
 				 */
@@ -100,7 +100,7 @@ namespace StevEngine {
 				std::string GetType() const { return UVSPHERE_PRIMITIVE_TYPE; }
 
 				/**
-				 * @brief Serialize component to a text stream
+				 * @brief Serialize component to a stream
 				 * @param type Type of stream to export to
 				 * @return Serialized stream
 				 */
@@ -147,7 +147,7 @@ namespace StevEngine {
 				std::string GetType() const { return ICOSPHERE_PRIMITIVE_TYPE; }
 
 				/**
-				 * @brief Serialize component to a text stream
+				 * @brief Serialize component to a stream
 				 * @param type Type of stream to export to
 				 * @return Serialized stream
 				 */
@@ -194,7 +194,7 @@ namespace StevEngine {
 				std::string GetType() const { return CYLINDER_PRIMITIVE_TYPE; }
 
 				/**
-				 * @brief Serialize component to a text stream
+				 * @brief Serialize component to a stream
 				 * @param type Type of stream to export to
 				 * @return Serialized stream
 				 */
@@ -241,7 +241,7 @@ namespace StevEngine {
 				std::string GetType() const { return CAPSULE_PRIMITIVE_TYPE; }
 
 				/**
-				 * @brief Serialize component to a text stream
+				 * @brief Serialize component to a stream
 				 * @param type Type of stream to export to
 				 * @return Serialized stream
 				 */

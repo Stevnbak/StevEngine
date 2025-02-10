@@ -45,11 +45,11 @@ namespace StevEngine::Visuals {
 }
 
 namespace StevEngine {
-	//Read from text stream
+	//Read from stream
 	template <> Visuals::Texture Stream::Read<Visuals::Texture>() {
 		return Visuals::Texture(Resources::resourceManager.GetFile(Read<std::string>()));
 	}
-	//Write to text stream
+	//Write to stream
 	template <> void Stream::Write<Visuals::Texture>(const Visuals::Texture& data) {
 		*this << data.GetPath();
 	}
