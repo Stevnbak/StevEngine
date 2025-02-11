@@ -1,15 +1,15 @@
 #pragma once
 #ifdef StevEngine_PLAYER_DATA
-#include <string>
-#include <yaml-cpp/yaml.h>
-
+#include "utilities/KeyValueStore.hpp"
 #include "main/Log.hpp"
+
+#include <string>
 
 namespace StevEngine::Data {
 	/**
 	 * @brief Manages game settings and configuration
 	 *
-	 * Handles saving/loading game settings using YAML format. Settings are stored
+	 * Handles saving/loading game settings. Settings are stored
 	 * in the user's config directory and persist between game sessions.
 	 */
 	class Settings {
@@ -25,16 +25,15 @@ namespace StevEngine::Data {
 			 * @tparam T Type of setting to read
 			 * @param name Setting key name
 			 * @return Value of type T
-			 * @throws Error if setting doesn't exist
 			 */
 			template<typename T> T Read(std::string name) const {
-				//Get line if key exists
-				if(!settings[name]) {
-					Log::Error(std::format("Game data with key '{}' not found!", name), true);
+				//Check if key exists
+				if(!settings.Contains(name)) {
+					Log::Error(std::format("Setting with key '{}' not found!", name), true);
 					return (T)NULL;
 				}
 				//Get data
-				return settings[name].as<T>();
+				return settings.Read<T>(name);
 			}
 
 			/**
@@ -51,7 +50,7 @@ namespace StevEngine::Data {
 			 * @param data Value to save
 			 */
 			template<typename T> void Save(std::string name, T data) {
-				settings[name] = data;
+				settings.Write(name, data);
 			}
 
 			/**
@@ -73,7 +72,7 @@ namespace StevEngine::Data {
 
 		private:
 			std::string configPath;  ///< Path to config directory
-			YAML::Node settings;	 ///< YAML node containing all settings
+			Utilities::KeyValueStore settings;	 ///< Key value store containing all settings
 	};
 
 	/** Global settings manager instance */

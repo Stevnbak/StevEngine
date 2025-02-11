@@ -1,7 +1,7 @@
 #pragma once
 #ifdef StevEngine_PLAYER_DATA
-#include "utilities/Stream.hpp"
-#include <map>
+#include "main/Log.hpp"
+#include "utilities/KeyValueStore.hpp"
 #include <string>
 
 namespace StevEngine::Data {
@@ -9,7 +9,7 @@ namespace StevEngine::Data {
 	/**
 	 * @brief Manages persistent game data storage and retrieval
 	 *
-	 * GameData handles saving and loading persistent game data using YAML format.
+	 * GameData handles saving and loading persistent game data.
 	 * It manages the application data directory and provides methods to read and
 	 * write different data types.
 	 */
@@ -32,7 +32,15 @@ namespace StevEngine::Data {
 			 * Reads and returns data of the specified type. Throws error if key
 			 * doesn't exist.
 			 */
-			template<typename T> T Read(std::string name);
+			template<typename T> T Read(std::string name) {
+				//Check if key exists
+				if(!data.Contains(name)) {
+					Log::Error(std::format("Game data with key '{}' not found!", name), true);
+					return T();
+				}
+				//Read value
+				return data.Read<T>(name);
+			}
 
 			/**
 			 * @brief Save data of specified type
@@ -42,7 +50,10 @@ namespace StevEngine::Data {
 			 *
 			 * Saves data and writes changes to disk immediately.
 			 */
-			template<typename T> void Save(std::string name, T data);
+			template<typename T> void Save(std::string name, T data) {
+				this->data.Write(name, data);
+				SaveToFile();
+			}
 
 			/**
 			 * @brief Delete saved data
@@ -70,7 +81,7 @@ namespace StevEngine::Data {
 			std::string logPath;
 
 			/** @brief Map containing all saved data streams */
-			std::map<std::string, Stream> data;
+			Utilities::KeyValueStore data;
 
 			/**
 			 * @brief Save all data to disk
