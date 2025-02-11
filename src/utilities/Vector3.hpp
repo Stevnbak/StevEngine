@@ -130,11 +130,3 @@ namespace StevEngine::Utilities {
 			static Vector3 Slerp(const Vector3& a, const Vector3& b, double t);
 	};
 }
-
-#include <yaml-cpp/yaml.h>
-namespace YAML {
-	template<> struct convert<StevEngine::Utilities::Vector3> {
-		static Node encode(const StevEngine::Utilities::Vector3& rhs);
-		static bool decode(const Node& node, StevEngine::Utilities::Vector3& rhs);
-	};
-}

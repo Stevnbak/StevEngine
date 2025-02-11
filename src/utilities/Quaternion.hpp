@@ -205,12 +205,3 @@ namespace StevEngine::Utilities {
 			static double RadiansToDegrees(double radians);
 	};
 }
-
-
-#include <yaml-cpp/yaml.h>
-namespace YAML {
-	template<> struct convert<StevEngine::Utilities::Quaternion> {
-		static Node encode(const StevEngine::Utilities::Quaternion& rhs);
-		static bool decode(const Node& node, StevEngine::Utilities::Quaternion& rhs);
-	};
-}

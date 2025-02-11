@@ -78,11 +78,3 @@ namespace StevEngine::Utilities {
 			const float* data() const;			   ///< Get raw float array
 	};
 }
-
-#include <yaml-cpp/yaml.h>
-namespace YAML {
-	template<> struct convert<StevEngine::Utilities::Vector4> {
-		static Node encode(const StevEngine::Utilities::Vector4& rhs);
-		static bool decode(const Node& node, StevEngine::Utilities::Vector4& rhs);
-	};
-}

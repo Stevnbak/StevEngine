@@ -87,14 +87,6 @@ namespace StevEngine::Utilities {
 	};
 }
 
-#include <yaml-cpp/yaml.h>
-namespace YAML {
-	template<> struct convert<StevEngine::Utilities::ID> {
-		static Node encode(const StevEngine::Utilities::ID& rhs);
-		static bool decode(const Node& node, StevEngine::Utilities::ID& rhs);
-	};
-}
-
 template <>
 struct std::hash<StevEngine::Utilities::ID>
 {

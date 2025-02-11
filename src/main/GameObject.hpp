@@ -133,13 +133,13 @@ namespace StevEngine {
 			 * @param type Type of stream to export to
 			 * @return Stream containing serialized object data
 			 */
-			Stream Export(StreamType type) const;
+			Utilities::Stream Export(Utilities::StreamType type) const;
 
 			/**
 			 * @brief Load object from serialized data
 			 * @param stream Stream containing serialized object data
 			 */
-			void Import(Stream& stream);
+			void Import(Utilities::Stream& stream);
 
 		private:
 			/**

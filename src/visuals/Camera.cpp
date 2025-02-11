@@ -15,7 +15,7 @@ namespace StevEngine::Visuals {
 	Camera::Camera(bool orthographic, float fov, float zoomValue, float nearClip, float farClip)
 	  : isOrthographic(orthographic), fov(fov), zoom(zoomValue), nearClip(nearClip), farClip(farClip) {}
 
-	Camera::Camera(Stream& stream)
+	Camera::Camera(Utilities::Stream& stream)
 	  : isOrthographic(stream.Read<bool>()),
 		zoom(stream.Read<float>()),
 		fov(stream.Read<float>()),
@@ -23,8 +23,8 @@ namespace StevEngine::Visuals {
 		nearClip(stream.Read<float>())
 	{}
 
-	Stream Camera::Export(StreamType type) const {
-		Stream stream(type);
+	Utilities::Stream Camera::Export(Utilities::StreamType type) const {
+		Utilities::Stream stream(type);
 		stream << isOrthographic << fov << zoom << farClip << nearClip;
 		return stream;
 	}

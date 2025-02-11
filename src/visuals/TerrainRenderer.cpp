@@ -96,14 +96,14 @@ namespace StevEngine::Visuals {
 	TerrainRenderer::TerrainRenderer(const TerrainData& data, Material material, bool smooth)
 	  : data(data), smooth(smooth), RenderComponent(CreateRenderObject(data, material, smooth)) {}
 
-	TerrainRenderer::TerrainRenderer(Stream& stream)
+	TerrainRenderer::TerrainRenderer(Utilities::Stream& stream)
 	  : RenderComponent(Renderer::Object({}, {}), stream), data(TerrainData(stream.Read<TerrainData>())), smooth(stream.Read<bool>())
 	{
 		object = CreateRenderObject(data, object.material, smooth);
 	}
 
-	Stream TerrainRenderer::Export(StreamType type) const {
-		Stream stream(type);
+	Utilities::Stream TerrainRenderer::Export(Utilities::StreamType type) const {
+		Utilities::Stream stream(type);
 		stream << RenderComponent::Export(type) << data << smooth;
 		return stream;
 	}

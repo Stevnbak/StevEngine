@@ -38,7 +38,7 @@ namespace StevEngine::Renderer {
 			 * @param object Renderable object
 			 * @param stream Stream containing serialized component data
 			 */
-			RenderComponent(const Object& object, Stream& stream);
+			RenderComponent(const Object& object, Utilities::Stream& stream);
 
 			/**
 			 * @brief Get component type
@@ -85,7 +85,7 @@ namespace StevEngine::Renderer {
 			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */
-			virtual Stream Export(StreamType type) const;
+			virtual Utilities::Stream Export(Utilities::StreamType type) const;
 
 		protected:
 			/** @brief Renderable object */

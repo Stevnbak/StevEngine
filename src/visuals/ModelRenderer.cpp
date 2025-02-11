@@ -31,7 +31,7 @@ namespace StevEngine::Visuals {
 	}
 	ModelRenderer::ModelRenderer(const Utilities::Model& model, const Material& material, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
 	  : model(model), objects(CreateRenderObjects(model, material)) {}
-	ModelRenderer::ModelRenderer(Stream& stream)
+	ModelRenderer::ModelRenderer(Utilities::Stream& stream)
 	  : model(Utilities::Model(Resources::resourceManager.GetFile(stream.Read<std::string>()))),
 		objects(CreateRenderObjects(model,
 		Material(stream.Read<Material>())))
@@ -41,8 +41,8 @@ namespace StevEngine::Visuals {
 			AddShader(ShaderProgram(stream));
 	}
 
-	Stream ModelRenderer::Export(StreamType type) const {
-		Stream stream(type);
+	Utilities::Stream ModelRenderer::Export(Utilities::StreamType type) const {
+		Utilities::Stream stream(type);
 		stream << model.path << position << rotation << scale;
 		stream << (uint)shaders.size();
 		for(auto&[_, program] : shaders)

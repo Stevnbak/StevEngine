@@ -89,7 +89,7 @@ namespace StevEngine::Physics {
 			 * @brief Create rigidbody from text serialized data
 			 * @param stream Stream containing serialized component data
 			 */
-			RigidBody(Stream& stream);
+			RigidBody(Utilities::Stream& stream);
 
 			/**
 			 * @brief Get component type
@@ -102,7 +102,7 @@ namespace StevEngine::Physics {
 			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */
-			Stream Export(StreamType type) const;
+			Utilities::Stream Export(Utilities::StreamType type) const;
 
 			/**
 			 * @brief Initialize component

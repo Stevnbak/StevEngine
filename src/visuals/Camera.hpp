@@ -29,7 +29,7 @@ namespace StevEngine {
 				 * @brief Create camera from text serialized data
 				 * @param stream Stream containing serialized component data
 				 */
-				Camera(Stream& stream);
+				Camera(Utilities::Stream& stream);
 
 				/**
 				 * @brief Get component type
@@ -42,7 +42,7 @@ namespace StevEngine {
 				 * @param type Type of stream to export to
 				 * @return Serialized stream
 				 */
-				Stream Export(StreamType type) const;
+				Utilities::Stream Export(Utilities::StreamType type) const;
 
 				/**
 				 * @brief Get view matrix for camera

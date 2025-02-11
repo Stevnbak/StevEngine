@@ -38,7 +38,7 @@ namespace StevEngine::Visuals {
 			 * @brief Create model renderer from text serialized data
 			 * @param stream Stream containing serialized component data
 			 */
-			ModelRenderer(Stream& stream);
+			ModelRenderer(Utilities::Stream& stream);
 
 			/**
 			 * @brief Get component type
@@ -51,7 +51,7 @@ namespace StevEngine::Visuals {
 			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */
-			Stream Export(StreamType type) const;
+			Utilities::Stream Export(Utilities::StreamType type) const;
 
 			/** @brief Local position offset */
 			Utilities::Vector3 position = Utilities::Vector3();

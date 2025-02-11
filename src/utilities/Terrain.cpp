@@ -8,9 +8,7 @@ namespace StevEngine::Utilities {
 		std::copy(&data[0], &data[(size * size)], &points[0]);
 	};
 	TerrainData::TerrainData(uint32_t size, double step) : size(size), step(step), points(new double[size * size]) {};
-}
 
-namespace StevEngine {
 	//Read from stream
 	template <> Utilities::TerrainData Stream::Read<Utilities::TerrainData>() {
 		uint32_t size = Read<uint32_t>();

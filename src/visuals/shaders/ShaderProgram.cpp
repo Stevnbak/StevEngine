@@ -53,15 +53,15 @@ namespace StevEngine::Renderer {
 		modified = false;
 	}
 
-	Stream ShaderProgram::Export(StreamType type) const {
-		Stream stream(type);
+	Utilities::Stream ShaderProgram::Export(Utilities::StreamType type) const {
+		Utilities::Stream stream(type);
 		stream << (uint8_t)shaderType << (uint)shaders.size();
 
 		for(auto&[loc, shader] : shaders) stream << (std::string(shader.source));
 
 		return stream;
 	}
-	ShaderProgram::ShaderProgram(Stream& stream) : shaderType((ShaderType)stream.Read<uint8_t>()), modified(true), location(glCreateProgram()) {
+	ShaderProgram::ShaderProgram(Utilities::Stream& stream) : shaderType((ShaderType)stream.Read<uint8_t>()), modified(true), location(glCreateProgram()) {
 		glProgramParameteri(location, GL_PROGRAM_SEPARABLE, GL_TRUE);
 		uint size = stream.Read<uint>();
 		for(int i = 0; i < size; i++)

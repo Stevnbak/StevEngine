@@ -123,8 +123,8 @@ namespace StevEngine {
 	}
 
 	//Export to stream
-	Stream GameObject::Export(StreamType type) const {
-		Stream stream(type);
+	Utilities::Stream GameObject::Export(Utilities::StreamType type) const {
+		Utilities::Stream stream(type);
 		//Basic info
 		stream << id << name;
 		stream << position << rotation << scale;
@@ -139,7 +139,7 @@ namespace StevEngine {
 		return stream;
 	}
 	//Import from stream
-	void GameObject::Import(Stream& stream) {
+	void GameObject::Import(Utilities::Stream& stream) {
 		//Basic info
 		stream >> name >> position >> rotation >> scale;
 		//Components and children

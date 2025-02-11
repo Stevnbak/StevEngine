@@ -67,12 +67,10 @@ namespace StevEngine::Utilities {
 	bool ID::operator() (const ID& lhs, const ID& rhs) const {
 		return lhs.string < rhs.string;
 	}
-}
 
-namespace StevEngine {
 	//Read from stream
 	template <> Utilities::ID Stream::Read<Utilities::ID>() {
-		if(type == Text) {
+		if(type == Utilities::StreamType::Text) {
 			char text[37];
 			for(int i = 0; i < 36; i++)
 				*this >> text[i];
@@ -86,23 +84,10 @@ namespace StevEngine {
 	}
 	//Write to stream
 	template <> void Stream::Write<Utilities::ID>(const Utilities::ID& data) {
-		if(type == Text) {
+		if(type == Utilities::StreamType::Text) {
 			std::string str = data.GetString();
 			for(int i = 0; i < 36; i++) *this << str[i];
 		}
 		else for(int i = 0; i < 16; i++) *this << data.GetRaw()[i];
-	}
-}
-
-namespace YAML {
-	Node convert<StevEngine::Utilities::ID>::encode(const StevEngine::Utilities::ID& rhs) {
-		Node node;
-		node = rhs.GetString();
-		return node;
-	}
-	bool convert<StevEngine::Utilities::ID>::decode(const Node& node, StevEngine::Utilities::ID& rhs) {
-		if(!node.IsDefined()) return false;
-		rhs = StevEngine::Utilities::ID(node.as<std::string>());
-		return true;
 	}
 }

@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 
-namespace StevEngine {
+namespace StevEngine::Utilities {
 	/**
 	 * @brief Available types of streams to use
 	 */
@@ -61,15 +61,14 @@ namespace StevEngine {
 				return *this;
 			}
 
-			#ifdef StevEngine_PLAYER_DATA
 			/**
 			 * @brief Write full stream content to a file
-			 * @param name Name of the file to write to
+			 * @param path Path of the file to write to
 			 *
-			 * Writes the full stream content to a file with the specified name in the appdata folder.
+			 * Writes the full stream content to a file with the specified path.
 			 */
-			void WriteToFile(const char* name) const;
-			#endif
+			void WriteToFile(const char* path) const;
+
 			/**
 			 * @brief Read content from a file to stream
 			 * @param file File to read from
@@ -87,6 +86,12 @@ namespace StevEngine {
 			 * @return Underlying std::stringstream
 			 */
 			std::stringstream& GetStream() { return stream; }
+
+			/**
+			 * @brief Get underlying std::stringstream object
+			 * @return Underlying std::stringstream
+			 */
+			const std::stringstream& GetStream() const { return stream; }
 
 			/**
 			 * @brief make a copy of a stream

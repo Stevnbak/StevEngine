@@ -204,16 +204,6 @@ if(USE_RENDERER_GL OR USE_PHYSICS)
 	endif()
 endif()
 
-## YAML
-set(YAML_CPP_BUILD_CONTRIB OFF)
-set(YAML_CPP_BUILD_TOOLS OFF)
-set(YAML_BUILD_SHARED_LIBS OFF)
-add_subdirectory(libs/yaml-cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp::yaml-cpp)
-target_include_directories(${PROJECT_NAME} PUBLIC libs/yaml-cpp/include)
-list(APPEND external_libs_names yaml-cpp/)
-list(APPEND external_libs_include libs/yaml-cpp/include/yaml-cpp)
-
 ## uuidv7
 target_include_directories(${PROJECT_NAME} PUBLIC libs/uuidv7-h)
 list(APPEND external_libs_names "")

@@ -45,7 +45,7 @@ namespace StevEngine {
 				 * @brief Create cube from serialized data
 				 * @param stream Stream containing serialized component data
 				 */
-				CubePrimitive(Stream& stream);
+				CubePrimitive(Utilities::Stream& stream);
 
 				/**
 				 * @brief Get component type
@@ -58,7 +58,7 @@ namespace StevEngine {
 				 * @param type Type of stream to export to
 				 * @return Serialized stream
 				 */
-				Stream Export(StreamType type) const;
+				Utilities::Stream Export(Utilities::StreamType type) const;
 
 				const Visuals::TextureType textureType;  ///< Texture mapping mode
 		};
@@ -91,7 +91,7 @@ namespace StevEngine {
 				 * @brief Create cube from serialized data
 				 * @param stream Stream containing serialized component data
 				 */
-				UVSpherePrimitive(Stream& stream);
+				UVSpherePrimitive(Utilities::Stream& stream);
 
 				/**
 				 * @brief Get component type
@@ -104,7 +104,7 @@ namespace StevEngine {
 				 * @param type Type of stream to export to
 				 * @return Serialized stream
 				 */
-				Stream Export(StreamType type) const;
+				Utilities::Stream Export(Utilities::StreamType type) const;
 
 				const Visuals::TextureType textureType;  ///< Texture mapping mode
 				const bool smooth;					   ///< Whether to use smooth shading
@@ -138,7 +138,7 @@ namespace StevEngine {
 				 * @brief Create cube from serialized data
 				 * @param stream Stream containing serialized component data
 				 */
-				IcospherePrimitive(Stream& stream);
+				IcospherePrimitive(Utilities::Stream& stream);
 
 				/**
 				 * @brief Get component type
@@ -151,7 +151,7 @@ namespace StevEngine {
 				 * @param type Type of stream to export to
 				 * @return Serialized stream
 				 */
-				Stream Export(StreamType type) const;
+				Utilities::Stream Export(Utilities::StreamType type) const;
 
 				const Visuals::TextureType textureType;  ///< Texture mapping mode
 				const bool smooth;					   ///< Whether to use smooth shading
@@ -185,7 +185,7 @@ namespace StevEngine {
 				 * @brief Create cube from serialized data
 				 * @param stream Stream containing serialized component data
 				 */
-				CylinderPrimitive(Stream& stream);
+				CylinderPrimitive(Utilities::Stream& stream);
 
 				/**
 				 * @brief Get component type
@@ -198,7 +198,7 @@ namespace StevEngine {
 				 * @param type Type of stream to export to
 				 * @return Serialized stream
 				 */
-				Stream Export(StreamType type) const;
+				Utilities::Stream Export(Utilities::StreamType type) const;
 
 				const Visuals::TextureType textureType;  ///< Texture mapping mode
 				const bool smooth;					   ///< Whether to use smooth shading
@@ -232,7 +232,7 @@ namespace StevEngine {
 				 * @brief Create capsule from serialized data
 				 * @param stream Stream containing serialized component data
 				 */
-				CapsulePrimitive(Stream& stream);
+				CapsulePrimitive(Utilities::Stream& stream);
 
 				/**
 				 * @brief Get component type
@@ -245,7 +245,7 @@ namespace StevEngine {
 				 * @param type Type of stream to export to
 				 * @return Serialized stream
 				 */
-				Stream Export(StreamType type) const;
+				Utilities::Stream Export(Utilities::StreamType type) const;
 
 				const Visuals::TextureType textureType;  ///< Texture mapping mode
 				const bool smooth;					   ///< Whether to use smooth shading

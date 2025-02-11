@@ -35,7 +35,7 @@ namespace StevEngine::Visuals {
 	}
 }
 
-namespace StevEngine {
+namespace StevEngine::Utilities {
 	//Read from stream
 	template <> Visuals::Material Stream::Read<Visuals::Material>() {
 		return Visuals::Material(

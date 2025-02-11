@@ -30,7 +30,7 @@ namespace StevEngine::Visuals {
 			 * @brief Create terrain renderer from serialized data
 			 * @param stream Stream containing serialized component data
 			 */
-			TerrainRenderer(Stream& stream);
+			TerrainRenderer(Utilities::Stream& stream);
 
 			/**
 			 * @brief Get component type
@@ -43,7 +43,7 @@ namespace StevEngine::Visuals {
 			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */
-			Stream Export(StreamType type) const;
+			Utilities::Stream Export(Utilities::StreamType type) const;
 
 		private:
 			const Utilities::TerrainData data;  ///< Heightmap terrain data

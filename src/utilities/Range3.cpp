@@ -38,9 +38,7 @@ namespace StevEngine::Utilities {
 		High = other.mMax;
 	}
 	#endif
-}
 
-namespace StevEngine {
 	//Read from stream
 	template <> Utilities::Range3 Stream::Read<Utilities::Range3>() {
 		Utilities::Range3 value;
@@ -50,22 +48,5 @@ namespace StevEngine {
 	//Write to stream
 	template <> void Stream::Write<Utilities::Range3>(const Utilities::Range3& data) {
 		*this << data.Low << data.High;
-	}
-}
-
-namespace YAML {
-	Node convert<StevEngine::Utilities::Range3>::encode(const StevEngine::Utilities::Range3& rhs) {
-		Node node;
-		node.push_back(rhs.Low);
-		node.push_back(rhs.High);
-		return node;
-	}
-	bool convert<StevEngine::Utilities::Range3>::decode(const Node& node, StevEngine::Utilities::Range3& rhs) {
-		if(!node.IsSequence() || node.size() != 2) {
-			return false;
-		}
-		rhs.Low = node[0].as<StevEngine::Utilities::Vector3>();
-		rhs.High = node[1].as<StevEngine::Utilities::Vector3>();
-		return true;
 	}
 }

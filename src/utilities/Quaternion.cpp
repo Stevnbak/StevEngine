@@ -225,9 +225,7 @@ namespace StevEngine::Utilities {
 	double Quaternion::RadiansToDegrees(double radians) {
 		return radians * (180.0 / M_PI);
 	}
-}
 
-namespace StevEngine {
 	//Read from stream
 	template <> Utilities::Quaternion Stream::Read<Utilities::Quaternion>() {
 		Utilities::Quaternion value;
@@ -237,27 +235,5 @@ namespace StevEngine {
 	//Write to stream
 	template <> void Stream::Write<Utilities::Quaternion>(const Utilities::Quaternion& data) {
 		*this << data.W << data.X << data.Y << data.Z;
-	}
-}
-
-
-namespace YAML {
-	Node convert<StevEngine::Utilities::Quaternion>::encode(const StevEngine::Utilities::Quaternion& rhs) {
-		Node node;
-		node.push_back(rhs.W);
-		node.push_back(rhs.X);
-		node.push_back(rhs.Y);
-		node.push_back(rhs.Z);
-		return node;
-	}
-	bool convert<StevEngine::Utilities::Quaternion>::decode(const Node& node, StevEngine::Utilities::Quaternion& rhs) {
-		if(!node.IsSequence() || node.size() != 4) {
-			return false;
-		}
-		rhs.W = node[0].as<double>();
-		rhs.X = node[1].as<double>();
-		rhs.Y = node[2].as<double>();
-		rhs.Z = node[3].as<double>();
-		return true;
 	}
 }

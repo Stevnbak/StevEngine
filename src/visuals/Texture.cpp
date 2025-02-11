@@ -44,7 +44,7 @@ namespace StevEngine::Visuals {
 	}
 }
 
-namespace StevEngine {
+namespace StevEngine::Utilities {
 	//Read from stream
 	template <> Visuals::Texture Stream::Read<Visuals::Texture>() {
 		return Visuals::Texture(Resources::resourceManager.GetFile(Read<std::string>()));

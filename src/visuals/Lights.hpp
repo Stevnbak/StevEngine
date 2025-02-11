@@ -40,7 +40,7 @@ namespace StevEngine::Visuals {
 
 		protected:
 			Light(uint32_t shaderID, Utilities::Vector3 diffuse, Utilities::Vector3 specular, std::string type);
-			Light(Stream& stream, std::string type);
+			Light(Utilities::Stream& stream, std::string type);
 			const uint32_t shaderLightID;  ///< Light index in shader
 			virtual ~Light();
 	};
@@ -64,7 +64,7 @@ namespace StevEngine::Visuals {
 			 * @brief Create directional light from text serialized data
 			 * @param stream Stream containing serialized component data
 			 */
-			DirectionalLight(Stream& stream);
+			DirectionalLight(Utilities::Stream& stream);
 
 			/**
 			 * @brief Get component type
@@ -77,7 +77,7 @@ namespace StevEngine::Visuals {
 			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */
-			Stream Export(StreamType type) const;
+			Utilities::Stream Export(Utilities::StreamType type) const;
 
 			void UpdateShader(const Renderer::ShaderProgram& program) const;
 			void ResetShader(const Renderer::ShaderProgram& program) const;
@@ -106,7 +106,7 @@ namespace StevEngine::Visuals {
 			 * @brief Create point light from text serialized data
 			 * @param stream Stream containing serialized component data
 			 */
-			PointLight(Stream& stream);
+			PointLight(Utilities::Stream& stream);
 
 			/**
 			 * @brief Get component type
@@ -119,7 +119,7 @@ namespace StevEngine::Visuals {
 			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */
-			Stream Export(StreamType type) const;
+			Utilities::Stream Export(Utilities::StreamType type) const;
 
 			float constant;	///< Constant attenuation factor
 			float linear;	 ///< Linear attenuation factor
@@ -151,7 +151,7 @@ namespace StevEngine::Visuals {
 			 * @brief Create spot light from text serialized data
 			 * @param stream Stream containing serialized component data
 			 */
-			SpotLight(Stream& stream);
+			SpotLight(Utilities::Stream& stream);
 
 			/**
 			 * @brief Get component type
@@ -164,7 +164,7 @@ namespace StevEngine::Visuals {
 			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */
-			Stream Export(StreamType type) const;
+			Utilities::Stream Export(Utilities::StreamType type) const;
 
 			float cutOff;		///< Inner cone angle in degrees
 			float outerCutOff;   ///< Outer cone angle in degrees

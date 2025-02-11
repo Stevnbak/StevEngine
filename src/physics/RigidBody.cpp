@@ -103,12 +103,12 @@ namespace StevEngine::Physics {
 		if(shape) shape->Release();
 	}
 
-	Stream RigidBody::Export(StreamType type) const {
-		Stream stream(type);
+	Utilities::Stream RigidBody::Export(Utilities::StreamType type) const {
+		Utilities::Stream stream(type);
 		stream << mass << (uint32_t)motionType << layer->id;
 		return stream;
 	}
-	RigidBody::RigidBody(Stream& stream)
+	RigidBody::RigidBody(Utilities::Stream& stream)
 	  : mass(stream.Read<double>()), motionType((JPH::EMotionType)stream.Read<uint32_t>()), layer(StevEngine::Physics::Layer::GetLayerById(stream.Read<int>())), body(nullptr) {}
 }
 #endif

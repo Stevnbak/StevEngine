@@ -10,7 +10,7 @@ namespace StevEngine::Renderer {
 	  : object(object) {}
 	RenderComponent::RenderComponent(const Object& object, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
 	  : position(position), rotation(rotation), scale(scale), object(object) {}
-	RenderComponent::RenderComponent(const Object& object, Stream& stream)
+	RenderComponent::RenderComponent(const Object& object, Utilities::Stream& stream)
 	  : object(object), position(stream.Read<Utilities::Vector3>()), rotation(stream.Read<Utilities::Quaternion>()), scale(stream.Read<Utilities::Vector3>())
 	{
 		stream >> this->object.material;
@@ -39,8 +39,8 @@ namespace StevEngine::Renderer {
 		object.RemoveShader(type);
 		if(shaders.contains(type)) shaders.erase(type);
 	}
-	Stream RenderComponent::Export(StreamType type) const {
-		Stream stream(type);
+	Utilities::Stream RenderComponent::Export(Utilities::StreamType type) const {
+		Utilities::Stream stream(type);
 		stream << position << rotation << scale << object.material;
 
 		stream << (uint)shaders.size();

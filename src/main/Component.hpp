@@ -65,7 +65,7 @@ namespace StevEngine {
 			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */
-			virtual Stream Export(StreamType stream) const = 0;
+			virtual Utilities::Stream Export(Utilities::StreamType stream) const = 0;
 
 			/**
 			 * @brief Initialize component after creation
@@ -113,7 +113,7 @@ namespace StevEngine {
 	 */
 	class CreateComponents {
 		/** @brief Map of registered component factory functions */
-		static inline std::unordered_map<std::string, std::function<Component*(Stream& stream)>> factories = std::unordered_map<std::string, std::function<Component*(Stream& stream)>>();
+		static inline std::unordered_map<std::string, std::function<Component*(Utilities::Stream& stream)>> factories = std::unordered_map<std::string, std::function<Component*(Utilities::Stream& stream)>>();
 
 		public:
 			/**
@@ -122,7 +122,7 @@ namespace StevEngine {
 			 * @param stream text serializable stream containing component data
 			 * @return Pointer to created component
 			 */
-			static Component* Create(const std::string& type, Stream& stream);
+			static Component* Create(const std::string& type, Utilities::Stream& stream);
 
 			/**
 			 * @brief Register a component type for creation
@@ -132,7 +132,7 @@ namespace StevEngine {
 			 */
 			template <class T> static bool RegisterComponentType(std::string type) {
 				if(factories.contains(type)) return false;
-				factories.insert({type, [](Stream& stream) -> Component*  {
+				factories.insert({type, [](Utilities::Stream& stream) -> Component*  {
 					return (Component*) (new T(stream));
 				}});
 				return true;

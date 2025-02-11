@@ -169,8 +169,8 @@ namespace StevEngine::Physics {
 	  : Collider(TerrainToShape(data), position, rotation, scale) {}
 
 	//Export colliders
-	Stream Collider::Export(StreamType type) const {
-		Stream stream(type);
+	Utilities::Stream Collider::Export(Utilities::StreamType type) const {
+		Utilities::Stream stream(type);
 		//Export shape to STL string
 		std::stringstream data;
 		JPH::StreamOutWrapper stream_out(data);
@@ -179,7 +179,7 @@ namespace StevEngine::Physics {
 		rawShape->SaveWithChildren(stream_out, shape_to_id, material_to_id);
 		std::string shapeString = data.str();
 		stream << (size_t)shapeString.size();
-		if(type == Text) {
+		if(type == Utilities::StreamType::Text) {
 			for(size_t i = 0; i < shapeString.size(); i++) {
 				stream.GetStream() << std::setw(4) << std::setfill('0') << std::hex << (short)shapeString[i];
 			}
@@ -192,11 +192,11 @@ namespace StevEngine::Physics {
 
 		return stream;
 	}
-	JPH::Ref<JPH::Shape> ImportShape(Stream& stream) {
+	JPH::Ref<JPH::Shape> ImportShape(Utilities::Stream& stream) {
 		//Size of data
 		size_t size = stream.Read<size_t>();
 		std::stringstream data;
-		if(stream.type == Text) {
+		if(stream.type == Utilities::StreamType::Text) {
 			for(size_t c = 0; c < size; c++) {
 				char sz[5];
 				sz[4] = '\000';
@@ -221,7 +221,7 @@ namespace StevEngine::Physics {
 			return NULL;
 		}
 	}
-	Collider::Collider(Stream& stream) : rawShape(ImportShape(stream)) {
+	Collider::Collider(Utilities::Stream& stream) : rawShape(ImportShape(stream)) {
 		stream >> position >> rotation >> scale;
 	}
 }

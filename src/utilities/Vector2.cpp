@@ -77,9 +77,7 @@ namespace StevEngine::Utilities {
 	double Vector2::Dot(const Vector2& a, const Vector2& b) {
 		return (a.X * b.X) + (a.Y * b.Y);
 	}
-}
 
-namespace StevEngine {
 	//Read from stream
 	template <> Utilities::Vector2 Stream::Read<Utilities::Vector2>() {
 		Utilities::Vector2 value;
@@ -89,22 +87,5 @@ namespace StevEngine {
 	//Write to stream
 	template <> void Stream::Write<Utilities::Vector2>(const Utilities::Vector2& data) {
 		*this << data.X << data.Y;
-	}
-}
-
-namespace YAML {
-	Node convert<StevEngine::Utilities::Vector2>::encode(const StevEngine::Utilities::Vector2& rhs) {
-		Node node;
-		node.push_back(rhs.X);
-		node.push_back(rhs.Y);
-		return node;
-	}
-	bool convert<StevEngine::Utilities::Vector2>::decode(const Node& node, StevEngine::Utilities::Vector2& rhs) {
-		if(!node.IsSequence() || node.size() != 2) {
-			return false;
-		}
-		rhs.X = node[0].as<double>();
-		rhs.Y = node[1].as<double>();
-		return true;
 	}
 }

@@ -32,9 +32,7 @@
 
 #include <cmath>
 #include <fstream>
-#include <iostream>
 #include <string>
-#include <yaml-cpp/yaml.h>
 #include <SDL_keycode.h>
 #include <cmrc/cmrc.hpp>
 CMRC_DECLARE(debug_development_assets);
@@ -54,7 +52,7 @@ class CameraController final : public Component {
 		CameraController() {};
 		CameraController(Stream& stream) {};
 		std::string GetType() const { return "Rotate"; }
-		Stream Export(StreamType type) const { return Stream(type); }
+		Utilities::Stream Export(Utilities::StreamType type) const { return Stream(type); }
 };
 bool camController = CreateComponents::RegisterComponentType<CameraController>("CameraController");
 void CameraController::Update(double deltaTime) {
@@ -125,7 +123,7 @@ class Rotate final : public Component {
 		void Start() {};
 		void Deactivate() {};
 		std::string GetType() const { return "Rotate"; }
-		Stream Export(StreamType type) const { return Stream(type); }
+		Utilities::Stream Export(Utilities::StreamType type) const { return Stream(type); }
 		Rotate() {};
 		Rotate(Vector3 axis, double movementSpeed = 0.5) : axis(axis), movementSpeed(movementSpeed) {};
 		Rotate(Stream& node) {};
@@ -164,7 +162,7 @@ void TestSerializeStuff() {
 	ts << id;
 	Log::Debug("Txt stream: " + ts.Read<Utilities::ID>().GetString());
 
-	ts.WriteToFile("TestExport.txt");
+	ts.WriteToFile((Data::data.GetAppdataPath() + "TestExport.txt").c_str());
 
 	Log::Debug("Binary stream test:");
 	Stream bs(Binary);
@@ -195,7 +193,7 @@ void TestSerializeStuff() {
 	Log::Debug("Bin stream: " + bs.Read<Utilities::ID>().GetString());
 	bs.Write<Vector3>(Vector3(1.52,2,3));
 	Log::Debug("Bin stream: " + (std::string)bs.Read<Vector3>());
-	bs.WriteToFile("TestExport.bin");
+	bs.WriteToFile((Data::data.GetAppdataPath() + "TestExport.bin").c_str());
 }
 
 ID modelObject;
@@ -474,7 +472,7 @@ int main(int argc, char** argv) {
 
 	//Export scene
 	#ifdef StevEngine_PLAYER_DATA
-	scene->Export(Text).WriteToFile(scene->name.c_str());
+	scene->Export(Text).WriteToFile((Data::data.GetAppdataPath() + scene->name + ".scene").c_str());
 	#endif
 	//*/
 

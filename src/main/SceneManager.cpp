@@ -48,8 +48,8 @@ namespace StevEngine {
 		return &scenes.at(name);
 	}
 
-	Scene* SceneManager::CreateSceneFromFile(Resources::Resource file, StreamType type) {
-		Stream stream(type);
+	Scene* SceneManager::CreateSceneFromFile(Resources::Resource file, Utilities::StreamType type) {
+		Utilities::Stream stream(type);
 		stream.ReadFromFile(file);
 		std::string name;
 		stream >> name;

@@ -41,7 +41,7 @@ namespace StevEngine::Audio {
 		if(channel != -1) audio.Stop(channel);
 	}
 
-	Emitter::Emitter(Stream& stream) {
+	Emitter::Emitter(Utilities::Stream& stream) {
 		//Set basic variables
 		stream >> audioPath >> loop >> volume;
 		audioData = NULL;
@@ -49,8 +49,8 @@ namespace StevEngine::Audio {
 		//Load audio file
 		ChangeSource(audioPath);
 	}
-	Stream Emitter::Export(StreamType type) const {
-		Stream stream(type);
+	Utilities::Stream Emitter::Export(Utilities::StreamType type) const {
+		Utilities::Stream stream(type);
 		stream << audioPath << loop << volume;
 		return stream;
 	}

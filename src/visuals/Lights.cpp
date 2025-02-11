@@ -95,37 +95,37 @@ namespace StevEngine::Visuals {
 		Renderer::render.RemoveLight(this);
 	}
 	//Export/Import lights
-	Light::Light(Stream& stream, std::string type) : shaderLightID(Renderer::render.GetLightID(type)) {
+	Light::Light(Utilities::Stream& stream, std::string type) : shaderLightID(Renderer::render.GetLightID(type)) {
 		stream >> diffuse >> specular;
 	}
-	DirectionalLight::DirectionalLight(Stream& stream) : Light(stream, DIRECTIONAL_LIGHT_TYPE) {
+	DirectionalLight::DirectionalLight(Utilities::Stream& stream) : Light(stream, DIRECTIONAL_LIGHT_TYPE) {
 		Renderer::render.AddLight(this);
 	}
-	Stream DirectionalLight::Export(StreamType type) const {
-		Stream stream(type);
+	Utilities::Stream DirectionalLight::Export(Utilities::StreamType type) const {
+		Utilities::Stream stream(type);
 		stream << diffuse << specular;
 		return stream;
 	}
-	PointLight::PointLight(Stream& stream) : Light(stream, POINT_LIGHT_TYPE) {
+	PointLight::PointLight(Utilities::Stream& stream) : Light(stream, POINT_LIGHT_TYPE) {
 		stream >> constant >> linear >> quadratic;
 
 		Renderer::render.AddLight(this);
 	}
-	Stream PointLight::Export(StreamType type) const {
-		Stream stream(type);
+	Utilities::Stream PointLight::Export(Utilities::StreamType type) const {
+		Utilities::Stream stream(type);
 		stream << diffuse << specular;
 
 		stream << constant << linear << quadratic;
 
 		return stream;
 	}
-	SpotLight::SpotLight(Stream& stream) : Light(stream, SPOT_LIGHT_TYPE) {
+	SpotLight::SpotLight(Utilities::Stream& stream) : Light(stream, SPOT_LIGHT_TYPE) {
 		stream >> cutOff >> outerCutOff;
 
 		Renderer::render.AddLight(this);
 	}
-	Stream SpotLight::Export(StreamType type) const {
-		Stream stream(type);
+	Utilities::Stream SpotLight::Export(Utilities::StreamType type) const {
+		Utilities::Stream stream(type);
 		stream << diffuse << specular;
 
 		stream << cutOff << outerCutOff;

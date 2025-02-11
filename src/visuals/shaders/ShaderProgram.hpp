@@ -30,7 +30,7 @@ namespace StevEngine::Renderer {
 			 * @brief Create from serialized data
 			 * @param stream Stream containing serialized component data
 			 */
-			ShaderProgram(Stream& stream);
+			ShaderProgram(Utilities::Stream& stream);
 
 			/** @brief Create empty program */
 			ShaderProgram() {};
@@ -131,7 +131,7 @@ namespace StevEngine::Renderer {
 			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */
-			Stream Export(StreamType type) const;
+			Utilities::Stream Export(Utilities::StreamType type) const;
 
 		private:
 			uint32_t location;	  ///< OpenGL program ID

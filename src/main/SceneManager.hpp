@@ -37,7 +37,7 @@ namespace StevEngine {
 			 * @param file Resource containing scene data
 			 * @return Pointer to created scene
 			 */
-			Scene* CreateSceneFromFile(Resources::Resource file, StreamType type);
+			Scene* CreateSceneFromFile(Resources::Resource file, Utilities::StreamType type);
 
 			/**
 			 * @brief Create empty scene

@@ -1,18 +1,15 @@
 #include "Stream.hpp"
-#include "data/DataManager.hpp"
 #include <cstdint>
 #include <cstdio>
 #include <fstream>
 
-namespace StevEngine {
+namespace StevEngine::Utilities {
 	//Write stream to file
-	#ifdef StevEngine_PLAYER_DATA
-	void Stream::WriteToFile(const char* name) const {
+	void Stream::WriteToFile(const char* path) const {
 		std::ofstream file;
-		file.open(Data::data.GetAppdataPath() + name, (type == Binary ? std::ios::out | std::ios::binary : std::ios::out));
+		file.open(path, (type == Binary ? std::ios::out | std::ios::binary : std::ios::out));
 		file << stream.str();
 	}
-	#endif
 
 	//Read from file
 	void Stream::ReadFromFile(const Resources::Resource& file) {
@@ -92,7 +89,7 @@ namespace StevEngine {
 		uint32_t size;
 		*this >> size;
 		char* text = new char[size];
-		if(type == Text) {
+		if(type == Utilities::StreamType::Text) {
 			stream.read(text, size);
 		} else {
 			for(uint32_t i = 0; i < size; i++) {

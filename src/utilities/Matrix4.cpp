@@ -304,9 +304,7 @@ namespace StevEngine::Utilities {
 		Vector4(0,0,0,1)
 	);
 	const Matrix4 Matrix4::zero = Matrix4(0.0);
-}
 
-namespace StevEngine {
 	//Read from stream
 	template <> Utilities::Matrix4 Stream::Read<Utilities::Matrix4>() {
 		double raw[4][4];
