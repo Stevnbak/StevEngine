@@ -96,4 +96,9 @@ namespace StevEngine {
 			object.Deactivate();
 		}
 	}
+	Scene::~Scene() {
+		for(Utilities::ID id : GetAllParentObjects()) {
+			DestroyObject(id);
+		}
+	}
 }

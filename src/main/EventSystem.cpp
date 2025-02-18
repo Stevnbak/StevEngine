@@ -15,7 +15,7 @@ namespace StevEngine {
 	}
 
 	void EventManager::Unsubscribe(const std::string eventId, const Utilities::ID handler) {
-		auto handlers = subscribers[eventId];
+		auto& handlers = subscribers[eventId];
 		for(size_t i = 0; i < handlers.size(); i++) {
 			if (handlers[i]->GetType() == handler) {
 				delete handlers[i];

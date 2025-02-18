@@ -26,6 +26,8 @@ namespace StevEngine {
 			const std::string name;
 
 		public:
+			~Scene();
+
 			/**
 			 * @brief Create empty GameObject
 			 * @return ID of created object

@@ -24,13 +24,16 @@ namespace StevEngine {
 			 * @param name Scene identifier
 			 * @return Pointer to scene
 			 */
-			Scene* GetScene(std::string name) { return &scenes.at(name); }
+			Scene* GetScene(std::string name) {
+				if (scenes.contains(name)) return scenes.at(name);
+				else return nullptr;
+			}
 
 			/**
 			 * @brief Get currently active scene
 			 * @return Pointer to active scene
 			 */
-			Scene* GetActiveScene() { return &scenes.at(active); }
+			Scene* GetActiveScene() { return scenes.at(active); }
 
 			/**
 			 * @brief Create scene from serialized data
@@ -59,7 +62,6 @@ namespace StevEngine {
 			 * Sets first scene as active if none active.
 			 */
 			void ActivateDefault();
-
 		private:
 			/**
 			 * @brief Update active scene
@@ -74,7 +76,7 @@ namespace StevEngine {
 			void Draw();
 			#endif
 
-			std::map<std::string, Scene> scenes;  ///< Map of all loaded scenes
+			std::unordered_map<std::string, Scene*> scenes;  ///< Map of all loaded scenes
 			std::string active;				   ///< Name of active scene
 	};
 

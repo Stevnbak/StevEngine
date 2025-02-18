@@ -159,10 +159,12 @@ namespace StevEngine {
 		///Log::Normal(std::format("Destroying object with id {}", id), true);
 		//Remove event listeners
 		GameObject* p = GetParent();
-		for(auto[id, event] : handlers) p->Unsubscribe(event, id);
+		if(p) for(auto[id, event] : handlers) p->Unsubscribe(event, id);
 		//Destroy children
 		for (int i = 0; i < children.size(); i++) {
-			sceneManager.GetScene(scene)->DestroyObject(children[i]);
+			auto* s = sceneManager.GetScene(scene);
+			s->GetObject(children[i])->SetParent(Utilities::ID::empty);
+			s->DestroyObject(children[i]);
 		}
 		//Destroy components
 		for (int i = 0; i < components.size(); i++)

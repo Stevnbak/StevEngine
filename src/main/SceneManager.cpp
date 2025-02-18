@@ -24,6 +24,12 @@ namespace StevEngine {
 		#ifdef StevEngine_SHOW_WINDOW
 		engine->GetEvents()->Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { this->Draw(); });
 		#endif
+		engine->GetEvents()->Subscribe<EngineQuitEvent>([this](EngineQuitEvent e) {
+			for(auto [name, scene] : scenes) {
+				delete scene;
+			}
+			scenes.clear();
+		});
 	}
 
 	void SceneManager::Update(double deltaTime) {
@@ -44,8 +50,8 @@ namespace StevEngine {
 
 	Scene* SceneManager::CreateScene(std::string name) {
 		if(scenes.contains(name)) throw std::runtime_error("Scene \"" + name + "\" already exists!");
-		scenes.emplace(name, Scene(name));
-		return &scenes.at(name);
+		scenes.emplace(name, new Scene(name));
+		return scenes.at(name);
 	}
 
 	Scene* SceneManager::CreateSceneFromFile(Resources::Resource file, Utilities::StreamType type) {
@@ -54,7 +60,7 @@ namespace StevEngine {
 		std::string name;
 		stream >> name;
 		if(scenes.contains(name)) throw std::runtime_error("Scene \"" + name + "\" already exists!");
-		scenes.emplace(name, Scene(name, stream));
-		return &scenes.at(name);
+		scenes.emplace(name, new Scene(name, stream));
+		return scenes.at(name);
 	}
 }
