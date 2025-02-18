@@ -2,8 +2,7 @@
 #include "main/Engine.hpp"
 #include "main/EngineEvents.hpp"
 #include "utilities/ID.hpp"
-
-#include <yaml-cpp/yaml.h>
+#include "utilities/Stream.hpp"
 
 namespace StevEngine {
 	SceneManager sceneManager = SceneManager();
@@ -49,11 +48,13 @@ namespace StevEngine {
 		return &scenes.at(name);
 	}
 
-	Scene* SceneManager::CreateSceneFromFile(Resources::Resource file) {
-		YAML::Node node = YAML::Load(file.GetRawData());
-		std::string name = node["name"].as<std::string>();
+	Scene* SceneManager::CreateSceneFromFile(Resources::Resource file, Utilities::StreamType type) {
+		Utilities::Stream stream(type);
+		stream.ReadFromFile(file);
+		std::string name;
+		stream >> name;
 		if(scenes.contains(name)) throw std::runtime_error("Scene \"" + name + "\" already exists!");
-		scenes.emplace(name, Scene(node));
+		scenes.emplace(name, Scene(name, stream));
 		return &scenes.at(name);
 	}
 }

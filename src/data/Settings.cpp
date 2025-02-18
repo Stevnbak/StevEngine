@@ -1,11 +1,10 @@
 #ifdef StevEngine_PLAYER_DATA
-#include "main/Engine.hpp"
 #include "Settings.hpp"
 #include "DataManager.hpp"
 
 #include <string>
 #include <filesystem>
-#include <algorithm>
+#include <fstream>
 
 namespace StevEngine::Data {
 	Settings settings = Settings();
@@ -21,24 +20,17 @@ namespace StevEngine::Data {
 		configPath = std::format("{}{}/", GetConfPath(), title);
 		std::filesystem::create_directories(configPath);
 		//Read or create data file
-		std::ifstream start;
-		start.open(configPath + "game.settings");
-		settings = YAML::Load(start);
+		std::ifstream start(configPath + "game.settings");
+		settings.ReadFromFile(start);
 	}
 	bool Settings::HasValue(std::string name) const {
-		return settings[name].IsDefined();
+		return settings.Contains(name);
 	}
 	void Settings::Delete(std::string name) {
-		settings.remove(name);
+		settings.Erase(name);
 	}
 	void Settings::SaveToFile() const {
-		std::ofstream file;
-		file.open(configPath + "game.settings");
-		file.clear();
-		YAML::Emitter out;
-		out << settings;
-		file << out.c_str();
-		file.close();
+		settings.WriteToFile((configPath + "game.settings").c_str());
 	}
 }
 #endif

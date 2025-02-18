@@ -9,18 +9,18 @@ using namespace StevEngine::Renderer;
 
 namespace StevEngine::Visuals {
 	Light::Light(uint32_t shaderID, Utilities::Vector3 diffuse, Utilities::Vector3 specular, std::string type)
-		: shaderLightID(shaderID), diffuse(diffuse), specular(specular), Component(type) {};
+	  : shaderLightID(shaderID), diffuse(diffuse), specular(specular) {};
 	//Create light components
 	DirectionalLight::DirectionalLight(Utilities::Vector3 diffuse, Utilities::Vector3 specular)
-		: Light(Renderer::render.GetLightID("DirectionalLight"), diffuse, specular, "DirectionalLight") {
+	  : Light(Renderer::render.GetLightID("DirectionalLight"), diffuse, specular, "DirectionalLight") {
 		Renderer::render.AddLight((Light*)this);
 	}
 	PointLight::PointLight(Utilities::Vector3 diffuse, Utilities::Vector3 specular, float constant, float linear, float quadratic)
-		: Light(Renderer::render.GetLightID("PointLight"), diffuse, specular, "PointLight"), constant(constant), linear(linear), quadratic(quadratic) {
+	  : Light(Renderer::render.GetLightID("PointLight"), diffuse, specular, "PointLight"), constant(constant), linear(linear), quadratic(quadratic) {
 		Renderer::render.AddLight(this);
 	}
 	SpotLight::SpotLight(Utilities::Vector3 diffuse, Utilities::Vector3 specular, float cutOff, float outerCutOff)
-		: Light(Renderer::render.GetLightID("SpotLight"), diffuse, specular, "SpotLight"), cutOff(cutOff), outerCutOff(outerCutOff) {
+	  : Light(Renderer::render.GetLightID("SpotLight"), diffuse, specular, "SpotLight"), cutOff(cutOff), outerCutOff(outerCutOff) {
 		Renderer::render.AddLight(this);
 	}
 	//Update shader information functions
@@ -95,49 +95,42 @@ namespace StevEngine::Visuals {
 		Renderer::render.RemoveLight(this);
 	}
 	//Export/Import lights
-	Light::Light(YAML::Node node) : shaderLightID(Renderer::render.GetLightID(node["type"].as<std::string>())), Component(node) {
-		diffuse = node["diffuse"].as<Utilities::Vector3>();
-		specular = node["specular"].as<Utilities::Vector3>();
+	Light::Light(Utilities::Stream& stream, std::string type) : shaderLightID(Renderer::render.GetLightID(type)) {
+		stream >> diffuse >> specular;
 	}
-	DirectionalLight::DirectionalLight(YAML::Node node) : Light(node) {
+	DirectionalLight::DirectionalLight(Utilities::Stream& stream) : Light(stream, DIRECTIONAL_LIGHT_TYPE) {
 		Renderer::render.AddLight(this);
 	}
-	YAML::Node DirectionalLight::Export(YAML::Node node) const {
-		node["diffuse"] = diffuse;
-		node["specular"] = specular;
-		return node;
+	Utilities::Stream DirectionalLight::Export(Utilities::StreamType type) const {
+		Utilities::Stream stream(type);
+		stream << diffuse << specular;
+		return stream;
 	}
-	PointLight::PointLight(YAML::Node node) : Light(node) {
-		constant = node["constant"].as<float>();
-		linear = node["linear"].as<float>();
-		quadratic = node["quadratic"].as<float>();
+	PointLight::PointLight(Utilities::Stream& stream) : Light(stream, POINT_LIGHT_TYPE) {
+		stream >> constant >> linear >> quadratic;
 
 		Renderer::render.AddLight(this);
 	}
-	YAML::Node PointLight::Export(YAML::Node node) const {
-		node["diffuse"] = diffuse;
-		node["specular"] = specular;
+	Utilities::Stream PointLight::Export(Utilities::StreamType type) const {
+		Utilities::Stream stream(type);
+		stream << diffuse << specular;
 
-		node["constant"] = constant;
-		node["linear"] = linear;
-		node["quadratic"] = quadratic;
+		stream << constant << linear << quadratic;
 
-		return node;
+		return stream;
 	}
-	SpotLight::SpotLight(YAML::Node node) : Light(node) {
-		cutOff = node["cutOff"].as<float>();
-		outerCutOff = node["outerCutOff"].as<float>();
+	SpotLight::SpotLight(Utilities::Stream& stream) : Light(stream, SPOT_LIGHT_TYPE) {
+		stream >> cutOff >> outerCutOff;
 
 		Renderer::render.AddLight(this);
 	}
-	YAML::Node SpotLight::Export(YAML::Node node) const {
-		node["diffuse"] = diffuse;
-		node["specular"] = specular;
+	Utilities::Stream SpotLight::Export(Utilities::StreamType type) const {
+		Utilities::Stream stream(type);
+		stream << diffuse << specular;
 
-		node["cutOff"] = cutOff;
-		node["outerCutOff"] = outerCutOff;
+		stream << cutOff << outerCutOff;
 
-		return node;
+		return stream;
 	}
 }
 #endif

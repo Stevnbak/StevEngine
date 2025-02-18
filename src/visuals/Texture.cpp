@@ -1,7 +1,8 @@
+#include "utilities/Stream.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "Texture.hpp"
 #include "main/ResourceManager.hpp"
-#include "visuals/renderer/RenderSystem.hpp"
+
 #include <SDL.h>
 #include <SDL_image.h>
 
@@ -40,6 +41,17 @@ namespace StevEngine::Visuals {
 	void Texture::FreeTexture() {
 		glDeleteTextures(1, &GLLocation);
 		bound = false;
+	}
+}
+
+namespace StevEngine::Utilities {
+	//Read from stream
+	template <> Visuals::Texture Stream::Read<Visuals::Texture>() {
+		return Visuals::Texture(Resources::resourceManager.GetFile(Read<std::string>()));
+	}
+	//Write to stream
+	template <> void Stream::Write<Visuals::Texture>(const Visuals::Texture& data) {
+		*this << data.GetPath();
 	}
 }
 #endif

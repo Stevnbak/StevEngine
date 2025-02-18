@@ -11,9 +11,12 @@
 #include "physics/Colliders.hpp"
 #include "physics/Layers.hpp"
 #include "main/SceneManager.hpp"
+#include "utilities/ID.hpp"
 #include "utilities/Matrix4.hpp"
 #include "utilities/Random.hpp"
+#include "utilities/Stream.hpp"
 #include "utilities/Terrain.hpp"
+#include "utilities/Vector2.hpp"
 #include "visuals/Material.hpp"
 #include "visuals/Primitive.hpp"
 #include "visuals/ModelRenderer.hpp"
@@ -28,8 +31,8 @@
 #include "visuals/shaders/Shader.hpp"
 
 #include <cmath>
+#include <fstream>
 #include <string>
-#include <yaml-cpp/yaml.h>
 #include <SDL_keycode.h>
 #include <cmrc/cmrc.hpp>
 CMRC_DECLARE(debug_development_assets);
@@ -46,8 +49,10 @@ class CameraController final : public Component {
 		void Update(double deltaTime);
 		void Start();
 		void Deactivate() {};
-		CameraController() : Component("CameraController") {};
-		CameraController(YAML::Node node) : Component(node) {};
+		CameraController() {};
+		CameraController(Stream& stream) {};
+		std::string GetType() const { return "Rotate"; }
+		Utilities::Stream Export(Utilities::StreamType type) const { return Stream(type); }
 };
 bool camController = CreateComponents::RegisterComponentType<CameraController>("CameraController");
 void CameraController::Update(double deltaTime) {
@@ -117,11 +122,79 @@ class Rotate final : public Component {
 		}
 		void Start() {};
 		void Deactivate() {};
-		Rotate() : Component("Rotate") {};
-		Rotate(Vector3 axis, double movementSpeed = 0.5) : axis(axis), movementSpeed(movementSpeed), Component("Rotate") {};
-		Rotate(YAML::Node node) : Component(node) {};
+		std::string GetType() const { return "Rotate"; }
+		Utilities::Stream Export(Utilities::StreamType type) const { return Stream(type); }
+		Rotate() {};
+		Rotate(Vector3 axis, double movementSpeed = 0.5) : axis(axis), movementSpeed(movementSpeed) {};
+		Rotate(Stream& node) {};
 };
 bool rotate = CreateComponents::RegisterComponentType<Rotate>("Rotate");
+
+void TestSerializeStuff() {
+	Utilities::Vector3 a(2,3.523,8.92);
+	Utilities::Vector3 b(5,0,9.9999);
+	Utilities::Vector3 c(1,-20,0);
+	ID id;
+
+	Log::Debug("Text stream test:");
+	Stream ts(Text);
+
+	Log::Debug("Original: " + (std::string)a);
+	ts.Write(a);
+	Log::Debug("Txt stream: " + (std::string)ts.Read<Utilities::Vector3>());
+
+	Log::Debug("Original: " + (std::string)b);
+	ts << b;
+
+	Log::Debug("Original: " + (std::string)c);
+	ts.Write(c);
+
+	Log::Debug("Txt stream: " + (std::string)ts.Read<Utilities::Vector3>());
+	Log::Debug("Txt stream: " + (std::string)ts.Read<Utilities::Vector3>());
+
+	std::string str("This is a test string!");
+	Log::Debug("Original: " + str);
+	ts << str;
+	Log::Debug("Txt stream: " + ts.Read<std::string>());
+
+
+	Log::Debug("Original: " + id.GetString());
+	ts << id;
+	Log::Debug("Txt stream: " + ts.Read<Utilities::ID>().GetString());
+
+	ts.WriteToFile((Data::data.GetAppdataPath() + "TestExport.txt").c_str());
+
+	Log::Debug("Binary stream test:");
+	Stream bs(Binary);
+	char chr = 'T';
+	Log::Debug(std::string("Original: ") + chr);
+	bs << chr;
+	Log::Debug(std::string("Bin stream: ") + bs.Read<char>());
+
+	Log::Debug("Original: " + (std::string)a);
+	bs.Write(a);
+	Log::Debug("Bin stream: " + (std::string)bs.Read<Utilities::Vector3>());
+
+	Log::Debug("Original: " + (std::string)b);
+	bs.Write(b);
+
+	Log::Debug("Original: " + (std::string)c);
+	bs.Write(c);
+
+	Log::Debug("Bin stream: " + (std::string)bs.Read<Utilities::Vector3>());
+	Log::Debug("Bin stream: " + (std::string)bs.Read<Utilities::Vector3>());
+
+	Log::Debug("Original: " + str);
+	bs << str;
+	Log::Debug("Bin stream: " + bs.Read<std::string>());
+
+	Log::Debug("Original: " + id.GetString());
+	bs << id;
+	Log::Debug("Bin stream: " + bs.Read<Utilities::ID>().GetString());
+	bs.Write<Vector3>(Vector3(1.52,2,3));
+	Log::Debug("Bin stream: " + (std::string)bs.Read<Vector3>());
+	bs.WriteToFile((Data::data.GetAppdataPath() + "TestExport.bin").c_str());
+}
 
 ID modelObject;
 
@@ -145,6 +218,9 @@ int main(int argc, char** argv) {
 		#endif
 		.targetFPS = 100
 	});
+
+	TestSerializeStuff();
+
 	Renderer::render.SetFaceCulling(false);
 	Renderer::render.SetMSAA(true, 8);
 	engine->GetEvents()->Subscribe<UpdateEvent>(mainUpdate);
@@ -370,7 +446,7 @@ int main(int argc, char** argv) {
 	//Test data manager
 	#ifdef StevEngine_PLAYER_DATA
 	Log::Debug("Before: " + Data::data.Read<std::string>("test"));
-	Data::data.Save("test", std::string("test data"));
+	Data::data.Save<std::string>("test", std::string("test data"));
 	Log::Debug("After: " + Data::data.Read<std::string>("test"));
 	#endif
 
@@ -396,7 +472,7 @@ int main(int argc, char** argv) {
 
 	//Export scene
 	#ifdef StevEngine_PLAYER_DATA
-	scene->ExportToFile();
+	scene->Export(Text).WriteToFile((Data::data.GetAppdataPath() + scene->name + ".scene").c_str());
 	#endif
 	//*/
 

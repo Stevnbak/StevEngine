@@ -3,14 +3,12 @@
 #include "main/GameObject.hpp"
 #include "main/SceneManager.hpp"
 #include "main/Log.hpp"
-#include <cstddef>
-#include <cstdint>
-#include <stdexcept>
 
 using namespace StevEngine::Utilities;
 
 namespace StevEngine {
-	Component::Component(std::string type) : type(type) {}
+	Component::Component() {}
+
 	void Component::SetObject(GameObject* object, std::string scene) {
 		gameObject = object->Id();
 		this->scene = scene;
@@ -35,23 +33,11 @@ namespace StevEngine {
 		for(auto[id, event] : handlers) object->Unsubscribe(event, id);
 	}
 	//Export/Import component
-	YAML::Node Component::Export() const {
-		YAML::Node node;
-		node["type"] = type;
-		return Export(node);
-	}
-	YAML::Node Component::Export(YAML::Node node) const {
-		return node;
-	}
-	Component::Component(YAML::Node node) {
-		type = node["type"].as<std::string>();
-	}
-	Component* CreateComponents::Create(YAML::Node node) {
-		std::string type = node["type"].as<std::string>();
+	Component* CreateComponents::Create(const std::string& type, Utilities::Stream& stream) {
 		if(!factories.contains(type)) {
-			Log::Error("Component of type \"" + type + "\" is not registered as importable.", true);
+			Log::Error("Component of type \"" + type + "\" is not registered as text importable.", true);
 			return nullptr;
 		}
-		return factories[type](node);
+		return factories[type](stream);
 	}
 }

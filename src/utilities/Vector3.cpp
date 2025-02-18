@@ -1,14 +1,10 @@
 #include "Vector3.hpp"
 #include "Vector2.hpp"
-
-#include "main/Log.hpp"
-
-#include <algorithm>
+#include "utilities/Stream.hpp"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <format>
-#include <sstream>
 
 namespace StevEngine::Utilities {
 	//Constructors
@@ -159,23 +155,15 @@ namespace StevEngine::Utilities {
 
 		return (a * (sin((1-t)*theta) / sintheta)) + (b * (sin(t*theta) / sintheta));
 	}
-}
 
-namespace YAML {
-	Node convert<StevEngine::Utilities::Vector3>::encode(const StevEngine::Utilities::Vector3& rhs) {
-		Node node;
-		node.push_back(rhs.X);
-		node.push_back(rhs.Y);
-		node.push_back(rhs.Z);
-		return node;
+	//Read from stream
+	template <> Utilities::Vector3 Stream::Read<Utilities::Vector3>() {
+		Utilities::Vector3 value;
+		*this >> value.X >> value.Y >> value.Z;
+		return value;
 	}
-	bool convert<StevEngine::Utilities::Vector3>::decode(const Node& node, StevEngine::Utilities::Vector3& rhs) {
-		if(!node.IsSequence() || node.size() != 3) {
-			return false;
-		}
-		rhs.X = node[0].as<double>();
-		rhs.Y = node[1].as<double>();
-		rhs.Z = node[2].as<double>();
-		return true;
+	//Write to stream
+	template <> void Stream::Write<Utilities::Vector3>(const Utilities::Vector3& data) {
+		*this << data.X << data.Y << data.Z;
 	}
 }

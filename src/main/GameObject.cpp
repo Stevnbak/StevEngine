@@ -1,23 +1,15 @@
 #include "GameObject.hpp"
-#include "data/DataManager.hpp"
 #include "main/EngineEvents.hpp"
 #include "main/EventSystem.hpp"
-#include "main/Log.hpp"
 #include "main/SceneManager.hpp"
 #include "main/Component.hpp"
 #include "utilities/ID.hpp"
 #include "utilities/Matrix4.hpp"
 #include "utilities/Quaternion.hpp"
+#include "utilities/Stream.hpp"
 #include "utilities/Vector3.hpp"
 
-#include <yaml-cpp/yaml.h>
-
-#include <format>
-#include <map>
-#include <list>
-#include <stdexcept>
-#include <type_traits>
-#include <iostream>
+#include <cstdio>
 
 namespace StevEngine {
 	//Main functions
@@ -108,7 +100,7 @@ namespace StevEngine {
 	GameObject* GameObject::GetChild(int index) const {
 		return sceneManager.GetScene(scene)->GetObject(children[index]);
 	}
-	int GameObject::GetChildCount() const {
+	uint GameObject::GetChildCount() const {
 		return children.size();
 	}
 	GameObject* GameObject::GetParent() const {
@@ -130,56 +122,36 @@ namespace StevEngine {
 		parent = id;
 	}
 
-	//Export
-	YAML::Node GameObject::Export() const {
-		YAML::Node node;
+	//Export to stream
+	Utilities::Stream GameObject::Export(Utilities::StreamType type) const {
+		Utilities::Stream stream(type);
 		//Basic info
-		node["id"] = id;
-		node["name"] = name;
-		//Transform info
-		node["position"] = position;
-		node["rotation"] = rotation;
-		node["scale"] = scale;
-		//Components
-		for(Component* component : components) {
-			node["components"].push_back(component->Export());
+		stream << id << name;
+		stream << position << rotation << scale;
+		//Components and children
+		stream << (uint)components.size() << GetChildCount();
+		for(auto component : components) {
+			stream << component->GetType() << component->Export(type);
 		}
-		//Children
-		for(int i = 0; i < children.size(); i++) {
-			node["children"].push_back(GetChild(i)->Export());
+		for(int i = 0; i < GetChildCount(); i++) {
+			stream << GetChild(i)->Export(type);
 		}
-		return node;
+		return stream;
 	}
-	#ifdef StevEngine_PLAYER_DATA
-	void GameObject::ExportToFile(std::string name) const {
-		YAML::Node node = Export();
-		YAML::Emitter out;
-		out << node;
-		std::ofstream file;
-		file.open(Data::data.GetAppdataPath() + name + ".object");
-		file << out.c_str();
-	}
-	#endif
-	//Import from yaml
-	void GameObject::Import(YAML::Node node)
-	{
+	//Import from stream
+	void GameObject::Import(Utilities::Stream& stream) {
 		//Basic info
-		name = node["name"].as<std::string>();
-		//Transform info
-		position = node["position"].as<Utilities::Vector3>();
-		rotation = node["rotation"].as<Utilities::Quaternion>();
-		scale = node["scale"].as<Utilities::Vector3>();
-		//Components
-		if(node["components"]) {
-			for(YAML::Node component : node["components"]) {
-				AddComponent(CreateComponents::Create(component));
-			}
+		stream >> name >> position >> rotation >> scale;
+		//Components and children
+		uint components, children;
+		stream >> components >> children;
+		for(int i = 0; i < components; i++) {
+			std::string type;
+			stream >> type;
+			AddComponent(CreateComponents::Create(type, stream));
 		}
-		//Children
-		if(node["children"]) {
-			for(YAML::Node childNode : node["children"]) {
-				AddChild(sceneManager.GetScene(scene)->CreateObject(childNode));
-			}
+		for(int i = 0; i < children; i++) {
+			sceneManager.GetScene(scene)->CreateObject(stream);
 		}
 	}
 	//Destroy

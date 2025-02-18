@@ -1,20 +1,17 @@
+#include "utilities/Stream.hpp"
+#include <iomanip>
 #ifdef StevEngine_PHYSICS
 #include "Colliders.hpp"
-#include "main/Scene.hpp"
 #include "main/GameObject.hpp"
 #include "main/Component.hpp"
-#include "main/ResourceManager.hpp"
 #include "utilities/Model.hpp"
 #include "utilities/Quaternion.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Terrain.hpp"
 
-#include <stdexcept>
 #include <algorithm>
-#include <iostream>
 #include <sstream>
 
-#include <yaml-cpp/binary.h>
 #include <Jolt/Physics/Collision/Shape/ScaledShape.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
@@ -33,7 +30,7 @@
 
 namespace StevEngine::Physics {
 	Collider::Collider(JPH::Ref<JPH::Shape> shape, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
-	: rawShape(shape), Component("Collider") {
+  : rawShape(shape) {
 		this->position = position;
 		this->rotation = rotation;
 		this->scale = scale;
@@ -88,19 +85,19 @@ namespace StevEngine::Physics {
 	}
 	//Cube collider
 	CubeCollider::CubeCollider(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
-		: Collider(new JPH::BoxShape(Utilities::Vector3(0.5, 0.5, 0.5)), position, rotation, scale) {}
+	  : Collider(new JPH::BoxShape(Utilities::Vector3(0.5, 0.5, 0.5)), position, rotation, scale) {}
 
 	//Sphere collider
 	SphereCollider::SphereCollider(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
-		: Collider(new JPH::SphereShape(0.5), position, rotation, scale) {}
+	  : Collider(new JPH::SphereShape(0.5), position, rotation, scale) {}
 
 	//Cylinder collider
 	CylinderCollider::CylinderCollider(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
-		: Collider(new JPH::CylinderShape(0.5,0.5), position, rotation, scale) {}
+	  : Collider(new JPH::CylinderShape(0.5,0.5), position, rotation, scale) {}
 
 	//Capsule collider
 	CapsuleCollider::CapsuleCollider(Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
-		: Collider(new JPH::CapsuleShape(0.25,0.5), position, rotation, scale) {}
+	  : Collider(new JPH::CapsuleShape(0.25,0.5), position, rotation, scale) {}
 
 	//Model collider
 	JPH::Ref<JPH::Shape> ModelToShape(const Utilities::Model& model, bool convex) {
@@ -150,7 +147,7 @@ namespace StevEngine::Physics {
 		}
 	}
 	ModelCollider::ModelCollider(const Utilities::Model& model, bool convex, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
-		: Collider(ModelToShape(model, convex), position, rotation, scale) {}
+	  : Collider(ModelToShape(model, convex), position, rotation, scale) {}
 
 	//Terrain collider
 	JPH::Ref<JPH::Shape> TerrainToShape(const Utilities::TerrainData& data) {
@@ -169,14 +166,11 @@ namespace StevEngine::Physics {
 		}
 	}
 	TerrainCollider::TerrainCollider(const Utilities::TerrainData& data, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale)
-		: Collider(TerrainToShape(data), position, rotation, scale) {}
+	  : Collider(TerrainToShape(data), position, rotation, scale) {}
 
 	//Export colliders
-	YAML::Node Collider::Export(YAML::Node node) const {
-		node["position"] = position;
-		node["rotation"] = rotation;
-		node["scale"] = scale;
-
+	Utilities::Stream Collider::Export(Utilities::StreamType type) const {
+		Utilities::Stream stream(type);
 		//Export shape to STL string
 		std::stringstream data;
 		JPH::StreamOutWrapper stream_out(data);
@@ -184,33 +178,38 @@ namespace StevEngine::Physics {
 		JPH::Shape::MaterialToIDMap material_to_id;
 		rawShape->SaveWithChildren(stream_out, shape_to_id, material_to_id);
 		std::string shapeString = data.str();
-		/*std::stringstream out;
-		for(size_t i = 0; i < shapeString.size(); i++) out << std::setw(4) << std::setfill('0') << std::hex << (short)shapeString[i];
-		node["shape"] = out.str();*/
-		node["shape"] = YAML::Binary((const unsigned char*)shapeString.c_str(), shapeString.size());
-		return node;
-	}
-	JPH::Ref<JPH::Shape> ImportShape(YAML::Node node) {
-		/*std::string raw = node["shape"].as<std::string>();
-		std::stringstream data;
-		for (size_t i = 0; i < raw.length(); i += 4)
-		{
-			char sz[5] = {raw[i], raw[i+1], raw[i+2], raw[i+3], '\0'};
-			char out = strtoul(sz, NULL, 16);
-			data << out;
+		stream << (size_t)shapeString.size();
+		if(type == Utilities::StreamType::Text) {
+			for(size_t i = 0; i < shapeString.size(); i++) {
+				stream.GetStream() << std::setw(4) << std::setfill('0') << std::hex << (short)shapeString[i];
+			}
 		}
-		JPH::StreamInWrapper stream_in(data);
-		JPH::Shape::IDToShapeMap id_to_shape;
-		JPH::Shape::IDToMaterialMap id_to_material;
-		JPH::Shape::ShapeResult result = JPH::Shape::sRestoreWithChildren(stream_in, id_to_shape, id_to_material);
-		if (result.IsValid())
-			return result.Get();
 		else {
-			Log::Error(std::format("Collider failed to import shape. Error: {}", result.GetError()), true);
-			return NULL;
-		}*/
-		YAML::Binary bin = node["shape"].as<YAML::Binary>();
-		std::stringstream data(std::string((const char*)bin.data(), bin.size()));
+			stream.GetStream() << data.rdbuf();
+		}
+		//Transform
+		stream << position << rotation << scale;
+
+		return stream;
+	}
+	JPH::Ref<JPH::Shape> ImportShape(Utilities::Stream& stream) {
+		//Size of data
+		size_t size = stream.Read<size_t>();
+		std::stringstream data;
+		if(stream.type == Utilities::StreamType::Text) {
+			for(size_t c = 0; c < size; c++) {
+				char sz[5];
+				sz[4] = '\000';
+				stream >> sz[0] >> sz[1] >> sz[2] >> sz[3];
+				char out = strtoul(sz, NULL, 16);
+				data << out;
+			}
+		} else {
+			for(size_t i = 0; i < size; i++) {
+				data << stream.Read<char>();
+			}
+		}
+
 		JPH::StreamInWrapper stream_in = JPH::StreamInWrapper(data);
 		JPH::Shape::IDToShapeMap id_to_shape;
 		JPH::Shape::IDToMaterialMap id_to_material;
@@ -222,10 +221,8 @@ namespace StevEngine::Physics {
 			return NULL;
 		}
 	}
-	Collider::Collider(YAML::Node node) : rawShape(ImportShape(node)), Component(node) {
-		position = node["position"].as<Utilities::Vector3>();
-		rotation = node["rotation"].as<Utilities::Quaternion>();
-		scale = node["scale"].as<Utilities::Vector3>();
+	Collider::Collider(Utilities::Stream& stream) : rawShape(ImportShape(stream)) {
+		stream >> position >> rotation >> scale;
 	}
 }
 #endif

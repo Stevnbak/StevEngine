@@ -1,15 +1,11 @@
 #include "Vector4.hpp"
 #include "Vector3.hpp"
-
-#include "main/Log.hpp"
-
 #include "utilities/Quaternion.hpp"
-#include <algorithm>
+#include "utilities/Stream.hpp"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <format>
-#include <sstream>
 
 namespace StevEngine::Utilities {
 	//Constructors
@@ -89,25 +85,15 @@ namespace StevEngine::Utilities {
 		data[3] = (float)Z;
 		return data;
 	}
-}
 
-namespace YAML {
-	Node convert<StevEngine::Utilities::Vector4>::encode(const StevEngine::Utilities::Vector4& rhs) {
-		Node node;
-		node.push_back(rhs.W);
-		node.push_back(rhs.X);
-		node.push_back(rhs.Y);
-		node.push_back(rhs.Z);
-		return node;
+	//Read from stream
+	template <> Utilities::Vector4 Stream::Read<Utilities::Vector4>() {
+		Utilities::Vector4 value;
+		*this >> value.W >> value.X >> value.Y >> value.Z;
+		return value;
 	}
-	bool convert<StevEngine::Utilities::Vector4>::decode(const Node& node, StevEngine::Utilities::Vector4& rhs) {
-		if(!node.IsSequence() || node.size() != 4) {
-			return false;
-		}
-		rhs.W = node[0].as<double>();
-		rhs.X = node[1].as<double>();
-		rhs.Y = node[2].as<double>();
-		rhs.Z = node[3].as<double>();
-		return true;
+	//Write to stream
+	template <> void Stream::Write<Utilities::Vector4>(const Utilities::Vector4& data) {
+		*this << data.W << data.X << data.Y << data.Z;
 	}
 }

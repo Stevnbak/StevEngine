@@ -2,17 +2,16 @@
 #include <ctime>
 
 namespace StevEngine::Utilities {
-	bool setseed = true;
-	int random() {
-		if(setseed) {
-			srand((unsigned int)time(NULL));
-			setseed = false;
-		}
-		return rand();
+
+	const bool SetRandomSeed() {
+		srand((unsigned int)time(NULL));
+		return true;
 	}
 
+	bool setseed = SetRandomSeed();
+
 	double GetRandomDouble(double min, double max) {
-		int r = random();
+		int r = rand();
 		double diff = max - min;
 		double d = (double)r / RAND_MAX;
 		return d * diff + min;
@@ -20,7 +19,7 @@ namespace StevEngine::Utilities {
 	double GetRandomDouble(double max) { return GetRandomDouble(0, max); }
 
 	int GetRandomInt(int min, int max) {
-		int r = random();
+		int r = rand();
 		int diff = max - min;
 		double d = (double)r / RAND_MAX;
 		return (d * diff) + min;

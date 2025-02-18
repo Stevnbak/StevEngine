@@ -2,20 +2,21 @@
 #include "Material.hpp"
 #include "visuals/Texture.hpp"
 #include "utilities/Vector3.hpp"
+#include "utilities/Stream.hpp"
 
 using namespace StevEngine::Utilities;
 
 namespace StevEngine::Visuals {
 	//Constructor
 	Material::Material(Color color, Vector3 ambient, Vector3 diffuse, Vector3 specular, float shininess, const Texture& albedoData, const Texture& normalData)
-		: color(color), ambient(ambient), diffuse(diffuse), specular(specular), shininess(shininess), albedo(albedoData), normal(normalData)
+	  : color(color), ambient(ambient), diffuse(diffuse), specular(specular), shininess(shininess), albedo(albedoData), normal(normalData)
 	{
 		albedo.BindTexture();
 		normal.BindTexture();
 	}
 
 	Material::Material(const Material& other)
-	: color(other.color), ambient(other.ambient), diffuse(other.diffuse), specular(other.specular), shininess(other.shininess), albedo(other.albedo), normal(other.normal) {}
+  : color(other.color), ambient(other.ambient), diffuse(other.diffuse), specular(other.specular), shininess(other.shininess), albedo(other.albedo), normal(other.normal) {}
 
 	//Textures
 	void Material::SetAlbedo(const Texture& albedoData) {
@@ -32,29 +33,24 @@ namespace StevEngine::Visuals {
 	void Material::FreeNormal() {
 		normal.FreeTexture();
 	}
+}
 
-	//Import/Export
-	Material::Material(YAML::Node node) :
-		color(node["color"].as<Color>()),
-		ambient(node["ambient"].as<Vector3>()),
-		diffuse(node["diffuse"].as<Vector3>()),
-		specular(node["specular"].as<Vector3>()),
-		shininess(node["shininess"].as<float>()),
-		albedo(Texture::empty), normal(Texture::empty)
-	{
-		if(node["albedo"].as<std::string>() != "") SetAlbedo(Visuals::Texture(Resources::resourceManager.GetFile(node["albedo"].as<std::string>())));
-		if(node["normal"].as<std::string>() != "") SetNormal(Visuals::Texture(Resources::resourceManager.GetFile(node["normal"].as<std::string>())));
+namespace StevEngine::Utilities {
+	//Read from stream
+	template <> Visuals::Material Stream::Read<Visuals::Material>() {
+		return Visuals::Material(
+			Read<Color>(),
+			Read<Vector3>(),
+			Read<Vector3>(),
+			Read<Vector3>(),
+			Read<float>(),
+			Read<Visuals::Texture>(),
+			Read<Visuals::Texture>()
+		);
 	}
-	YAML::Node Material::Export() const {
-		YAML::Node node;
-		node["color"] = color;
-		node["ambient"] = ambient;
-		node["diffuse"] = diffuse;
-		node["specular"] = specular;
-		node["shininess"] = shininess;
-		node["albedo"] = albedo.GetPath();
-		node["normal"] = normal.GetPath();
-		return node;
+	//Write to stream
+	template <> void Stream::Write<Visuals::Material>(const Visuals::Material& data) {
+		*this << data.color << data.ambient << data.diffuse << data.specular << data.shininess << data.GetAlbedo() << data.GetNormal();
 	}
 }
 #endif

@@ -1,22 +1,21 @@
 #include "Quaternion.hpp"
-
-#include "main/Log.hpp"
+#include "utilities/Stream.hpp"
 #include "utilities/Vector4.hpp"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include <sstream>
+#include <format>
 
 namespace StevEngine::Utilities {
 	//Constructors
 	Quaternion::Quaternion(double w, double x, double y, double z)
-		: W(w), X(x), Y(y), Z(z) {}
+	  : W(w), X(x), Y(y), Z(z) {}
 	Quaternion::Quaternion(double w, Vector3 vector)
-		: W(w), X(vector.X), Y(vector.Y), Z(vector.Z) {}
+	  : W(w), X(vector.X), Y(vector.Y), Z(vector.Z) {}
 	Quaternion::Quaternion(const Quaternion& from)
-		: W(from.W), X(from.X), Y(from.Y), Z(from.Z) {}
+	  : W(from.W), X(from.X), Y(from.Y), Z(from.Z) {}
 	Quaternion::Quaternion()
-		: W(1), X(0), Y(0), Z(0) {}
+	  : W(1), X(0), Y(0), Z(0) {}
 	//Directions
 	Vector3 Quaternion::Forward() const {
 		return Get() * Vector3::forward;
@@ -226,25 +225,15 @@ namespace StevEngine::Utilities {
 	double Quaternion::RadiansToDegrees(double radians) {
 		return radians * (180.0 / M_PI);
 	}
-}
 
-namespace YAML {
-	Node convert<StevEngine::Utilities::Quaternion>::encode(const StevEngine::Utilities::Quaternion& rhs) {
-		Node node;
-		node.push_back(rhs.W);
-		node.push_back(rhs.X);
-		node.push_back(rhs.Y);
-		node.push_back(rhs.Z);
-		return node;
+	//Read from stream
+	template <> Utilities::Quaternion Stream::Read<Utilities::Quaternion>() {
+		Utilities::Quaternion value;
+		*this >> value.W >> value.X >> value.Y >> value.Z;
+		return value;
 	}
-	bool convert<StevEngine::Utilities::Quaternion>::decode(const Node& node, StevEngine::Utilities::Quaternion& rhs) {
-		if(!node.IsSequence() || node.size() != 4) {
-			return false;
-		}
-		rhs.W = node[0].as<double>();
-		rhs.X = node[1].as<double>();
-		rhs.Y = node[2].as<double>();
-		rhs.Z = node[3].as<double>();
-		return true;
+	//Write to stream
+	template <> void Stream::Write<Utilities::Quaternion>(const Utilities::Quaternion& data) {
+		*this << data.W << data.X << data.Y << data.Z;
 	}
 }

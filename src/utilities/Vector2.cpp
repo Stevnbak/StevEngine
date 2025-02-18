@@ -1,12 +1,10 @@
 #include "Vector2.hpp"
 #include "Vector3.hpp"
-
-#include "main/Log.hpp"
+#include "utilities/Stream.hpp"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <format>
-#include <sstream>
 
 namespace StevEngine::Utilities {
 	//Constructors
@@ -79,21 +77,15 @@ namespace StevEngine::Utilities {
 	double Vector2::Dot(const Vector2& a, const Vector2& b) {
 		return (a.X * b.X) + (a.Y * b.Y);
 	}
-}
 
-namespace YAML {
-	Node convert<StevEngine::Utilities::Vector2>::encode(const StevEngine::Utilities::Vector2& rhs) {
-		Node node;
-		node.push_back(rhs.X);
-		node.push_back(rhs.Y);
-		return node;
+	//Read from stream
+	template <> Utilities::Vector2 Stream::Read<Utilities::Vector2>() {
+		Utilities::Vector2 value;
+		*this >> value.X >> value.Y;
+		return value;
 	}
-	bool convert<StevEngine::Utilities::Vector2>::decode(const Node& node, StevEngine::Utilities::Vector2& rhs) {
-		if(!node.IsSequence() || node.size() != 2) {
-			return false;
-		}
-		rhs.X = node[0].as<double>();
-		rhs.Y = node[1].as<double>();
-		return true;
+	//Write to stream
+	template <> void Stream::Write<Utilities::Vector2>(const Utilities::Vector2& data) {
+		*this << data.X << data.Y;
 	}
 }

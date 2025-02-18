@@ -1,6 +1,6 @@
 #include "Range3.hpp"
 #include "Vector3.hpp"
-#include "main/Log.hpp"
+#include "utilities/Stream.hpp"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -38,21 +38,15 @@ namespace StevEngine::Utilities {
 		High = other.mMax;
 	}
 	#endif
-}
 
-namespace YAML {
-	Node convert<StevEngine::Utilities::Range3>::encode(const StevEngine::Utilities::Range3& rhs) {
-		Node node;
-		node.push_back(rhs.Low);
-		node.push_back(rhs.High);
-		return node;
+	//Read from stream
+	template <> Utilities::Range3 Stream::Read<Utilities::Range3>() {
+		Utilities::Range3 value;
+		*this >> value.Low >> value.High;
+		return value;
 	}
-	bool convert<StevEngine::Utilities::Range3>::decode(const Node& node, StevEngine::Utilities::Range3& rhs) {
-		if(!node.IsSequence() || node.size() != 2) {
-			return false;
-		}
-		rhs.Low = node[0].as<StevEngine::Utilities::Vector3>();
-		rhs.High = node[1].as<StevEngine::Utilities::Vector3>();
-		return true;
+	//Write to stream
+	template <> void Stream::Write<Utilities::Range3>(const Utilities::Range3& data) {
+		*this << data.Low << data.High;
 	}
 }

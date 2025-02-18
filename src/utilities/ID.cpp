@@ -1,9 +1,12 @@
 #include "ID.hpp"
+#include "utilities/Random.hpp"
+#include "utilities/Stream.hpp"
 
 #include <cstdint>
-#include <stdio.h>
 #include <stdlib.h>
 #include <chrono>
+
+bool seededRand = StevEngine::Utilities::SetRandomSeed();
 
 uint8_t last[16];
 namespace StevEngine::Utilities {
@@ -37,6 +40,9 @@ namespace StevEngine::Utilities {
 	ID::ID (uint8_t* raw) {
 		for(int i = 0; i < 16; i++)
 			this->raw[i] = raw[i];
+		char text[37];
+		uuidv7_to_string(raw, text);
+		string = std::string(text);
 	}
 	ID::ID (std::string string) {
 		this->string = string;
@@ -61,17 +67,27 @@ namespace StevEngine::Utilities {
 	bool ID::operator() (const ID& lhs, const ID& rhs) const {
 		return lhs.string < rhs.string;
 	}
-}
 
-namespace YAML {
-	Node convert<StevEngine::Utilities::ID>::encode(const StevEngine::Utilities::ID& rhs) {
-		Node node;
-		node = rhs.GetString();
-		return node;
+	//Read from stream
+	template <> Utilities::ID Stream::Read<Utilities::ID>() {
+		if(type == Utilities::StreamType::Text) {
+			char text[37];
+			for(int i = 0; i < 36; i++)
+				*this >> text[i];
+			text[36] = '\000';
+			return Utilities::ID(std::string(text));
+		} else {
+			uint8_t value[16];
+			for(int i = 0; i < 16; i++) *this >> value[i];
+			return Utilities::ID(value);
+		}
 	}
-	bool convert<StevEngine::Utilities::ID>::decode(const Node& node, StevEngine::Utilities::ID& rhs) {
-		if(!node.IsDefined()) return false;
-		rhs = StevEngine::Utilities::ID(node.as<std::string>());
-		return true;
+	//Write to stream
+	template <> void Stream::Write<Utilities::ID>(const Utilities::ID& data) {
+		if(type == Utilities::StreamType::Text) {
+			std::string str = data.GetString();
+			for(int i = 0; i < 36; i++) *this << str[i];
+		}
+		else for(int i = 0; i < 16; i++) *this << data.GetRaw()[i];
 	}
 }
