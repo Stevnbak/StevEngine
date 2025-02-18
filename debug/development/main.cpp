@@ -157,10 +157,9 @@ void TestSerializeStuff() {
 	ts << str;
 	Log::Debug("Txt stream: " + ts.Read<std::string>());
 
-
-	Log::Debug("Original: " + id.GetString());
+	Log::Debug("Original: " + std::string(id.GetString()));
 	ts << id;
-	Log::Debug("Txt stream: " + ts.Read<Utilities::ID>().GetString());
+	Log::Debug("Txt stream: " + std::string(ts.Read<Utilities::ID>().GetString()));
 
 	ts.WriteToFile((Data::data.GetAppdataPath() + "TestExport.txt").c_str());
 
@@ -188,10 +187,10 @@ void TestSerializeStuff() {
 	bs << str;
 	Log::Debug("Bin stream: " + bs.Read<std::string>());
 
-	Log::Debug("Original: " + id.GetString());
+	Log::Debug("Original: " + std::string(id.GetString()));
 	bs << id;
-	Log::Debug("Bin stream: " + bs.Read<Utilities::ID>().GetString());
-	bs.Write<Vector3>(Vector3(1.52,2,3));
+	Log::Debug("Bin stream: " + std::string(bs.Read<Utilities::ID>().GetString()));
+	bs.Write<Vector3>(Vector3(1.52, 2, 3));
 	Log::Debug("Bin stream: " + (std::string)bs.Read<Vector3>());
 	bs.WriteToFile((Data::data.GetAppdataPath() + "TestExport.bin").c_str());
 }

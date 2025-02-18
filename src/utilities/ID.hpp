@@ -1,6 +1,6 @@
 #pragma once
-#include <uuidv7.h>
-#include <string>
+#include <cstdint>
+#include <functional>
 #include <stdint.h>
 
 namespace StevEngine::Utilities {
@@ -15,31 +15,31 @@ namespace StevEngine::Utilities {
 			/**
 			 * @brief Generate new random UUID
 			 */
-			ID ();
+			ID();
 
 			/**
 			 * @brief Copy constructor
 			 * @param other ID to copy
 			 */
-			ID (const ID& other);
+			ID(const ID& other);
 
 			/**
 			 * @brief Create from raw bytes
 			 * @param raw 16-byte UUID data
 			 */
-			ID (uint8_t* raw);
+			ID(uint8_t* raw);
 
 			/**
 			 * @brief Create from string representation
 			 * @param string UUID string
 			 */
-			ID (std::string string);
+			ID(const char* text);
 
 			/**
 			 * @brief Get string representation
 			 * @return UUID as string
 			 */
-			std::string GetString() const { return std::string(string); }
+			const char* GetString() const;
 
 			/**
 			 * @brief Assignment operator
@@ -68,7 +68,7 @@ namespace StevEngine::Utilities {
 			 * @param rhs Second ID
 			 * @return true if lhs < rhs
 			 */
-			bool operator() (const ID& lhs, const ID& rhs) const;
+			bool operator()(const ID& lhs, const ID& rhs) const;
 
 			/**
 			 * @brief Check if ID is null/empty
@@ -82,21 +82,23 @@ namespace StevEngine::Utilities {
 			const uint8_t* GetRaw() const { return raw; }
 
 		private:
-			uint8_t raw[16];	 ///< Raw UUID bytes
-			std::string string;   ///< String representation
+			uint8_t raw[16]; ///< Raw UUID bytes
 	};
 }
 
-template <>
-struct std::hash<StevEngine::Utilities::ID>
-{
-	/**
-	 * @brief Hash function for ID
-	 * @param k ID to hash
-	 * @return Hash value
-	 */
-	std::size_t operator()(const StevEngine::Utilities::ID& k) const
-	{
-		return (std::hash<std::string>()(k.GetString()));
-	}
+template<> struct std::hash<StevEngine::Utilities::ID> {
+		/**
+		 * @brief Hash function for ID
+		 * @param k ID to hash
+		 * @return Hash value
+		 */
+		std::size_t operator()(const StevEngine::Utilities::ID& k) const {
+			size_t result = 0;
+			std::hash<uint8_t> hasher;
+			auto values = k.GetRaw();
+			for (uint8_t i = 0; i < 16; i++) {
+				result = result * 31 + hasher(values[i]);
+			}
+			return result;
+		}
 };
