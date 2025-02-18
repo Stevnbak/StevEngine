@@ -21,31 +21,51 @@
 namespace StevEngine {
 	class Engine;
 	namespace Physics {
+		/**
+		 * @brief Core physics simulation system
+		 *
+		 * Handles initialization and updating of the Jolt physics engine.
+		 * Manages physics settings, bodies, and simulation state.
+		 */
 		class PhysicsSystem {
 			friend class StevEngine::Engine;
 			public:
+				/**
+				 * @brief Create physics system
+				 */
 				PhysicsSystem();
+
+				/**
+				 * @brief Initialize physics system
+				 * @param settings Jolt physics settings
+				 */
 				void Init(JPH::PhysicsSettings settings);
+
+				/**
+				 * @brief Get physics body interface
+				 * @return Pointer to Jolt body interface
+				 */
 				JPH::BodyInterface* GetBodyInterface() const { return bodyInterface; }
+
 			private:
+				/**
+				 * @brief Update physics simulation
+				 * @param deltaTime Time step for physics simulation
+				 */
 				void Update(double deltaTime);
-				//Jolt system
-				JPH::PhysicsSystem joltSystem;
-				//Body interface
-				JPH::BodyInterface* bodyInterface;
-				// Memory Allocator
-				JPH::TempAllocatorMalloc tempAllocator = JPH::TempAllocatorMalloc();
-				// Job System
-				JPH::JobSystemSingleThreaded jobSystem = JPH::JobSystemSingleThreaded();
-				// Create mapping table from object layer to broadphase layer
-				BPLayerInterfaceImpl broad_phase_layer_interface = BPLayerInterfaceImpl();
-				// Create class that filters object vs broadphase layers
-				ObjectVsBroadPhaseLayerFilterImpl object_vs_broadphase_layer_filter = ObjectVsBroadPhaseLayerFilterImpl();
-				// Create class that filters object vs object layers
-				ObjectLayerPairFilterImpl object_vs_object_layer_filter = ObjectLayerPairFilterImpl();
+
+				JPH::PhysicsSystem joltSystem;		  ///< Main Jolt physics system
+				JPH::BodyInterface* bodyInterface;	   ///< Interface for manipulating physics bodies
+				JPH::TempAllocatorMalloc tempAllocator; ///< Memory allocator for physics
+				JPH::JobSystemSingleThreaded jobSystem;  ///< Job system for physics calculations
+
+				// Layer management
+				BPLayerInterfaceImpl broad_phase_layer_interface;					///< Broad phase layer interface
+				ObjectVsBroadPhaseLayerFilterImpl object_vs_broadphase_layer_filter; ///< Broad phase collision filter
+				ObjectLayerPairFilterImpl object_vs_object_layer_filter;			 ///< Object pair collision filter
 		};
 
-		extern PhysicsSystem physics;
+		extern PhysicsSystem physics; ///< Global physics system instance
 	}
 }
 #endif
