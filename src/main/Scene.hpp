@@ -135,6 +135,6 @@ namespace StevEngine {
 			#endif
 
 			/** @brief Map of all objects in scene */
-			std::unordered_map<Utilities::ID, GameObject> gameObjects;
+			std::map<Utilities::ID, GameObject, Utilities::ID> gameObjects;
 	};
 }

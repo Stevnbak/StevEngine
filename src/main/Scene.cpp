@@ -8,13 +8,13 @@ using namespace StevEngine::Utilities;
 namespace StevEngine {
 	ID Scene::CreateObject() {
 		ID id;
-		gameObjects.insert({id, GameObject(id, "GameObject", name)});
+		gameObjects.emplace(std::piecewise_construct, std::forward_as_tuple(id), std::forward_as_tuple(id, "GameObject", name)) ;
 		if(active) GetObject(id)->Start();
 		return id;
 	}
 	ID Scene::CreateObject(std::string name, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) {
 		ID id;
-		gameObjects.emplace(id, GameObject(id, name, this->name));
+		gameObjects.emplace(std::piecewise_construct, std::forward_as_tuple(id), std::forward_as_tuple(id, name, this->name)) ;
 		GameObject* object = GetObject(id);
 		object->position = position;
 		object->rotation = rotation;
@@ -30,7 +30,7 @@ namespace StevEngine {
 	Utilities::ID Scene::CreateObject(Utilities::Stream& stream) {
 		Utilities::ID id;
 		stream >> id;
-		gameObjects.emplace(id, GameObject(id, "GameObject", name));
+		gameObjects.emplace(std::piecewise_construct, std::forward_as_tuple(id), std::forward_as_tuple(id, "GameObject", name)) ;
 		GameObject* object = GetObject(id);
 		object->Import(stream);
 		if(active) object->Start();

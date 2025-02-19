@@ -270,6 +270,7 @@ int main(int argc, char** argv) {
 		//primitive->GetMaterial().SetNormal(Texture(Resources::resourceManager.GetFile("normal_map.png")));
 		//object->AddComponent(new Rotate(Vector3::up));
 		object->AddComponent(new Rotate(Vector3::right));
+		//object->AddComponentTest<Rotate>(std::string("Test"));
 		#endif
 		GameObject* parent = scene->GetObject(scene->CreateObject("Parent", Utilities::Vector3(0, 3, 0), Utilities::Quaternion(), Utilities::Vector3(1.0)));
 		parent->AddChild(id);

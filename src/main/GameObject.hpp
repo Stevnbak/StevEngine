@@ -7,6 +7,7 @@
 #include "main/Log.hpp"
 #include "main/Component.hpp"
 
+#include <memory>
 #include <vector>
 #include <type_traits>
 
@@ -167,7 +168,12 @@ namespace StevEngine {
 			void Draw(Utilities::Matrix4 transform);
 			#endif
 
-			GameObject();
+		public:
+			/**
+			 * @brief Should never be called directly, use Scene::CreateObject
+			 *
+			 * Constructs a GameObject with the specified properties.
+			 */
 			GameObject(Utilities::ID id, std::string name, std::string scene);
 
 		//Events
@@ -274,7 +280,7 @@ namespace StevEngine {
 
 		//Component functions
 		private:
-			std::vector<Component*> components;  ///< Attached components
+			std::vector<std::unique_ptr<Component>> components;  ///< Attached components
 
 		public:
 			/**
@@ -288,8 +294,8 @@ namespace StevEngine {
 			GetComponent(bool log = true) {
 				//Find component
 				for (int i = 0; i < components.size(); i++) {
-					if (dynamic_cast<T*>(components[i])) {
-						T* component = (T*)components[i];
+					if (dynamic_cast<T*>(components[i].get())) {
+						T* component = (T*)components[i].get();
 						return component;
 					}
 				}
@@ -310,8 +316,8 @@ namespace StevEngine {
 				std::vector<T*> foundComponents;
 				//Find components
 				for (int i = 0; i < components.size(); i++) {
-					if (dynamic_cast<T*>(components[i])) {
-						T* component = (T*)components[i];
+					if (dynamic_cast<T*>(components[i].get())) {
+						T* component = (T*)components[i].get();
 						foundComponents.push_back(component);
 					}
 				}
@@ -324,7 +330,9 @@ namespace StevEngine {
 			 * @return Vector of all components
 			 */
 			std::vector<Component*> GetAllComponents() const {
-				return components;
+				std::vector<Component*> vec;
+				for(auto& component : components) vec.push_back(component.get());
+				return vec;
 			}
 
 			/**
@@ -367,7 +375,7 @@ namespace StevEngine {
 				}
 				//Add to list
 				component->SetObject(this, this->scene);
-				components.push_back(component);
+				components.emplace_back(component);
 				if(isActive) component->Start();
 				return component;
 			}
@@ -380,11 +388,11 @@ namespace StevEngine {
 			typename std::enable_if<std::is_base_of<Component,T>::value, void >::type
 			RemoveAllComponents() {
 				//Find component
-				std::vector<Component*>::iterator i = components.begin();
+				auto i = components.begin();
 				while (i != components.end()) {
 					if (dynamic_cast<T*>(*i)) {
 						//Delete component from memory
-						delete *i;
+						///delete *i;
 						//Remove from list
 						i = components.erase(i);
 					}
@@ -404,7 +412,7 @@ namespace StevEngine {
 			RemoveComponent(T* component) {
 				//Find component
 				for (int i = 0; i < components.size(); i++) {
-					if (components[i] == component) {
+					if (components[i].get() == component) {
 						//Remove from list
 						components.erase(components.begin() + i);
 						//Delete component from memory

@@ -74,9 +74,10 @@ namespace StevEngine::Utilities {
 
 	bool ID::operator<(const ID& other) const {
 		for (uint8_t i = 0; i < 16; i++) {
-			if (raw[i] >= other.raw[i]) return false;
+			if (raw[i] < other.raw[i]) return true;
+			if (raw[i] > other.raw[i]) return false;
 		}
-		return true;
+		return false;
 	}
 
 	bool ID::operator()(const ID& lhs, const ID& rhs) const { return lhs < rhs; }

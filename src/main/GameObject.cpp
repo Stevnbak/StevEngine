@@ -15,7 +15,7 @@ namespace StevEngine {
 	//Main functions
 	void GameObject::Start() {
 		isActive = true;
-		for (Component* component : components) {
+		for (auto& component : components) {
 			component->Start();
 		}
 	}
@@ -81,9 +81,6 @@ namespace StevEngine {
 	}
 
 	//Constructors
-	GameObject::GameObject() : id(Utilities::ID()), name("GameObject") {
-		//Log::Normal(std::format("Creating gameobject with new id {}", id.GetString()), true);
-	}
 	GameObject::GameObject(Utilities::ID id, std::string name, std::string scene) : id(id), name(name), scene(scene) {
 		//Log::Normal(std::format("Creating gameobject with id {}", id.GetString()), true);
 	}
@@ -135,7 +132,7 @@ namespace StevEngine {
 		stream << position << rotation << scale;
 		//Components and children
 		stream << (uint)components.size() << GetChildCount();
-		for(auto component : components) {
+		for(auto& component : components) {
 			stream << component->GetType() << component->Export(type);
 		}
 		for(int i = 0; i < GetChildCount(); i++) {
@@ -172,10 +169,7 @@ namespace StevEngine {
 			s->DestroyObject(children[i]);
 		}
 		//Destroy components
-		for (int i = 0; i < components.size(); i++)
-		{
-			components[i]->handlers.clear();
-			delete components[i];
-		}
+		for (auto& c : components) c->handlers.clear();
+		components.clear();
 	}
 }
