@@ -2,6 +2,7 @@
 #include "main/Component.hpp"
 #include "utilities/ID.hpp"
 #include "utilities/Stream.hpp"
+#include <cassert>
 
 using namespace StevEngine::Utilities;
 
@@ -9,17 +10,17 @@ namespace StevEngine {
 	ID Scene::CreateObject() {
 		ID id;
 		gameObjects.emplace(std::piecewise_construct, std::forward_as_tuple(id), std::forward_as_tuple(id, "GameObject", name)) ;
-		if(active) GetObject(id)->Start();
+		if(active) GetObject(id).Start();
 		return id;
 	}
 	ID Scene::CreateObject(std::string name, Utilities::Vector3 position, Utilities::Quaternion rotation, Utilities::Vector3 scale) {
 		ID id;
 		gameObjects.emplace(std::piecewise_construct, std::forward_as_tuple(id), std::forward_as_tuple(id, name, this->name)) ;
-		GameObject* object = GetObject(id);
-		object->position = position;
-		object->rotation = rotation;
-		object->scale = scale;
-		if(active) object->Start();
+		GameObject& object = GetObject(id);
+		object.position = position;
+		object.rotation = rotation;
+		object.scale = scale;
+		if(active) object.Start();
 		return id;
 	}
 	Utilities::ID Scene::CreateObject(Resources::Resource file, Utilities::StreamType type) {
@@ -31,14 +32,17 @@ namespace StevEngine {
 		Utilities::ID id;
 		stream >> id;
 		gameObjects.emplace(std::piecewise_construct, std::forward_as_tuple(id), std::forward_as_tuple(id, "GameObject", name)) ;
-		GameObject* object = GetObject(id);
-		object->Import(stream);
-		if(active) object->Start();
+		GameObject& object = GetObject(id);
+		object.Import(stream);
+		if(active) object.Start();
 		return id;
 	}
-	GameObject* Scene::GetObject(Utilities::ID id) {
-		if(!gameObjects.contains(id)) return nullptr;
-		return &gameObjects.at(id);
+	bool Scene::Exists(Utilities::ID id) {
+		return gameObjects.contains(id);
+	}
+	GameObject& Scene::GetObject(Utilities::ID id) {
+		assert(gameObjects.contains(id) && "No GameObject found.");
+		return gameObjects.at(id);
 	}
 	std::vector<ID> Scene::GetAllObjects() {
 		std::vector<ID> keys;
@@ -62,7 +66,7 @@ namespace StevEngine {
 	Scene::Scene(std::string name) : name(name) {
 		//Create main camera
 		#ifdef StevEngine_SHOW_WINDOW
-		activeCamera = GetObject(CreateObject("Main Camera"))->AddComponent(new Visuals::Camera());
+		activeCamera = GetObject(CreateObject("Main Camera")).AddComponent(new Visuals::Camera());
 		#endif
 	}
 	Scene::Scene(std::string name, Utilities::Stream& stream) : name(name) {
@@ -73,7 +77,7 @@ namespace StevEngine {
 		}
 		//Set camera
 		#ifdef StevEngine_SHOW_WINDOW
-		activeCamera = GetObject(stream.Read<ID>())->GetComponent<Visuals::Camera>();
+		activeCamera = GetObject(stream.Read<ID>()).GetComponent<Visuals::Camera>();
 		#endif
 	}
 	Utilities::Stream Scene::Export(Utilities::StreamType type) {

@@ -31,10 +31,10 @@ namespace StevEngine::Visuals {
 
 	Matrix4 Camera::GetView() const {
 		//Rotate everything else based on camera rotation
-		Matrix4 rotation = Matrix4::FromRotation(Quaternion::Conjugate(GetParent()->GetWorldRotation()));
+		Matrix4 rotation = Matrix4::FromRotation(Quaternion::Conjugate(GetParent().GetWorldRotation()));
 
 		//Move everything else based on camera position
-		Matrix4 translation = Matrix4::FromTranslation(-GetParent()->GetWorldPosition());
+		Matrix4 translation = Matrix4::FromTranslation(-GetParent().GetWorldPosition());
 
 		return rotation * translation;
 	}
@@ -44,7 +44,7 @@ namespace StevEngine::Visuals {
 		float aspect = (float)s.WIDTH / s.HEIGHT;
 		if (isOrthographic)
 		{
-			Vector3 position = GetParent()->GetWorldPosition();
+			Vector3 position = GetParent().GetWorldPosition();
 			double width = (1 * aspect) / (zoom / position.Z);
 			double height = (1) / (zoom / position.Z);
 			//Set up an orthographic projection

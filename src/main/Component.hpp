@@ -44,15 +44,15 @@ namespace StevEngine {
 
 			/**
 			 * @brief Get parent GameObject
-			 * @return Pointer to parent GameObject
+			 * @return Reference to parent GameObject
 			 */
-			GameObject* GetParent() const;
+			GameObject& GetParent() const;
 
 			/**
 			 * @brief Get containing Scene
-			 * @return Pointer to containing Scene
+			 * @return Reference to containing Scene
 			 */
-			Scene* GetScene() const;
+			Scene& GetScene() const;
 
 			/**
 			 * @brief Get component type
@@ -97,7 +97,7 @@ namespace StevEngine {
 			 * @param object Parent GameObject
 			 * @param scene Containing scene name
 			 */
-			void SetObject(GameObject* object, std::string scene);
+			void SetObject(GameObject& object, std::string scene);
 
 		//Events
 		protected:

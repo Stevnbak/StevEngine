@@ -36,12 +36,12 @@ namespace StevEngine::Physics {
 		this->scale = scale;
 	}
 	void Collider::Start() {
-		GameObject* parent = GetParent();
+		GameObject& parent = GetParent();
 		//Set correct scale for shape
-		Utilities::Vector3 abs = parent->GetWorldScale();
+		Utilities::Vector3 abs = parent.GetWorldScale();
 		if(rawShape) this->shape = new JPH::ScaledShape(rawShape, Utilities::Vector3(scale.X * abs.X, scale.Y * abs.Y, scale.Z * abs.Z));
 		//Events
-		handlers.emplace_back(parent->Subscribe<TransformUpdateEvent>([this] (TransformUpdateEvent e) { this->TransformUpdate(e.position, e.rotation, e.scale);}), TransformUpdateEvent::GetStaticEventType());
+		handlers.emplace_back(parent.Subscribe<TransformUpdateEvent>([this] (TransformUpdateEvent e) { this->TransformUpdate(e.position, e.rotation, e.scale);}), TransformUpdateEvent::GetStaticEventType());
 	}
 	void Collider::Deactivate()	{
 		if(shape) shape->Release();
@@ -51,14 +51,14 @@ namespace StevEngine::Physics {
 		if(rawShape) rawShape->Release();
 	}
 	void Collider::TransformUpdate(bool position, bool rotation, bool scale, bool fromLocal) {
-		GameObject* parent = GetParent();
+		GameObject* parent = &GetParent();
 		//Re scale collider
 		if(scale) {
 			Utilities::Vector3 abs = parent->GetWorldScale();
 			this->shape = new JPH::ScaledShape(rawShape, Utilities::Vector3(this->scale.X * abs.X, this->scale.Y * abs.Y, this->scale.Z * abs.Z));
 		} else if(!fromLocal) {
 			//Don't tell current parent if it gets the same position or rotation change
-			parent = parent->GetParent();
+			parent = &parent->GetParent();
 		}
 		//Publish shape updated
 		if(parent != nullptr) parent->Publish(ColliderUpdateEvent(this));

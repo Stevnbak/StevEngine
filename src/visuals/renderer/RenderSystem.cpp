@@ -193,11 +193,11 @@ namespace StevEngine::Renderer {
 		ResetGPUBuffers();
 
 		//Camera matrices
-		Visuals::Camera* camera = sceneManager.GetActiveScene()->GetCamera();
+		Visuals::Camera* camera = sceneManager.GetActiveScene().GetCamera();
 		//  View matrix
 		vertexShaderProgram.SetShaderUniform("viewTransform", camera->GetView());
-		fragmentShaderProgram.SetShaderUniform("viewPosition", camera->GetParent()->GetWorldPosition());
-		fragmentShaderProgram.SetShaderUniform("viewDirection", camera->GetParent()->GetWorldRotation().Forward());
+		fragmentShaderProgram.SetShaderUniform("viewPosition", camera->GetParent().GetWorldPosition());
+		fragmentShaderProgram.SetShaderUniform("viewDirection", camera->GetParent().GetWorldRotation().Forward());
 		//  Projection matrix
 		vertexShaderProgram.SetShaderUniform("projectionTransform", camera->GetProjection());
 		//Lights

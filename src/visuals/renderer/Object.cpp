@@ -131,11 +131,11 @@ namespace StevEngine::Renderer {
 			}
 			glUseProgramStages(pipeline, GL_FRAGMENT_SHADER_BIT, fragmentProgram->GetLocation());
 			//Update program with basic info
-			Visuals::Camera* camera = sceneManager.GetActiveScene()->GetCamera();
+			Visuals::Camera* camera = sceneManager.GetActiveScene().GetCamera();
 			//  View matrix
 			vertexProgram->SetShaderUniform("viewTransform", camera->GetView());
-			fragmentProgram->SetShaderUniform("viewPosition", camera->GetParent()->GetWorldPosition());
-			fragmentProgram->SetShaderUniform("viewDirection", camera->GetParent()->GetWorldRotation().Forward());
+			fragmentProgram->SetShaderUniform("viewPosition", camera->GetParent().GetWorldPosition());
+			fragmentProgram->SetShaderUniform("viewDirection", camera->GetParent().GetWorldRotation().Forward());
 			//  Projection matrix
 			vertexProgram->SetShaderUniform("projectionTransform", camera->GetProjection());
 			//  Ambient lighting

@@ -9,6 +9,7 @@
 #include "utilities/Stream.hpp"
 #include "utilities/Vector3.hpp"
 
+#include <cassert>
 #include <cstdio>
 
 namespace StevEngine {
@@ -59,22 +60,22 @@ namespace StevEngine {
 	}
 	Utilities::Vector3 GameObject::GetWorldPosition() {
 		if(!parent.IsNull()) {
-			GameObject* object = GetParent();
-			return (Utilities::Matrix4::FromTranslationRotationScale(object->GetWorldPosition(), object->GetRotation(), object->GetScale()) * position);
+			GameObject& object = GetParent();
+			return (Utilities::Matrix4::FromTranslationRotationScale(object.GetWorldPosition(), object.GetRotation(), object.GetScale()) * position);
 		} else {
 			return position;
 		}
 	}
 	Utilities::Quaternion GameObject::GetWorldRotation() {
 		if(!parent.IsNull()) {
-			return GetParent()->GetWorldRotation() * rotation;
+			return GetParent().GetWorldRotation() * rotation;
 		} else {
 			return rotation;
 		}
 	}
 	Utilities::Vector3 GameObject::GetWorldScale() {
 		if(!parent.IsNull()) {
-			return Utilities::Vector3::CombineScale(GetParent()->GetWorldScale(), scale);
+			return Utilities::Vector3::CombineScale(GetParent().GetWorldScale(), scale);
 		} else {
 			return scale;
 		}
@@ -88,39 +89,39 @@ namespace StevEngine {
 	//Children functions
 	int GameObject::AddChild(const Utilities::ID& id) {
 		children.emplace_back(id);
-		GetScene()->GetObject(id)->SetParent(this->id);
+		GetScene().GetObject(id).SetParent(this->id);
 		int i = children.size() - 1;
 		return i;
 	}
 	void GameObject::RemoveChild(int index) {
-		GetChild(index)->parent = Utilities::ID::empty;
+		GetChild(index).parent = Utilities::ID::empty;
 		children.erase(children.begin() + index);
 	}
-	GameObject* GameObject::GetChild(int index) const {
-		return GetScene()->GetObject(children[index]);
+	GameObject& GameObject::GetChild(int index) const {
+		return GetScene().GetObject(children[index]);
 	}
 	uint GameObject::GetChildCount() const {
 		return children.size();
 	}
-	GameObject* GameObject::GetParent() const {
-		if(!parent.IsNull()) return GetScene()->GetObject(parent);
+	GameObject& GameObject::GetParent() const {
+		if(!parent.IsNull()) return sceneManager.GetScene(scene)->GetObject(parent);
 		else return nullptr;
 	}
-	Scene* GameObject::GetScene() const {
+	Scene& GameObject::GetScene() const {
 		return sceneManager.GetScene(scene);
 	}
 	void GameObject::SetParent(const Utilities::ID& id) {
 		if(id.IsNull()) return;
 		if(!parent.IsNull()) {
-			GameObject* p = GetParent();
-			for(auto[id, event] : handlers) p->Unsubscribe(event, id);
+			GameObject& p = GetParent();
+			for(auto[id, event] : handlers) p.Unsubscribe(event, id);
 		}
-		GameObject* object = GetScene()->GetObject(id);
-		handlers.emplace_back(object->Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); }), UpdateEvent::GetStaticEventType());
+		GameObject& object = GetScene().GetObject(id);
+		handlers.emplace_back(object.Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); }), UpdateEvent::GetStaticEventType());
 		#ifdef StevEngine_SHOW_WINDOW
-		handlers.emplace_back(object->Subscribe<DrawEvent>([this] (DrawEvent e) { this->Draw(e.transform);  }), DrawEvent::GetStaticEventType());
+		handlers.emplace_back(object.Subscribe<DrawEvent>([this] (DrawEvent e) { this->Draw(e.transform);  }), DrawEvent::GetStaticEventType());
 		#endif
-		handlers.emplace_back(object->Subscribe<DeactivateEvent>([this] (DeactivateEvent) { this->Deactivate();  }), DeactivateEvent::GetStaticEventType());
+		handlers.emplace_back(object.Subscribe<DeactivateEvent>([this] (DeactivateEvent) { this->Deactivate();  }), DeactivateEvent::GetStaticEventType());
 		parent = id;
 	}
 
@@ -136,7 +137,7 @@ namespace StevEngine {
 			stream << component->GetType() << component->Export(type);
 		}
 		for(int i = 0; i < GetChildCount(); i++) {
-			stream << GetChild(i)->Export(type);
+			stream << GetChild(i).Export(type);
 		}
 		return stream;
 	}
@@ -153,20 +154,22 @@ namespace StevEngine {
 			AddComponent(CreateComponents::Create(type, stream));
 		}
 		for(int i = 0; i < children; i++) {
-			GetScene()->CreateObject(stream);
+			GetScene().CreateObject(stream);
 		}
 	}
 	//Destroy
 	GameObject::~GameObject() {
 		///Log::Normal(std::format("Destroying object with id {}", id), true);
 		//Remove event listeners
-		GameObject* p = GetParent();
-		if(p) for(auto[id, event] : handlers) p->Unsubscribe(event, id);
+		if(HasParent()) {
+			GameObject& p = GetParent();
+			for(auto[id, event] : handlers) p.Unsubscribe(event, id);
+		}
 		//Destroy children
 		for (int i = 0; i < children.size(); i++) {
-			auto* s = GetScene();
-			s->GetObject(children[i])->SetParent(Utilities::ID::empty);
-			s->DestroyObject(children[i]);
+			auto& s = GetScene();
+			s.GetObject(children[i]).SetParent(Utilities::ID::empty);
+			s.DestroyObject(children[i]);
 		}
 		//Destroy components
 		for (auto& c : components) c->handlers.clear();

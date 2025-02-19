@@ -59,11 +59,18 @@ namespace StevEngine {
 			Utilities::ID CreateObject(Utilities::Stream& stream);
 
 			/**
+			 * @brief Checks if an object with the specified id exists
+			 * @param id Object identifier
+			 * @return true if object exists, otherwise false
+			 */
+			bool Exists(Utilities::ID id);
+
+			/**
 			 * @brief Get object by ID
 			 * @param id Object identifier
 			 * @return Pointer to object or nullptr if not found
 			 */
-			GameObject* GetObject(Utilities::ID id);
+			GameObject& GetObject(Utilities::ID id);
 
 			#ifdef StevEngine_SHOW_WINDOW
 			/**
@@ -76,7 +83,7 @@ namespace StevEngine {
 			 * @brief Get camera object
 			 * @return Pointer to camera GameObject
 			 */
-			GameObject* GetCameraObject() { return activeCamera->GetParent(); }
+			GameObject& GetCameraObject() { return activeCamera->GetParent(); }
 			#endif
 
 			/**
@@ -104,20 +111,24 @@ namespace StevEngine {
 			 */
 			Utilities::Stream Export(Utilities::StreamType type);
 
-		private:
 			/**
-			 * @brief Create new scene
+			 * @brief Should never be called directly, use SceneManager::CreateScene
+			 *
+			 * Create new scene
 			 * @param name Scene identifier
 			 */
 			Scene(std::string name);
 
 			/**
-			 * @brief Create scene from serialized data
+			 * @brief Should never be called directly, use SceneManager::CreateScene
+			 *
+			 * Create scene from serialized data
 			 * @param name Name of the scene
 			 * @param stream Stream containing serialized object data
 			 */
 			Scene(std::string name, Utilities::Stream& stream);
 
+		private:
 			bool active = false;  ///< Whether scene is currently active
 
 			/**

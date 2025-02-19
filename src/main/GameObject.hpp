@@ -200,8 +200,7 @@ namespace StevEngine {
 			template<typename EventType>
 			void Publish(const EventType& event) {
 				events.Publish(event);
-				GameObject* parent = GetParent();
-				if(parent != nullptr) parent->ChildPublish<EventType>(event, id);
+				if(HasParent()) GetParent().ChildPublish<EventType>(event, id);
 			}
 
 			/**
@@ -221,8 +220,7 @@ namespace StevEngine {
 			template<typename EventType>
 			void ChildPublish(const EventType& event, Utilities::ID object) {
 				events.Publish(ChildEvent<EventType>(event));
-				GameObject* parent = GetParent();
-				if(parent != nullptr) parent->ChildPublish<EventType>(event, object);
+				if(HasParent()) GetParent().ChildPublish<EventType>(event, id);
 			}
 
 			EventManager events;   ///< Object event manager
@@ -248,7 +246,7 @@ namespace StevEngine {
 			 * @param index Child index
 			 * @return Pointer to child object
 			 */
-			GameObject* GetChild(int index) const;
+			GameObject& GetChild(int index) const;
 
 			/**
 			 * @brief Get number of children
@@ -257,16 +255,22 @@ namespace StevEngine {
 			uint GetChildCount() const;
 
 			/**
+			 * @brief Check if object has a parent
+			 * @return true if object has a parent, otherwise false
+			 */
+			bool HasParent() const { return !parent.IsNull(); }
+
+			/**
 			 * @brief Get parent object
 			 * @return Pointer to parent object
 			 */
-			GameObject* GetParent() const;
+			GameObject& GetParent() const;
 
 			/**
 			 * @brief Get containing Scene
 			 * @return Pointer to containing Scene
 			 */
-			Scene* GetScene() const;
+			Scene& GetScene() const;
 
 		private:
 			/**
@@ -350,7 +354,7 @@ namespace StevEngine {
 				allComponents.insert(allComponents.end(), current.begin(), current.end());
 				//Find components in each child object
 				for (int i = 0; i < children.size(); i++) {
-					std::vector<T*> childComp = GetChild(i)->GetAllComponentsInChildren<T>();
+					std::vector<T*> childComp = GetChild(i).GetAllComponentsInChildren<T>();
 					allComponents.insert(allComponents.end(), childComp.begin(), childComp.end());
 				}
 				//Return components
@@ -374,7 +378,7 @@ namespace StevEngine {
 					}
 				}
 				//Add to list
-				component->SetObject(this, this->scene);
+				component->SetObject(*this, this->scene);
 				components.emplace_back(component);
 				if(isActive) component->Start();
 				return component;

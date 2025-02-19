@@ -29,7 +29,7 @@ namespace StevEngine::Visuals {
 		program.SetShaderUniform((part + "basic.diffuse").c_str(), diffuse);
 		program.SetShaderUniform((part + "basic.specular").c_str(), specular);
 
-		program.SetShaderUniform((part + "direction").c_str(), GetParent()->GetWorldRotation().Forward());
+		program.SetShaderUniform((part + "direction").c_str(), GetParent().GetWorldRotation().Forward());
 	}
 	void DirectionalLight::ResetShader(const ShaderProgram& program) const {
 		std::string part = "directionalLights[" + std::to_string(shaderLightID) + "].";
@@ -46,7 +46,7 @@ namespace StevEngine::Visuals {
 		program.SetShaderUniform((part + "basic.diffuse").c_str(), diffuse);
 		program.SetShaderUniform((part + "basic.specular").c_str(), specular);
 
-		program.SetShaderUniform((part + "position").c_str(), GetParent()->GetWorldPosition());
+		program.SetShaderUniform((part + "position").c_str(), GetParent().GetWorldPosition());
 
 		program.SetShaderUniform((part + "constant").c_str(), constant);
 		program.SetShaderUniform((part + "linear").c_str(), linear);
@@ -71,8 +71,8 @@ namespace StevEngine::Visuals {
 		program.SetShaderUniform((part + "basic.diffuse").c_str(), diffuse);
 		program.SetShaderUniform((part + "basic.specular").c_str(), specular);
 
-		program.SetShaderUniform((part + "position").c_str(), GetParent()->GetWorldPosition());
-		program.SetShaderUniform((part + "position").c_str(), GetParent()->GetWorldRotation().Forward());
+		program.SetShaderUniform((part + "position").c_str(), GetParent().GetWorldPosition());
+		program.SetShaderUniform((part + "position").c_str(), GetParent().GetWorldRotation().Forward());
 
 		program.SetShaderUniform((part + "cutOff").c_str(), cutOff);
 		program.SetShaderUniform((part + "outerCutOff").c_str(), outerCutOff);
