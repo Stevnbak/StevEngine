@@ -5,6 +5,15 @@
 #include <string>
 
 namespace StevEngine::Renderer {
+	GLenum OpenGLShaderType(const ShaderType& type) {
+		switch(type) {
+			case VERTEX: return GL_VERTEX_SHADER;
+			case FRAGMENT: return GL_FRAGMENT_SHADER;
+			case COMPUTE: return GL_COMPUTE_SHADER;
+			default: return -1;
+		}
+	}
+
 	//Definition sources
 	const char* fragmentDefinitionSource =
 		#include "visuals/shaders/definitions.frag"
@@ -12,15 +21,32 @@ namespace StevEngine::Renderer {
 	const char* vertexDefinitionSource =
 		#include "visuals/shaders/definitions.vert"
 	;
-	Shader::Shader(const char* source, ShaderType shaderType) : shaderType(shaderType), source(source) {
-		//Create
-		location = glCreateShader(shaderType == VERTEX ? GL_VERTEX_SHADER : GL_FRAGMENT_SHADER);
-		//Add definitions
-		const char* definitions = shaderType == VERTEX ? vertexDefinitionSource : fragmentDefinitionSource;
-		std::string src(source);
+	bool AddDefinitions(const ShaderType& type, std::string& src) {
+		const char* definitions;
+		switch(type) {
+			case VERTEX:
+				definitions = vertexDefinitionSource;
+				break;
+			case FRAGMENT:
+		 		definitions = fragmentDefinitionSource;
+				break;
+			default:
+				return false;
+		};
 		int loc = src.find("\n", src.find_first_of("#version"));
 		src = src.substr(0, loc) + std::string(definitions) + src.substr(loc);
-		const char* newSource = src.c_str();
+		return true;
+	}
+
+	//Shader constructor
+	Shader::Shader(const char* source, ShaderType shaderType) : shaderType(shaderType), source(source) {
+		//Create
+		location = glCreateShader(OpenGLShaderType(shaderType));
+		//Add definitions
+		std::string src(source);
+		const char* newSource;
+		if(AddDefinitions(shaderType, src))	newSource = src.c_str();
+		else newSource = source;
 		//Compile
 		glShaderSource(location, 1, &newSource, NULL);
 		glCompileShader(location);

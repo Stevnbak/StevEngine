@@ -6,6 +6,7 @@
 #include "utilities/Color.hpp"
 #include "utilities/Matrix4.hpp"
 #include "utilities/Stream.hpp"
+#include "visuals/Texture.hpp"
 
 #include <map>
 #include <cstdint>
@@ -25,6 +26,15 @@ namespace StevEngine::Renderer {
 			 * @param shaderType Type of shaders in program
 			 */
 			ShaderProgram(ShaderType shaderType);
+
+			/**
+			 * @brief Create shader program
+			 *
+			 * The shader type will be inferred from the first shader in vector, any shader of different type will be ignored.
+			 *
+			 * @param shaders Vector of shaders to initialize program with.
+			 */
+			ShaderProgram(const std::vector<Shader>& shaders);
 
 			/**
 			 * @brief Create from serialized data
@@ -133,11 +143,52 @@ namespace StevEngine::Renderer {
 			 */
 			Utilities::Stream Export(Utilities::StreamType type) const;
 
-		private:
+		protected:
 			uint32_t location;	  ///< OpenGL program ID
 			ShaderType shaderType;  ///< Type of shaders in program
 			bool modified;		  ///< Whether program needs relinking
 			std::map<uint32_t, Shader> shaders;  ///< Shaders by OpenGL ID
+	};
+
+	class ComputeShader : public ShaderProgram {
+		public:
+			/**
+			 * @brief Create compute shader program
+			 *, with a single shader from source.
+			 *
+			 * @param source Source for the default shader to create
+			 */
+			ComputeShader(const char* source);
+
+			/**
+			 * @brief Create compute shader program
+			 *
+			 * @param shaders Vector of shaders to initialize program with.
+			 */
+			ComputeShader(const std::vector<Shader>& shaders);
+
+			/**
+			 * @brief Create from serialized data
+			 * @param stream Stream containing serialized component data
+			 */
+			ComputeShader(Utilities::Stream& stream) : ShaderProgram(stream) {};
+
+			/**
+			 * @brief Run the compute shader
+			 *
+			 * Group size is a single pixel of the output texture;
+			 *
+			 * @param output Compute texture to save output of shader to
+			 */
+			void Run(const Visuals::ComputeTexture& output) const { return Run(output, output.width, output.height, 1); }
+			/**
+			 * @brief Run the compute shader
+			 * @param output Compute texture to save output of shader to
+			 * @param groupsX Number of groups to use on the X-axis
+			 * @param groupsY Number of groups to use on the Y-axis
+			 * @param groupsZ Number of groups to use on the Z-axis
+			 */
+			void Run(const Visuals::ComputeTexture& output, uint32_t groupsX, uint32_t groupsY, uint32_t groupsZ = 1) const;
 	};
 }
 #endif

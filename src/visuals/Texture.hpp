@@ -2,6 +2,7 @@
 #ifdef StevEngine_RENDERER_GL
 #include "main/ResourceManager.hpp"
 #include "glad/gl.h"
+#include <cstdint>
 
 namespace StevEngine::Visuals {
 	/**
@@ -76,6 +77,58 @@ namespace StevEngine::Visuals {
 			SDL_Surface* surface;	 ///< SDL surface containing image data
 			GLuint GLLocation;	   ///< OpenGL texture ID
 			bool bound;			  ///< Whether texture is bound to OpenGL
+	};
+
+	class ComputeTexture {
+		public:
+			ComputeTexture(uint32_t width, uint32_t height, GLenum format = GL_RGBA32F);
+
+			/**
+			 * @brief Copy constructor
+			 * @param copy Texture to copy
+			 */
+			ComputeTexture(const ComputeTexture& copy);
+
+			~ComputeTexture();
+
+			/**
+			 * @brief Bind texture to OpenGL
+			 * Generates and configures texture in GPU memory
+			 */
+			void BindTexture();
+
+			/**
+			 * @brief Free texture from OpenGL
+			 * Releases texture from GPU memory
+			 */
+			void FreeTexture();
+
+			/**
+			 * @brief Check if texture is bound to OpenGL
+			 * @return True if texture is in GPU memory
+			 */
+			bool IsBound() const { return bound; };
+
+			/**
+			 * @brief Attach to an OpenGL framebuffer
+			 * Generates and configures texture in GPU memory
+			 * @param framebuffer OpenGL location of the framebuffer to attach to
+			 * @return true if attachment was succesful, false if not
+			 */
+			bool AttachToFrameBuffer(uint32_t framebuffer, GLenum attachmentType = GL_COLOR_ATTACHMENT0);
+
+			/**
+			 * @brief Get OpenGL texture ID
+			 * @return OpenGL texture location
+			 */
+			GLuint GetGLLocation() const { return GLLocation; };
+
+			const uint32_t width;	///< Width of the texture
+			const uint32_t height;	///< Height of the texture
+			const GLenum format;	///< OpenGL image storage format
+		private:
+			GLuint GLLocation;	   	///< OpenGL texture ID
+			bool bound;			  	///< Whether texture is bound to OpenGL
 	};
 }
 #endif

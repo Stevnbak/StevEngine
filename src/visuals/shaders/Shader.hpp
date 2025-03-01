@@ -7,7 +7,8 @@ namespace StevEngine::Renderer {
 
 	enum ShaderType {
 		VERTEX,
-		FRAGMENT
+		FRAGMENT,
+		COMPUTE
 	};
 
 	/**
@@ -28,6 +29,12 @@ namespace StevEngine::Renderer {
 
 			/** @brief Type of this shader */
 			const ShaderType shaderType;
+
+			/**
+			 * @brief Get OpenGL shader ID
+			 * @return OpenGL shader location
+			 */
+			uint32_t GetLocation() const { return location; };
 
 		private:
 			uint32_t location;	 ///< OpenGL shader object ID

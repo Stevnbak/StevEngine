@@ -1,3 +1,4 @@
+#include "main/Log.hpp"
 #include "utilities/Stream.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "Texture.hpp"
@@ -12,7 +13,7 @@ namespace StevEngine::Visuals {
 	Texture::Texture(Resources::Resource file) : path(file.path), bound(false) {
 		surface = IMG_Load_RW(file.GetSDLData(), true);
 	}
-	Texture::Texture(const Texture& copy) : path(copy.path), GLLocation(copy.GLLocation), surface(copy.surface), bound(false) {}
+	Texture::Texture(const Texture& copy) : path(copy.path), GLLocation(copy.GLLocation), surface(copy.surface), bound(copy.bound) {}
 	void Texture::operator=(const Texture& copy) {
 		if(bound) FreeTexture();
 		GLLocation = copy.GLLocation;
@@ -24,6 +25,7 @@ namespace StevEngine::Visuals {
 			GLLocation = 0;
 			return;
 		};
+		if(IsBound()) FreeTexture();
 		glGenTextures(1, &GLLocation);
 		glBindTexture(GL_TEXTURE_2D, GLLocation);
 		//Genereate texture
@@ -39,9 +41,44 @@ namespace StevEngine::Visuals {
 		SDL_FreeSurface(convertedSurface);
 	}
 	void Texture::FreeTexture() {
+		if(!IsBound()) return Log::Error("Texture is not bound!", true);
 		glDeleteTextures(1, &GLLocation);
 		bound = false;
 	}
+
+	ComputeTexture::ComputeTexture(uint32_t width, uint32_t height, GLenum format) : width(width), height(height), format(format), bound(false) {}
+	ComputeTexture::ComputeTexture(const ComputeTexture& copy)
+		: width(copy.width), height(copy.height), format(copy.format), GLLocation(copy.GLLocation), bound(copy.bound) {}
+	ComputeTexture::~ComputeTexture() {}
+	void ComputeTexture::BindTexture() {
+		glCreateTextures(GL_TEXTURE_2D, 1, &GLLocation);
+		glTextureStorage2D(GLLocation, 1, format, width, height);
+		glTextureParameteri(GLLocation, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTextureParameteri(GLLocation, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(GLLocation, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(GLLocation, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		//Set bound
+		bound = true;
+	}
+	void ComputeTexture::FreeTexture() {
+		if(!IsBound()) return Log::Error("Texture is not bound!", true);
+		glDeleteTextures(1, &GLLocation);
+		bound = false;
+	}
+	bool ComputeTexture::AttachToFrameBuffer(uint32_t framebuffer, GLenum attachmentType) {
+		if(!IsBound()) {
+			Log::Error("Texture is not bound!", true);
+			return false;
+		}
+		glNamedFramebufferTexture(framebuffer, attachmentType, GLLocation, 0);
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		{
+			Log::Error("Framebuffer is not complete!", true);
+			return false;
+		}
+		return true;
+	}
+
 }
 
 namespace StevEngine::Utilities {
@@ -52,6 +89,14 @@ namespace StevEngine::Utilities {
 	//Write to stream
 	template <> void Stream::Write<Visuals::Texture>(const Visuals::Texture& data) {
 		*this << data.GetPath();
+	}
+	//Read from stream
+	template <> Visuals::ComputeTexture Stream::Read<Visuals::ComputeTexture>() {
+		return Visuals::ComputeTexture(Read<uint32_t>(),Read<uint32_t>());
+	}
+	//Write to stream
+	template <> void Stream::Write<Visuals::ComputeTexture>(const Visuals::ComputeTexture& data) {
+		*this << data.width << data.height;
 	}
 }
 #endif

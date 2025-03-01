@@ -18,19 +18,30 @@ namespace StevEngine::Renderer {
 	ShaderProgram::ShaderProgram(ShaderType shaderType) : shaderType(shaderType), modified(true), location(glCreateProgram()) {
 		glProgramParameteri(location, GL_PROGRAM_SEPARABLE, GL_TRUE);
 		//Add main shaders
-		if(shaderType == VERTEX) {
-			AddShader(Shader(vertexMainSource, shaderType));
-		} else {
-			AddShader(Shader(fragmentMainSource, shaderType));
-			AddShader(Shader(lightSource, shaderType));
+		switch(shaderType) {
+			case VERTEX:
+				AddShader(Shader(vertexMainSource, shaderType));
+				break;
+			case FRAGMENT:
+				AddShader(Shader(fragmentMainSource, shaderType));
+				AddShader(Shader(lightSource, shaderType));
+				break;
 		}
 	}
 
+	ShaderProgram::ShaderProgram(const std::vector<Shader>& shaders) : ShaderProgram(shaders.at(0).shaderType) {
+		for(Shader shader : shaders) {
+			//if(shader.shaderType != shaderType) continue;
+			AddShader(shader);
+		}
+		RelinkProgram();
+	}
+
 	uint32_t ShaderProgram::AddShader(Shader shader) {
-		glAttachShader(location, shader.location);
-		shaders.insert({shader.location, shader});
+		glAttachShader(location, shader.GetLocation());
+		shaders.insert({shader.GetLocation(), shader});
 		modified = true;
-		return shader.location;
+		return shader.GetLocation();
 	}
 
 	void ShaderProgram::RemoveShader(uint32_t location) {
@@ -93,6 +104,19 @@ namespace StevEngine::Renderer {
 	}
 	void ShaderProgram::SetShaderUniform(const char* name, double value) const {
 		glProgramUniform1d(location, glGetUniformLocation(location, name), value);
+	}
+
+
+	ComputeShader::ComputeShader(const char* source) : ShaderProgram({Shader(source, COMPUTE)}) {}
+
+	void ComputeShader::Run(const Visuals::ComputeTexture& output, uint32_t groupsX, uint32_t groupsY, uint32_t groupsZ) const {
+		//Use this hsader program program
+		glUseProgram(location);
+		glBindImageTexture(0, output.GetGLLocation(), 0, GL_FALSE, 0, GL_WRITE_ONLY, output.format);
+		//Run the compute shader
+		glDispatchCompute(groupsX, groupsY, groupsZ);
+		// Ensure all writes to the image are complete before continuing
+		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 	}
 }
 #endif
