@@ -83,7 +83,6 @@ namespace StevEngine::Renderer {
 	void ShaderProgram::SetShaderUniform(const char* name, Utilities::Matrix4 value) const {
 		glProgramUniformMatrix4fv(location, glGetUniformLocation(location, name), 1, GL_FALSE, value.data());
 	}
-
 	void ShaderProgram::SetShaderUniform(const char* name, Utilities::Color value) const {
 		glProgramUniform4fv(location, glGetUniformLocation(location, name), 1, value.data());
 	}

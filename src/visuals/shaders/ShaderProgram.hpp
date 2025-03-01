@@ -165,7 +165,7 @@ namespace StevEngine::Renderer {
 			 *
 			 * @param shaders Vector of shaders to initialize program with.
 			 */
-			ComputeShader(const std::vector<Shader>& shaders);
+			ComputeShader(const std::vector<Shader>& shaders) : ShaderProgram(shaders) {};
 
 			/**
 			 * @brief Create from serialized data
