@@ -78,6 +78,23 @@ namespace StevEngine::Visuals {
 		}
 		return true;
 	}
+	void* ComputeTexture::RetrieveData(GLenum format, GLenum pixel, size_t dataSize) const {
+		GLuint buffer;
+		glGenBuffers(1, &buffer);
+		glBindBuffer(GL_PIXEL_PACK_BUFFER, buffer);
+		glNamedBufferData(buffer,
+			width * height * dataSize,
+			(void*)0,
+			GL_DYNAMIC_DRAW);
+		// bind texture
+		glBindTexture(GL_TEXTURE_2D, GLLocation);
+		// transfer texture into PBO
+		glGetTexImage(GL_TEXTURE_2D, 0, format, pixel, (GLvoid*)0);
+
+		//map buffer to array
+		return glMapNamedBuffer(buffer, GL_READ_ONLY);
+	}
+
 
 }
 

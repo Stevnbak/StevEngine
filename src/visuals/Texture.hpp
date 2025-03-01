@@ -118,6 +118,14 @@ namespace StevEngine::Visuals {
 			bool AttachToFrameBuffer(uint32_t framebuffer, GLenum attachmentType = GL_COLOR_ATTACHMENT0);
 
 			/**
+			 * @brief Retrieve pointer to the data from the texture
+			 * @param format OpenGL pixel format for the returned data (@see https://docs.gl/gl4/glGetTexImage `format` parameter)
+			 * @param pixel OpenGL pixel type for the returned data. (@see https://docs.gl/gl4/glGetTexImage `type` parameter)
+			 * @return true if attachment was succesful, false if not
+			 */
+			void* RetrieveData(GLenum format, GLenum pixel = GL_FLOAT, size_t dataSize = sizeof(float)) const;
+
+			/**
 			 * @brief Get OpenGL texture ID
 			 * @return OpenGL texture location
 			 */
