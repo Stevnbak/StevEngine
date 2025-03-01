@@ -15,7 +15,8 @@ namespace StevEngine::Utilities {
 			 * @param step Grid spacing
 			 * @param data Array of height values
 			 */
-			TerrainData(uint32_t size, double step, double* data);
+			TerrainData(uint32_t size, double step, double* data, double scale = 1.0);
+			TerrainData(uint32_t size, double step, float* data, double scale = 1.0);
 
 			/**
 			 * @brief Create empty terrain

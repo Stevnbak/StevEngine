@@ -116,6 +116,8 @@ namespace StevEngine::Renderer {
 		glDispatchCompute(groupsX, groupsY, groupsZ);
 		// Ensure all writes to the image are complete before continuing
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+		//Reset program
+		glUseProgram(0);
 	}
 }
 #endif

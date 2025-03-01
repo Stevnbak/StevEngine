@@ -108,7 +108,7 @@ namespace StevEngine {
 				void DrawFrame();					///< Draw a complete frame
 				void SetViewSize(int WIDTH, int HEIGHT);  ///< Set viewport size
 				void SetVSync(bool vsync);		   ///< Set vertical sync
-				void SetFaceCulling(bool enable, GLenum face = GL_BACK, bool clockwise = false);  ///< Set face culling
+				void SetFaceCulling(bool enable, GLenum face = GL_FRONT, bool clockwise = false);  ///< Set face culling
 				void SetMSAA(bool enable, uint16_t amount = 4);  ///< Set anti-aliasing
 
 				// Getters

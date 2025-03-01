@@ -176,6 +176,7 @@ namespace StevEngine::Renderer {
 	};
 
 	void RenderSystem::DrawFrame() {
+		glUseProgram(0);
 		//Clear color and depth buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

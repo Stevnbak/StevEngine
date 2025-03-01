@@ -4,9 +4,12 @@
 #include <cstdint>
 
 namespace StevEngine::Utilities {
-	TerrainData::TerrainData(uint32_t size, double step, double* data) : size(size), step(step), points(new double[size * size]) {
-		std::copy(&data[0], &data[(size * size)], &points[0]);
+	TerrainData::TerrainData(uint32_t size, double step, double* data, double scale) : size(size), step(step), points(new double[size * size]) {
+		std::transform(&data[0], &data[(size * size)], &points[0], [scale](double v){ return v * scale; });
 	};
+	TerrainData::TerrainData(uint32_t size, double step, float* data, double scale) : size(size), step(step), points(new double[size * size]) {
+		std::transform(&data[0], &data[(size * size)], &points[0], [scale](float v){ return (double)v * scale; });
+	}
 	TerrainData::TerrainData(uint32_t size, double step) : size(size), step(step), points(new double[size * size]) {};
 
 	//Read from stream

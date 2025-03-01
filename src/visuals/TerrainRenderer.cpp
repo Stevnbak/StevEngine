@@ -81,13 +81,13 @@ namespace StevEngine::Visuals {
 					vertices.emplace_back(c, cUV, faceNormal, tangent);
 					vertices.emplace_back(d, dUV, faceNormal, tangent);
 
-					indices.emplace_back(offset + 0);
+					indices.emplace_back(offset + 2);
 					indices.emplace_back(offset + 1);
-					indices.emplace_back(offset + 2);
-
 					indices.emplace_back(offset + 0);
-					indices.emplace_back(offset + 2);
+
 					indices.emplace_back(offset + 3);
+					indices.emplace_back(offset + 2);
+					indices.emplace_back(offset + 0);
 				}
 			}
 		}
