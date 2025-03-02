@@ -120,10 +120,11 @@ namespace StevEngine::Visuals {
 			/**
 			 * @brief Retrieve pointer to the data from the texture
 			 * @param format OpenGL pixel format for the returned data (@see https://docs.gl/gl4/glGetTexImage `format` parameter)
+			 * @param dataSize Size of the data for each pixel. For GL_RGB and GL_FLOAT it should be `sizeof(float) * 3`
 			 * @param pixel OpenGL pixel type for the returned data. (@see https://docs.gl/gl4/glGetTexImage `type` parameter)
 			 * @return true if attachment was succesful, false if not
 			 */
-			void* RetrieveData(GLenum format, GLenum pixel = GL_FLOAT, size_t dataSize = sizeof(float)) const;
+			void* RetrieveData(GLenum format, size_t dataSize = sizeof(float), GLenum pixel = GL_FLOAT) const;
 
 			/**
 			 * @brief Get OpenGL texture ID

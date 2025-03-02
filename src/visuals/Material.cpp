@@ -28,10 +28,10 @@ namespace StevEngine::Visuals {
 		normal.BindTexture();
 	}
 	void Material::FreeAlbedo() {
-		albedo.FreeTexture();
+		if(albedo.IsBound()) albedo.FreeTexture();
 	}
 	void Material::FreeNormal() {
-		normal.FreeTexture();
+		if(normal.IsBound()) normal.FreeTexture();
 	}
 }
 

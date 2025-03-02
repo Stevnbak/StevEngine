@@ -1,3 +1,4 @@
+#include "glad/gl.h"
 #include "main/Log.hpp"
 #include "utilities/Stream.hpp"
 #ifdef StevEngine_RENDERER_GL
@@ -78,7 +79,7 @@ namespace StevEngine::Visuals {
 		}
 		return true;
 	}
-	void* ComputeTexture::RetrieveData(GLenum format, GLenum pixel, size_t dataSize) const {
+	void* ComputeTexture::RetrieveData(GLenum format, size_t dataSize, GLenum pixel) const {
 		GLuint buffer;
 		glGenBuffers(1, &buffer);
 		glBindBuffer(GL_PIXEL_PACK_BUFFER, buffer);
@@ -90,9 +91,12 @@ namespace StevEngine::Visuals {
 		glBindTexture(GL_TEXTURE_2D, GLLocation);
 		// transfer texture into PBO
 		glGetTexImage(GL_TEXTURE_2D, 0, format, pixel, (GLvoid*)0);
-
 		//map buffer to array
-		return glMapNamedBuffer(buffer, GL_READ_ONLY);
+		void* data = glMapNamedBuffer(buffer, GL_READ_ONLY);
+		//Delete buffer again
+		glDeleteBuffers(1, &buffer);
+		//Return data
+		return data;
 	}
 
 
