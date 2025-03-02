@@ -14,11 +14,13 @@
 namespace StevEngine {
 	//Main functions
 	void GameObject::Start() {
+		isActive = true;
 		for (Component* component : components) {
 			component->Start();
 		}
 	}
 	void GameObject::Deactivate() {
+		isActive = false;
 		events.Publish(DeactivateEvent());
 	}
 	void GameObject::Update(double deltaTime) {
@@ -65,7 +67,7 @@ namespace StevEngine {
 	}
 	Utilities::Quaternion GameObject::GetWorldRotation() {
 		if(!parent.IsNull()) {
-			return sceneManager.GetScene(scene)->GetObject(parent)->GetWorldRotation() * rotation;
+			return GetParent()->GetWorldRotation() * rotation;
 		} else {
 			return rotation;
 		}
@@ -89,7 +91,7 @@ namespace StevEngine {
 	//Children functions
 	int GameObject::AddChild(const Utilities::ID& id) {
 		children.emplace_back(id);
-		sceneManager.GetScene(scene)->GetObject(id)->SetParent(this->id);
+		GetScene()->GetObject(id)->SetParent(this->id);
 		int i = children.size() - 1;
 		return i;
 	}
@@ -98,14 +100,17 @@ namespace StevEngine {
 		children.erase(children.begin() + index);
 	}
 	GameObject* GameObject::GetChild(int index) const {
-		return sceneManager.GetScene(scene)->GetObject(children[index]);
+		return GetScene()->GetObject(children[index]);
 	}
 	uint GameObject::GetChildCount() const {
 		return children.size();
 	}
 	GameObject* GameObject::GetParent() const {
-		if(!parent.IsNull()) return sceneManager.GetScene(scene)->GetObject(parent);
+		if(!parent.IsNull()) return GetScene()->GetObject(parent);
 		else return nullptr;
+	}
+	Scene* GameObject::GetScene() const {
+		return sceneManager.GetScene(scene);
 	}
 	void GameObject::SetParent(const Utilities::ID& id) {
 		if(id.IsNull()) return;
@@ -113,7 +118,7 @@ namespace StevEngine {
 			GameObject* p = GetParent();
 			for(auto[id, event] : handlers) p->Unsubscribe(event, id);
 		}
-		GameObject* object = sceneManager.GetScene(scene)->GetObject(id);
+		GameObject* object = GetScene()->GetObject(id);
 		handlers.emplace_back(object->Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); }), UpdateEvent::GetStaticEventType());
 		#ifdef StevEngine_SHOW_WINDOW
 		handlers.emplace_back(object->Subscribe<DrawEvent>([this] (DrawEvent e) { this->Draw(e.transform);  }), DrawEvent::GetStaticEventType());
@@ -151,7 +156,7 @@ namespace StevEngine {
 			AddComponent(CreateComponents::Create(type, stream));
 		}
 		for(int i = 0; i < children; i++) {
-			sceneManager.GetScene(scene)->CreateObject(stream);
+			GetScene()->CreateObject(stream);
 		}
 	}
 	//Destroy
@@ -162,7 +167,7 @@ namespace StevEngine {
 		if(p) for(auto[id, event] : handlers) p->Unsubscribe(event, id);
 		//Destroy children
 		for (int i = 0; i < children.size(); i++) {
-			auto* s = sceneManager.GetScene(scene);
+			auto* s = GetScene();
 			s->GetObject(children[i])->SetParent(Utilities::ID::empty);
 			s->DestroyObject(children[i]);
 		}

@@ -46,8 +46,9 @@ namespace StevEngine {
 			Utilities::ID Id() const { return id; }
 
 		private:
-			Utilities::ID id;	   ///< Unique identifier
-			std::string scene;	  ///< Containing scene name
+			Utilities::ID id;	  	///< Unique identifier
+			std::string scene;	  	///< Containing scene name
+			bool isActive = false;	///< Is this gameobject currently active
 
 		//Transform
 		public:
@@ -180,7 +181,8 @@ namespace StevEngine {
 			 */
 			template<typename EventType>
 			Utilities::ID Subscribe(EventFunction<EventType> handler, bool allowFromChild = true) {
-				if(allowFromChild) events.Subscribe<ChildEvent<EventType>>([handler] (ChildEvent<EventType> e) { handler(e.event); });
+				if(allowFromChild)
+					events.Subscribe<ChildEvent<EventType>>([handler] (ChildEvent<EventType> e) { handler(e.event); });
 				return events.Subscribe<EventType>(handler);
 			}
 
@@ -253,6 +255,12 @@ namespace StevEngine {
 			 * @return Pointer to parent object
 			 */
 			GameObject* GetParent() const;
+
+			/**
+			 * @brief Get containing Scene
+			 * @return Pointer to containing Scene
+			 */
+			Scene* GetScene() const;
 
 		private:
 			/**
@@ -360,6 +368,7 @@ namespace StevEngine {
 				//Add to list
 				component->SetObject(this, this->scene);
 				components.push_back(component);
+				if(isActive) component->Start();
 				return component;
 			}
 

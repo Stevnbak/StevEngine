@@ -26,9 +26,11 @@ namespace StevEngine {
 	}
 
 	void EventManager::Publish(const Event& event) {
-		auto handlers = subscribers[event.GetEventType()];
-		for (auto& handler : handlers) {
-			handler->Execute(event);
+		auto& handlers = subscribers[event.GetEventType()];
+		auto i = handlers.begin();
+		while(i != handlers.end()) {
+			(*i)->Execute(event);
+			i++;
 		}
 		//Log::Debug(event.GetEventType() + " published to " + std::to_string(handlers.size()) + " listeners.", true);
 	}

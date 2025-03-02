@@ -13,11 +13,11 @@ namespace StevEngine {
 		gameObject = object->Id();
 		this->scene = scene;
 		//Event listeners
-		handlers.emplace_back(object->Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); }), UpdateEvent::GetStaticEventType());
+		handlers.emplace_back(object->Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); }, false), UpdateEvent::GetStaticEventType());
 		#ifdef StevEngine_SHOW_WINDOW
-		handlers.emplace_back(object->Subscribe<DrawEvent>([this] (DrawEvent e) { this->Draw(e.transform);  }), DrawEvent::GetStaticEventType());
+		handlers.emplace_back(object->Subscribe<DrawEvent>([this] (DrawEvent e) { this->Draw(e.transform); }, false), DrawEvent::GetStaticEventType());
 		#endif
-		handlers.emplace_back(object->Subscribe<DeactivateEvent>([this] (DeactivateEvent) { this->Deactivate();  }), DeactivateEvent::GetStaticEventType());
+		handlers.emplace_back(object->Subscribe<DeactivateEvent>([this] (DeactivateEvent) { this->Deactivate(); }, false), DeactivateEvent::GetStaticEventType());
 	}
 	GameObject* Component::GetParent() const {
 		return GetScene()->GetObject(gameObject);
