@@ -11,6 +11,9 @@
 #include <array>
 #include <cstdint>
 
+#define OPENGL_MAJOR 4
+#define OPENGL_MINOR 4
+
 namespace StevEngine {
 	namespace Visuals {
 		class Light;

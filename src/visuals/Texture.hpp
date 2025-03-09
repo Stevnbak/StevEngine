@@ -40,7 +40,7 @@ namespace StevEngine::Visuals {
 			 * @brief Bind texture to OpenGL
 			 * Generates and configures texture in GPU memory
 			 */
-			void BindTexture();
+			void BindTexture(bool force = false);
 
 			/**
 			 * @brief Free texture from OpenGL
@@ -69,7 +69,7 @@ namespace StevEngine::Visuals {
 			/** @brief Empty texture singleton */
 			const static Texture empty;
 
-		private:
+		protected:
 			/** @brief Create empty texture */
 			Texture() : bound(false), surface(nullptr), GLLocation(0) {};
 
@@ -79,7 +79,7 @@ namespace StevEngine::Visuals {
 			bool bound;			  ///< Whether texture is bound to OpenGL
 	};
 
-	class ComputeTexture {
+	class ComputeTexture : public Texture {
 		public:
 			ComputeTexture(uint32_t width, uint32_t height, GLenum format = GL_RGBA32F);
 
@@ -95,19 +95,7 @@ namespace StevEngine::Visuals {
 			 * @brief Bind texture to OpenGL
 			 * Generates and configures texture in GPU memory
 			 */
-			void BindTexture();
-
-			/**
-			 * @brief Free texture from OpenGL
-			 * Releases texture from GPU memory
-			 */
-			void FreeTexture();
-
-			/**
-			 * @brief Check if texture is bound to OpenGL
-			 * @return True if texture is in GPU memory
-			 */
-			bool IsBound() const { return bound; };
+			void BindTexture(bool force = false);
 
 			/**
 			 * @brief Attach to an OpenGL framebuffer
@@ -126,18 +114,9 @@ namespace StevEngine::Visuals {
 			 */
 			void* RetrieveData(GLenum format, size_t dataSize = sizeof(float), GLenum pixel = GL_FLOAT) const;
 
-			/**
-			 * @brief Get OpenGL texture ID
-			 * @return OpenGL texture location
-			 */
-			GLuint GetGLLocation() const { return GLLocation; };
-
 			const uint32_t width;	///< Width of the texture
 			const uint32_t height;	///< Height of the texture
 			const GLenum format;	///< OpenGL image storage format
-		private:
-			GLuint GLLocation;	   	///< OpenGL texture ID
-			bool bound;			  	///< Whether texture is bound to OpenGL
 	};
 }
 #endif

@@ -24,8 +24,9 @@ namespace StevEngine::Renderer {
 			/**
 			 * @brief Create shader program
 			 * @param shaderType Type of shaders in program
+			 * @param useDefaultShaders Add default engine shaders to program
 			 */
-			ShaderProgram(ShaderType shaderType);
+			ShaderProgram(ShaderType shaderType, bool useDefaultShaders = true);
 
 			/**
 			 * @brief Create shader program
@@ -33,8 +34,9 @@ namespace StevEngine::Renderer {
 			 * The shader type will be inferred from the first shader in vector, any shader of different type will be ignored.
 			 *
 			 * @param shaders Vector of shaders to initialize program with.
+			 * @param useDefaultShaders Add default engine shaders to program
 			 */
-			ShaderProgram(const std::vector<Shader>& shaders);
+			ShaderProgram(const std::vector<Shader>& shaders, bool useDefaultShaders = true);
 
 			/**
 			 * @brief Create from serialized data
@@ -60,6 +62,9 @@ namespace StevEngine::Renderer {
 
 			/** @brief Relink program after shader changes */
 			void RelinkProgram();
+
+			/** @brief Deletes program and all shaders from OpenGL */
+			void DeleteProgram();
 
 			// Uniform setters
 			/**
@@ -189,6 +194,14 @@ namespace StevEngine::Renderer {
 			 * @param groupsZ Number of groups to use on the Z-axis
 			 */
 			void Run(const Visuals::ComputeTexture& output, uint32_t groupsX, uint32_t groupsY, uint32_t groupsZ = 1) const;
+			/**
+			 * @brief Run the compute shader
+			 * @param groupsX Number of groups to use on the X-axis
+			 * @param groupsY Number of groups to use on the Y-axis
+			 * @param groupsZ Number of groups to use on the Z-axis
+			 */
+			void Run(uint32_t groupsX, uint32_t groupsY, uint32_t groupsZ = 1) const;
+
 	};
 }
 #endif

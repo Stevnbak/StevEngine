@@ -39,13 +39,13 @@ namespace StevEngine::Renderer {
 	}
 
 	//Shader constructor
-	Shader::Shader(const char* source, ShaderType shaderType) : shaderType(shaderType), source(source) {
+	Shader::Shader(const char* source, ShaderType shaderType, bool useDefaultDefinitions) : shaderType(shaderType), source(source) {
 		//Create
 		location = glCreateShader(OpenGLShaderType(shaderType));
 		//Add definitions
 		std::string src(source);
 		const char* newSource;
-		if(AddDefinitions(shaderType, src))	newSource = src.c_str();
+		if(useDefaultDefinitions && AddDefinitions(shaderType, src)) newSource = src.c_str();
 		else newSource = source;
 		//Compile
 		glShaderSource(location, 1, &newSource, NULL);

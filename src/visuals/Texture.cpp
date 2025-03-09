@@ -16,17 +16,23 @@ namespace StevEngine::Visuals {
 	}
 	Texture::Texture(const Texture& copy) : path(copy.path), GLLocation(copy.GLLocation), surface(copy.surface), bound(copy.bound) {}
 	void Texture::operator=(const Texture& copy) {
-		if(bound) FreeTexture();
+		//if(bound) FreeTexture();
+		bound = copy.bound;
+		path = copy.path;
 		GLLocation = copy.GLLocation;
 		surface = copy.surface;
 	}
 	Texture::~Texture() {}
-	void Texture::BindTexture() {
+	void Texture::BindTexture(bool force) {
+		if(IsBound()) {
+			if(force) FreeTexture();
+			else return;
+		}
 		if(!surface) {
 			GLLocation = 0;
+			bound = false;
 			return;
 		};
-		if(IsBound()) FreeTexture();
 		glGenTextures(1, &GLLocation);
 		glBindTexture(GL_TEXTURE_2D, GLLocation);
 		//Genereate texture
@@ -47,11 +53,15 @@ namespace StevEngine::Visuals {
 		bound = false;
 	}
 
-	ComputeTexture::ComputeTexture(uint32_t width, uint32_t height, GLenum format) : width(width), height(height), format(format), bound(false) {}
+	ComputeTexture::ComputeTexture(uint32_t width, uint32_t height, GLenum format) : width(width), height(height), format(format) {}
 	ComputeTexture::ComputeTexture(const ComputeTexture& copy)
-		: width(copy.width), height(copy.height), format(copy.format), GLLocation(copy.GLLocation), bound(copy.bound) {}
+		: width(copy.width), height(copy.height), format(copy.format), Texture(copy) {}
 	ComputeTexture::~ComputeTexture() {}
-	void ComputeTexture::BindTexture() {
+	void ComputeTexture::BindTexture(bool force) {
+		if(IsBound()) {
+			if(force) FreeTexture();
+			else return;
+		}
 		glCreateTextures(GL_TEXTURE_2D, 1, &GLLocation);
 		glTextureStorage2D(GLLocation, 1, format, width, height);
 		glTextureParameteri(GLLocation, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -60,11 +70,6 @@ namespace StevEngine::Visuals {
 		glTextureParameteri(GLLocation, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		//Set bound
 		bound = true;
-	}
-	void ComputeTexture::FreeTexture() {
-		if(!IsBound()) return Log::Error("Texture is not bound!", true);
-		glDeleteTextures(1, &GLLocation);
-		bound = false;
 	}
 	bool ComputeTexture::AttachToFrameBuffer(uint32_t framebuffer, GLenum attachmentType) {
 		if(!IsBound()) {

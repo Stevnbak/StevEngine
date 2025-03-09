@@ -1,3 +1,4 @@
+#include "glad/gl.h"
 #ifdef StevEngine_RENDERER_GL
 #include "ShaderProgram.hpp"
 #include "Shader.hpp"
@@ -15,21 +16,25 @@ namespace StevEngine::Renderer {
 	const char* lightSource =
 		#include "visuals/shaders/lights.frag"
 	;
-	ShaderProgram::ShaderProgram(ShaderType shaderType) : shaderType(shaderType), modified(true), location(glCreateProgram()) {
+	ShaderProgram::ShaderProgram(ShaderType shaderType, bool useDefaultShaders) : shaderType(shaderType), modified(true), location(glCreateProgram()) {
 		glProgramParameteri(location, GL_PROGRAM_SEPARABLE, GL_TRUE);
 		//Add main shaders
-		switch(shaderType) {
-			case VERTEX:
-				AddShader(Shader(vertexMainSource, shaderType));
-				break;
-			case FRAGMENT:
-				AddShader(Shader(fragmentMainSource, shaderType));
-				AddShader(Shader(lightSource, shaderType));
-				break;
+		if(useDefaultShaders) {
+			switch(shaderType) {
+				case VERTEX:
+					AddShader(Shader(vertexMainSource, shaderType));
+					break;
+				case FRAGMENT:
+					AddShader(Shader(fragmentMainSource, shaderType));
+					AddShader(Shader(lightSource, shaderType));
+					break;
+				default:
+					break;
+			}
 		}
 	}
 
-	ShaderProgram::ShaderProgram(const std::vector<Shader>& shaders) : ShaderProgram(shaders.at(0).shaderType) {
+	ShaderProgram::ShaderProgram(const std::vector<Shader>& shaders, bool useDefaultShaders) : ShaderProgram(shaders.at(0).shaderType, useDefaultShaders) {
 		for(Shader shader : shaders) {
 			//if(shader.shaderType != shaderType) continue;
 			AddShader(shader);
@@ -62,6 +67,13 @@ namespace StevEngine::Renderer {
 			Log::Error("Shader program failed to compile!\n" + std::string(infoLog));
 		}
 		modified = false;
+	}
+
+	void ShaderProgram::DeleteProgram() {
+		while(!shaders.empty()) {
+			RemoveShader(shaders.begin()->first);
+		}
+		glDeleteProgram(location);
 	}
 
 	Utilities::Stream ShaderProgram::Export(Utilities::StreamType type) const {
@@ -109,9 +121,14 @@ namespace StevEngine::Renderer {
 	ComputeShader::ComputeShader(const char* source) : ShaderProgram({Shader(source, COMPUTE)}) {}
 
 	void ComputeShader::Run(const Visuals::ComputeTexture& output, uint32_t groupsX, uint32_t groupsY, uint32_t groupsZ) const {
-		//Use this hsader program program
-		glUseProgram(location);
+		//Bind texture
 		glBindImageTexture(0, output.GetGLLocation(), 0, GL_FALSE, 0, GL_WRITE_ONLY, output.format);
+		//Run shader
+		Run(groupsX, groupsY, groupsZ);
+	}
+	void ComputeShader::Run(uint32_t groupsX, uint32_t groupsY, uint32_t groupsZ) const {
+		//Use this shader program program
+		glUseProgram(location);
 		//Run the compute shader
 		glDispatchCompute(groupsX, groupsY, groupsZ);
 		// Ensure all writes to the image are complete before continuing

@@ -32,8 +32,8 @@ namespace StevEngine::Renderer {
 		#endif
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, context_flags);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 4 );
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, OPENGL_MAJOR );
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, OPENGL_MINOR );
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
@@ -177,6 +177,7 @@ namespace StevEngine::Renderer {
 
 	void RenderSystem::DrawFrame() {
 		glUseProgram(0);
+		glBindProgramPipeline(render.GetShaderPipeline());
 		//Clear color and depth buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -207,6 +208,10 @@ namespace StevEngine::Renderer {
 			//Draw objects
 			for(RenderObject& object : queues[i]) {
 				object.Draw();
+				//Reset vao/pipline etc.
+				glBindVertexArray(VAO);
+				glUseProgram(0);
+				glBindProgramPipeline(render.GetShaderPipeline());
 			}
 			//Clear queue
 			queues[i].clear();

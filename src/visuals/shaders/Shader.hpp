@@ -24,8 +24,9 @@ namespace StevEngine::Renderer {
 			 * @brief Create new shader
 			 * @param source GLSL source code
 			 * @param shaderType Type of shader (vertex/fragment)
+			 * @param useDefaultDefinitions Add default engine shader definitions to shader
 			 */
-			Shader(const char* source, ShaderType shaderType);
+			Shader(const char* source, ShaderType shaderType, bool useDefaultDefinitions = true);
 
 			/** @brief Type of this shader */
 			const ShaderType shaderType;
