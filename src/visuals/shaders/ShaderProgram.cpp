@@ -107,8 +107,11 @@ namespace StevEngine::Renderer {
 	void ShaderProgram::SetShaderUniform(const char* name, bool value) const {
 		glProgramUniform1i(location, glGetUniformLocation(location, name), value);
 	}
-	void ShaderProgram::SetShaderUniform(const char* name, int value) const {
+	void ShaderProgram::SetShaderUniform(const char* name, int32_t value) const {
 		glProgramUniform1i(location, glGetUniformLocation(location, name), value);
+	}
+	void ShaderProgram::SetShaderUniform(const char* name, uint32_t value) const {
+		glProgramUniform1ui(location, glGetUniformLocation(location, name), value);
 	}
 	void ShaderProgram::SetShaderUniform(const char* name, float value) const {
 		glProgramUniform1f(location, glGetUniformLocation(location, name), value);

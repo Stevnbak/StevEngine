@@ -114,6 +114,11 @@ namespace StevEngine {
 				void SetFaceCulling(bool enable, GLenum face = GL_FRONT, bool clockwise = false);  ///< Set face culling
 				void SetMSAA(bool enable, uint16_t amount = 4);  ///< Set anti-aliasing
 
+				//Enable/disable
+				void SetEnabled(bool enabled);
+				private: bool enabled;
+			public:
+
 				// Getters
 				const ShaderProgram& GetDefaultVertexShaderProgram() const { return vertexShaderProgram; }
 				const ShaderProgram& GetDefaultFragmentShaderProgram() const { return fragmentShaderProgram; }
@@ -146,6 +151,11 @@ namespace StevEngine {
 				 * @param light Light to remove
 				 */
 				void RemoveLight(Visuals::Light* light);
+
+				/**
+			 	 * @brief Rebinds the GPU buffers (VBO, EBO, VAO) to the renderers
+				*/
+				void ResetGPUBuffers();
 
 			private:
 				SDL_GLContext context;  ///< OpenGL context

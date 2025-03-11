@@ -99,12 +99,11 @@ namespace StevEngine::Visuals {
 		//map buffer to array
 		void* data = glMapNamedBuffer(buffer, GL_READ_ONLY);
 		//Delete buffer again
+		glUnmapNamedBuffer(buffer);
 		glDeleteBuffers(1, &buffer);
 		//Return data
 		return data;
 	}
-
-
 }
 
 namespace StevEngine::Utilities {

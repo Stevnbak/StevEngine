@@ -101,6 +101,7 @@ namespace StevEngine::Renderer {
 		engine->GetEvents()->Subscribe<WindowVSyncEvent>([this] (WindowVSyncEvent i) { return this->SetVSync(i.value); });
 		engine->GetEvents()->Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { return this->DrawFrame(); });
 
+		SetEnabled(true);
 		Log::Debug("Renderer has been initialized!", true);
 	}
 
@@ -171,18 +172,25 @@ namespace StevEngine::Renderer {
 		glUseProgramStages(shaderPipeline, GL_FRAGMENT_SHADER_BIT, fragmentShaderProgram.GetLocation());
 	}
 
+	void RenderSystem::ResetGPUBuffers() {
+		glBindVertexArray(VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	}
+
 	void RenderSystem::DrawObject(const CustomObject& object, Utilities::Matrix4 transform, RenderQueue queue) {
 		queues[queue].emplace_back(object, transform);
 	};
 
 	void RenderSystem::DrawFrame() {
+		if(!enabled) return;
 		glUseProgram(0);
 		glBindProgramPipeline(render.GetShaderPipeline());
 		//Clear color and depth buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//Bind vertex array
-		glBindVertexArray(VAO);
+		ResetGPUBuffers();
 
 		//Camera matrices
 		Visuals::Camera* camera = sceneManager.GetActiveScene()->GetCamera();
@@ -208,19 +216,17 @@ namespace StevEngine::Renderer {
 			//Draw objects
 			for(RenderObject& object : queues[i]) {
 				object.Draw();
-				//Reset vao/pipline etc.
-				glBindVertexArray(VAO);
-				glUseProgram(0);
-				glBindProgramPipeline(render.GetShaderPipeline());
 			}
 			//Clear queue
 			queues[i].clear();
 		}
 
-		//Cleanup
-		glBindVertexArray(0);
 		// Refresh OpenGL window
 		SDL_GL_SwapWindow(engine->window);
+	}
+
+	void RenderSystem::SetEnabled(bool enabled) {
+		this->enabled = enabled;
 	}
 
 	void RenderSystem::SetBackground(const Utilities::Color& color) {

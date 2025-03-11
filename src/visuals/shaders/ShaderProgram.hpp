@@ -107,7 +107,14 @@ namespace StevEngine::Renderer {
 			 * @param name Uniform name in shader
 			 * @param value Integer value
 			 */
-			void SetShaderUniform(const char* name, int value) const;
+			void SetShaderUniform(const char* name, int32_t value) const;
+
+			/**
+			 * @brief Set unsigned integer uniform
+			 * @param name Uniform name in shader
+			 * @param value Unsigned integer value
+			 */
+			void SetShaderUniform(const char* name, uint32_t value) const;
 
 			/**
 			 * @brief Set float uniform
