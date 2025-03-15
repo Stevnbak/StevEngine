@@ -19,10 +19,9 @@ using namespace StevEngine::Utilities;
 
 namespace StevEngine {
 	namespace Visuals {
-		const float r = 0.5;
 		const float pi2 = (2*M_PI);
 		//Cube
-		static const std::vector<Vertex> CubeVertices(TextureType textureType) {
+		const std::vector<Vertex> CubeVertices(TextureType textureType) {
 			std::array<Vertex, 6*6> vertices;
 			for(int side = 0; side < 6; side++) {
 				//Coordinates
@@ -101,8 +100,8 @@ namespace StevEngine {
 				).Normalized();
 				//Combine to vertices
 				for(int i = 0; i < 6; i++) {
-					if(a == 1)	vertices[side * 6 + i] = Vertex(sideVertices[i] * r, sideUVs[i], normal, tangent);
-					else		vertices[side * 6 + i] = Vertex(sideVertices[5 - i] * r, sideUVs[5 - i], normal, tangent);
+					if(a == 1)	vertices[side * 6 + i] = Vertex(sideVertices[i] * RADIUS, sideUVs[i], normal, tangent);
+					else		vertices[side * 6 + i] = Vertex(sideVertices[5 - i] * RADIUS, sideUVs[5 - i], normal, tangent);
 				}
 			}
 			return std::vector<Vertex>(vertices.begin(), vertices.end());
@@ -123,7 +122,7 @@ namespace StevEngine {
 		}
 
 		//Sphere
-		static const std::vector<Vertex> UVSphereVertices(TextureType textureType, bool smooth, int detail = 30, float height = r) {
+		const std::vector<Vertex> UVSphereVertices(TextureType textureType, bool smooth, int detail, float height) {
 			float anglePerStep = pi2 / detail; //In Radians
 			double repeatFactor = (textureType == REPEAT ? 4 : 1);
 			float divide = pi2 / repeatFactor;
@@ -139,7 +138,7 @@ namespace StevEngine {
 				for (int section = 0; section < detail; section++)
 				{
 					float sectionAngle = (anglePerStep) * section;
-					circle.emplace_back(r * std::cos(sectionAngle) * cosStackAngle, currentHeight, r * std::sin(sectionAngle) * cosStackAngle);
+					circle.emplace_back(RADIUS * std::cos(sectionAngle) * cosStackAngle, currentHeight, RADIUS * std::sin(sectionAngle) * cosStackAngle);
 				}
 				layers.push_back(circle);
 			}
@@ -271,7 +270,7 @@ namespace StevEngine {
 		static const std::array<Vector3, 20 * 3> Icosahedron() {
 			std::array<Vector3, 12> icosahedronVertices;
 			double goldenRatio = std::numbers::phi_v<double>;
-			double a = sqrt(pow(r, 2) / (1 + pow(goldenRatio, 2)));
+			double a = sqrt(pow(RADIUS, 2) / (1 + pow(goldenRatio, 2)));
 			double c = a * goldenRatio;
 			icosahedronVertices[0 + 0] = Vector3(-a, 0,  c);
 			icosahedronVertices[0 + 1] = Vector3( a, 0,  c);
@@ -349,7 +348,7 @@ namespace StevEngine {
 			}
 			return vertices;
 		}
-		static const std::vector<Vertex> IcosphereVertices(TextureType textureType, bool smooth, int detail = 3) {
+		const std::vector<Vertex> IcosphereVertices(TextureType textureType, bool smooth, int detail) {
 			//Get Icosahedron
 			std::array<Vector3, 20 * 3> icosahedron = Icosahedron();
 
@@ -408,7 +407,7 @@ namespace StevEngine {
 					if (cUV.X < 0.25) cUV.X += repeatFactor;
 				}
 				//Fix UV at poles
-				double top = sqrt(pow(r, 2) / (1 + pow(std::numbers::phi_v<double>, 2))) * std::numbers::phi_v<double>;
+				double top = sqrt(pow(RADIUS, 2) / (1 + pow(std::numbers::phi_v<double>, 2))) * std::numbers::phi_v<double>;
 				if(aUV.Y == 0 || aUV.Y == 1) {
 					aUV.X = (bUV.X + cUV.X) / 2.0;
 				}
@@ -459,7 +458,7 @@ namespace StevEngine {
 		}
 
 		//Cylinder
-		static const std::vector<Vertex> CylinderVertices(TextureType textureType, bool smooth, int detail = 30, double height = r) {
+		const std::vector<Vertex> CylinderVertices(TextureType textureType, bool smooth, int detail, double height) {
 			float third = 0.33333333333;
 			float quarter = 0.25;
 			int repeatFactor = (textureType == REPEAT ? 4 : 1);
@@ -474,13 +473,13 @@ namespace StevEngine {
 			for (int i = 0; i <= detail; i++)
 			{
 				float currentAngle = (anglePerStep) * i;
-				circle.emplace_back(r * std::cos(currentAngle), r * std::sin(currentAngle));
+				circle.emplace_back(RADIUS * std::cos(currentAngle), RADIUS * std::sin(currentAngle));
 			}
 			//Create triangles
 			std::vector<Vertex> vertices;
 			// Bottom and top
 			for(int f = -1; f <= 1; f += 2) {
-				Vector3 faceCenter = Vector3(0, f * r, 0);
+				Vector3 faceCenter = Vector3(0, f * RADIUS, 0);
 				Vector3 faceNormal = (Vector3::up * f).Normalized();
 				double faceCenterV = !(f * 0.5 + 0.5);
 				for (int i = 0; i < circle.size() - 1; i++) {
@@ -590,7 +589,7 @@ namespace StevEngine {
 		}
 
 		//Capsule
-		static const std::vector<Vertex> CapsuleVertices(TextureType textureType, bool smooth, int detail = 30) {
+		const std::vector<Vertex> CapsuleVertices(TextureType textureType, bool smooth, int detail) {
 			float third = 0.33333333333;
 			float quarter = 0.25;
 			int repeatFactor = (textureType == REPEAT ? 4 : 1);
@@ -601,24 +600,24 @@ namespace StevEngine {
 			//Create triangles
 			std::vector<Vertex> vertices;
 			// Get sphere vertices
-			std::vector<Vertex> sphere = UVSphereVertices(textureType, smooth, detail, r / 2.0);
+			std::vector<Vertex> sphere = UVSphereVertices(textureType, smooth, detail, RADIUS / 2.0);
 			for(int i = 0; i < sphere.size(); i += 3) {
 				Vertex v1 = sphere[i+0];
 				Vertex v2 = sphere[i+1];
 				Vertex v3 = sphere[i+2];
 				if(v1.position.Y < 0 || v2.position.Y < 0 || v3.position.Y < 0) {
-					v1.position.Y -= r / 2;
-					v2.position.Y -= r / 2;
-					v3.position.Y -= r / 2;
+					v1.position.Y -= RADIUS / 2;
+					v2.position.Y -= RADIUS / 2;
+					v3.position.Y -= RADIUS / 2;
 					//UV
 					v1.uv.Y = (v1.uv.Y - 0.5) * 2.0/3.0 + 2.0/3.0;
 					v2.uv.Y = (v2.uv.Y - 0.5) * 2.0/3.0 + 2.0/3.0;
 					v3.uv.Y = (v3.uv.Y - 0.5) * 2.0/3.0 + 2.0/3.0;
 				}
 				else if(v1.position.Y > 0 || v2.position.Y > 0 || v3.position.Y > 0) {
-					v1.position.Y += r / 2;
-					v2.position.Y += r / 2;
-					v3.position.Y += r / 2;
+					v1.position.Y += RADIUS / 2;
+					v2.position.Y += RADIUS / 2;
+					v3.position.Y += RADIUS / 2;
 					//UV
 					v1.uv.Y *= 2.0/3.0;
 					v2.uv.Y *= 2.0/3.0;
@@ -635,7 +634,7 @@ namespace StevEngine {
 
 			}
 			// Get cylinder vertices
-			std::vector<Vertex> cylinder = CylinderVertices(textureType, smooth, detail, r / 2.0);
+			std::vector<Vertex> cylinder = CylinderVertices(textureType, smooth, detail, RADIUS / 2.0);
 			for(int i = 0; i < cylinder.size(); i++) {
 				const Vertex& v = cylinder[i];
 				if(v.normal.Y < 0.1 && v.normal.Y > -0.1) {

@@ -45,13 +45,9 @@ namespace StevEngine::Utilities {
 			vertices.reserve(assimpMesh->mNumVertices);
 			for(int v = 0; v < assimpMesh->mNumVertices; v++) {
 				Vector3 coords = ((Vector3)assimpMesh->mVertices[v]) - center;
-				Vector3 tex = assimpMesh->HasTextureCoords(v) ? assimpMesh->mTextureCoords[0][v] : aiVector3D();
+				Vector3 tex = assimpMesh->HasTextureCoords(0) ? assimpMesh->mTextureCoords[0][v] : aiVector3D();
 				Vector3 normal = ((Vector3)assimpMesh->mNormals[v]);
-				Vector3 tangent = Vector3(1.0);
-				//Calculate tangent
-				if(assimpMesh->HasTangentsAndBitangents()) {
-					Vector3 tangent = ((Vector3)assimpMesh->mTangents[v]);
-				}
+				Vector3 tangent = assimpMesh->HasTangentsAndBitangents() ? ((Vector3)assimpMesh->mTangents[v]) : Vector3(1.0);
 				vertices.emplace_back(coords, (Vector2)tex, normal, tangent);
 			}
 			//Indices
@@ -104,7 +100,7 @@ namespace StevEngine::Utilities {
 				meshes.emplace_back(vertices, indices, material);
 			#else
 				//Push mesh
-				meshes.emplace_back(vertices, indicesl);
+				meshes.emplace_back(vertices, indices);
 			#endif
 		}
 	}

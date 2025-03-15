@@ -1,4 +1,5 @@
 #pragma once
+#include "utilities/Range3.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include <vector>
 #include <cstdint>
@@ -76,12 +77,39 @@ namespace StevEngine::Renderer {
 			 */
 			void Draw(Utilities::Matrix4 transform) const;
 
+			/**
+			 * @brief Update GPU buffers with object vertex and index data
+			 */
+			void UpdateBuffers() const;
+
+			/**
+			 * @brief Update Fragment shader with material data
+			 */
+			void UpdateShaderMaterial() const;
+
+			/**
+			 * @brief Get the number of indices in object
+			 * @return Number of indices
+			 */
+			size_t GetIndexCount() const { return indexCount; }
+			/**
+			 * @brief Get the number of indices in object
+			 * @return Number of indices
+			 */
+			size_t GetVertexCount() const { return vertexCount; }
+			/**
+			 * @brief Get bouning box of object
+			 * @return Bounding box
+			 */
+			Utilities::Range3 GetBoundingBox() const { return boundingBox; }
+
 		private:
 			float* vertices;	  ///< Vertex data array
 			size_t vertexCount;  ///< Number of vertices
 			uint32_t* indices;	///< Index data array
 			size_t indexCount;   ///< Number of indices
 			std::map<Renderer::ShaderType, Renderer::ShaderProgram> shaders;  ///< Shader programs by type
+			Utilities::Range3 boundingBox; ///< Bounding box
 	};
 }
 #endif

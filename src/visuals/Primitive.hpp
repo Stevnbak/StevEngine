@@ -1,6 +1,7 @@
 #pragma once
 #ifdef StevEngine_RENDERER_GL
 #include "renderer/RenderComponent.hpp"
+#include "utilities/Vertex.hpp"
 #include "visuals/Material.hpp"
 
 #define CUBE_PRIMITIVE_TYPE "CubePrimitive"
@@ -8,6 +9,8 @@
 #define ICOSPHERE_PRIMITIVE_TYPE "IcoSpherePrimitive"
 #define CYLINDER_PRIMITIVE_TYPE "CylinderPrimitive"
 #define CAPSULE_PRIMITIVE_TYPE "CapsulePrimitive"
+
+#define RADIUS 0.5
 
 namespace StevEngine {
 	namespace Visuals {
@@ -18,6 +21,11 @@ namespace StevEngine {
 			REPEAT,  ///< Texture repeats across surface
 			COVER	///< Texture stretches to cover surface
 		};
+
+		/**
+		 * @brief Get cube primitive vertices
+		 */
+		const std::vector<Utilities::Vertex> CubeVertices(TextureType textureType);
 
 		/**
 		 * @brief Cube primitive renderer
@@ -62,6 +70,11 @@ namespace StevEngine {
 
 				const Visuals::TextureType textureType;  ///< Texture mapping mode
 		};
+
+		/**
+		 * @brief Get uv sphere primitive vertices
+		 */
+		const std::vector<Utilities::Vertex> UVSphereVertices(TextureType textureType, bool smooth, int detail = 30, float height = RADIUS);
 
 		/**
 		 * @brief UV-mapped sphere primitive renderer
@@ -111,6 +124,11 @@ namespace StevEngine {
 		};
 
 		/**
+		 * @brief Get ico sphere primitive vertices
+		 */
+		const std::vector<Utilities::Vertex> IcosphereVertices(TextureType textureType, bool smooth, int detail = 3);
+
+		/**
 		 * @brief Icosphere primitive renderer
 		 *
 		 * Renders a sphere using subdivided icosahedron.
@@ -158,6 +176,11 @@ namespace StevEngine {
 		};
 
 		/**
+		 * @brief Get cylinder primitive vertices
+		 */
+		const std::vector<Utilities::Vertex> CylinderVertices(TextureType textureType, bool smooth, int detail = 30, double height = RADIUS);
+
+		/**
 		 * @brief Cylinder primitive renderer
 		 *
 		 * Renders a cylinder with circular caps.
@@ -203,6 +226,11 @@ namespace StevEngine {
 				const Visuals::TextureType textureType;  ///< Texture mapping mode
 				const bool smooth;					   ///< Whether to use smooth shading
 		};
+
+		/**
+		 * @brief Get capsule primitive vertices
+		 */
+		const std::vector<Utilities::Vertex> CapsuleVertices(TextureType textureType, bool smooth, int detail = 30);
 
 		/**
 		 * @brief Capsule primitive renderer

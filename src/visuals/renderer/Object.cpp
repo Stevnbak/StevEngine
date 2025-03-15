@@ -49,6 +49,13 @@ namespace StevEngine::Renderer {
 				uniqueVertices.emplace_back(v);
 			}
 			newIndices.emplace_back(index);
+			//Bounding box:
+			if(v.position.X < boundingBox.Low.X) boundingBox.Low.X = v.position.X;
+			if(v.position.X > boundingBox.High.X) boundingBox.High.X = v.position.X;
+			if(v.position.Y < boundingBox.Low.Y) boundingBox.Low.Y = v.position.Y;
+			if(v.position.Y > boundingBox.High.Y) boundingBox.High.Y = v.position.Y;
+			if(v.position.Z < boundingBox.Low.Z) boundingBox.Low.Z = v.position.Z;
+			if(v.position.Z > boundingBox.High.Z) boundingBox.High.Z = v.position.Z;
 		}
 		//Fill vertex and index arrays
 		auto floatVertices = ToFloatList(uniqueVertices);
@@ -77,9 +84,18 @@ namespace StevEngine::Renderer {
 		for(int i = 0; i < indexCount; i++) {
 			this->indices[i] = indices[i];
 		}
+		//Bounding box:
+		for (Vertex v : vertices) {
+			if(v.position.X < boundingBox.Low.X) boundingBox.Low.X = v.position.X;
+			if(v.position.X > boundingBox.High.X) boundingBox.High.X = v.position.X;
+			if(v.position.Y < boundingBox.Low.Y) boundingBox.Low.Y = v.position.Y;
+			if(v.position.Y > boundingBox.High.Y) boundingBox.High.Y = v.position.Y;
+			if(v.position.Z < boundingBox.Low.Z) boundingBox.Low.Z = v.position.Z;
+			if(v.position.Z > boundingBox.High.Z) boundingBox.High.Z = v.position.Z;
+		}
 	}
 	Object::Object(const Object& instance)
-	  : indices(instance.indices), indexCount(instance.indexCount), vertices(instance.vertices), vertexCount(instance.vertexCount), material(instance.material) {}
+	  : indices(instance.indices), indexCount(instance.indexCount), vertices(instance.vertices), vertexCount(instance.vertexCount), material(instance.material), boundingBox(instance.boundingBox) {}
 
 	//Shaders
 	void Object::AddShader(Renderer::ShaderProgram program) {
@@ -130,6 +146,33 @@ namespace StevEngine::Renderer {
 		}
 		//Update transform
 		vertexProgram->SetShaderUniform("objectTransform", transform);
+		//Update material
+		UpdateShaderMaterial();
+		//Draw object
+		UpdateBuffers();
+		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+		//Remove custom pipeline
+		if(usingCustomShaders) {
+			//Reset lights
+			if(usingCustomFragmentShader) {
+				for(Light* light : render.GetLights()) {
+					light->ResetShader(*fragmentProgram);
+				}
+			}
+			glBindProgramPipeline(render.GetShaderPipeline());
+			glDeleteProgramPipelines(1, &pipeline);
+		}
+	}
+
+	void Object::UpdateBuffers() const {
+		glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(float), vertices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+	}
+
+	void Object::UpdateShaderMaterial() const {
+		//Find fragment shader
+		const ShaderProgram* fragmentProgram = &render.GetDefaultFragmentShaderProgram();
+		if(shaders.contains(FRAGMENT)) fragmentProgram = &shaders.at(FRAGMENT);
 		//Update texture
 		const Visuals::Texture& albedo = material.GetAlbedo();
 		bool isAlbedoTextured = albedo.IsBound();
@@ -155,21 +198,6 @@ namespace StevEngine::Renderer {
 		fragmentProgram->SetShaderUniform("objectMaterial.diffuse", material.diffuse);
 		fragmentProgram->SetShaderUniform("objectMaterial.specular", material.specular);
 		fragmentProgram->SetShaderUniform("objectMaterial.shininess", material.shininess);
-		//Draw object
-		glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(float), vertices, GL_STATIC_DRAW);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(uint32_t), indices, GL_STATIC_DRAW);
-		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
-		//Remove custom pipeline
-		if(usingCustomShaders) {
-			//Reset lights
-			if(usingCustomFragmentShader) {
-				for(Light* light : render.GetLights()) {
-					light->ResetShader(*fragmentProgram);
-				}
-			}
-			glBindProgramPipeline(render.GetShaderPipeline());
-			glDeleteProgramPipelines(1, &pipeline);
-		}
 	}
 }
 #endif
