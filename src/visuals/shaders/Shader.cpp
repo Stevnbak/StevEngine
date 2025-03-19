@@ -9,7 +9,10 @@ namespace StevEngine::Renderer {
 		switch(type) {
 			case VERTEX: return GL_VERTEX_SHADER;
 			case FRAGMENT: return GL_FRAGMENT_SHADER;
+			case GEOMETRY: return GL_GEOMETRY_SHADER;
 			case COMPUTE: return GL_COMPUTE_SHADER;
+			case TESS_CONTROL: return GL_TESS_CONTROL_SHADER;
+			case TESS_EVALUATION: return GL_TESS_EVALUATION_SHADER;
 			default: return -1;
 		}
 	}

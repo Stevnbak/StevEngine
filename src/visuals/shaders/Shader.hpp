@@ -8,7 +8,10 @@ namespace StevEngine::Renderer {
 	enum ShaderType {
 		VERTEX,
 		FRAGMENT,
-		COMPUTE
+		GEOMETRY,
+		COMPUTE,
+		TESS_CONTROL,
+		TESS_EVALUATION
 	};
 
 	/**
