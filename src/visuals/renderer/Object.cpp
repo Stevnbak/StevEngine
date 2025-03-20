@@ -17,28 +17,13 @@ using StevEngine::Utilities::Vertex;
 using namespace StevEngine::Visuals;
 
 namespace StevEngine::Renderer {
-	std::vector<float> ToFloatList(const std::vector<Vertex>& vertices) {
-		std::vector<float> result;
-		result.resize(vertices.size() * (Utilities::VERTEX_COUNT));
-		int j = 0;
-		for(int i = 0; i < vertices.size(); i++) {
-			const Vertex& vertex = vertices[i];
-			result[j++] = vertex.position.X;
-			result[j++] = vertex.position.Y;
-			result[j++] = vertex.position.Z;
-			result[j++] = vertex.uv.X;
-			result[j++] = vertex.uv.Y;
-			result[j++] = vertex.normal.X;
-			result[j++] = vertex.normal.Y;
-			result[j++] = vertex.normal.Z;
-			result[j++] = vertex.tangent.X;
-			result[j++] = vertex.tangent.Y;
-			result[j++] = vertex.tangent.Z;
-		}
-		return result;
-	}
-	Object::Object(const std::vector<Vertex>& vertices, const Visuals::Material& material)
-	  : material(material) {
+	std::vector<float> ToFloatList(const std::vector<Vertex>& vertices);
+	uint32_t* SolidToWireframe(uint32_t* indices, uint32_t& size);
+	uint32_t* WireframeToSolid(uint32_t* indices, uint32_t& size);
+
+	Object::Object(const std::vector<Vertex>& vertices, const Visuals::Material& material, RenderType renderType)
+	  : material(material), renderType(renderType)
+	{
 		//Create indices and filter out duplicates
 		std::vector<Vertex> uniqueVertices;
 		std::vector<uint32_t> newIndices;
@@ -69,9 +54,12 @@ namespace StevEngine::Renderer {
 		for(int i = 0; i < indexCount; i++) {
 			this->indices[i] = newIndices[i];
 		}
+		if(renderType == WIREFRAME) {
+			this->indices = SolidToWireframe(indices, indexCount);
+		}
 	}
-	Object::Object(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices,  const Visuals::Material& material)
-	  : vertices(new float[vertices.size()]), vertexCount(vertices.size()), indices(new uint32_t[indices.size()]), indexCount(indices.size()), material(material)
+	Object::Object(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices,  const Visuals::Material& material, RenderType renderType)
+	  : vertices(new float[vertices.size()]), indexCount(indices.size()), material(material), renderType(renderType)
 	{
 		auto floatVertices = ToFloatList(vertices);
 		vertexCount = floatVertices.size();
@@ -79,10 +67,12 @@ namespace StevEngine::Renderer {
 		for(int i = 0; i < vertexCount; i++) {
 			this->vertices[i] = floatVertices[i];
 		}
-		indexCount = indices.size();
 		this->indices = new uint32_t[indexCount];
 		for(int i = 0; i < indexCount; i++) {
 			this->indices[i] = indices[i];
+		}
+		if(renderType == WIREFRAME) {
+			this->indices = SolidToWireframe(this->indices, indexCount);
 		}
 		//Bounding box:
 		for (Vertex v : vertices) {
@@ -95,8 +85,20 @@ namespace StevEngine::Renderer {
 		}
 	}
 	Object::Object(const Object& instance)
-	  : indices(instance.indices), indexCount(instance.indexCount), vertices(instance.vertices), vertexCount(instance.vertexCount), material(instance.material), boundingBox(instance.boundingBox) {}
+	  : indices(instance.indices), indexCount(instance.indexCount), vertices(instance.vertices), vertexCount(instance.vertexCount), material(instance.material), boundingBox(instance.boundingBox), renderType(instance.renderType) {}
 
+	//Set render type
+	void Object::SetRenderType(RenderType type) {
+		if(renderType == type) return;
+		if(type == WIREFRAME) {
+			//Convert from solid to wireframe
+			indices = SolidToWireframe(indices, indexCount);
+		} else {
+			//Convert from wireframe to solid
+			indices = WireframeToSolid(indices, indexCount);
+		}
+		renderType = type;
+	}
 	//Shaders
 	void Object::AddShader(Renderer::ShaderProgram program) {
 		if(shaders.contains(program.GetType())) RemoveShader(program.GetType());
@@ -150,7 +152,7 @@ namespace StevEngine::Renderer {
 		UpdateShaderMaterial();
 		//Draw object
 		UpdateBuffers();
-		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+		glDrawElements(renderType == WIREFRAME ? GL_LINES : GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 		//Remove custom pipeline
 		if(usingCustomShaders) {
 			//Reset lights
@@ -198,6 +200,50 @@ namespace StevEngine::Renderer {
 		fragmentProgram->SetShaderUniform("objectMaterial.diffuse", material.diffuse);
 		fragmentProgram->SetShaderUniform("objectMaterial.specular", material.specular);
 		fragmentProgram->SetShaderUniform("objectMaterial.shininess", material.shininess);
+	}
+
+	std::vector<float> ToFloatList(const std::vector<Vertex>& vertices) {
+		std::vector<float> result;
+		result.resize(vertices.size() * (Utilities::VERTEX_COUNT));
+		int j = 0;
+		for(int i = 0; i < vertices.size(); i++) {
+			const Vertex& vertex = vertices[i];
+			result[j++] = vertex.position.X;
+			result[j++] = vertex.position.Y;
+			result[j++] = vertex.position.Z;
+			result[j++] = vertex.uv.X;
+			result[j++] = vertex.uv.Y;
+			result[j++] = vertex.normal.X;
+			result[j++] = vertex.normal.Y;
+			result[j++] = vertex.normal.Z;
+			result[j++] = vertex.tangent.X;
+			result[j++] = vertex.tangent.Y;
+			result[j++] = vertex.tangent.Z;
+		}
+		return result;
+	}
+	uint32_t* SolidToWireframe(uint32_t* indices, uint32_t& size) {
+		uint32_t* newIndices = new uint32_t[size * 2];
+		for(int i = 0; i < size; i+=3) {
+			newIndices[i*2] = indices[i];
+			newIndices[i*2+1] = indices[i + 1];
+			newIndices[i*2+2] = indices[i + 1];
+			newIndices[i*2+3] = indices[i + 2];
+			newIndices[i*2+4] = indices[i + 2];
+			newIndices[i*2+5] = indices[i];
+		}
+		size *= 2;
+		delete[] indices;
+		return newIndices;
+	}
+	uint32_t* WireframeToSolid(uint32_t* indices, uint32_t& size) {
+		size /= 2;
+		uint32_t* newIndices = new uint32_t[size];
+		for(int i = 0; i < size; i++) {
+			newIndices[i] = indices[i * 2];
+		}
+		delete[] indices;
+		return newIndices;
 	}
 }
 #endif

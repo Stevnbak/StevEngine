@@ -27,6 +27,11 @@ namespace StevEngine::Renderer {
 			virtual void Draw(Utilities::Matrix4 transform) const = 0;
 	};
 
+	enum RenderType {
+		SOLID,
+		WIREFRAME
+	};
+
 	/**
 	 * @brief Standard renderable mesh object
 	 *
@@ -40,7 +45,7 @@ namespace StevEngine::Renderer {
 			 * @param vertices Array of vertex data
 			 * @param material Material to render with
 			 */
-			Object(const std::vector<Utilities::Vertex>& vertices, const Visuals::Material& material);
+			Object(const std::vector<Utilities::Vertex>& vertices, const Visuals::Material& material, RenderType renderType = SOLID);
 
 			/**
 			 * @brief Create object from vertices and indices
@@ -48,7 +53,7 @@ namespace StevEngine::Renderer {
 			 * @param indices Array of vertex indices
 			 * @param material Material to render with
 			 */
-			Object(const std::vector<Utilities::Vertex>& vertices, const std::vector<uint32_t>& indices, const Visuals::Material& material);
+			Object(const std::vector<Utilities::Vertex>& vertices, const std::vector<uint32_t>& indices, const Visuals::Material& material, RenderType renderType = SOLID);
 
 			/**
 			 * @brief Copy constructor
@@ -91,25 +96,36 @@ namespace StevEngine::Renderer {
 			 * @brief Get the number of indices in object
 			 * @return Number of indices
 			 */
-			size_t GetIndexCount() const { return indexCount; }
+			uint32_t GetIndexCount() const { return indexCount; }
 			/**
 			 * @brief Get the number of indices in object
 			 * @return Number of indices
 			 */
-			size_t GetVertexCount() const { return vertexCount; }
+			uint32_t GetVertexCount() const { return vertexCount; }
 			/**
 			 * @brief Get bouning box of object
 			 * @return Bounding box
 			 */
 			Utilities::Range3 GetBoundingBox() const { return boundingBox; }
+			/**
+			 * @brief Get the type of rendering used by this object
+			 * @return Render type
+			 */
+			RenderType GetRenderType() const { return renderType; }
+			/**
+			 * @brief Set the type of rendering used by this object
+			 * @return Render type
+			 */
+			void SetRenderType(RenderType type);
 
 		private:
 			float* vertices;	  ///< Vertex data array
-			size_t vertexCount;  ///< Number of vertices
+			uint32_t vertexCount;  ///< Number of vertices
 			uint32_t* indices;	///< Index data array
-			size_t indexCount;   ///< Number of indices
+			uint32_t indexCount;   ///< Number of indices
 			std::map<Renderer::ShaderType, Renderer::ShaderProgram> shaders;  ///< Shader programs by type
 			Utilities::Range3 boundingBox; ///< Bounding box
+			RenderType renderType; ///> Render type
 	};
 }
 #endif

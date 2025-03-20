@@ -1,4 +1,5 @@
 #pragma once
+#include "visuals/renderer/Object.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "renderer/RenderComponent.hpp"
 #include "utilities/Vertex.hpp"
@@ -42,12 +43,16 @@ namespace StevEngine {
 				 * @param scale Local scale modifier
 				 * @param material Surface material
 				 * @param textureType Texture mapping mode
+				 * @param renderType Object rendering mode
 				 */
-				CubePrimitive(Utilities::Vector3 position = Utilities::Vector3(),
-							  Utilities::Quaternion rotation = Utilities::Quaternion(),
-							  Utilities::Vector3 scale = Utilities::Vector3(1),
-							  const Material& material = Material(),
-							  TextureType textureType = REPEAT);
+				CubePrimitive(
+					Utilities::Vector3 position = Utilities::Vector3(),
+					Utilities::Quaternion rotation = Utilities::Quaternion(),
+					Utilities::Vector3 scale = Utilities::Vector3(1),
+					const Material& material = Material(),
+					TextureType textureType = REPEAT,
+					Renderer::RenderType renderType = Renderer::SOLID
+				);
 
 				/**
 				 * @brief Create cube from serialized data
@@ -92,13 +97,17 @@ namespace StevEngine {
 				 * @param material Surface material
 				 * @param smooth Use smooth shading
 				 * @param textureType Texture mapping mode
+				 * @param renderType Object rendering mode
 				 */
-				UVSpherePrimitive(Utilities::Vector3 position = Utilities::Vector3(),
-								  Utilities::Quaternion rotation = Utilities::Quaternion(),
-								  Utilities::Vector3 scale = Utilities::Vector3(1),
-								  Material material = Material(),
-								  bool smooth = true,
-								  TextureType textureType = COVER);
+				UVSpherePrimitive(
+					Utilities::Vector3 position = Utilities::Vector3(),
+					Utilities::Quaternion rotation = Utilities::Quaternion(),
+					Utilities::Vector3 scale = Utilities::Vector3(1),
+					Material material = Material(),
+					bool smooth = true,
+					TextureType textureType = COVER,
+					Renderer::RenderType renderType = Renderer::SOLID
+				);
 
 				/**
 				 * @brief Create cube from serialized data
@@ -144,13 +153,17 @@ namespace StevEngine {
 				 * @param material Surface material
 				 * @param smooth Use smooth shading
 				 * @param textureType Texture mapping mode
+				 * @param renderType Object rendering mode
 				 */
-				IcospherePrimitive(Utilities::Vector3 position = Utilities::Vector3(),
-								   Utilities::Quaternion rotation = Utilities::Quaternion(),
-								   Utilities::Vector3 scale = Utilities::Vector3(1),
-								   Material material = Material(),
-								   bool smooth = true,
-								   TextureType textureType = COVER);
+				IcospherePrimitive(
+					Utilities::Vector3 position = Utilities::Vector3(),
+					Utilities::Quaternion rotation = Utilities::Quaternion(),
+					Utilities::Vector3 scale = Utilities::Vector3(1),
+					Material material = Material(),
+					bool smooth = true,
+					TextureType textureType = COVER,
+					Renderer::RenderType renderType = Renderer::SOLID
+				);
 
 				/**
 				 * @brief Create cube from serialized data
@@ -196,13 +209,17 @@ namespace StevEngine {
 				 * @param material Surface material
 				 * @param smooth Use smooth shading
 				 * @param textureType Texture mapping mode
+				 * @param renderType Object rendering mode
 				 */
-				CylinderPrimitive(Utilities::Vector3 position = Utilities::Vector3(),
-								  Utilities::Quaternion rotation = Utilities::Quaternion(),
-								  Utilities::Vector3 scale = Utilities::Vector3(1),
-								  Material material = Material(),
-								  bool smooth = true,
-								  TextureType textureType = COVER);
+				CylinderPrimitive(
+					Utilities::Vector3 position = Utilities::Vector3(),
+					Utilities::Quaternion rotation = Utilities::Quaternion(),
+					Utilities::Vector3 scale = Utilities::Vector3(1),
+					Material material = Material(),
+					bool smooth = true,
+					TextureType textureType = COVER,
+					Renderer::RenderType renderType = Renderer::SOLID
+				);
 
 				/**
 				 * @brief Create cube from serialized data
@@ -248,13 +265,17 @@ namespace StevEngine {
 				 * @param material Surface material
 				 * @param smooth Use smooth shading
 				 * @param textureType Texture mapping mode
+				 * @param renderType Object rendering mode
 				 */
-				CapsulePrimitive(Utilities::Vector3 position = Utilities::Vector3(),
-								 Utilities::Quaternion rotation = Utilities::Quaternion(),
-								 Utilities::Vector3 scale = Utilities::Vector3(1),
-								 Material material = Material(),
-								 bool smooth = true,
-								 TextureType textureType = COVER);
+				CapsulePrimitive(
+					Utilities::Vector3 position = Utilities::Vector3(),
+					Utilities::Quaternion rotation = Utilities::Quaternion(),
+					Utilities::Vector3 scale = Utilities::Vector3(1),
+					Material material = Material(),
+					bool smooth = true,
+					TextureType textureType = COVER,
+					Renderer::RenderType renderType = Renderer::SOLID
+				);
 
 				/**
 				 * @brief Create capsule from serialized data

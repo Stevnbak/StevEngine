@@ -1,3 +1,4 @@
+#include "visuals/renderer/Object.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "RenderComponent.hpp"
 #include "RenderSystem.hpp"
@@ -14,8 +15,11 @@ namespace StevEngine::Renderer {
 	  : object(object), position(stream.Read<Utilities::Vector3>()), rotation(stream.Read<Utilities::Quaternion>()), scale(stream.Read<Utilities::Vector3>())
 	{
 		stream >> this->object.material;
-		uint shaderCount = stream.Read<uint>();
-		for(int i = 0; i < shaderCount; i++)
+		RenderType renderType = (RenderType)stream.Read<uint32_t>();
+		this->object.SetRenderType(renderType);
+
+		uint32_t shaderCount = stream.Read<uint32_t>();
+		for(uint32_t i = 0; i < shaderCount; i++)
 			AddShader(ShaderProgram(stream));
 	}
 	//Destructor
@@ -41,9 +45,9 @@ namespace StevEngine::Renderer {
 	}
 	Utilities::Stream RenderComponent::Export(Utilities::StreamType type) const {
 		Utilities::Stream stream(type);
-		stream << position << rotation << scale << object.material;
+		stream << position << rotation << scale << object.material << (uint32_t)object.GetRenderType();
 
-		stream << (uint)shaders.size();
+		stream << (uint32_t)shaders.size();
 		for(auto&[_, program] : shaders)
 			stream << program.Export(type);
 

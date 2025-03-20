@@ -106,11 +106,11 @@ namespace StevEngine {
 			}
 			return std::vector<Vertex>(vertices.begin(), vertices.end());
 		}
-		CubePrimitive::CubePrimitive(Vector3 position, Quaternion rotation, Vector3 scale, const Material& material, TextureType textureType)
-		  : RenderComponent(Object(CubeVertices(textureType), material), position, rotation, scale), textureType(textureType) {}
+		CubePrimitive::CubePrimitive(Vector3 position, Quaternion rotation, Vector3 scale, const Material& material, TextureType textureType, Renderer::RenderType renderType)
+		  : RenderComponent(Object(CubeVertices(textureType), material, renderType), position, rotation, scale), textureType(textureType) {}
 
 		CubePrimitive::CubePrimitive(Utilities::Stream& stream)
-		  : RenderComponent(Object({}, {}), stream), textureType((TextureType)stream.Read<uint32_t>())
+		  : RenderComponent(Object({}, Material()), stream), textureType((TextureType)stream.Read<uint32_t>())
 		{
 			object = Object(CubeVertices(textureType), object.material);
 		}
@@ -249,13 +249,13 @@ namespace StevEngine {
 			}
 			return vertices;
 		}
-		UVSpherePrimitive::UVSpherePrimitive(Vector3 position, Quaternion rotation, Vector3 scale, Material material, bool smooth, TextureType textureType)
-		  : RenderComponent(Object(UVSphereVertices(textureType, smooth), material), position, rotation, scale), textureType(textureType), smooth(smooth) {}
+		UVSpherePrimitive::UVSpherePrimitive(Vector3 position, Quaternion rotation, Vector3 scale, Material material, bool smooth, TextureType textureType, Renderer::RenderType renderType)
+		  : RenderComponent(Object(UVSphereVertices(textureType, smooth), material, renderType), position, rotation, scale), textureType(textureType), smooth(smooth) {}
 
 		UVSpherePrimitive::UVSpherePrimitive(Utilities::Stream& stream)
-		  : RenderComponent(Object({}, {}), stream), textureType((TextureType)stream.Read<uint32_t>()), smooth(stream.Read<bool>())
+		  : RenderComponent(Object({}, Material()), stream), textureType((TextureType)stream.Read<uint32_t>()), smooth(stream.Read<bool>())
 		{
-			object = Object(UVSphereVertices(textureType, smooth), object.material);
+			object = Object(UVSphereVertices(textureType, smooth), object.material, object.GetRenderType());
 		}
 
 		Utilities::Stream UVSpherePrimitive::Export(Utilities::StreamType type) const {
@@ -442,13 +442,13 @@ namespace StevEngine {
 			}
 			return vertices;
 		}
-		IcospherePrimitive::IcospherePrimitive(Vector3 position, Quaternion rotation, Vector3 scale, Material material, bool smooth, TextureType textureType)
-		  : RenderComponent(Object(IcosphereVertices(textureType, smooth), material), position, rotation, scale), textureType(textureType), smooth(smooth) {}
+		IcospherePrimitive::IcospherePrimitive(Vector3 position, Quaternion rotation, Vector3 scale, Material material, bool smooth, TextureType textureType, Renderer::RenderType renderType)
+		  : RenderComponent(Object(IcosphereVertices(textureType, smooth), material, renderType), position, rotation, scale), textureType(textureType), smooth(smooth) {}
 
 		IcospherePrimitive::IcospherePrimitive(Utilities::Stream& stream)
-		  : RenderComponent(Object({}, {}), stream), textureType((TextureType)stream.Read<uint32_t>()), smooth(stream.Read<bool>())
+		  : RenderComponent(Object({}, Material()), stream), textureType((TextureType)stream.Read<uint32_t>()), smooth(stream.Read<bool>())
 		{
-			object = Object(UVSphereVertices(textureType, smooth), object.material);
+			object = Object(UVSphereVertices(textureType, smooth), object.material, object.GetRenderType());
 		}
 
 		Utilities::Stream IcospherePrimitive::Export(Utilities::StreamType type) const {
@@ -574,12 +574,12 @@ namespace StevEngine {
 			//Return
 			return vertices;
 		}
-		CylinderPrimitive::CylinderPrimitive(Vector3 position, Quaternion rotation, Vector3 scale, Material material, bool smooth, TextureType textureType)
-		  : RenderComponent(Object(CylinderVertices(textureType, smooth), material), position, rotation, scale), textureType(textureType), smooth(smooth) {}
+		CylinderPrimitive::CylinderPrimitive(Vector3 position, Quaternion rotation, Vector3 scale, Material material, bool smooth, TextureType textureType, Renderer::RenderType renderType)
+		  : RenderComponent(Object(CylinderVertices(textureType, smooth), material, renderType), position, rotation, scale), textureType(textureType), smooth(smooth) {}
 		CylinderPrimitive::CylinderPrimitive(Utilities::Stream& stream)
-		  : RenderComponent(Object({}, {}), stream), textureType((TextureType)stream.Read<uint32_t>()), smooth(stream.Read<bool>())
+		  : RenderComponent(Object({}, Material()), stream), textureType((TextureType)stream.Read<uint32_t>()), smooth(stream.Read<bool>())
 		{
-			object = Object(UVSphereVertices(textureType, smooth), object.material);
+			object = Object(UVSphereVertices(textureType, smooth), object.material, object.GetRenderType());
 		}
 
 		Utilities::Stream CylinderPrimitive::Export(Utilities::StreamType type) const {
@@ -644,12 +644,12 @@ namespace StevEngine {
 			//Return
 			return vertices;
 		}
-		CapsulePrimitive::CapsulePrimitive(Vector3 position, Quaternion rotation, Vector3 scale, Material material, bool smooth, TextureType textureType)
-		  : RenderComponent(Object(CapsuleVertices(textureType, smooth), material), position, rotation, scale), textureType(textureType), smooth(smooth) {}
+		CapsulePrimitive::CapsulePrimitive(Vector3 position, Quaternion rotation, Vector3 scale, Material material, bool smooth, TextureType textureType, Renderer::RenderType renderType)
+		  : RenderComponent(Object(CapsuleVertices(textureType, smooth), material, renderType), position, rotation, scale), textureType(textureType), smooth(smooth) {}
 		CapsulePrimitive::CapsulePrimitive(Utilities::Stream& stream)
-		  : RenderComponent(Object({}, {}), stream), textureType((TextureType)stream.Read<uint32_t>()), smooth(stream.Read<bool>())
+		  : RenderComponent(Object({}, Material()), stream), textureType((TextureType)stream.Read<uint32_t>()), smooth(stream.Read<bool>())
 		{
-			object = Object(UVSphereVertices(textureType, smooth), object.material);
+			object = Object(UVSphereVertices(textureType, smooth), object.material, object.GetRenderType());
 		}
 		Utilities::Stream CapsulePrimitive::Export(Utilities::StreamType type) const {
 			Utilities::Stream stream(type);
