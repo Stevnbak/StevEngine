@@ -6,6 +6,7 @@
 build
 out/*
 links.txt
+doxygen
 
 # Visual Studio
 .vs

@@ -13,28 +13,14 @@ Features includes:
 - Loading models, images and other resources
 - And more...
 
-# Table of Contents
-
-- [Modules](#modules)
-  - [Base](#base)
-  - [Inputs](#inputs)
-  - [Data & Settings](#data--settings)
-  - [OpenGL Renderer](#opengl-renderer)
-  - [Physics](#physics)
-  - [Audio](#audio)
-- [Setup & Building](#setup--building)
-  - [Setup project & dependencies](#setup-project--dependencies)
-  - [Linux](#linux)
-  - [Windows](#windows)
-  - [Build options](#build-options)
-- [Usage](#usage)
+The full documentation for this project can be accessed at [stevnbak.github.io/StevEngine](https://stevnbak.github.io/StevEngine)
 
 # Modules
 The engine constists of multiple modules which can be enabled or disabled during the cmake build process.
 
 These modules are:
 
-## **Base**
+## Base
 
 The base of the engine consists of the main engine setup, resource manager, logging, scenes, game-objects and component system.
 
@@ -51,13 +37,13 @@ Components are how custom behaviour (both game specific stuff and general stuff 
 
 This is the only module which cannot be disabled.
 
-## **Inputs**
+## Inputs
 
 The input manager handles inputs from the mouse and keyboard through [SDL](https://github.com/libsdl-org/SDL/tree/SDL2) input events.
 
 Can be disabled by setting the cmake build option "USE_INPUTS" to OFF".
 
-## **Data & Settings**
+## Data & Settings
 
 The data and settings managers handles saving player data and settings to a local folder on the user's machine, which will persist across game restarts.
 
@@ -66,35 +52,35 @@ This is also the system that is used for for logging to a file. It is therefore 
 
 Can be disabled by setting the cmake build option "USE_PLAYER_DATA" to OFF".
 
-## **OpenGL Renderer**
+## OpenGL Renderer
 
 The OpenGL renderer is the only renderer in the engine, it handles (once it's complete) rendering primitives, models, textures, lighting etc.
 
 Can be disabled by setting the cmake build option "USE_RENDERER_GL" to OFF.
 
-## **Physics**
-
-Physics is implemented as components, but is using [Jolt Physics](https://github.com/jrouwe/JoltPhysics) as the backbone.
-
-Can be disabled by setting the cmake build option "USE_PHYSICS" to OFF".
-
-## **Audio**
+## Audio
 
 The audio system allows playing audio through the use of [SDL_Mixer](https://github.com/libsdl-org/SDL_mixer).
 
 Can be disabled by setting the cmake build option "USE_AUDIO" to OFF".
 
+## Physics
+
+Physics is implemented as components, but is using [Jolt Physics](https://github.com/jrouwe/JoltPhysics) as the backbone.
+
+Can be disabled by setting the cmake build option "USE_PHYSICS" to OFF".
+
 # Setup & Building
 
-This project is tested and built to be working on Linux (Ubuntu) and Windows (Using Visual Studio).
+This project is tested and built to be working on Linux (Ubuntu & Arch) and Windows (Using Visual Studio).
 
-And uses CMake as the build system
+And uses CMake as the build system.
 
 ## Setup project & dependencies
 
 Clone this repository by running:
 ```shell
-git clone https://github.com/Stevnbak/StevEngine.git
+git clone --recursive https://github.com/Stevnbak/StevEngine.git
 ```
 
 Clone and initialize submodules by running:
