@@ -104,8 +104,7 @@ namespace StevEngine {
 		return children.size();
 	}
 	GameObject& GameObject::GetParent() const {
-		if(!parent.IsNull()) return sceneManager.GetScene(scene)->GetObject(parent);
-		else return nullptr;
+		return GetScene().GetObject(parent);
 	}
 	Scene& GameObject::GetScene() const {
 		return sceneManager.GetScene(scene);
