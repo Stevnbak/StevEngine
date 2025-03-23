@@ -27,7 +27,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          submodules: "false"
+          submodules: "true"
       - name: Install doxygen
         run: wget https://github.com/doxygen/doxygen/releases/download/Release_1_13_2/doxygen-1.13.2.linux.bin.tar.gz && tar -xf doxygen-1.13.2.linux.bin.tar.gz
       - name: Generate documentation site
