@@ -1,0 +1,15 @@
+html {
+	--primary-color: #c4171a;
+	--primary-dark-color: #7f3334;
+	--primary-light-color: #e86f71;
+}
+html.dark-mode {
+	--primary-color: #d1191c;
+	--primary-dark-color: #e25d5f;
+	--primary-light-color: #aa4647;
+}
+
+.github-corner svg {
+    fill: var(--primary-light-color);
+    color: var(--page-background-color);
+}

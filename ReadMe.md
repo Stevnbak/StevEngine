@@ -1,6 +1,5 @@
 # StevEngine
-
-StevEngine is a customizable game engine C++ library.
+StevEngine is a customizable C++ game engine library.
 
 Features includes:
 
@@ -13,7 +12,7 @@ Features includes:
 - Loading models, images and other resources
 - And more...
 
-The full documentation for this project can be accessed at [stevnbak.github.io/StevEngine](https://stevnbak.github.io/StevEngine)
+The full documentation for this project can be accessed at [stevnbak.github.io/StevEngine](https://stevnbak.github.io/StevEngine) [TOC]
 
 # Modules
 The engine constists of multiple modules which can be enabled or disabled during the cmake build process.
@@ -41,7 +40,7 @@ This is the only module which cannot be disabled.
 
 The input manager handles inputs from the mouse and keyboard through [SDL](https://github.com/libsdl-org/SDL/tree/SDL2) input events.
 
-Can be disabled by setting the cmake build option "USE_INPUTS" to OFF".
+Can be disabled by setting the cmake build option `USE_INPUTS` to `OFF`.
 
 ## Data & Settings
 
@@ -50,25 +49,25 @@ The data and settings managers handles saving player data and settings to a loca
 The settings manager handles saving player settings to a local file on the user's machine, which will persist across game restarts.
 This is also the system that is used for for logging to a file. It is therefore not recommended to disable this.
 
-Can be disabled by setting the cmake build option "USE_PLAYER_DATA" to OFF".
+Can be disabled by setting the cmake build option `USE_PLAYER_DATA` to `OFF`.
 
 ## OpenGL Renderer
 
 The OpenGL renderer is the only renderer in the engine, it handles (once it's complete) rendering primitives, models, textures, lighting etc.
 
-Can be disabled by setting the cmake build option "USE_RENDERER_GL" to OFF.
+Can be disabled by setting the cmake build option `USE_RENDERER_GL` to `OFF`.
 
 ## Audio
 
 The audio system allows playing audio through the use of [SDL_Mixer](https://github.com/libsdl-org/SDL_mixer).
 
-Can be disabled by setting the cmake build option "USE_AUDIO" to OFF".
+Can be disabled by setting the cmake build option `USE_AUDIO` to `OFF`.
 
 ## Physics
 
 Physics is implemented as components, but is using [Jolt Physics](https://github.com/jrouwe/JoltPhysics) as the backbone.
 
-Can be disabled by setting the cmake build option "USE_PHYSICS" to OFF".
+Can be disabled by setting the cmake build option `USE_PHYSICS` to `OFF`.
 
 # Setup & Building
 
@@ -92,7 +91,7 @@ Building or installing [glad](https://github.com/Dav1dde/glad):
 > [!WARNING]
 > Building glad requires a python intepreter installed and added to the path.
 >
-> Alternatively glad can be generated online through this link: https://gen.glad.sh/#generator=c&api=gl%3D4.4&profile=gl%3Dcore%2Cgles1%3Dcommon and the build optiosn `BUILD_GLAD` can be set to `OFF` and `GLAD_DIR` should be set to the directory of the installed GLAD files.
+> Alternatively glad can be generated online through this link: https://gen.glad.sh/#generator=c&api=gl%3D4.4&profile=gl%3Dcore%2Cgles1%3Dcommon and the build options `BUILD_GLAD` can be set to `OFF` and `GLAD_DIR` should be set to the directory of the installed GLAD files.
 >
 > (*This can be done by adding `-DBUILD_GLAD=OFF -DGLAD_DIR=<glad_path>` to the cmake command*)
 

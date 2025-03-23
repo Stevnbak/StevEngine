@@ -22,3 +22,6 @@
 	path = libs/SDL2
 	url = https://github.com/libsdl-org/SDL.git
 	branch = SDL2
+[submodule "doxygen-awesome-css"]
+	path = docs/doxygen-awesome-css
+	url = https://github.com/jothepro/doxygen-awesome-css.git
