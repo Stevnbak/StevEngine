@@ -1,8 +1,8 @@
 name: Build and release
 
 on:
-  #push:
-  #  branches: [ "main" ]
+  push:
+    branches: [ "" ]
   #pull_request:
   #  branches: [ "main" ]
   #  tags:
