@@ -23,6 +23,10 @@ namespace StevEngine::Utilities {
 	Vector3 Range3::GetCenter() const {
 		return Vector3(Low.X + ((High.X - Low.X) / 2), Low.Y + ((High.Y - Low.Y) / 2), Low.Z + ((High.Z - Low.Z) / 2));
 	}
+
+	Vector3 Range3::GetSize() const {
+		return High - Low;
+	}
 	//Conversions
 	#ifdef StevEngine_PHYSICS
 	Range3::operator JPH::AABox() const {

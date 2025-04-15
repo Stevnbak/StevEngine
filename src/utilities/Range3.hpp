@@ -49,6 +49,12 @@ namespace StevEngine::Utilities {
 			 */
 			Vector3 GetCenter() const;
 
+			/**
+			 * @brief Get size of range
+			 * @return Size vector
+			 */
+			Vector3 GetSize() const;
+
 			//Conversions
 			#ifdef StevEngine_PHYSICS
 			operator JPH::AABox() const;					///< Convert to Jolt AABB
