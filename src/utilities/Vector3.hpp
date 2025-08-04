@@ -3,7 +3,7 @@
 #include <Jolt/Jolt.h>
 #endif
 #ifdef StevEngine_MODELS
-#include "assimp/mesh.h"
+#include "assimp/vector3.h"
 #endif
 #include <string>
 

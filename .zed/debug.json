@@ -1,0 +1,12 @@
+[
+  {
+    "adapter": "GDB",
+    "label": "debug_development (GDB)",
+    "program": "build/debug_development",
+    "cwd": "$ZED_WORKTREE_ROOT",//"/mnt/SSD/Programming/Game_Projects/StevEngine",
+    "build": "build",
+    "args": [],
+    "env": {},
+    "stop_on_entry": false
+  }
+]

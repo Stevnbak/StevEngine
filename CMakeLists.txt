@@ -204,11 +204,6 @@ if(USE_RENDERER_GL OR USE_PHYSICS)
 	endif()
 endif()
 
-## uuidv7
-target_include_directories(${PROJECT_NAME} PUBLIC libs/uuidv7-h)
-list(APPEND external_libs_names "")
-list(APPEND external_libs_include libs/uuidv7-h)
-
 # Debug executable
 cmake_dependent_option(DEBUG_EXECUTABLE "Build the debug programs for testing the engine." ON "IS_DEBUG" OFF)
 if(DEBUG_EXECUTABLE)

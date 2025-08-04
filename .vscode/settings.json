@@ -73,6 +73,20 @@
 		"regex": "cpp",
 		"forward_list": "cpp",
 		"valarray": "cpp",
-		"*.vert": "cpp"
+		"*.vert": "cpp",
+		"strstream": "cpp",
+		"cfenv": "cpp",
+		"complex": "cpp",
+		"csignal": "cpp",
+		"cstring": "cpp",
+		"set": "cpp",
+		"expected": "cpp",
+		"source_location": "cpp",
+		"hash_map": "cpp",
+		"hash_set": "cpp",
+		"future": "cpp",
+		"stdfloat": "cpp",
+		"text_encoding": "cpp",
+		"typeindex": "cpp"
 	}
 }
