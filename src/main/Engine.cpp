@@ -67,6 +67,7 @@ namespace StevEngine {
 	}
 
 	int Engine::Start() {
+		Log::Normal("Starting Engine", true);
 		events.Publish(EngineStartEvent());
 		//Main loop
 		uint64_t lastUpdateTime = GetTime();

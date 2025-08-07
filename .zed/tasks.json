@@ -1,23 +1,18 @@
 [
 	{
 		"label": "debug",
-		"type": "shell",
-		"command": "CXX=clang cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DDEBUG_EXECUTABLE=ON",
+		"command": "CXX=clang cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DDEBUG_EXECUTABLE=ON -DUSE_NETWORKING=ON",
 		"cwd": "$ZED_WORKTREE_ROOT",
 		"reveal": "always"
 	},
 	{
 		"label": "release",
-		"type": "shell",
 		"command": "CXX=clang cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DDEBUG_EXECUTABLE=OFF",
-		"options": {
-			"cwd": "$ZED_WORKTREE_ROOT"
-		},
+		"cwd": "$ZED_WORKTREE_ROOT",
 		"reveal": "always"
 	},
 	{
 		"label": "build",
-		"type": "shell",
 		"command": "cmake --build build",
 		"cwd": "$ZED_WORKTREE_ROOT",
 		"reveal": "never",
@@ -26,8 +21,8 @@
 	},
 	{
 		"label": "start",
-		"type": "shell",
 		"command": "cmake --build build && gdb -ex run ./build/debug_development",
+		"show_command": false,
 		"cwd": "$ZED_WORKTREE_ROOT",
 		"reveal": "never",
 		"hide": "never",
@@ -35,8 +30,8 @@
 	},
 	{
 		"label": "test",
-		"type": "shell",
 		"command": "cmake --build build && ./build/debug_performance",
+		"show_command": false,
 		"cwd": "$ZED_WORKTREE_ROOT",
 		"reveal": "never",
 		"hide": "never",

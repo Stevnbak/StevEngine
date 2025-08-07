@@ -77,6 +77,12 @@ if (USE_AUDIO)
 	set(build_string "${build_string}, AUDIO")
 endif()
 
+option(USE_NETWORKING "Use the networking system" OFF)
+if (USE_NETWORKING)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_NETWORKING)
+	set(build_string "${build_string}, NETWORKING")
+endif()
+
 message("Building ${build_string}")
 
 # external libraries
@@ -225,6 +231,17 @@ if(DEBUG_EXECUTABLE)
 			set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT debug_${executable})
 		endif()
 	ENDFOREACH()
+
+	# networking
+	if(USE_NETWORKING)
+		file(GLOB_RECURSE net_client_src CONFIGURE_DEPENDS "debug/networking/client/*.?pp")
+		add_executable(networking_client ${net_client_src})
+		target_link_libraries(networking_client PRIVATE ${PROJECT_NAME})
+
+		file(GLOB_RECURSE net_server_src CONFIGURE_DEPENDS "debug/networking/server/*.?pp")
+		add_executable(networking_server ${net_server_src})
+		target_link_libraries(networking_server PRIVATE ${PROJECT_NAME})
+	endif()
 endif()
 
 # Copy files
