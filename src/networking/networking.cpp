@@ -1,7 +1,14 @@
+#include "utilities/Stream.hpp"
+#include <stdexcept>
 #ifdef StevEngine_NETWORKING
 #include "networking.hpp"
 
 namespace StevEngine::Networking {
+	Message::Message(MessageID id) : id(id), data(Utilities::Binary) {}
+	Message::Message(MessageID id, Utilities::Stream data) : id(id), data(data) {
+		if(data.type != Utilities::Binary) throw std::runtime_error("Message data must be a binary stream.");
+	}
+
 	#ifdef _WIN32
 	bool winsockInitalized = false;
 	void initWinSock() {

@@ -109,7 +109,7 @@ int main(int argc, char** argv) {
 	//Setup networking
 	Networking::Server::Manager server ("127.0.0.1", 5000);
 
-	server.listen(3, [](Networking::Server::Client client, Networking::Message msg) {
+	server.listen(3, [](const Networking::Server::Client& client, Networking::Message msg) {
 		Log::Normal(std::string("From (") + client.id.GetString() +  "): \"" + msg.data.Read<std::string>() + "\"");
 	});
 

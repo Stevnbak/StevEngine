@@ -107,9 +107,7 @@ int main(int argc, char** argv) {
 
 	//Setup networking
 	Networking::Client::Manager client ("127.0.0.1", 5000);
-	Stream data(Binary);
-	data << std::string("First message!");
-	client.send({3, data, sizeof(data.GetStream().str())});
+	client.send({3, std::string("First message!")});
 
 	//Start engine
 	return engine->Start();

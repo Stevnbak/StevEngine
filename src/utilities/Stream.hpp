@@ -25,7 +25,17 @@ namespace StevEngine::Utilities {
 			 * @brief Create new stream of type
 			 * @param type Type of stream to create
 			 */
-			Stream(StreamType type) : type(type) {};
+			Stream(StreamType type = Binary) : type(type) {};
+
+			/**
+			 * @brief Create new stream of type, with data already added
+			 * @param data Data to add to stream
+			 * @param type Type of stream to create
+			 */
+			template <typename T> Stream(const T& data, StreamType type = Binary) : type(type) {
+				*this << data;
+			};
+
 
 			/**
 			 * @brief Read data of specified type from stream
@@ -86,12 +96,14 @@ namespace StevEngine::Utilities {
 			 * @return Underlying std::stringstream
 			 */
 			std::stringstream& GetStream() { return stream; }
+			operator std::stringstream&() { return stream; }
 
 			/**
 			 * @brief Get underlying std::stringstream object
 			 * @return Underlying std::stringstream
 			 */
 			const std::stringstream& GetStream() const { return stream; }
+			operator const std::stringstream&() const { return stream; }
 
 			/**
 			 * @brief make a copy of a stream

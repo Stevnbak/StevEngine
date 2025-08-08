@@ -7,7 +7,7 @@
 
 namespace StevEngine::Networking::Client {
 
-	using MessageFunction = std::function<void(const Message& message)>;
+	using MessageFunction = std::function<void(Message message)>;
 
 	class MessageHandler {
 		public:
@@ -15,7 +15,7 @@ namespace StevEngine::Networking::Client {
 			MessageHandler(const MessageHandler& copy);
 			void operator= (const MessageHandler& copy);
 
-			void operator() (const Message& message) const;
+			void operator() (Message message) const;
 
 			bool operator== (const MessageHandler& other) const;
 

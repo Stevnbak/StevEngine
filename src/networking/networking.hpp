@@ -19,9 +19,11 @@ namespace StevEngine::Networking {
 	typedef uint32_t MessageID;
 
 	struct Message {
+		Message(MessageID id);
+		Message(MessageID id, Utilities::Stream data);
+
 		MessageID id;
 		Utilities::Stream data;
-		uint32_t size;
 	};
 
 	void initWinSock();

@@ -34,6 +34,7 @@ namespace StevEngine::Utilities {
 		if(data.type != type) throw("Stream types are not matching!");
 		stream << data.stream.rdbuf();
 	}
+
 	//Read char from stream
 	template <> char Stream::Read<char>() {
 		if(stream.eof()) return (char)NULL;

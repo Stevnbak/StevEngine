@@ -29,7 +29,7 @@ template<> struct std::hash<StevEngine::Networking::Server::Client> {
 
 namespace StevEngine::Networking::Server {
 
-	using MessageFunction = std::function<void(const Client& client, const Message& message)>;
+	using MessageFunction = std::function<void(const Client& client, Message message)>;
 
 	class MessageHandler {
 		public:
@@ -37,7 +37,7 @@ namespace StevEngine::Networking::Server {
 			MessageHandler(const MessageHandler& copy);
 			void operator= (const MessageHandler& copy);
 
-			void operator() (const Client& client, const Message& message) const;
+			void operator() (const Client& client, Message message) const;
 			bool operator== (const MessageHandler& other) const;
 			Utilities::ID getId() const { return id; }
 		private:

@@ -1,17 +1,15 @@
-#include "main/Log.hpp"
-#include <bits/types/struct_timeval.h>
-#include <sys/socket.h>
-#include <unordered_set>
 #ifdef StevEngine_NETWORKING
 #include "server.hpp"
 #include "networking.hpp"
 #include "main/Engine.hpp"
 #include "main/EngineEvents.hpp"
+#include "main/Log.hpp"
 #include "utilities/Stream.hpp"
 #include <cstdint>
 #include <vector>
 #include <stdexcept>
 #include <string>
+#include <bits/types/struct_timeval.h>
 
 namespace StevEngine::Networking::Server {
 
@@ -63,7 +61,7 @@ namespace StevEngine::Networking::Server {
 		Client client(connection);
 		clients.insert(client);
 
-		send(client, {0, Utilities::Binary, 0});
+		send(client, 0);
 	}
 	void Manager::recieveMessages() {
 		FD_ZERO(&readfds);
@@ -104,7 +102,7 @@ namespace StevEngine::Networking::Server {
 					break;
 				}
 				//Publish to listeners
-				recieve(client, {id, stream, size});
+				recieve(client, {id, stream});
 			}
 		}
 
@@ -117,9 +115,9 @@ namespace StevEngine::Networking::Server {
 	bool Manager::send(const Client& client, const Message& message) {
 		//Create data
 		Utilities::Stream raw(Utilities::Binary);
-		raw << message.id << message.size << message.data;
+		raw << message.id << message.data.GetStream().view().size() << message.data;
 		//Try and send data
-		return ::send(client.socket, raw.GetStream().str().c_str(), message.size + sizeof(message.id) + sizeof(message.size), 0) < 0;
+		return ::send(client.socket, raw.GetStream().view().data(), raw.GetStream().view().size(), 0) < 0;
 	}
 
 	void Manager::recieve(const Client& client, const Message& message) {
@@ -154,7 +152,7 @@ namespace StevEngine::Networking::Server {
 		id = copy.id;
 	}
 
-	void MessageHandler::operator() (const Client& client, const Message& message) const {
+	void MessageHandler::operator() (const Client& client, Message message) const {
 		function(client, message);
 	}
 

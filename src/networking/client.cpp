@@ -1,15 +1,14 @@
-#include "main/Log.hpp"
-#include "utilities/ID.hpp"
 #ifdef StevEngine_NETWORKING
 #include "client.hpp"
 #include "networking.hpp"
 #include "main/Engine.hpp"
 #include "main/EngineEvents.hpp"
+#include "main/Log.hpp"
 #include "utilities/Stream.hpp"
+
 #include <cstdint>
 #include <vector>
 #include <stdexcept>
-#include <string>
 
 namespace StevEngine::Networking::Client {
 	timeval timeout = {0, 0};
@@ -61,7 +60,7 @@ namespace StevEngine::Networking::Client {
 					delete[] buf;
 				}
 				//Publish to listeners
-				recieve({id, stream, size});
+				recieve({id, stream});
 			}
 		});
 	}
@@ -72,7 +71,7 @@ namespace StevEngine::Networking::Client {
 	}
 
 	void Manager::disconnect() {
-		send({1, Utilities::Stream(Utilities::Binary), 0});
+		send(1);
 		::close(connection);
 	}
 
@@ -83,10 +82,10 @@ namespace StevEngine::Networking::Client {
 	bool Manager::send(const Message& message) {
 		//Create data
 		Utilities::Stream raw(Utilities::Binary);
-		raw << message.id << message.size << message.data;
+		raw << message.id << message.data.GetStream().view().size() << message.data;
 		//Try and send data
 		int tries = 0;
-		while(::send(connection, raw.GetStream().str().c_str(), message.size + sizeof(message.id) + sizeof(message.size), 0) < 0) {
+		while(::send(connection, raw.GetStream().view().data(), raw.GetStream().view().size(), 0) < 0) {
 			if(tries > 3) return false;
 			//Try to establish connection again
 			close(connection);
@@ -129,7 +128,7 @@ namespace StevEngine::Networking::Client {
 		id = copy.id;
 	}
 
-	void MessageHandler::operator() (const Message& message) const {
+	void MessageHandler::operator() (Message message) const {
 		function(message);
 	}
 
