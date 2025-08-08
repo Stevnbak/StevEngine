@@ -35,6 +35,22 @@ namespace StevEngine::Networking::Server {
 			//Recieve new messages from server
 			recieveMessages();
 		});
+		//Ping
+		listen(3, [this](const Client& client, auto _) {
+			//Log::Debug("Ping from: " + std::string(client.id.GetString()));
+			client.sinceLastPing = 0;
+			send(client, 3);
+		});
+		engine->GetEvents()->Subscribe<UpdateEvent>([this](const UpdateEvent& e) {
+			for(auto& client : clients) {
+				client.sinceLastPing += e.deltaTime;
+
+				if(client.sinceLastPing > TIMEOUT_PING) {
+					Log::Debug(std::string("Client (") + client.id.GetString() + ") timed out!");
+					disconnected.insert(client);
+				}
+			}
+		});
 	}
 
 	Manager::~Manager() {
@@ -64,27 +80,30 @@ namespace StevEngine::Networking::Server {
 		send(client, 0);
 	}
 	void Manager::recieveMessages() {
+		//Disconnect the clients marked for disconnection
+		for(auto& client : disconnected) {
+			Log::Debug(std::string("Client (") + client.id.GetString() + ") disconnected!");
+			clients.erase(client);
+		}
+		disconnected.clear();
+
+		//Read messages
 		FD_ZERO(&readfds);
 		Socket max = 0;
 		for(auto& client : clients) {
 			FD_SET(client.socket, &readfds);
 			if(client.socket > max) max = client.socket;
 		}
-
 		int activity = select(max + 1, &readfds, NULL, NULL, &timeout);
-       	if (activity < 0) return; //Failed to read info
+        for(int i = 0; i < activity;) {
+	        for(auto& client : clients) {
+				if(!FD_ISSET(client.socket, &readfds)) continue; //No messages from this client
 
-        std::unordered_set<Client> disconnected;
-
-        for(auto& client : clients) {
-			if(!FD_ISSET(client.socket, &readfds)) continue; //No messages from this client
-
-			while(true) {
 				//Read id and data size
 				MessageID id;
 				uint32_t size;
-				if(recv(client.socket, &id, sizeof(id), 0) < sizeof(id)) break; //TODO: Handle partial messages better
-				if(recv(client.socket, &size, sizeof(size), 0) < sizeof(id)) break;
+				if(recv(client.socket, &id, sizeof(id), 0) < sizeof(id)) continue; //TODO: Handle partial messages better
+				if(recv(client.socket, &size, sizeof(size), 0) < sizeof(id)) continue;
 
 				//Read data
 				Utilities::Stream stream(Utilities::Binary);
@@ -92,32 +111,35 @@ namespace StevEngine::Networking::Server {
 					char* buf = new char[size];
 					if(recv(client.socket, buf, size, 0) < size) {
 						delete[] buf;
-						break;
+						continue;
 					}
 					for(uint32_t i = 0; i < size; i++) stream << buf[i];
 					delete[] buf;
 				}
+				i++;
 				if(id == 1) {
 					disconnected.insert(client);
-					break;
+					continue;
 				}
 				//Publish to listeners
 				recieve(client, {id, stream});
 			}
-		}
+        }
 
-		for(auto& client : disconnected) {
-			Log::Debug(std::string("Client (") + client.id.GetString() + ") disconnected!");
-			clients.erase(client);
-		}
+
 	}
 
-	bool Manager::send(const Client& client, const Message& message) {
+	void Manager::sendAll(const Message& message) {
+
+	}
+
+
+	void Manager::send(const Client& client, const Message& message) {
 		//Create data
 		Utilities::Stream raw(Utilities::Binary);
-		raw << message.id << message.data.GetStream().view().size() << message.data;
+		raw << message.id << (uint32_t)message.data.GetStream().view().size() << message.data;
 		//Try and send data
-		return ::send(client.socket, raw.GetStream().view().data(), raw.GetStream().view().size(), 0) < 0;
+		::send(client.socket, raw.GetStream().view().data(), raw.GetStream().view().size(), MSG_NOSIGNAL);
 	}
 
 	void Manager::recieve(const Client& client, const Message& message) {

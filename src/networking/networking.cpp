@@ -1,7 +1,7 @@
-#include "utilities/Stream.hpp"
-#include <stdexcept>
 #ifdef StevEngine_NETWORKING
 #include "networking.hpp"
+#include "utilities/Stream.hpp"
+#include <stdexcept>
 
 namespace StevEngine::Networking {
 	Message::Message(MessageID id) : id(id), data(Utilities::Binary) {}

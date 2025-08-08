@@ -10,14 +10,16 @@
 
 namespace StevEngine::Networking::Server {
 	class Client {
+		friend class Manager;
 		public:
 			Client(const Socket& connection);
 			Client(const Socket& connection, const Utilities::ID& id);
 			const Utilities::ID id;
-
 			const Socket socket;
 
 			bool operator== (const Client& client) const;
+		private:
+			mutable float sinceLastPing = 0;
 	};
 }
 template<> struct std::hash<StevEngine::Networking::Server::Client> {
@@ -51,8 +53,8 @@ namespace StevEngine::Networking::Server {
 
 			~Manager();
 
-			bool sendAll(const Message& message);
-			bool send(const Client& to, const Message& message);
+			void sendAll(const Message& message);
+			void send(const Client& to, const Message& message);
 
 			Utilities::ID listen(MessageID id, MessageFunction function);
 			void unlisten(MessageID id, const Utilities::ID handler);
@@ -62,6 +64,7 @@ namespace StevEngine::Networking::Server {
 
 			std::unordered_map<MessageID, std::vector<MessageHandler>> subscribers;
 			std::unordered_set<Client> clients;
+			std::unordered_set<Client> disconnected; //Disconnected clients to be removed next loop
 
 			fd_set readfds;
 			void acceptConnections();

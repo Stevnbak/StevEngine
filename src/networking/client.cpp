@@ -1,3 +1,4 @@
+#include <string>
 #ifdef StevEngine_NETWORKING
 #include "client.hpp"
 #include "networking.hpp"
@@ -22,23 +23,13 @@ namespace StevEngine::Networking::Client {
 			serverAddress.sin_family = AF_INET6;
 			inet_pton(AF_INET6, ip.c_str(), &serverAddress.sin_addr);
 		};
-		//Establish connection
-		connection = socket(serverAddress.sin_family, SOCK_STREAM, 0);
-		if(!connect()) throw std::runtime_error("Failed to connect to server at " + ip + ":" + std::to_string(port));
-		FD_ZERO(&readfds);
-		FD_SET(connection, &readfds);
 
-		//Wait for connection confirmation
-		MessageID id;
-		if(recv(connection, &id, sizeof(id), 0) < sizeof(id)) throw std::runtime_error("Error when reading messages from server."); //TODO: Handle partial messages better
-		if(id != 0) throw std::runtime_error("Invalid first message from server.");
-		Log::Debug("Succesfully connected to server");
-		uint32_t size;
-		recv(connection, &size, sizeof(size), 0); //Remove size info from socket buffer
-
+		//Setup listeners
 		engine->GetEvents()->Subscribe<PreUpdateEvent>([this](const PreUpdateEvent& e) {
 			//Read all new messages from server
 			while(true) {
+				FD_ZERO(&readfds);
+				FD_SET(connection, &readfds);
 				int activity = select(connection + 1, &readfds, NULL, NULL, &timeout);
 	        	if (activity < 0) break; //Failed to read info
 
@@ -63,11 +54,44 @@ namespace StevEngine::Networking::Client {
 				recieve({id, stream});
 			}
 		});
+		engine->GetEvents()->Subscribe<UpdateEvent>([this](const UpdateEvent& e) {
+			sinceLastPing += e.deltaTime;
+
+			if(sinceLastPing > TIMEOUT_PING) {
+				Log::Debug("Server timed out!");
+				sinceLastPing = 0;
+				close(connection);
+				//TODO: Currently whole program stops and waits for a new connection, make it so it just tries every update
+				connect();
+			}
+		});
+		//Ping
+		listen(3, [this](auto _) {
+			pingTime = sinceLastPing * 1000 + 0.5;
+			//Log::Debug("Ping: " + std::to_string(pingTime));
+			sinceLastPing = 0;
+
+			send(3);
+		});
+
+		//Start connection
+		if(!connect()) throw std::runtime_error("Failed to connect to server at " + ip + ":" + std::to_string(port));
 	}
 
 	bool Manager::connect() {
-		//Connect to this server
-		return ::connect(connection, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) >= 0;
+		//Connect to server
+		connection = socket(serverAddress.sin_family, SOCK_STREAM, 0);
+		if(::connect(connection, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0) return false;
+		//Wait for first message
+		MessageID id;
+		if(recv(connection, &id, sizeof(id), 0) < sizeof(id)) return false; //TODO: Handle partial messages better
+		if(id != 0) return false;
+		Log::Debug("Succesfully connected to server");
+		uint32_t size;
+		recv(connection, &size, sizeof(size), 0); //Remove size info from socket buffer
+
+		send(3); //Send initial ping
+		return true;
 	}
 
 	void Manager::disconnect() {
@@ -79,21 +103,12 @@ namespace StevEngine::Networking::Client {
 		disconnect();
 	}
 
-	bool Manager::send(const Message& message) {
+	void Manager::send(const Message& message) {
 		//Create data
 		Utilities::Stream raw(Utilities::Binary);
-		raw << message.id << message.data.GetStream().view().size() << message.data;
+		raw << message.id << (uint32_t)message.data.GetStream().view().size() << message.data;
 		//Try and send data
-		int tries = 0;
-		while(::send(connection, raw.GetStream().view().data(), raw.GetStream().view().size(), 0) < 0) {
-			if(tries > 3) return false;
-			//Try to establish connection again
-			close(connection);
-			if(!connect()) return false;
-			tries++;
-		}
-		//Message sent succesfully
-		return true;
+		::send(connection, raw.GetStream().view().data(), raw.GetStream().view().size(), MSG_NOSIGNAL);
 	}
 
 	void Manager::recieve(const Message& message) {

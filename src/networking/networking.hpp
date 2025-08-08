@@ -14,8 +14,12 @@
 	#include <arpa/inet.h>
 #endif
 
+#ifndef TIMEOUT_PING
+#define TIMEOUT_PING 2
+#endif
+
 namespace StevEngine::Networking {
-	//ID of which message is sent or recieved (0 and 1 are reserved for engine purposes)
+	//ID of which message is sent or recieved (0 to 5 are reserved for engine purposes)
 	typedef uint32_t MessageID;
 
 	struct Message {

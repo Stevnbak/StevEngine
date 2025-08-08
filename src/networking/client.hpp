@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #ifdef StevEngine_NETWORKING
 #include "networking.hpp"
 #include "utilities/ID.hpp"
@@ -31,7 +32,7 @@ namespace StevEngine::Networking::Client {
 
 			~Manager();
 
-			bool send(const Message& message);
+			void send(const Message& message);
 
 			Utilities::ID listen(MessageID id, MessageFunction function);
 			void unlisten(MessageID id, const Utilities::ID handler);
@@ -47,6 +48,10 @@ namespace StevEngine::Networking::Client {
 			void recieve(const Message& message);
 
 			Socket connection;
+
+			//Ping
+			uint32_t pingTime = 0; //in ms
+			float sinceLastPing = 0;
 	};
 }
 
