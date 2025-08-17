@@ -5,7 +5,7 @@
 #include "main/EngineEvents.hpp"
 #include "main/Log.hpp"
 #include "utilities/Stream.hpp"
-#include <cstdint>
+
 #include <vector>
 #include <stdexcept>
 #include <string>
@@ -34,6 +34,12 @@ namespace StevEngine::Networking::Server {
 			acceptConnections();
 			//Recieve new messages from server
 			recieveMessages();
+		});
+		//Reconnection (with client id)
+		listen(0, [this](const Client& client, MessageData message) {
+			auto id = message.Read<Utilities::ID>();
+			clients.emplace(client.socket, id);
+			clients.erase(client);
 		});
 		//Ping
 		listen(3, [this](const Client& client, auto _) {
@@ -77,7 +83,7 @@ namespace StevEngine::Networking::Server {
 		Client client(connection);
 		clients.insert(client);
 
-		send(client, 0);
+		send(client, 0, client.id);
 	}
 	void Manager::recieveMessages() {
 		//Disconnect the clients marked for disconnection
@@ -98,55 +104,41 @@ namespace StevEngine::Networking::Server {
         for(int i = 0; i < activity;) {
 	        for(auto& client : clients) {
 				if(!FD_ISSET(client.socket, &readfds)) continue; //No messages from this client
-
 				//Read id and data size
-				MessageID id;
-				uint32_t size;
-				if(recv(client.socket, &id, sizeof(id), 0) < sizeof(id)) continue; //TODO: Handle partial messages better
-				if(recv(client.socket, &size, sizeof(size), 0) < sizeof(id)) continue;
-
-				//Read data
-				Utilities::Stream stream(Utilities::Binary);
-				if(size > 0) {
-					char* buf = new char[size];
-					if(recv(client.socket, buf, size, 0) < size) {
-						delete[] buf;
-						continue;
-					}
-					for(uint32_t i = 0; i < size; i++) stream << buf[i];
-					delete[] buf;
-				}
+				Message message = readMessage(client.socket);
 				i++;
-				if(id == 1) {
+				if(message.id == 2) continue;
+				if(message.id == 1) {
 					disconnected.insert(client);
 					continue;
 				}
 				//Publish to listeners
-				recieve(client, {id, stream});
+				recieve(client, message);
 			}
         }
 
 
 	}
 
-	void Manager::sendAll(const Message& message) {
-
+	void Manager::sendAll(const Message& message) const {
+		for(const auto& client : clients) send(client, message);
+	}
+	void Manager::sendAll(const MessageID& id, MessageData data) const {
+		sendAll({id, data});
 	}
 
-
-	void Manager::send(const Client& client, const Message& message) {
-		//Create data
-		Utilities::Stream raw(Utilities::Binary);
-		raw << message.id << (uint32_t)message.data.GetStream().view().size() << message.data;
-		//Try and send data
-		::send(client.socket, raw.GetStream().view().data(), raw.GetStream().view().size(), MSG_NOSIGNAL);
+	void Manager::send(const Client& client, const Message& message) const {
+		sendMessage(client.socket, message);
+	}
+	void Manager::send(const Client& to, const MessageID& id, MessageData data) const {
+		send(to, {id, data});
 	}
 
 	void Manager::recieve(const Client& client, const Message& message) {
 		auto& handlers = subscribers[message.id];
 		auto i = handlers.begin();
 		while(i != handlers.end()) {
-			(*i)(client, message);
+			(*i)(client, message.data);
 			i++;
 		}
 	}
@@ -174,7 +166,7 @@ namespace StevEngine::Networking::Server {
 		id = copy.id;
 	}
 
-	void MessageHandler::operator() (const Client& client, Message message) const {
+	void MessageHandler::operator() (const Client& client, MessageData message) const {
 		function(client, message);
 	}
 

@@ -107,8 +107,7 @@ int main(int argc, char** argv) {
 
 	//Setup networking
 	Networking::Client::Manager client ("127.0.0.1", 5001);
-	client.send({10, std::string("First message!")});
-
+	client.send(10, std::string("First message!"));
 	//Start engine
 	return engine->Start();
 }

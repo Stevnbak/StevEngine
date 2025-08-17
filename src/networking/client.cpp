@@ -1,4 +1,3 @@
-#include <string>
 #ifdef StevEngine_NETWORKING
 #include "client.hpp"
 #include "networking.hpp"
@@ -7,7 +6,6 @@
 #include "main/Log.hpp"
 #include "utilities/Stream.hpp"
 
-#include <cstdint>
 #include <vector>
 #include <stdexcept>
 
@@ -35,23 +33,10 @@ namespace StevEngine::Networking::Client {
 
 	         	if (!FD_ISSET(connection, &readfds)) break; //No new messages
 				//Read id and data size
-				MessageID id;
-				uint32_t size;
-				if(recv(connection, &id, sizeof(id), 0) < sizeof(id)) break; //TODO: Handle partial messages better
-				if(recv(connection, &size, sizeof(size), 0) < sizeof(id)) break;
-				//Read data
-				Utilities::Stream stream(Utilities::Binary);
-				if(size > 0) {
-					char* buf = new char[size];
-					if(recv(connection, buf, size, 0) < size) {
-						delete[] buf;
-						break;
-					}
-					for(uint32_t i = 0; i < size; i++) stream << buf[i];
-					delete[] buf;
-				}
+				Message message = readMessage(connection);
+				if(message.id == 2) break; //Error occured, ignore message
 				//Publish to listeners
-				recieve({id, stream});
+				recieve(message);
 			}
 		});
 		engine->GetEvents()->Subscribe<UpdateEvent>([this](const UpdateEvent& e) {
@@ -73,7 +58,6 @@ namespace StevEngine::Networking::Client {
 
 			send(3);
 		});
-
 		//Start connection
 		if(!connect()) throw std::runtime_error("Failed to connect to server at " + ip + ":" + std::to_string(port));
 	}
@@ -82,13 +66,22 @@ namespace StevEngine::Networking::Client {
 		//Connect to server
 		connection = socket(serverAddress.sin_family, SOCK_STREAM, 0);
 		if(::connect(connection, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0) return false;
-		//Wait for first message
-		MessageID id;
-		if(recv(connection, &id, sizeof(id), 0) < sizeof(id)) return false; //TODO: Handle partial messages better
-		if(id != 0) return false;
+		//Wait for connection message
+		while(true) {
+			Message msg = readMessage(connection);
+			if(msg.id != 0) continue;
+			//Connection message recieved
+			if(id == Utilities::ID::empty) {
+				//First connection, save given id
+				id = msg.data.Read<Utilities::ID>();
+			} else {
+				//Reconnection
+				send(0, id);
+			}
+			//No more waiting
+			break;
+		}
 		Log::Debug("Succesfully connected to server");
-		uint32_t size;
-		recv(connection, &size, sizeof(size), 0); //Remove size info from socket buffer
 
 		send(3); //Send initial ping
 		return true;
@@ -97,25 +90,25 @@ namespace StevEngine::Networking::Client {
 	void Manager::disconnect() {
 		send(1);
 		::close(connection);
+		id = Utilities::ID::empty;
 	}
 
 	Manager::~Manager() {
 		disconnect();
 	}
 
-	void Manager::send(const Message& message) {
-		//Create data
-		Utilities::Stream raw(Utilities::Binary);
-		raw << message.id << (uint32_t)message.data.GetStream().view().size() << message.data;
-		//Try and send data
-		::send(connection, raw.GetStream().view().data(), raw.GetStream().view().size(), MSG_NOSIGNAL);
+	void Manager::send(const Message& message) const {
+		sendMessage(connection, message);
+	}
+	void Manager::send(const MessageID& id, MessageData data) const {
+		send({id, data});
 	}
 
 	void Manager::recieve(const Message& message) {
 		auto& handlers = subscribers[message.id];
 		auto i = handlers.begin();
 		while(i != handlers.end()) {
-			(*i)(message);
+			(*i)(message.data);
 			i++;
 		}
 	}
@@ -143,7 +136,7 @@ namespace StevEngine::Networking::Client {
 		id = copy.id;
 	}
 
-	void MessageHandler::operator() (Message message) const {
+	void MessageHandler::operator() (MessageData message) const {
 		function(message);
 	}
 

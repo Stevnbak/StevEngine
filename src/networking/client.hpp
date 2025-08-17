@@ -8,7 +8,7 @@
 
 namespace StevEngine::Networking::Client {
 
-	using MessageFunction = std::function<void(Message message)>;
+	using MessageFunction = std::function<void(MessageData message)>;
 
 	class MessageHandler {
 		public:
@@ -16,7 +16,7 @@ namespace StevEngine::Networking::Client {
 			MessageHandler(const MessageHandler& copy);
 			void operator= (const MessageHandler& copy);
 
-			void operator() (Message message) const;
+			void operator() (MessageData message) const;
 
 			bool operator== (const MessageHandler& other) const;
 
@@ -32,7 +32,8 @@ namespace StevEngine::Networking::Client {
 
 			~Manager();
 
-			void send(const Message& message);
+			void send(const Message& message) const;
+			void send(const MessageID& id, MessageData data = MessageData()) const;
 
 			Utilities::ID listen(MessageID id, MessageFunction function);
 			void unlisten(MessageID id, const Utilities::ID handler);
@@ -48,6 +49,7 @@ namespace StevEngine::Networking::Client {
 			void recieve(const Message& message);
 
 			Socket connection;
+			Utilities::ID id = Utilities::ID::empty;
 
 			//Ping
 			uint32_t pingTime = 0; //in ms

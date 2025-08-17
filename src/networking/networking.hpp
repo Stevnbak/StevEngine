@@ -20,14 +20,21 @@
 
 namespace StevEngine::Networking {
 	//ID of which message is sent or recieved (0 to 5 are reserved for engine purposes)
+	// 0 = Connection
+	// 1 = Disconnection
+	// 2 = Error
+	// 3 = Ping
 	typedef uint32_t MessageID;
+
+	typedef Utilities::Stream MessageData;
+
 
 	struct Message {
 		Message(MessageID id);
-		Message(MessageID id, Utilities::Stream data);
+		Message(MessageID id, MessageData data);
 
-		MessageID id;
-		Utilities::Stream data;
+		const MessageID id;
+		MessageData data;
 	};
 
 	void initWinSock();
@@ -37,5 +44,8 @@ namespace StevEngine::Networking {
 	#else
 		typedef int Socket;
 	#endif
+
+	Message readMessage(Socket connection);
+	bool sendMessage(Socket connection, Message message);
 }
 #endif

@@ -31,7 +31,7 @@ template<> struct std::hash<StevEngine::Networking::Server::Client> {
 
 namespace StevEngine::Networking::Server {
 
-	using MessageFunction = std::function<void(const Client& client, Message message)>;
+	using MessageFunction = std::function<void(const Client& client, MessageData message)>;
 
 	class MessageHandler {
 		public:
@@ -39,7 +39,7 @@ namespace StevEngine::Networking::Server {
 			MessageHandler(const MessageHandler& copy);
 			void operator= (const MessageHandler& copy);
 
-			void operator() (const Client& client, Message message) const;
+			void operator() (const Client& client, MessageData message) const;
 			bool operator== (const MessageHandler& other) const;
 			Utilities::ID getId() const { return id; }
 		private:
@@ -53,11 +53,15 @@ namespace StevEngine::Networking::Server {
 
 			~Manager();
 
-			void sendAll(const Message& message);
-			void send(const Client& to, const Message& message);
+			void sendAll(const Message& message) const;
+			void sendAll(const MessageID& id, MessageData data = MessageData()) const;
+			void send(const Client& to, const Message& message) const;
+			void send(const Client& to, const MessageID& id, MessageData data = MessageData()) const;
 
 			Utilities::ID listen(MessageID id, MessageFunction function);
 			void unlisten(MessageID id, const Utilities::ID handler);
+
+			const std::unordered_set<Client>& getClients() const { return clients; };
 
 		private:
 			sockaddr_in serverAddress;
@@ -69,7 +73,6 @@ namespace StevEngine::Networking::Server {
 			fd_set readfds;
 			void acceptConnections();
 			void recieveMessages();
-
 
 			void recieve(const Client& from, const Message& message);
 
