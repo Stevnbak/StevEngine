@@ -10,6 +10,7 @@ Features includes:
 - Audio
 - Data management
 - Loading models, images and other resources
+- Networking
 - And more...
 
 The full documentation for this project can be accessed at [stevnbak.github.io/StevEngine](https://stevnbak.github.io/StevEngine) [TOC]
@@ -68,6 +69,12 @@ Can be disabled by setting the cmake build option `USE_AUDIO` to `OFF`.
 Physics is implemented as components, but is using [Jolt Physics](https://github.com/jrouwe/JoltPhysics) as the backbone.
 
 Can be disabled by setting the cmake build option `USE_PHYSICS` to `OFF`.
+
+## Networking
+
+The networking handles connections and sending messages back and forth, but what data should be sent when and how it's handled is not controlled.
+
+By default it's turned off, can be enabled by setting the cmake build option `USE_NETWORKING` to `ON`.
 
 # Setup & Building
 

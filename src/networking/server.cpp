@@ -38,7 +38,7 @@ namespace StevEngine::Networking::Server {
 		//Reconnection (with client id)
 		listen(0, [this](const Client& client, MessageData message) {
 			auto id = message.Read<Utilities::ID>();
-			clients.emplace(client.socket, id);
+			clients.insert(Client(client.socket, id));
 			clients.erase(client);
 		});
 		//Ping
@@ -133,6 +133,14 @@ namespace StevEngine::Networking::Server {
 	void Manager::send(const Client& to, const MessageID& id, MessageData data) const {
 		send(to, {id, data});
 	}
+	void Manager::send(const Utilities::ID& clientId, const Message& message) const {
+		Client temp = Client(0, clientId);
+		if(!clients.contains(temp)) throw std::runtime_error(std::string("Client (") + clientId.GetString() + ") not connected");
+		send(Client(clients.find(temp)->socket, clientId), message);
+	}
+	void Manager::send(const Utilities::ID& clientId, const MessageID& id, MessageData data) const {
+		send(clientId, {id, data});
+	}
 
 	void Manager::recieve(const Client& client, const Message& message) {
 		auto& handlers = subscribers[message.id];
@@ -159,18 +167,18 @@ namespace StevEngine::Networking::Server {
 		}
 	}
 
-	MessageHandler::MessageHandler(const MessageFunction& function) : function(function) {}
-	MessageHandler::MessageHandler(const MessageHandler& copy) : function(copy.function), id(copy.id) {}
-	void MessageHandler::operator= (const MessageHandler& copy) {
+	Manager::MessageHandler::MessageHandler(const MessageFunction& function) : function(function) {}
+	Manager::MessageHandler::MessageHandler(const MessageHandler& copy) : function(copy.function), id(copy.id) {}
+	void Manager::MessageHandler::operator= (const MessageHandler& copy) {
 		function = copy.function;
 		id = copy.id;
 	}
 
-	void MessageHandler::operator() (const Client& client, MessageData message) const {
+	void Manager::MessageHandler::operator() (const Client& client, MessageData message) const {
 		function(client, message);
 	}
 
-	bool MessageHandler::operator== (const MessageHandler& other) const {
+	bool Manager::MessageHandler::operator== (const MessageHandler& other) const {
 		return (other.id == id);
 	}
 

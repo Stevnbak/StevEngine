@@ -129,18 +129,18 @@ namespace StevEngine::Networking::Client {
 		}
 	}
 
-	MessageHandler::MessageHandler(const MessageFunction& function) : function(function) {}
-	MessageHandler::MessageHandler(const MessageHandler& copy) : function(copy.function), id(copy.id) {}
-	void MessageHandler::operator= (const MessageHandler& copy) {
+	Manager::MessageHandler::MessageHandler(const MessageFunction& function) : function(function) {}
+	Manager::MessageHandler::MessageHandler(const MessageHandler& copy) : function(copy.function), id(copy.id) {}
+	void Manager::MessageHandler::operator= (const MessageHandler& copy) {
 		function = copy.function;
 		id = copy.id;
 	}
 
-	void MessageHandler::operator() (MessageData message) const {
+	void Manager::MessageHandler::operator() (MessageData message) const {
 		function(message);
 	}
 
-	bool MessageHandler::operator== (const MessageHandler& other) const {
+	bool Manager::MessageHandler::operator== (const MessageHandler& other) const {
 		return (other.id == id);
 	}
 }
