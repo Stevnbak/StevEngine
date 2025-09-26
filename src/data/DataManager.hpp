@@ -93,7 +93,7 @@ namespace StevEngine::Data {
 	 * @brief Get user's home directory path
 	 * @return Path to home directory
 	 */
-	extern std::string GetHomePath();
+	std::string GetHomePath();
 
 	/** Global game data manager instance */
 	extern GameData data;

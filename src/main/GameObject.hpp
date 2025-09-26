@@ -252,7 +252,7 @@ namespace StevEngine {
 			 * @brief Get number of children
 			 * @return Child count
 			 */
-			uint GetChildCount() const;
+			uint32_t GetChildCount() const;
 
 			/**
 			 * @brief Check if object has a parent

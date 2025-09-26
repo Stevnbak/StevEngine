@@ -100,7 +100,7 @@ namespace StevEngine {
 	GameObject& GameObject::GetChild(int index) const {
 		return GetScene().GetObject(children[index]);
 	}
-	uint GameObject::GetChildCount() const {
+	uint32_t GameObject::GetChildCount() const {
 		return children.size();
 	}
 	GameObject& GameObject::GetParent() const {
@@ -131,7 +131,7 @@ namespace StevEngine {
 		stream << id << name;
 		stream << position << rotation << scale;
 		//Components and children
-		stream << (uint)components.size() << GetChildCount();
+		stream << (uint32_t)components.size() << GetChildCount();
 		for(auto& component : components) {
 			stream << component->GetType() << component->Export(type);
 		}
@@ -145,7 +145,7 @@ namespace StevEngine {
 		//Basic info
 		stream >> name >> position >> rotation >> scale;
 		//Components and children
-		uint components, children;
+		uint32_t components, children;
 		stream >> components >> children;
 		for(int i = 0; i < components; i++) {
 			std::string type;

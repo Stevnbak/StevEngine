@@ -23,11 +23,12 @@
 
 namespace StevEngine::Networking {
 	/**
-	 * ID of which message is sent or recieved (0 to 3 are reserved for engine purposes)
+	 * ID of which message is sent or recieved (0 to 4 are reserved for engine purposes)
 	 * 0 = Connection
 	 * 1 = Disconnection
-	 * 2 = Error
+	 * 2 = Reconnection
 	 * 3 = Ping
+	 * 4 = Error
 	 */
 	typedef uint32_t MessageID;
 
@@ -65,8 +66,9 @@ namespace StevEngine::Networking {
 	 * @brief Socket object type is different across platforms, this is the shared object
 	 */
 	#ifdef _WIN32
-		WSADATA wsa;
+		extern WSADATA wsa;
 		typedef SOCKET Socket;
+		#define MSG_NOSIGNAL 0
 	#else
 		typedef int Socket;
 	#endif
@@ -81,5 +83,9 @@ namespace StevEngine::Networking {
 	 * @brief Used internally to encode and send a message to a socket connection
 	 */
 	bool sendMessage(Socket connection, Message message);
+	/**
+	 * @brief Close the socket connection
+	*/
+	void closeSocket(Socket connection);
 }
 #endif

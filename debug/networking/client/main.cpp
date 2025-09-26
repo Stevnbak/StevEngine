@@ -11,6 +11,7 @@
 
 #include <string>
 #include <SDL_keycode.h>
+#include <iostream>
 
 using namespace StevEngine;
 using namespace StevEngine::Utilities;
@@ -86,12 +87,15 @@ void CameraController::Start() {
 
 //Create engine
 int main(int argc, char** argv) {
-	CreateEngine("Debug", {
+	printf("Test\n");
+	std::cout << "Test 2" << std::endl;
+	CreateEngine("NetworkingClient", {
 		#ifdef StevEngine_SHOW_WINDOW
 		.vsync = true, .fullscreen = false,
 		#endif
 		.targetFPS = 100
 	});
+	printf("Created engine\n");
 	Scene& scene = sceneManager.CreateScene("Debug scene");
 
 	//Add Camera controller
@@ -105,6 +109,7 @@ int main(int argc, char** argv) {
 	cam->zoom = 1;
 	#endif
 
+	printf("Setup camera controller\n");
 	//Setup networking
 	Networking::Client::Manager client ("127.0.0.1", 5001);
 	client.send(10, std::string("First message!"));

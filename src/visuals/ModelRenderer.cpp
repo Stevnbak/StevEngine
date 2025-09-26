@@ -36,7 +36,7 @@ namespace StevEngine::Visuals {
 		objects(CreateRenderObjects(model,
 		Material(stream.Read<Material>())))
 	{
-		uint shaderCount = stream.Read<uint>();
+		uint32_t shaderCount = stream.Read<uint32_t>();
 		for(int i = 0; i < shaderCount; i++)
 			AddShader(ShaderProgram(stream));
 	}
@@ -44,7 +44,7 @@ namespace StevEngine::Visuals {
 	Utilities::Stream ModelRenderer::Export(Utilities::StreamType type) const {
 		Utilities::Stream stream(type);
 		stream << model.path << position << rotation << scale;
-		stream << (uint)shaders.size();
+		stream << (uint32_t)shaders.size();
 		for(auto&[_, program] : shaders)
 			stream << program.Export(type);
 		return stream;

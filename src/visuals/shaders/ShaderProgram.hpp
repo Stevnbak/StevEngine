@@ -156,10 +156,10 @@ namespace StevEngine::Renderer {
 			Utilities::Stream Export(Utilities::StreamType type) const;
 
 		protected:
-			uint32_t location;	  ///< OpenGL program ID
-			ShaderType shaderType;  ///< Type of shaders in program
-			bool modified;		  ///< Whether program needs relinking
-			std::map<uint32_t, Shader> shaders;  ///< Shaders by OpenGL ID
+			uint32_t location = 0;							///< OpenGL program ID
+			ShaderType shaderType = ShaderType::VERTEX;		///< Type of shaders in program
+			bool modified = false;							///< Whether program needs relinking
+			std::map<uint32_t, Shader> shaders;				///< Shaders by OpenGL ID
 	};
 
 	class ComputeShader : public ShaderProgram {

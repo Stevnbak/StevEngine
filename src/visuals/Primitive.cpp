@@ -269,9 +269,8 @@ namespace StevEngine {
 		*/
 		static const std::array<Vector3, 20 * 3> Icosahedron() {
 			std::array<Vector3, 12> icosahedronVertices;
-			double goldenRatio = std::numbers::phi_v<double>;
-			double a = sqrt(pow(RADIUS, 2) / (1 + pow(goldenRatio, 2)));
-			double c = a * goldenRatio;
+			double a = sqrt(pow(RADIUS, 2) / (1 + pow(phi, 2)));
+			double c = a * phi;
 			icosahedronVertices[0 + 0] = Vector3(-a, 0,  c);
 			icosahedronVertices[0 + 1] = Vector3( a, 0,  c);
 			icosahedronVertices[0 + 2] = Vector3( a, 0, -c);
@@ -407,7 +406,7 @@ namespace StevEngine {
 					if (cUV.X < 0.25) cUV.X += repeatFactor;
 				}
 				//Fix UV at poles
-				double top = sqrt(pow(RADIUS, 2) / (1 + pow(std::numbers::phi_v<double>, 2))) * std::numbers::phi_v<double>;
+				double top = sqrt(pow(RADIUS, 2) / (1 + pow(phi, 2))) * phi;
 				if(aUV.Y == 0 || aUV.Y == 1) {
 					aUV.X = (bUV.X + cUV.X) / 2.0;
 				}

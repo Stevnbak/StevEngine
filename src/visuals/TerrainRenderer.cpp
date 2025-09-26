@@ -40,7 +40,7 @@ namespace StevEngine::Visuals {
 				);
 
 				//Create vertices & normals
-				size_t offset = vertices.size();
+				uint32_t offset = vertices.size();
 				if(smooth) {
 					for(int o = 0; o <= 1; o++) {
 						for(int p = 0; p <= 1; p++) {

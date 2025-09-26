@@ -1,9 +1,8 @@
-#include "glad/gl.h"
-#include "main/Log.hpp"
-#include "utilities/Stream.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "Texture.hpp"
 #include "main/ResourceManager.hpp"
+#include "main/Log.hpp"
+#include "utilities/Stream.hpp"
 
 #include <SDL.h>
 #include <SDL_image.h>

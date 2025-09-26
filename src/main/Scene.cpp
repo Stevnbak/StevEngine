@@ -71,8 +71,8 @@ namespace StevEngine {
 	}
 	Scene::Scene(std::string name, Utilities::Stream& stream) : name(name) {
 		//Create objects
-		uint objects = stream.Read<uint>();
-		for(uint i = 0; i < objects; i++) {
+		uint32_t objects = stream.Read<uint32_t>();
+		for(uint32_t i = 0; i < objects; i++) {
 			CreateObject(stream);
 		}
 		//Set camera
@@ -82,7 +82,7 @@ namespace StevEngine {
 	}
 	Utilities::Stream Scene::Export(Utilities::StreamType type) {
 		Utilities::Stream stream(type);
-		stream << name << (uint)gameObjects.size();
+		stream << name << (uint32_t)gameObjects.size();
 		for(const auto& [id, obj] : gameObjects) {
 			stream << obj.Export(type);
 		}

@@ -1,7 +1,6 @@
 #pragma once
 #include "EventSystem.hpp"
 #include <SDL.h>
-#include <sys/types.h>
 
 namespace StevEngine {
 	/**
@@ -11,7 +10,7 @@ namespace StevEngine {
 		#ifdef StevEngine_SHOW_WINDOW
 		bool vsync = false;	  ///< Whether to use vertical sync
 		bool fullscreen = false; ///< Whether to run fullscreen
-		u_int16_t MSAA = 4;	 ///< Multisample anti-aliasing samples
+		uint16_t MSAA = 4;	 ///< Multisample anti-aliasing samples
 		int WIDTH = 800;		///< Window width
 		int HEIGHT = 600;	   ///< Window height
 		#endif

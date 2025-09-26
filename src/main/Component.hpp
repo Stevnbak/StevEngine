@@ -132,9 +132,12 @@ namespace StevEngine {
 			 */
 			template <class T> static bool RegisterComponentType(std::string type) {
 				if(factories.contains(type)) return false;
-				factories.insert({type, [](Utilities::Stream& stream) -> Component*  {
+				/*factories.insert({type, [](Utilities::Stream& stream) {
 					return (Component*) (new T(stream));
-				}});
+				}});*/
+				factories.emplace(type, [](Utilities::Stream& stream) {
+					return (Component*) new T(stream);
+				});
 				return true;
 			}
 	};

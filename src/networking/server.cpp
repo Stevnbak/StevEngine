@@ -9,7 +9,9 @@
 #include <vector>
 #include <stdexcept>
 #include <string>
+#ifndef _WIN32
 #include <bits/types/struct_timeval.h>
+#endif
 
 namespace StevEngine::Networking::Server {
 
@@ -36,10 +38,11 @@ namespace StevEngine::Networking::Server {
 			recieveMessages();
 		});
 		//Reconnection (with client id)
-		listen(0, [this](const Client& client, MessageData message) {
+		listen(2, [this](const Client& client, MessageData message) {
 			auto id = message.Read<Utilities::ID>();
+			Log::Debug(std::string("Client (") + id.GetString() + ") reconnected (replaced " + client.id.GetString() + ")");
 			clients.insert(Client(client.socket, id));
-			clients.erase(client);
+			disconnected.insert(client);
 		});
 		//Ping
 		listen(3, [this](const Client& client, auto _) {
@@ -60,7 +63,7 @@ namespace StevEngine::Networking::Server {
 	}
 
 	Manager::~Manager() {
-		::close(server);
+		closeSocket(server);
 	}
 
 	timeval timeout = {0, 0};
@@ -79,8 +82,9 @@ namespace StevEngine::Networking::Server {
 		Socket connection = accept(server, (sockaddr*)NULL, NULL);
 		if(connection < 0) return; //Failed to accept new connection
 
-		Log::Debug("Client connected");
 		Client client(connection);
+
+		Log::Debug(std::string("Client (") + client.id.GetString() + ") connected");
 		clients.insert(client);
 
 		send(client, 0, client.id);
@@ -96,28 +100,23 @@ namespace StevEngine::Networking::Server {
 		//Read messages
 		FD_ZERO(&readfds);
 		Socket max = 0;
-		for(auto& client : clients) {
+		for(const Client& client : clients) {
 			FD_SET(client.socket, &readfds);
 			if(client.socket > max) max = client.socket;
 		}
 		int activity = select(max + 1, &readfds, NULL, NULL, &timeout);
-        for(int i = 0; i < activity;) {
-	        for(auto& client : clients) {
+		for(int i = 0; i < activity;) {
+	        for(const Client& client : clients) {
 				if(!FD_ISSET(client.socket, &readfds)) continue; //No messages from this client
 				//Read id and data size
 				Message message = readMessage(client.socket);
 				i++;
-				if(message.id == 2) continue;
-				if(message.id == 1) {
-					disconnected.insert(client);
-					continue;
-				}
+				if(message.id == 4) continue;
+				if(message.id == 1) disconnected.insert(client);
 				//Publish to listeners
 				recieve(client, message);
 			}
         }
-
-
 	}
 
 	void Manager::sendAll(const Message& message) const {

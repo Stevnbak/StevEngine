@@ -45,7 +45,7 @@ namespace StevEngine::Networking::Client {
 			if(sinceLastPing > TIMEOUT_PING) {
 				Log::Debug("Server timed out!");
 				sinceLastPing = 0;
-				close(connection);
+				closeSocket(connection);
 				//TODO: Currently whole program stops and waits for a new connection, make it so it just tries every update
 				connect();
 			}
@@ -55,7 +55,6 @@ namespace StevEngine::Networking::Client {
 			pingTime = sinceLastPing * 1000 + 0.5;
 			//Log::Debug("Ping: " + std::to_string(pingTime));
 			sinceLastPing = 0;
-
 			send(3);
 		});
 		//Start connection
@@ -76,7 +75,7 @@ namespace StevEngine::Networking::Client {
 				id = msg.data.Read<Utilities::ID>();
 			} else {
 				//Reconnection
-				send(0, id);
+				send(2, id);
 			}
 			//No more waiting
 			break;
@@ -88,8 +87,8 @@ namespace StevEngine::Networking::Client {
 	}
 
 	void Manager::disconnect() {
-		send(1);
-		::close(connection);
+		send({1});
+		closeSocket(connection);
 		id = Utilities::ID::empty;
 	}
 

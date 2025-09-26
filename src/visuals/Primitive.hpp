@@ -1,8 +1,8 @@
 #pragma once
-#include "visuals/renderer/Object.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "renderer/RenderComponent.hpp"
 #include "utilities/Vertex.hpp"
+#include "visuals/renderer/Object.hpp"
 #include "visuals/Material.hpp"
 
 #define CUBE_PRIMITIVE_TYPE "CubePrimitive"
@@ -12,6 +12,8 @@
 #define CAPSULE_PRIMITIVE_TYPE "CapsulePrimitive"
 
 #define RADIUS 0.5
+
+const double phi = (1 + sqrt(5)) / 2;
 
 namespace StevEngine {
 	namespace Visuals {

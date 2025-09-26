@@ -1,5 +1,6 @@
 #pragma once
 #include "Stream.hpp"
+#include <map>
 
 namespace StevEngine::Utilities {
 	class KeyValueStore {

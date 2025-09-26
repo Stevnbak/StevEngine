@@ -1,7 +1,9 @@
 #pragma once
 #ifdef StevEngine_RENDERER_GL
 #include "main/ResourceManager.hpp"
-#include "glad/gl.h"
+
+#include <glad/gl.h>
+
 #include <cstdint>
 
 namespace StevEngine::Visuals {

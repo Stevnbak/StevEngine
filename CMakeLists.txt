@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
-project(StevEngine VERSION 0.1 LANGUAGES C CXX)
+project(StevEngine VERSION 0.2 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
+endif()
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
 	set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -94,7 +96,7 @@ cmake_dependent_option(GLAD_DIR "Directory to find the glad files in" ${CMAKE_CU
 if(USE_RENDERER_GL)
 	if(BUILD_GLAD)
 		add_subdirectory(libs/glad/cmake)
-		glad_add_library(glad STATIC QUIET REPRODUCIBLE API gl:core=4.4)
+		glad_add_library(glad STATIC QUIET REPRODUCIBLE API gl:core=4.5)
 		target_link_libraries(${PROJECT_NAME} PUBLIC glad)
 	else()
 		target_include_directories(${PROJECT_NAME} PUBLIC ${GLAD_DIR}/include)
@@ -128,7 +130,15 @@ set(SDL_SHARED OFF)
 set(SDL_STATIC ON)
 set(SDL2_DISABLE_INSTALL OFF)
 set(SDL_TEST OFF)
-add_subdirectory(libs/SDL2)
+
+find_package(SDL2 COMPONENTS SDL2)
+if(TARGET SDL2::SDL2)
+	find_package(SDL2 COMPONENTS SDL2main)
+else()
+	message(WARNING "Building SDL2 from source.")
+	add_subdirectory(libs/SDL2)
+endif()
+
 if(TARGET SDL2::SDL2main)
 	target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2main)
 endif()
@@ -151,43 +161,79 @@ endif()
 
 ## SDL_Mixer
 if(USE_AUDIO)
-	set(SDL2MIXER_VENDORED ON)
-	set(SDL2MIXER_MOD OFF)
-	set(SDL2MIXER_MIDI OFF)
-	set(SDL2MIXER_OPUS OFF)
-	set(SDL2MIXER_WAVPACK OFF)
-	add_subdirectory(libs/SDL2_mixer)
+	find_package(SDL2_mixer)
+	if(TARGET SDL2_mixer::SDL2_mixer OR TARGET SDL2_mixer)
+	else()
+		message(WARNING "Building SDL2 Mixer from source.")
+
+		set(SDL2MIXER_VENDORED ON)
+		set(SDL2MIXER_MOD OFF)
+		set(SDL2MIXER_MIDI OFF)
+		set(SDL2MIXER_OPUS OFF)
+		set(SDL2MIXER_WAVPACK OFF)
+		add_subdirectory(libs/SDL2_mixer)
+	endif()
+	
 	target_include_directories(${PROJECT_NAME} PUBLIC libs/SDL2_mixer/include)
 	list(APPEND external_libs_names SDL2_mixer/)
 	list(APPEND external_libs_include libs/SDL2_mixer/include)
-	if (WIN32)
+
+	if (TARGET SDL2_mixer::SDL2_mixer)
 		target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_mixer::SDL2_mixer)
-		add_custom_command(
-			TARGET ${PROJECT_NAME} POST_BUILD
-			COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2_mixer::SDL2_mixer>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
-			VERBATIM
-		)
+
+		if(WIN32)
+			add_custom_command(
+				TARGET ${PROJECT_NAME} POST_BUILD
+				COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2_mixer::SDL2_mixer>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+				VERBATIM
+			)
+		endif()
 	else()
 		target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_mixer)
+		if(WIN32)
+			add_custom_command(
+				TARGET ${PROJECT_NAME} POST_BUILD
+				COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2_mixer>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+				VERBATIM
+			)
+		endif()
 	endif()
 endif()
 
 ## SDL_Image
 if(USE_RENDERER_GL)
-	add_subdirectory(libs/SDL2_image)
+	find_package(SDL2_image)
+	if(TARGET SDL2_image::SDL2_image OR TARGET SDL2_image)
+	else()
+		message(WARNING "Building SDL2 Image from source.")
+
+		set(SDL2IMAGE_VENDORED OFF)
+		add_subdirectory(libs/SDL2_image)
+	endif()
+
+
 	target_include_directories(${PROJECT_NAME} PUBLIC libs/SDL2_image/include)
 	list(APPEND external_libs_names SDL2_image/)
 	list(APPEND external_libs_include libs/SDL2_image/include)
-	if (WIN32)
+	if (TARGET SDL2_image::SDL2_image)
 		target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image::SDL2_image)
 
-		add_custom_command(
-			TARGET ${PROJECT_NAME} POST_BUILD
-			COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2_image::SDL2_image>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
-			VERBATIM
-		)
+		if(WIN32)
+			add_custom_command(
+				TARGET ${PROJECT_NAME} POST_BUILD
+				COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2_image::SDL2_image>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+				VERBATIM
+			)
+		endif()
 	else()
 		target_link_libraries(${PROJECT_NAME} PUBLIC SDL2_image)
+		if(WIN32)
+			add_custom_command(
+				TARGET ${PROJECT_NAME} POST_BUILD
+				COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2_image>" "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+				VERBATIM
+			)
+		endif()
 	endif()
 endif()
 

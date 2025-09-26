@@ -71,14 +71,14 @@ namespace StevEngine::Visuals {
 			 * @param index Mesh index
 			 * @return Reference to render object
 			 */
-			Renderer::Object& GetObject(uint index) { return objects.at(index); };
+			Renderer::Object& GetObject(uint32_t index) { return objects.at(index); };
 
 			/**
 			 * @brief Get material for mesh
 			 * @param index Mesh index
 			 * @return Reference to material
 			 */
-			Visuals::Material& GetMaterials(uint index) { return GetObject(index).material; };
+			Visuals::Material& GetMaterials(uint32_t index) { return GetObject(index).material; };
 
 			/**
 			 * @brief Add shader program

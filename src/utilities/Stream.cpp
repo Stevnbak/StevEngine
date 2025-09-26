@@ -1,4 +1,6 @@
 #include "Stream.hpp"
+#include "main/ResourceManager.hpp"
+
 #include <cstdint>
 #include <cstdio>
 #include <fstream>
@@ -12,14 +14,15 @@ namespace StevEngine::Utilities {
 	}
 
 	//Read from file
-	void Stream::ReadFromFile(const Resources::Resource& file) {
+	bool Stream::ReadFromFile(const Resources::Resource& file) {
 		const char* data = file.GetRawData();
 		size_t size = file.GetSize();
 		for(int i = 0; i < size; i++) *this << (char)data[i];
+		return size > 0;
 	}
 	//Read from file stream
-	void Stream::ReadFromFile(std::ifstream& file) {
-		if(!file.is_open()) return;
+	bool Stream::ReadFromFile(std::ifstream& file) {
+		if(!file.is_open()) return false;
 		size_t size = file.seekg(0, std::ios::end).tellg();
 		if(size > 0) {
 			char* data = new char[size];
@@ -27,6 +30,7 @@ namespace StevEngine::Utilities {
 			for(int i = 0; i < size; i++) *this << (char)data[i];
 		}
 		file.close();
+		return size > 0;
 	}
 
 	//Write stream to stream

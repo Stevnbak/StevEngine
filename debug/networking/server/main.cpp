@@ -87,7 +87,7 @@ void CameraController::Start() {
 
 //Create engine
 int main(int argc, char** argv) {
-	CreateEngine("Debug", {
+	CreateEngine("NetworkingServer", {
 		#ifdef StevEngine_SHOW_WINDOW
 		.vsync = true, .fullscreen = false,
 		#endif

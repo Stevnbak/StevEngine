@@ -21,14 +21,14 @@ namespace StevEngine::Utilities {
 
 	void KeyValueStore::ReadFromFile(const Resources::Resource& file) {
 		Stream stream(Text);
-		stream.ReadFromFile(file);
-		ReadFromStream(stream);
+		bool fileHasContent = stream.ReadFromFile(file);
+		if (fileHasContent) ReadFromStream(stream);
 	}
 
 	void KeyValueStore::ReadFromFile(std::ifstream& file) {
 		Stream stream(Text);
-		stream.ReadFromFile(file);
-		ReadFromStream(stream);
+		bool fileHasContent = stream.ReadFromFile(file);
+		if (fileHasContent) ReadFromStream(stream);
 	}
 
 	void KeyValueStore::ReadFromStream(Stream& stream) {

@@ -1,8 +1,10 @@
 #ifdef StevEngine_PLAYER_DATA
 #include "DataManager.hpp"
 #include "main/Log.hpp"
+#include "main/ResourceManager.hpp"
 
 #include <string>
+#include <map>
 #include <fstream>
 #include <filesystem>
 #include <algorithm>
@@ -29,7 +31,7 @@ namespace StevEngine::Data {
 			return "appdata";
 		}
 	}
-	std::string GetDataPath() {
+	static std::string GetDataPath() {
 		if(std::getenv("HOME")) {
 			return std::format("{}/.local/", GetHomePath());
 		}
@@ -46,8 +48,10 @@ namespace StevEngine::Data {
 		std::filesystem::create_directories(appdataPath);
 		std::filesystem::create_directories(logPath);
 		//Read or create data file
-		std::ifstream start(GetAppdataPath() + "game.data");
-		data.ReadFromFile(start);
+		if (std::filesystem::exists(GetAppdataPath() + "game.data")) {
+			std::ifstream start(GetAppdataPath() + "game.data");
+			data.ReadFromFile(start);
+		}
 	}
 
 
