@@ -1,5 +1,7 @@
 #include "KeyValueStore.hpp"
 
+#include <cstdint>
+
 namespace StevEngine::Utilities {
 	void KeyValueStore::Erase(std::string key) {
 		data.erase(key);

@@ -91,7 +91,13 @@ git clone --recursive https://github.com/Stevnbak/StevEngine.git
 
 Clone and initialize submodules by running:
 ```shell
-git submodule update --init
+git submodule update --init --recursive --remote
+```
+
+To add as submodule to an existing git repository do:
+```shell
+git submodule add --name StevEngine https://github.com/Stevnbak/StevEngine.git <path>
+git submodule update --init --recursive --remote
 ```
 
 Building or installing [glad](https://github.com/Dav1dde/glad):
