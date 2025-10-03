@@ -1,7 +1,5 @@
 #pragma once
-#ifdef StevEngine_PHYSICS
-#include <Jolt/Jolt.h>
-#endif
+#include "physics/Jolt.h"
 #ifdef StevEngine_MODELS
 #include "assimp/vector3.h"
 #endif
@@ -58,7 +56,9 @@ namespace StevEngine::Utilities {
 			Vector3& operator+= (const Vector3& other);	   ///< Add-assign
 			Vector3& operator-= (const Vector3& other);	   ///< Subtract-assign
 			Vector3  operator* (const double& other) const;   ///< Scalar multiplication
+			Vector3  operator*= (const double& other);   ///< Scalar multiplication-assign
 			Vector3  operator/ (const double& other) const;   ///< Scalar division
+			Vector3  operator/= (const double& other);   ///< Scalar division-assign
 			bool	 operator== (const Vector3& other) const; ///< Equality comparison
 
 			//Conversions

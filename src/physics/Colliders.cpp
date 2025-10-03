@@ -1,16 +1,16 @@
-#include "utilities/Stream.hpp"
-#include <iomanip>
 #ifdef StevEngine_PHYSICS
 #include "Colliders.hpp"
 #include "main/GameObject.hpp"
 #include "main/Component.hpp"
 #include "utilities/Model.hpp"
 #include "utilities/Quaternion.hpp"
-#include "utilities/Vector3.hpp"
+#include "utilities/Stream.hpp"
 #include "utilities/Terrain.hpp"
+#include "utilities/Vector3.hpp"
 
 #include <algorithm>
 #include <sstream>
+#include <iomanip>
 
 #include <Jolt/Physics/Collision/Shape/ScaledShape.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>

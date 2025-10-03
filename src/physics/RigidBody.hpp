@@ -1,14 +1,14 @@
 #pragma once
-#include "utilities/Stream.hpp"
 #ifdef StevEngine_PHYSICS
 #include "main/Component.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Quaternion.hpp"
 #include "physics/Colliders.hpp"
 #include "physics/Layers.hpp"
+#include "utilities/Stream.hpp"
 
 //Jolt imports
-#include <Jolt/Jolt.h>
+#include "Jolt.h"
 #include <Jolt/Physics/Collision/Shape/StaticCompoundShape.h>
 #include <Jolt/Physics/Body/BodyManager.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
@@ -59,18 +59,15 @@ namespace StevEngine::Physics {
 	 * Adds physical simulation to game objects using Jolt physics.
 	 * Handles collision shapes, forces, and motion simulation.
 	 */
-	class RigidBody final : public Component {
-		friend class Collider;
-		friend class StevEngine::GameObject;
-
+	class RigidBody : public Component {
 		public:
 			JPH::Body* GetBody() const { return body; }	 ///< Get Jolt physics body
 			const JPH::EMotionType motionType;			  ///< Motion type (static/dynamic/kinematic)
-			const Layer* layer;							 ///< Physics collision layer
+			const LayerID layer;							 ///< Physics collision layer
 			const float mass;							   ///< Body mass in kg
+			static const bool unique = true;				///< Only one per GameObject
 
 		private:
-			static const bool unique = true;				///< Only one per GameObject
 			MotionProperties motionProperties;			  ///< Motion behavior settings
 			std::vector<Collider*> colliders;			  ///< Attached colliders
 			JPH::Body* body;							   ///< Jolt physics body
@@ -83,7 +80,7 @@ namespace StevEngine::Physics {
 			 * @param layer Collision layer
 			 * @param mass Mass in kg
 			 */
-			RigidBody(JPH::EMotionType motionType, Layer* layer, float mass = 1000);
+			RigidBody(JPH::EMotionType motionType, LayerID layer = LayerManager::DEFAULT, float mass = 1);
 
 			/**
 			 * @brief Create rigidbody from text serialized data
@@ -280,8 +277,5 @@ namespace StevEngine::Physics {
          */
         void MoveKinematic(Utilities::Vector3 inTargetPosition, Utilities::Quaternion inTargetRotation, float inDeltaTime) { return body->MoveKinematic(inTargetPosition, inTargetRotation, inDeltaTime); }
 	};
-
-	/** Register RigidBody as a component type */
-	inline bool body = CreateComponents::RegisterComponentType<RigidBody>(RIGIDBODY_TYPE);
 }
 #endif

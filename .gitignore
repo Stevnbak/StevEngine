@@ -1,6 +1,9 @@
 # VS Code files
-#.vscode
+.vscode
 .cache
+
+#zed
+.zed
 
 # Project
 build

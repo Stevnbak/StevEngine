@@ -1,10 +1,11 @@
 #pragma once
 #include "main/ResourceManager.hpp"
 #include "main/GameObject.hpp"
+#include "physics/Layers.hpp"
 #include "utilities/Stream.hpp"
 #include "visuals/Camera.hpp"
 
-#include <unordered_map>
+#include <map>
 #include <string>
 
 namespace StevEngine {
@@ -147,5 +148,12 @@ namespace StevEngine {
 
 			/** @brief Map of all objects in scene */
 			std::map<Utilities::ID, GameObject, Utilities::ID> gameObjects;
+
+			//Physics layers
+			#ifdef StevEngine_PHYSICS
+			Physics::LayerManager physicLayers;
+		public:
+			Physics::LayerManager& GetLayers() { return physicLayers; };
+			#endif
 	};
 }

@@ -345,8 +345,8 @@ namespace StevEngine {
 			 * @return Vector of matching components
 			 */
 			template <class T>
-			typename std::enable_if<std::is_base_of<Component,T>::value, std::vector<T*> >::type
-			GetAllComponentsInChildren() {
+			requires std::is_base_of_v<Component,T>
+			std::vector<T*> GetAllComponentsInChildren() {
 				//Define vector
 				std::vector<T*> allComponents;
 				//Find components in this object:
@@ -367,8 +367,8 @@ namespace StevEngine {
 			 * @return Pointer to added component or nullptr if failed
 			 */
 			template <class T>
-			typename std::enable_if<std::is_base_of<Component,T>::value, T* >::type
-			AddComponent(T* component) {
+			requires std::is_base_of_v<Component,T>
+			T* AddComponent(T* component) {
 				if(!component) return nullptr;
 				//If unique check uniqueness
 				if (component->unique) {
@@ -389,8 +389,8 @@ namespace StevEngine {
 			 * @tparam T Component type to remove
 			 */
 			template <class T>
-			typename std::enable_if<std::is_base_of<Component,T>::value, void >::type
-			RemoveAllComponents() {
+			requires std::is_base_of_v<Component,T>
+			void RemoveAllComponents() {
 				//Find component
 				auto i = components.begin();
 				while (i != components.end()) {
@@ -412,8 +412,8 @@ namespace StevEngine {
 			 * @param component Pointer to component to remove
 			 */
 			template <class T>
-			typename std::enable_if<std::is_base_of<Component,T>::value, void >::type
-			RemoveComponent(T* component) {
+			requires std::is_base_of_v<Component,T>
+			void RemoveComponent(T* component) {
 				//Find component
 				for (int i = 0; i < components.size(); i++) {
 					if (components[i].get() == component) {

@@ -56,9 +56,23 @@ namespace StevEngine::Utilities {
 	Vector3 Vector3::operator * (const double& other) const {
 		return Vector3(X * other, Y * other, Z * other);
 	}
+	Vector3 Vector3::operator*= (const double& value) {
+		X *= value;
+		Y *= value;
+		Z *= value;
+		return *this;
+	}
+
 	Vector3 Vector3::operator / (const double& other) const {
 		return Vector3(X / other, Y / other, Z / other);
 	}
+	Vector3 Vector3::operator/= (const double& value) {
+		X /= value;
+		Y /= value;
+		Z /= value;
+		return *this;
+	}
+
 	bool Vector3::operator == (const Vector3& other) const {
 		return (X == other.X) && (Y == other.Y) && (Z == other.Z);
 	}

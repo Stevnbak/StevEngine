@@ -8,7 +8,7 @@
 #include "utilities/Model.hpp"
 #include "utilities/Terrain.hpp"
 //Jolt:
-#include <Jolt/Jolt.h>
+#include "Jolt.h"
 #include <Jolt/Physics/Collision/Shape/Shape.h>
 
 #define COLLIDER_TYPE "Collider"

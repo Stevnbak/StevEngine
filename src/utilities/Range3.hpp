@@ -2,7 +2,6 @@
 #include "Vector3.hpp"
 
 #ifdef StevEngine_PHYSICS
-#include <Jolt/Jolt.h>
 #include <Jolt/Geometry/AABox.h>
 #endif
 

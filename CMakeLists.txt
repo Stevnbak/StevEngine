@@ -89,6 +89,10 @@ message("Building ${build_string}")
 
 # external libraries
 set(BUILD_SHARED_LIBS OFF)
+set(BUILDTYPE "${CMAKE_BUILD_TYPE}")
+set(CMAKE_BUILD_TYPE Release)
+get_directory_property(old_dir_compile_options COMPILE_OPTIONS)
+add_compile_options(-w)
 
 ## GLAD
 cmake_dependent_option(BUILD_GLAD "Build GLAD as part of the build process" ON "USE_RENDERER_GL" OFF)
@@ -111,6 +115,7 @@ if(USE_PHYSICS)
 	set(ENABLE_OBJECT_STREAM OFF)
 	set(USE_ASSERTS OFF)
 	set(DEBUG_RENDERER_IN_DEBUG_AND_RELEASE OFF)
+	set(PROFILE_ENABLED OFF)
 	set(PROFILER_IN_DEBUG_AND_RELEASE OFF)
 	set(USE_STD_VECTOR ON)
 	set(GENERATE_DEBUG_SYMBOLS OFF)
@@ -173,7 +178,7 @@ if(USE_AUDIO)
 		set(SDL2MIXER_WAVPACK OFF)
 		add_subdirectory(libs/SDL2_mixer)
 	endif()
-	
+
 	target_include_directories(${PROJECT_NAME} PUBLIC libs/SDL2_mixer/include)
 	list(APPEND external_libs_names SDL2_mixer/)
 	list(APPEND external_libs_include libs/SDL2_mixer/include)
@@ -255,6 +260,8 @@ if(USE_RENDERER_GL OR USE_PHYSICS)
 		set_property(TARGET assimp PROPERTY MSVC_RUNTIME_LIBRARY ${MSVC_LIBRARY})
 	endif()
 endif()
+set(CMAKE_BUILD_TYPE "${BUILDTYPE}")
+set_directory_properties(PROPERTIES COMPILE_OPTIONS "${old_dir_compile_options}")
 
 # Debug executable
 cmake_dependent_option(DEBUG_EXECUTABLE "Build the debug programs for testing the engine." ON "IS_DEBUG" OFF)

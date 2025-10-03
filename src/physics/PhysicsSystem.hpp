@@ -1,9 +1,8 @@
 #pragma once
 #ifdef StevEngine_PHYSICS
-#include "Layers.hpp"
 
 //Jolt imports
-#include <Jolt/Jolt.h>
+#include "Jolt.h"
 #include <Jolt/RegisterTypes.h>
 #include <Jolt/Core/Factory.h>
 #include <Jolt/Core/TempAllocator.h>
@@ -17,6 +16,8 @@
 #include <Jolt/Physics/Body/BodyManager.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt/Physics/Body/BodyActivationListener.h>
+
+#include "Layers.hpp"
 
 namespace StevEngine {
 	class Engine;
@@ -43,9 +44,15 @@ namespace StevEngine {
 
 				/**
 				 * @brief Get physics body interface
-				 * @return Pointer to Jolt body interface
+				 * @return Reference to Jolt body interface
 				 */
-				JPH::BodyInterface* GetBodyInterface() const { return bodyInterface; }
+				JPH::BodyInterface& GetBodyInterface() { return joltSystem.GetBodyInterface(); }
+
+				/**
+				 * @brief Get Jolt physics system
+				 * @return Reference to Jolt physics system
+				 */
+				JPH::PhysicsSystem& GetJoltSystem() { return joltSystem; }
 
 			private:
 				/**
@@ -55,14 +62,13 @@ namespace StevEngine {
 				void Update(double deltaTime);
 
 				JPH::PhysicsSystem joltSystem;		  ///< Main Jolt physics system
-				JPH::BodyInterface* bodyInterface;	   ///< Interface for manipulating physics bodies
 				JPH::TempAllocatorMalloc tempAllocator; ///< Memory allocator for physics
 				JPH::JobSystemSingleThreaded jobSystem;  ///< Job system for physics calculations
 
 				// Layer management
-				BPLayerInterfaceImpl broad_phase_layer_interface;					///< Broad phase layer interface
-				ObjectVsBroadPhaseLayerFilterImpl object_vs_broadphase_layer_filter; ///< Broad phase collision filter
-				ObjectLayerPairFilterImpl object_vs_object_layer_filter;			 ///< Object pair collision filter
+				BPLayerInterfaceImpl broad_phase_layer_interface;						///< Broad phase layer interface
+				ObjectVsBroadPhaseLayerFilterImpl object_vs_broadphase_layer_filter; 	///< Broad phase collision filter
+				ObjectLayerPairFilterImpl object_vs_object_layer_filter;			 	///< Object pair collision filter
 		};
 
 		extern PhysicsSystem physics; ///< Global physics system instance

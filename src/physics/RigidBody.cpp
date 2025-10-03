@@ -11,7 +11,7 @@
 
 namespace StevEngine::Physics {
 	//Constructor
-	RigidBody::RigidBody(JPH::EMotionType motionType, Layer* layer, float mass)
+	RigidBody::RigidBody(JPH::EMotionType motionType, LayerID layer, float mass)
 	  : motionType(motionType), layer(layer), mass(mass), body(nullptr) {};
 
 	void RigidBody::Start() {
@@ -20,7 +20,7 @@ namespace StevEngine::Physics {
 
 		//Create new body
 		GameObject& parent = GetParent();
-		JPH::BodyCreationSettings bodySettings = JPH::BodyCreationSettings(shape, parent.GetWorldPosition() - shape->GetCenterOfMass(), parent.GetWorldRotation(), motionType, layer->id);
+		JPH::BodyCreationSettings bodySettings = JPH::BodyCreationSettings(shape, parent.GetWorldPosition() - shape->GetCenterOfMass(), parent.GetWorldRotation(), motionType, layer);
 		bodySettings.mGravityFactor = motionProperties.GravityFactor;
 		bodySettings.mLinearDamping = motionProperties.LinearDamping;
 		bodySettings.mAngularDamping = motionProperties.AngularDamping;
@@ -37,14 +37,14 @@ namespace StevEngine::Physics {
 		bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
 		bodySettings.mMassPropertiesOverride = massProperties;
 		//	Create body from settings
-		body = physics.GetBodyInterface()->CreateBody(bodySettings);
-		physics.GetBodyInterface()->AddBody(body->GetID(), JPH::EActivation::Activate);
+		body = physics.GetBodyInterface().CreateBody(bodySettings);
+		physics.GetBodyInterface().AddBody(body->GetID(), JPH::EActivation::Activate);
 
 		//Events
 		parent.Subscribe<ColliderUpdateEvent>([this](ColliderUpdateEvent) { RefreshShape(); });
 	}
 	void RigidBody::Deactivate() {
-		if(body) physics.GetBodyInterface()->DestroyBody(body->GetID());
+		if(body) physics.GetBodyInterface().DestroyBody(body->GetID());
 		if(shape) shape->Release();
 	}
 	void RigidBody::Update(double deltaTime) {
@@ -99,16 +99,19 @@ namespace StevEngine::Physics {
 	}
 
 	RigidBody::~RigidBody() {
-		if(body) physics.GetBodyInterface()->DestroyBody(body->GetID());
+		if(body) physics.GetBodyInterface().DestroyBody(body->GetID());
 		if(shape) shape->Release();
 	}
 
 	Utilities::Stream RigidBody::Export(Utilities::StreamType type) const {
 		Utilities::Stream stream(type);
-		stream << mass << (uint32_t)motionType << layer->id;
+		stream << mass << (uint32_t)motionType << layer;
 		return stream;
 	}
 	RigidBody::RigidBody(Utilities::Stream& stream)
-	  : mass(stream.Read<double>()), motionType((JPH::EMotionType)stream.Read<uint32_t>()), layer(StevEngine::Physics::Layer::GetLayerById(stream.Read<int>())), body(nullptr) {}
+	  : mass(stream.Read<double>()), motionType((JPH::EMotionType)stream.Read<uint32_t>()), layer((JPH::ObjectLayer)stream.Read<int>()), body(nullptr) {}
+
+	/** Register RigidBody as a component type */
+	bool body = CreateComponents::RegisterComponentType<RigidBody>(RIGIDBODY_TYPE);
 }
 #endif

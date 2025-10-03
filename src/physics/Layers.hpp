@@ -1,13 +1,14 @@
 #pragma once
 #ifdef StevEngine_PHYSICS
+#include <unordered_map>
 
-#include <map>
-#include <string>
-
-#include <Jolt/Jolt.h>
+#include "Jolt.h"
 #include <Jolt/Physics/Collision/BroadPhase/BroadPhaseLayer.h>
 
+
 namespace StevEngine::Physics {
+	typedef JPH::ObjectLayer LayerID;
+
 	namespace BroadPhaseLayers
 	{
 		/** @brief Layer for static/non-moving objects */
@@ -23,39 +24,63 @@ namespace StevEngine::Physics {
 	 * Controls which objects can collide with each other.
 	 */
 	class Layer {
+		friend class LayerManager;
+
 		public:
-			const bool isStatic;			///< Whether objects are static
-			const std::string name;		 ///< Layer name
-			const JPH::ObjectLayer id;	  ///< Unique layer ID
-			const JPH::BroadPhaseLayer BroadPhaseLayer;  ///< Broad phase settings
+			const bool isStatic;							///< Whether objects are static
+			const LayerID id;	  							///< Unique layer ID
+			const JPH::BroadPhaseLayer BroadPhaseLayer;  	///< Broad phase settings
 
 			/**
-			 * @brief Create new physics layer
-			 * @param name Layer identifier
-			 * @param isStatic Whether objects are static
+			 * @brief Copy physics layer
+			 * @param copy Layer to copy
 			 */
-			Layer(std::string name, bool isStatic = false);
+			Layer(const Layer& copy);
 
 		private:
-			static JPH::ObjectLayer currentId;  ///< Next layer ID to assign
-			static std::map<unsigned int, Layer*> layers;  ///< All layers by ID
-			static std::map<std::string, Layer*> layersByName;  ///< All layers by name
-
-		public:
 			/**
-			 * @brief Get layer by name
-			 * @param name Layer identifier
-			 * @return Layer pointer
+			 * @brief Create new physics layer
+			 * @param id Layer identifier
+			 * @param isStatic Whether objects are static
 			 */
-			static Layer* GetLayerByName(std::string name);
+			Layer(LayerID id, bool isStatic = false);
+	};
+
+	/**
+	 * @brief Physics collision layer manager
+	 *
+	 * Defines set of layers and which collisions are allowed.
+	 */
+	class LayerManager {
+		public:
+			enum DefaultLayers {
+				STATIC = (LayerID)0,
+				DEFAULT = (LayerID)1,
+			};
+
+			LayerManager();
+
+			/**
+			 * @brief Create a new physics layer
+			 * @param isStatic Whether objects are static
+			 * @return Layer ID
+			 */
+			LayerID CreateLayer(bool isStatic = true);
 
 			/**
 			 * @brief Get layer by ID
 			 * @param id Layer ID
-			 * @return Layer pointer
+			 * @return Layer
 			 */
-			static Layer* GetLayerById(JPH::ObjectLayer id);
+			const Layer& GetLayer(LayerID id);
+
+		private:
+			std::unordered_map<LayerID, Layer> layers;
+
+			LayerID currentId;  ///< Next layer ID to assign
 	};
+
+	// Jolt management
 
 	/**
 	 * @brief Broad phase layer interface for Jolt
@@ -118,4 +143,15 @@ namespace StevEngine::Physics {
 			virtual bool ShouldCollide(JPH::ObjectLayer inObject1, JPH::ObjectLayer inObject2) const override;
 	};
 }
+
+template<> struct std::hash<StevEngine::Physics::Layer> {
+	/**
+	 * @brief Hash function for Physics layer
+	 * @param k Layer to hash
+	 * @return Hash value
+	 */
+	std::size_t operator()(const StevEngine::Physics::Layer& k) const {
+		return std::hash<StevEngine::Physics::LayerID>()(k.id);
+	}
+};
 #endif

@@ -1,10 +1,8 @@
 #pragma once
-#ifdef StevEngine_PHYSICS
-#include <Jolt/Jolt.h>
-#endif
+#include "Vector3.hpp"
+
 #include <string>
 
-#include "Vector3.hpp"
 
 namespace StevEngine::Utilities {
 	class Vector4;
