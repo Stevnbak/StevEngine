@@ -1,0 +1,133 @@
+#ifdef StevEngine_PHYSICS
+#include "CharacterBody.hpp"
+#include "main/GameObject.hpp"
+#include "physics/Colliders.hpp"
+#include "physics/PhysicsSystem.hpp"
+#include "utilities/Quaternion.hpp"
+#include "utilities/Stream.hpp"
+#include "utilities/Vector3.hpp"
+
+#include "Jolt/Physics/Collision/Shape/StaticCompoundShape.h"
+
+#define CHARACTERBODY_TYPE "CharacterBody"
+
+namespace StevEngine::Physics {
+
+	JPH::TempAllocatorMalloc tempAllocator;
+
+	JPH::CharacterVirtualSettings convertSettings(CharacterSettings input) {
+		JPH::CharacterVirtualSettings settings;
+		settings.mMass = input.mass;
+		settings.mMaxStrength = input.maxStrength;
+		settings.mPredictiveContactDistance = input.predictiveContactDistance;
+		settings.mMaxCollisionIterations = input.maxCollisionIterations;
+		settings.mMaxConstraintIterations = input.maxConstraintIterations;
+		settings.mMinTimeRemaining = input.minTimeRemaining;
+		settings.mCollisionTolerance = input.collisionTolerance;
+		settings.mCharacterPadding = input.characterPadding;
+		settings.mMaxNumHits = input.maxNumHits;
+		settings.mHitReductionCosMaxAngle = input.hitReductionCosMaxAngle;
+		settings.mPenetrationRecoverySpeed = input.penetrationRecoverySpeed;
+		return settings;
+	}
+
+	JPH::CharacterVirtualSettings tempSettings;
+	CharacterBody::CharacterBody(CharacterSettings input, LayerID layer)
+	  : Component(),
+		settings(convertSettings(input)),
+		layer(layer)
+	{
+		jphCharacter = new JPH::CharacterVirtual(&settings, Utilities::Vector3(0), JPH::Quat::sIdentity(), &physics.GetJoltSystem());
+	}
+
+	void CharacterBody::RefreshShape() {
+		GameObject& parent = GetParent();
+		//Find all colliders:
+		std::vector<Collider*> colliders;
+		colliders = parent.GetAllComponents<Collider>();
+		for (int i = 0; i < parent.GetChildCount(); i++) {
+			std::vector<Collider*> cc = parent.GetChild(i).GetAllComponents<Collider>();
+			colliders.insert(colliders.end(), cc.begin(), cc.end());
+		}
+		//Create new shape
+		JPH::StaticCompoundShapeSettings shapeSettings = JPH::StaticCompoundShapeSettings();
+		for(Collider* col : colliders) {
+			if(col->GetShape())
+				shapeSettings.AddShape((col->GetParent().GetWorldPosition() + col->GetPosition()), (col->GetParent().GetWorldRotation() + col->GetRotation() - parent.GetWorldRotation()), col->GetShape());
+		}
+		//Create final shape
+		JPH::ShapeSettings::ShapeResult result = shapeSettings.Create();
+		if(result.IsValid()) {
+			shape = result.Get();
+			settings.mShape = shape;
+			settings.mShapeOffset = -shape->GetCenterOfMass();
+			JPH::PhysicsSystem& system = physics.GetJoltSystem();
+			jphCharacter->SetShapeOffset(settings.mShapeOffset);
+			jphCharacter->SetShape(shape, 0, system.GetDefaultBroadPhaseLayerFilter(layer), system.GetDefaultLayerFilter(layer), bodyFilter, shapeFilter, tempAllocator);
+		}
+		else {
+			Log::Error(result.GetError().c_str(), true);
+		}
+	}
+
+	CharacterSettings fromStream(Utilities::Stream& stream) {
+		CharacterSettings settings;
+		stream
+			>> settings.mass
+			>> settings.maxStrength
+			>> settings.predictiveContactDistance
+			>> settings.maxCollisionIterations
+			>> settings.maxConstraintIterations
+			>> settings.minTimeRemaining
+			>> settings.collisionTolerance
+			>> settings.characterPadding
+			>> settings.maxNumHits
+			>> settings.hitReductionCosMaxAngle
+			>> settings.penetrationRecoverySpeed
+		;
+
+		return settings;
+	}
+
+	CharacterBody::CharacterBody(Utilities::Stream& stream) : CharacterBody(fromStream(stream)) {}
+
+	Utilities::Stream CharacterBody::Export(Utilities::StreamType type) const {
+		Utilities::Stream stream(type);
+		stream
+			<< settings.mMass
+			<< settings.mMaxStrength
+			<< settings.mPredictiveContactDistance
+			<< settings.mMaxCollisionIterations
+			<< settings.mMaxConstraintIterations
+			<< settings.mMinTimeRemaining
+			<< settings.mCollisionTolerance
+			<< settings.mCharacterPadding
+			<< settings.mMaxNumHits
+			<< settings.mHitReductionCosMaxAngle
+			<< settings.mPenetrationRecoverySpeed
+		;
+
+		return stream;
+	}
+
+	void CharacterBody::Start() {
+		RefreshShape();
+	}
+
+	void CharacterBody::Deactivate() {
+
+	}
+
+	void CharacterBody::Update(double deltaTime) {
+		JPH::PhysicsSystem& system = physics.GetJoltSystem();
+		velocity += system.GetGravity() * deltaTime;
+		jphCharacter->SetLinearVelocity(velocity);
+		jphCharacter->Update(deltaTime, system.GetGravity(), system.GetDefaultBroadPhaseLayerFilter(layer), system.GetDefaultLayerFilter(layer), bodyFilter, shapeFilter, tempAllocator);
+		velocity = jphCharacter->GetLinearVelocity();
+		GetParent().SetPosition(jphCharacter->GetPosition(), false);
+		GetParent().SetRotation(jphCharacter->GetRotation(), false);
+	}
+
+	CharacterBody::~CharacterBody() {}
+}
+#endif
