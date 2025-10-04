@@ -1,3 +1,5 @@
+#include "utilities/Quaternion.hpp"
+#include "utilities/Vector3.hpp"
 #ifdef StevEngine_PHYSICS
 #include "RigidBody.hpp"
 #include "physics/Colliders.hpp"
@@ -20,7 +22,7 @@ namespace StevEngine::Physics {
 
 		//Create new body
 		GameObject& parent = GetParent();
-		JPH::BodyCreationSettings bodySettings = JPH::BodyCreationSettings(shape, parent.GetWorldPosition() - shape->GetCenterOfMass(), parent.GetWorldRotation(), motionType, layer);
+		JPH::BodyCreationSettings bodySettings = JPH::BodyCreationSettings(shape, parent.GetWorldPosition(), parent.GetWorldRotation(), motionType, layer);
 		bodySettings.mGravityFactor = motionProperties.GravityFactor;
 		bodySettings.mLinearDamping = motionProperties.LinearDamping;
 		bodySettings.mAngularDamping = motionProperties.AngularDamping;
@@ -39,7 +41,6 @@ namespace StevEngine::Physics {
 		//	Create body from settings
 		body = physics.GetBodyInterface().CreateBody(bodySettings);
 		physics.GetBodyInterface().AddBody(body->GetID(), JPH::EActivation::Activate);
-
 		//Events
 		parent.Subscribe<ColliderUpdateEvent>([this](ColliderUpdateEvent) { RefreshShape(); });
 	}
@@ -52,7 +53,7 @@ namespace StevEngine::Physics {
 	void RigidBody::Update(double deltaTime) {
 		if(motionType != JPH::EMotionType::Static) {
 			GameObject& parent = GetParent();
-			parent.SetPosition(body->GetWorldSpaceBounds().GetCenter(), false);
+			parent.SetPosition(body->GetPosition(), false);
 			parent.SetRotation(body->GetRotation(), false);
 		}
 	}
@@ -63,8 +64,10 @@ namespace StevEngine::Physics {
 	}
 	void RigidBody::RefreshShape() {
 		GameObject& parent = GetParent();
+		Utilities::Vector3 pos = parent.GetWorldPosition();
+		Utilities::Quaternion rot = parent.GetWorldRotation();
 		//Find all colliders:
-		colliders.clear();
+		std::vector<Collider*> colliders;
 		colliders = parent.GetAllComponents<Collider>();
 		for (int i = 0; i < parent.GetChildCount(); i++) {
 			std::vector<Collider*> cc = parent.GetChild(i).GetAllComponents<Collider>();
@@ -74,7 +77,7 @@ namespace StevEngine::Physics {
 		JPH::StaticCompoundShapeSettings shapeSettings = JPH::StaticCompoundShapeSettings();
 		for(Collider* col : colliders) {
 			if(col->GetShape())
-				shapeSettings.AddShape((col->GetParent().GetWorldPosition() + col->GetPosition()), (col->GetParent().GetWorldRotation() + col->GetRotation() - parent.GetWorldRotation()), col->GetShape());
+				shapeSettings.AddShape((col->GetParent().GetWorldPosition() + col->GetPosition() - pos), (col->GetParent().GetWorldRotation() + col->GetRotation() - rot), col->GetShape());
 		}
 		//Create final shape
 		JPH::ShapeSettings::ShapeResult result = shapeSettings.Create();

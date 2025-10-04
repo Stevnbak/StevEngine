@@ -42,6 +42,8 @@ namespace StevEngine::Physics {
 
 	void CharacterBody::RefreshShape() {
 		GameObject& parent = GetParent();
+		Utilities::Vector3 pos = parent.GetWorldPosition();
+		Utilities::Quaternion rot = parent.GetWorldRotation();
 		//Find all colliders:
 		std::vector<Collider*> colliders;
 		colliders = parent.GetAllComponents<Collider>();
@@ -53,7 +55,7 @@ namespace StevEngine::Physics {
 		JPH::StaticCompoundShapeSettings shapeSettings = JPH::StaticCompoundShapeSettings();
 		for(Collider* col : colliders) {
 			if(col->GetShape())
-				shapeSettings.AddShape((col->GetParent().GetWorldPosition() + col->GetPosition()), (col->GetParent().GetWorldRotation() + col->GetRotation() - parent.GetWorldRotation()), col->GetShape());
+				shapeSettings.AddShape((col->GetParent().GetWorldPosition() + col->GetPosition() - pos), (col->GetParent().GetWorldRotation() + col->GetRotation() - rot), col->GetShape());
 		}
 		//Create final shape
 		JPH::ShapeSettings::ShapeResult result = shapeSettings.Create();
@@ -114,13 +116,13 @@ namespace StevEngine::Physics {
 		RefreshShape();
 
 		GameObject& parent = GetParent();
-		jphCharacter->SetRotation(parent.GetRotation());
-		jphCharacter->SetPosition(parent.GetPosition());
+		jphCharacter->SetRotation(parent.GetWorldRotation());
+		jphCharacter->SetPosition(parent.GetWorldPosition());
 
 		GetParent().Subscribe<TransformUpdateEvent>([this](const TransformUpdateEvent& e) {
 			GameObject& parent = GetParent();
-			if(e.rotation) jphCharacter->SetRotation(parent.GetRotation());
-			if(e.position) jphCharacter->SetPosition(parent.GetPosition());
+			if(e.rotation) jphCharacter->SetRotation(parent.GetWorldRotation());
+			if(e.position) jphCharacter->SetPosition(parent.GetWorldPosition());
 		});
 	}
 

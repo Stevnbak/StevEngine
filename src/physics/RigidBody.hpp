@@ -69,7 +69,6 @@ namespace StevEngine::Physics {
 
 		private:
 			MotionProperties motionProperties;			  ///< Motion behavior settings
-			std::vector<Collider*> colliders;			  ///< Attached colliders
 			JPH::Body* body;							   ///< Jolt physics body
 			JPH::Ref<JPH::Shape> shape;					///< Combined collision shape
 
