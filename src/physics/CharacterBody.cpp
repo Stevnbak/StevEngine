@@ -112,6 +112,16 @@ namespace StevEngine::Physics {
 
 	void CharacterBody::Start() {
 		RefreshShape();
+
+		GameObject& parent = GetParent();
+		jphCharacter->SetRotation(parent.GetRotation());
+		jphCharacter->SetPosition(parent.GetPosition());
+
+		GetParent().Subscribe<TransformUpdateEvent>([this](const TransformUpdateEvent& e) {
+			GameObject& parent = GetParent();
+			if(e.rotation) jphCharacter->SetRotation(parent.GetRotation());
+			if(e.position) jphCharacter->SetPosition(parent.GetPosition());
+		});
 	}
 
 	void CharacterBody::Deactivate() {
@@ -128,6 +138,8 @@ namespace StevEngine::Physics {
 		GetParent().SetRotation(jphCharacter->GetRotation(), false);
 	}
 
-	CharacterBody::~CharacterBody() {}
+	CharacterBody::~CharacterBody() {
+		delete jphCharacter;
+	}
 }
 #endif

@@ -3,6 +3,7 @@
 #include "main/GameObject.hpp"
 #include "main/SceneManager.hpp"
 #include "main/Log.hpp"
+#include "utilities/Stream.hpp"
 
 using namespace StevEngine::Utilities;
 
@@ -32,11 +33,14 @@ namespace StevEngine {
 		for(auto[id, event] : handlers) object.Unsubscribe(event, id);
 	}
 	//Export/Import component
-	Component* CreateComponents::Create(const std::string& type, Utilities::Stream& stream) {
+	Component* CreateComponents::Create(const std::string& type, Stream& stream) {
 		if(!factories.contains(type)) {
 			Log::Error("Component of type \"" + type + "\" is not registered as text importable.", true);
 			return nullptr;
 		}
 		return factories[type](stream);
+	}
+	Stream Component::Export(StreamType stream) const {
+		return Stream(stream);
 	}
 }

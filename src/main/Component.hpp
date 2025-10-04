@@ -65,7 +65,7 @@ namespace StevEngine {
 			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */
-			virtual Utilities::Stream Export(Utilities::StreamType stream) const = 0;
+			virtual Utilities::Stream Export(Utilities::StreamType stream) const;
 
 			/**
 			 * @brief Initialize component after creation

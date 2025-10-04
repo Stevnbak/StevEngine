@@ -104,6 +104,7 @@ namespace StevEngine::Physics {
 		// Function wrappers
 		public:
 			bool 	IsSupported() const { return jphCharacter->IsSupported(); }; ///< Is character supported (by ground/wall)
+			bool 	IsOnGround() const { return jphCharacter->GetGroundState() == JPH::CharacterBase::EGroundState::OnGround; }; ///< Is character on the ground
 			float 	GetMass () const { return jphCharacter->GetMass(); }; ///< Get character mass (kg)
 			void 	SetMass (float mass) { jphCharacter->SetMass(mass); settings.mMass = mass; }; ///< Set character mass (kg)
 			float 	GetMaxStrength () const { return jphCharacter->GetMaxStrength(); }; ///< Maximum force with which the character can push other bodies (N)

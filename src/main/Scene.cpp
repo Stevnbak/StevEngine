@@ -61,7 +61,10 @@ namespace StevEngine {
 		return keys;
 	}
 	void Scene::DestroyObject(ID id) {
-		if(gameObjects.contains(id)) gameObjects.erase(id);
+		if(gameObjects.contains(id)) {
+			GetObject(id).Deactivate();
+			gameObjects.erase(id);
+		}
 	}
 	Scene::Scene(std::string name) : name(name) {
 		//Create main camera

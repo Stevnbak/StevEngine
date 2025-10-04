@@ -58,7 +58,7 @@ namespace StevEngine::Physics {
 			this->shape = new JPH::ScaledShape(rawShape, Utilities::Vector3(this->scale.X * abs.X, this->scale.Y * abs.Y, this->scale.Z * abs.Z));
 		} else if(!fromLocal) {
 			//Don't tell current parent if it gets the same position or rotation change
-			parent = &parent->GetParent();
+			parent = (parent->HasParent() ? &parent->GetParent() : nullptr);
 		}
 		//Publish shape updated
 		if(parent != nullptr) parent->Publish(ColliderUpdateEvent(this));

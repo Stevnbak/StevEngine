@@ -45,7 +45,9 @@ namespace StevEngine::Physics {
 	}
 	void RigidBody::Deactivate() {
 		if(body) physics.GetBodyInterface().DestroyBody(body->GetID());
+		body = nullptr;
 		if(shape) shape->Release();
+		shape = nullptr;
 	}
 	void RigidBody::Update(double deltaTime) {
 		if(motionType != JPH::EMotionType::Static) {

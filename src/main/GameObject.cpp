@@ -114,6 +114,13 @@ namespace StevEngine {
 		if(!parent.IsNull()) {
 			GameObject& p = GetParent();
 			for(auto[id, event] : handlers) p.Unsubscribe(event, id);
+			//Remove from parent list
+			for(int i = 0; i < p.GetChildCount(); i++) {
+				if(p.children.at(i) == Id()) {
+					p.RemoveChild(i);
+					break;
+				}
+			}
 		}
 		GameObject& object = GetScene().GetObject(id);
 		handlers.emplace_back(object.Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); }), UpdateEvent::GetStaticEventType());
@@ -160,7 +167,7 @@ namespace StevEngine {
 	GameObject::~GameObject() {
 		///Log::Normal(std::format("Destroying object with id {}", id), true);
 		//Remove event listeners
-		if(HasParent()) {
+		if(HasParent() && GetScene().Exists(parent)) {
 			GameObject& p = GetParent();
 			for(auto[id, event] : handlers) p.Unsubscribe(event, id);
 		}
