@@ -138,6 +138,15 @@ namespace StevEngine::Physics {
 		GetParent().SetRotation(jphCharacter->GetRotation(), false);
 	}
 
+	void CharacterBody::ExtendedUpdate(double deltaTime, JPH::CharacterVirtual::ExtendedUpdateSettings updateSettings) {
+		JPH::PhysicsSystem& system = physics.GetJoltSystem();
+		jphCharacter->SetLinearVelocity(velocity);
+		jphCharacter->ExtendedUpdate(deltaTime, system.GetGravity(), updateSettings, system.GetDefaultBroadPhaseLayerFilter(layer), system.GetDefaultLayerFilter(layer), bodyFilter, shapeFilter, tempAllocator);
+		velocity = jphCharacter->GetLinearVelocity();
+		GetParent().SetPosition(jphCharacter->GetPosition(), false);
+		GetParent().SetRotation(jphCharacter->GetRotation(), false);
+	}
+
 	CharacterBody::~CharacterBody() {
 		delete jphCharacter;
 	}

@@ -73,9 +73,16 @@ namespace StevEngine::Physics {
 
 			/**
 			 * @brief Update transform from physics
+			 * Adds gravity to the current velocity
 			 * @param deltaTime Time since last update
 			 */
 			void Update(double deltaTime);
+
+			/**
+			 * @brief Extended physics transform update
+			 * @param deltaTime Time since last update
+			 */
+			void ExtendedUpdate(double deltaTime, JPH::CharacterVirtual::ExtendedUpdateSettings updateSettings = {});
 
 			/**
 			 * @brief Clean up resources
