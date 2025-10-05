@@ -1,3 +1,4 @@
+#include "main/Log.hpp"
 #ifdef StevEngine_PHYSICS
 #include "CharacterBody.hpp"
 #include "main/GameObject.hpp"
@@ -40,7 +41,7 @@ namespace StevEngine::Physics {
 		jphCharacter = new JPH::CharacterVirtual(&settings, Utilities::Vector3(0), JPH::Quat::sIdentity(), &physics.GetJoltSystem());
 	}
 
-	void CharacterBody::RefreshShape() {
+	bool CharacterBody::RefreshShape() {
 		GameObject& parent = GetParent();
 		Utilities::Vector3 pos = parent.GetWorldPosition();
 		Utilities::Quaternion rot = parent.GetWorldRotation();
@@ -60,15 +61,26 @@ namespace StevEngine::Physics {
 		//Create final shape
 		JPH::ShapeSettings::ShapeResult result = shapeSettings.Create();
 		if(result.IsValid()) {
-			shape = result.Get();
-			settings.mShape = shape;
-			settings.mShapeOffset = -shape->GetCenterOfMass();
-			JPH::PhysicsSystem& system = physics.GetJoltSystem();
-			jphCharacter->SetShapeOffset(settings.mShapeOffset);
-			jphCharacter->SetShape(shape, 0, system.GetDefaultBroadPhaseLayerFilter(layer), system.GetDefaultLayerFilter(layer), bodyFilter, shapeFilter, tempAllocator);
+			return SetShape(result.Get(), Utilities::Vector3(0));
 		}
-		else {
-			Log::Error(result.GetError().c_str(), true);
+		Log::Error(result.GetError().c_str(), true);
+		return false;
+	}
+
+	bool CharacterBody::SetShape(JPH::Ref<JPH::Shape> newShape, Utilities::Vector3 shapeOffset) {
+		JPH::PhysicsSystem& system = physics.GetJoltSystem();
+		//Try and set new shape
+		jphCharacter->SetShapeOffset(shapeOffset);
+		if(jphCharacter->SetShape(newShape, 0, system.GetDefaultBroadPhaseLayerFilter(layer), system.GetDefaultLayerFilter(layer), bodyFilter, shapeFilter, tempAllocator)) {
+			if(shape) shape->Release(); //Release old shape
+			shape = newShape;
+			settings.mShape = newShape;
+			settings.mShapeOffset = shapeOffset;
+			return true;
+		} else { //Failed to set new shape, falling back to previous one
+			settings.mShape = shape;
+			jphCharacter->SetShapeOffset(settings.mShapeOffset);
+			return false;
 		}
 	}
 

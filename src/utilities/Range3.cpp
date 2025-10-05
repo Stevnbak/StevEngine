@@ -1,6 +1,8 @@
 #include "Range3.hpp"
 #include "Vector3.hpp"
 #include "utilities/Stream.hpp"
+#include <format>
+#include <string>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -28,6 +30,9 @@ namespace StevEngine::Utilities {
 		return High - Low;
 	}
 	//Conversions
+	Range3::operator std::string() const {
+		return std::format("[({}), ({})]", (std::string)Low, (std::string)High);
+	}
 	#ifdef StevEngine_PHYSICS
 	Range3::operator JPH::AABox() const {
 		return JPH::AABox((JPH::DVec3)Low, (JPH::DVec3)High);

@@ -56,6 +56,7 @@ namespace StevEngine {
 	}
 	void InputManager::ForcePressKey(SDL_Keycode key, bool value) {
 		///Log::Debug(std::format("Changed pressed status of key ({}) to {}", SDL_GetKeyName(key), value), true);
+		if(inputMap[key] == value) return;
 		inputMap[key] = value;
 		if(value) events.Publish(InputKeyDownEvent(key));
 		else events.Publish(InputKeyUpEvent(key));

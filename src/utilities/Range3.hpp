@@ -55,10 +55,11 @@ namespace StevEngine::Utilities {
 			Vector3 GetSize() const;
 
 			//Conversions
+			explicit operator std::string() const; 			///< Convert to string
 			#ifdef StevEngine_PHYSICS
 			operator JPH::AABox() const;					///< Convert to Jolt AABB
 			Range3& operator= (const JPH::AABox& other);	///< Assign from Jolt AABB
-			Range3(const JPH::AABox& other);			   ///< Create from Jolt AABB
+			Range3(const JPH::AABox& other);			   	///< Create from Jolt AABB
 			#endif
 	};
 }

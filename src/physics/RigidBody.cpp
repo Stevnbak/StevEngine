@@ -82,6 +82,7 @@ namespace StevEngine::Physics {
 		//Create final shape
 		JPH::ShapeSettings::ShapeResult result = shapeSettings.Create();
 		if(result.IsValid()) {
+			if(shape) shape->Release(); //Release old shape
 			shape = result.Get();
 			if(body != nullptr) {
 				body->SetShapeInternal(shape, false);

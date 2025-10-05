@@ -64,19 +64,19 @@ namespace StevEngine::Physics {
 			/**
 			 * @brief Initialize component
 			 */
-			void Start();
+			virtual void Start();
 
 			/**
 			 * @brief Clean up when deactivated
 			 */
-			void Deactivate();
+			virtual void Deactivate();
 
 			/**
 			 * @brief Update transform from physics
 			 * Adds gravity to the current velocity
 			 * @param deltaTime Time since last update
 			 */
-			void Update(double deltaTime);
+			virtual void Update(double deltaTime);
 
 			/**
 			 * @brief Extended physics transform update
@@ -87,19 +87,22 @@ namespace StevEngine::Physics {
 			/**
 			 * @brief Clean up resources
 			 */
-			~CharacterBody();
+			virtual ~CharacterBody();
 
 			/**
 			 * @brief Refresh combined collision shape
 			 * Rebuilds shape from all attached colliders
 			 */
-			void RefreshShape();
+			virtual bool RefreshShape();
 
 		protected:
 			JPH::CharacterVirtualSettings settings;		///< Jolt Physics Virtual Character Controller Settings
-			JPH::CharacterVirtual* jphCharacter;			///< Jolt Physics Virtual Character Controller
+			JPH::CharacterVirtual* jphCharacter;		///< Jolt Physics Virtual Character Controller
 
 			LayerID layer; 								///< Physics layer
+
+			bool SetShape(JPH::Ref<JPH::Shape> shape, Utilities::Vector3 shapeOffset = 0);	///< Set Jolt Physics collision shape
+			JPH::Ref<JPH::Shape> GetShape() const { return shape; } 					///< Get Jolt Physics collision shape
 
 		private:
 			JPH::Ref<JPH::Shape> shape;					///< Combined collision shape
