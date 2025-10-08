@@ -71,7 +71,7 @@ namespace StevEngine::Physics {
 		JPH::PhysicsSystem& system = physics.GetJoltSystem();
 		//Try and set new shape
 		jphCharacter->SetShapeOffset(shapeOffset);
-		if(jphCharacter->SetShape(newShape, 0, system.GetDefaultBroadPhaseLayerFilter(layer), system.GetDefaultLayerFilter(layer), bodyFilter, shapeFilter, tempAllocator)) {
+		if(jphCharacter->SetShape(newShape, 0.01f, system.GetDefaultBroadPhaseLayerFilter(layer), system.GetDefaultLayerFilter(layer), bodyFilter, shapeFilter, tempAllocator)) {
 			if(shape) shape->Release(); //Release old shape
 			shape = newShape;
 			settings.mShape = newShape;
