@@ -1,3 +1,6 @@
+#include "SDL_events.h"
+#include "SDL_keycode.h"
+#include "SDL_mouse.h"
 #ifdef StevEngine_INPUTS
 #include "inputs/InputSystem.hpp"
 #include "main/Engine.hpp"
@@ -31,12 +34,14 @@ namespace StevEngine {
 				events.Publish(InputMouseWheelEvent(mouseWheelDelta));
 				break;
 			case SDL_MOUSEBUTTONDOWN:
-				mouseInputMap[ev.button.button] = true;
-				events.Publish(InputMouseButtonDownEvent(ev.button.button));
+				inputMap[-ev.button.button] = true;
+				events.Publish(InputMouseButtonDownEvent((MouseButton)-ev.button.button));
+				events.Publish(InputKeyDownEvent(-ev.button.button));
 				break;
 			case SDL_MOUSEBUTTONUP:
-				mouseInputMap[ev.button.button] = false;
-				events.Publish(InputMouseButtonUpEvent(ev.button.button));
+				inputMap[-ev.button.button] = false;
+				events.Publish(InputMouseButtonUpEvent((MouseButton)-ev.button.button));
+				events.Publish(InputKeyUpEvent(-ev.button.button));
 				break;
 		}
 	}
@@ -60,14 +65,6 @@ namespace StevEngine {
 		inputMap[key] = value;
 		if(value) events.Publish(InputKeyDownEvent(key));
 		else events.Publish(InputKeyUpEvent(key));
-	}
-	bool InputManager::IsMouseButtonPressed(Uint8 button) const {
-		bool pressed = false;
-		if (mouseInputMap.contains(button)) {
-			pressed = inputMap.at(button);
-		}
-		///Log::Debug(std::format("Mouse button ({}) has pressed value of {}", button, pressed), true);
-		return pressed;
 	}
 	void InputManager::ResetMouseDelta() {
 		mouseDelta = Utilities::Vector2();

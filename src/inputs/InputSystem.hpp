@@ -5,6 +5,7 @@
 #include "utilities/Vector2.hpp"
 
 #include <SDL.h>
+#include <SDL_keycode.h>
 
 namespace StevEngine {
 	/**
@@ -15,6 +16,19 @@ namespace StevEngine {
 		Confined,   ///< Cursor confined to window
 		Locked	  ///< Cursor hidden and locked to window center
 	};
+
+	typedef int32_t Button;
+	/**
+	 * @brief Defines mouse button values
+	 */
+	enum MouseButton : Button {
+		LEFT = -SDL_BUTTON_LEFT,
+		RIGHT = -SDL_BUTTON_RIGHT,
+		MIDDLE = -SDL_BUTTON_MIDDLE,
+		EXTRA1 = -SDL_BUTTON_X1,
+		EXTRA2 = -SDL_BUTTON_X2,
+	};
+
 
 	/**
 	 * @brief Handles input processing and management
@@ -37,24 +51,17 @@ namespace StevEngine {
 
 			/**
 			 * @brief Check if key is currently pressed
-			 * @param key SDL keycode to check
+			 * @param key Button keycode to check
 			 * @return true if key is pressed, false otherwise
 			 */
-			bool IsKeyPressed(SDL_Keycode key) const;
+			bool IsKeyPressed(Button key) const;
 
 			/**
 			 * @brief Force key press state
-			 * @param key SDL keycode to set
+			 * @param key Button keycode to set
 			 * @param value Pressed state to set
 			 */
-			void ForcePressKey(SDL_Keycode key, bool value);
-
-			/**
-			 * @brief Check if mouse button is currently pressed
-			 * @param button Mouse button ID to check
-			 * @return true if button is pressed, false otherwise
-			 */
-			bool IsMouseButtonPressed(Uint8 button) const;
+			void ForcePressKey(Button key, bool value);
 
 			/**
 			 * @brief Get current mouse position
@@ -75,8 +82,7 @@ namespace StevEngine {
 
 		private:
 			EventManager events;  ///< Input event manager
-			std::unordered_map<SDL_Keycode, bool> inputMap;  ///< Key press state map
-			std::unordered_map<Uint8, bool> mouseInputMap;   ///< Mouse button state map
+			std::unordered_map<Button, bool> inputMap;  ///< Key press state map
 			Utilities::Vector2 mousePosition;  ///< Current mouse position
 			Utilities::Vector2 mouseDelta;	 ///< Mouse movement delta
 			double mouseWheelDelta;		   ///< Mouse wheel movement
@@ -100,10 +106,10 @@ namespace StevEngine {
 			 * @brief Create key down event
 			 * @param key SDL keycode of pressed key
 			 */
-			InputKeyDownEvent(SDL_Keycode key) : key(key) {}
+			InputKeyDownEvent(Button key) : key(key) {}
 			const std::string GetEventType() const override { return GetStaticEventType(); };
 			static const std::string GetStaticEventType() {  return "InputKeyDownEvent"; }
-			SDL_Keycode key;  ///< Keycode of pressed key
+			Button key;  ///< Keycode of pressed key
 	};
 
 	/**
@@ -115,10 +121,10 @@ namespace StevEngine {
 			 * @brief Create key up event
 			 * @param key SDL keycode of released key
 			 */
-			InputKeyUpEvent(SDL_Keycode key) : key(key) {}
+			InputKeyUpEvent(Button key) : key(key) {}
 			const std::string GetEventType() const override { return GetStaticEventType(); };
 			static const std::string GetStaticEventType() {  return "InputKeyUpEvent"; }
-			SDL_Keycode key;  ///< Keycode of released key
+			Button key;  ///< Keycode of released key
 	};
 
 	/**
@@ -164,10 +170,10 @@ namespace StevEngine {
 			 * @brief Create mouse button down event
 			 * @param button ID of pressed button
 			 */
-			InputMouseButtonDownEvent(Uint8 button) : button(button) {}
+			InputMouseButtonDownEvent(MouseButton button) : button(button) {}
 			const std::string GetEventType() const override { return GetStaticEventType(); };
 			static const std::string GetStaticEventType() {  return "InputMouseButtonDownEvent"; }
-			Uint8 button;  ///< ID of pressed button
+			MouseButton button;  ///< ID of pressed button
 	};
 
 	/**
@@ -179,10 +185,10 @@ namespace StevEngine {
 			 * @brief Create mouse button up event
 			 * @param button ID of released button
 			 */
-			InputMouseButtonUpEvent(Uint8 button) : button(button) {}
+			InputMouseButtonUpEvent(MouseButton button) : button(button) {}
 			const std::string GetEventType() const override { return GetStaticEventType(); };
 			static const std::string GetStaticEventType() {  return "InputMouseButtonUpEvent"; }
-			Uint8 button;  ///< ID of released button
+			MouseButton button;  ///< ID of released button
 	};
 }
 #endif
