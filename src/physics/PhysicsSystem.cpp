@@ -15,7 +15,8 @@
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt/Physics/Body/BodyActivationListener.h>
-
+#include <Jolt/Physics/Collision/NarrowPhaseQuery.h>
+#include <Jolt/Physics/Collision/CastResult.h>
 
 
 namespace StevEngine::Physics {
@@ -58,5 +59,27 @@ namespace StevEngine::Physics {
 		//Events
 		engine->GetEvents()->Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); });
 	}
+
+	JPH::Body* PhysicsSystem::CreateBody(JPH::BodyCreationSettings settings, RigidBody* attachedRigidBody) {
+		JPH::Body* body = joltSystem.GetBodyInterface().CreateBody(settings);
+		joltSystem.GetBodyInterface().AddBody(body->GetID(), JPH::EActivation::Activate);
+		rigidBodies.emplace(body->GetID(), attachedRigidBody);
+		return body;
+	}
+
+	void PhysicsSystem::DestroyBody(JPH::Body* body, RigidBody* attachedRigidBody) {
+		rigidBodies.erase(body->GetID());
+		joltSystem.GetBodyInterface().DestroyBody(body->GetID());
+	}
+
+	RigidBody* PhysicsSystem::CastRay(JPH::RayCast ray, Utilities::Vector3* hitPoint) const {
+		JPH::RayCastResult result;
+		if (joltSystem.GetNarrowPhaseQuery().CastRay(JPH::RRayCast(ray), result)) {
+			if(hitPoint) *hitPoint = ray.GetPointOnRay(result.mFraction);
+			return rigidBodies.at(result.mBodyID); // Return hit rigid body component
+		} else {
+			return nullptr;
+		}
+	};
 }
 #endif

@@ -3,7 +3,6 @@
 #include "main/Component.hpp"
 #include "utilities/Vector3.hpp"
 #include "utilities/Quaternion.hpp"
-#include "physics/Colliders.hpp"
 #include "physics/Layers.hpp"
 #include "utilities/Stream.hpp"
 

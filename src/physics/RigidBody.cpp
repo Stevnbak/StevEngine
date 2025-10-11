@@ -1,13 +1,14 @@
-#include "utilities/Quaternion.hpp"
-#include "utilities/Vector3.hpp"
 #ifdef StevEngine_PHYSICS
 #include "RigidBody.hpp"
 #include "physics/Colliders.hpp"
 #include "physics/PhysicsSystem.hpp"
 #include "physics/Layers.hpp"
+
 #include "main/Log.hpp"
 #include "main/GameObject.hpp"
 #include "main/Component.hpp"
+#include "utilities/Quaternion.hpp"
+#include "utilities/Vector3.hpp"
 
 #include <math.h>
 
@@ -39,13 +40,12 @@ namespace StevEngine::Physics {
 		bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::MassAndInertiaProvided;
 		bodySettings.mMassPropertiesOverride = massProperties;
 		//	Create body from settings
-		body = physics.GetBodyInterface().CreateBody(bodySettings);
-		physics.GetBodyInterface().AddBody(body->GetID(), JPH::EActivation::Activate);
+		body = physics.CreateBody(bodySettings, this);
 		//Events
 		parent.Subscribe<ColliderUpdateEvent>([this](ColliderUpdateEvent) { RefreshShape(); });
 	}
 	void RigidBody::Deactivate() {
-		if(body) physics.GetBodyInterface().DestroyBody(body->GetID());
+		if(body) physics.DestroyBody(body, this);
 		body = nullptr;
 		if(shape) shape->Release();
 		shape = nullptr;
@@ -84,9 +84,7 @@ namespace StevEngine::Physics {
 		if(result.IsValid()) {
 			if(shape) shape->Release(); //Release old shape
 			shape = result.Get();
-			if(body != nullptr) {
-				body->SetShapeInternal(shape, false);
-			}
+			if(body) body->SetShapeInternal(shape, false);
 		}
 		else {
 			Log::Error(result.GetError().c_str(), true);
@@ -105,8 +103,7 @@ namespace StevEngine::Physics {
 	}
 
 	RigidBody::~RigidBody() {
-		if(body) physics.GetBodyInterface().DestroyBody(body->GetID());
-		if(shape) shape->Release();
+		Deactivate();
 	}
 
 	Utilities::Stream RigidBody::Export(Utilities::StreamType type) const {

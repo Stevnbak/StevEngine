@@ -1,5 +1,8 @@
 #pragma once
 #ifdef StevEngine_PHYSICS
+#include "physics/RigidBody.hpp"
+#include "utilities/Vector3.hpp"
+#include <unordered_map>
 
 //Jolt imports
 #include "Jolt.h"
@@ -10,9 +13,11 @@
 #include <Jolt/Physics/PhysicsSettings.h>
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Core/JobSystemSingleThreaded.h>
+#include <Jolt/Physics/Collision/RayCast.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
 #include <Jolt/Physics/Collision/Shape/MutableCompoundShape.h>
+#include <Jolt/Physics/Body/Body.h>
 #include <Jolt/Physics/Body/BodyManager.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt/Physics/Body/BodyActivationListener.h>
@@ -44,15 +49,32 @@ namespace StevEngine {
 
 				/**
 				 * @brief Get physics body interface
-				 * @return Reference to Jolt body interface
+				 * @param ray Jolt ray to cast
+				 * @param hitPoint [OUT] Point of ray intersect
+				 * @return If successfully hit a pointer to the RigidBody component that was hit otherwise nullptr
 				 */
-				JPH::BodyInterface& GetBodyInterface() { return joltSystem.GetBodyInterface(); }
+				RigidBody* CastRay(JPH::RayCast ray, Utilities::Vector3* hitPoint = NULL) const;
 
 				/**
 				 * @brief Get Jolt physics system
 				 * @return Reference to Jolt physics system
 				 */
-				JPH::PhysicsSystem& GetJoltSystem() { return joltSystem; }
+				JPH::PhysicsSystem& GetJoltSystem() { return joltSystem; };
+
+				/**
+				 * @brief Create a new Jolt physics body
+				 * @param settings Jolt physics body creation settings
+				 * @param attachedRigidBody The rigid body component attached to this body
+				 * @return Newly created body
+				 */
+				JPH::Body* CreateBody(JPH::BodyCreationSettings settings, RigidBody* attachedRigidBody);
+
+				/**
+				 * @brief Destroy body
+				 * @param body Body to destroy
+				 * @param attachedRigidBody The rigid body component attached to this body
+				 */
+				void DestroyBody(JPH::Body* body, RigidBody* attachedRigidBody);
 
 			private:
 				/**
@@ -69,6 +91,9 @@ namespace StevEngine {
 				BPLayerInterfaceImpl broad_phase_layer_interface;						///< Broad phase layer interface
 				ObjectVsBroadPhaseLayerFilterImpl object_vs_broadphase_layer_filter; 	///< Broad phase collision filter
 				ObjectLayerPairFilterImpl object_vs_object_layer_filter;			 	///< Object pair collision filter
+
+				// RigidBody management
+				std::unordered_map<JPH::BodyID, RigidBody*> rigidBodies;
 		};
 
 		extern PhysicsSystem physics; ///< Global physics system instance
