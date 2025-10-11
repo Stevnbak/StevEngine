@@ -254,6 +254,10 @@ namespace StevEngine {
 		return currentFPS;
 	}
 
+	float Engine::GetGameTime() const {
+		return (float)GetTime() / SDL_GetPerformanceFrequency();
+	}
+
 	//Create engine and subsystems function
 	void CreateEngine(std::string title, GameSettings gameSettings) {
 		#ifdef StevEngine_PLAYER_DATA

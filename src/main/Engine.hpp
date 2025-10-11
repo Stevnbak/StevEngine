@@ -98,6 +98,11 @@ namespace StevEngine {
 			void SetWindowSize(int width, int height);
 			#endif
 
+			/**
+			 * @brief Get total time in seconds since engine started
+			 */
+			float GetGameTime() const;
+
 		private:
 			EventManager events;	 ///< Engine event manager
 			double currentFPS;	   ///< Current frames per second
