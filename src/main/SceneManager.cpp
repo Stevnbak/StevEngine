@@ -35,6 +35,15 @@ namespace StevEngine {
 	void SceneManager::Init() {
 		EventManager& events = engine->GetEvents();
 		events.Subscribe<EngineStartEvent>([this] (EngineStartEvent) { this->ActivateDefault(); });
+		events.Subscribe<PreUpdateEvent>([this] (PreUpdateEvent) {
+			// Destroy objects marked for destruction
+			Scene& scene = GetActiveScene();
+			for(const auto& id : scene.destroyedObjects) {
+				scene.GetObject(id).Deactivate();
+				scene.gameObjects.erase(id);
+			}
+			scene.destroyedObjects.clear();
+		});
 		events.Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); });
 		#ifdef StevEngine_SHOW_WINDOW
 		events.Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { this->Draw(); });

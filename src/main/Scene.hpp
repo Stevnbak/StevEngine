@@ -7,6 +7,7 @@
 
 #include <map>
 #include <string>
+#include <unordered_set>
 
 namespace StevEngine {
 	class Engine;
@@ -148,6 +149,7 @@ namespace StevEngine {
 
 			/** @brief Map of all objects in scene */
 			std::map<Utilities::ID, GameObject, Utilities::ID> gameObjects;
+			std::unordered_set<Utilities::ID> destroyedObjects; ///< Objects that will be destroyed before the next update loop
 
 			//Physics layers
 			#ifdef StevEngine_PHYSICS

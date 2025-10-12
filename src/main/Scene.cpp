@@ -61,10 +61,7 @@ namespace StevEngine {
 		return keys;
 	}
 	void Scene::DestroyObject(ID id) {
-		if(gameObjects.contains(id)) {
-			GetObject(id).Deactivate();
-			gameObjects.erase(id);
-		}
+		destroyedObjects.insert(id);
 	}
 	Scene::Scene(std::string name) : name(name) {
 		//Create main camera
@@ -105,7 +102,8 @@ namespace StevEngine {
 	}
 	Scene::~Scene() {
 		for(Utilities::ID id : GetAllParentObjects()) {
-			DestroyObject(id);
+			GetObject(id).Deactivate();
+			gameObjects.erase(id);
 		}
 	}
 }
