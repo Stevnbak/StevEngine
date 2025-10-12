@@ -26,6 +26,7 @@ namespace StevEngine::Physics {
 	//Tick
 	void PhysicsSystem::Update(double deltaTime) {
 		joltSystem.Update(deltaTime, 1, &tempAllocator, &jobSystem);
+		jobSystem.WaitForJobs(jobSystem.CreateBarrier());
 	}
 
 	//Constructor
