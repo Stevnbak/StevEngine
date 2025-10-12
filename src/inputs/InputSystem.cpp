@@ -32,6 +32,14 @@ namespace StevEngine {
 			case SDL_MOUSEWHEEL:
 				mouseWheelDelta = ev.wheel.preciseY;
 				events.Publish(InputMouseWheelEvent(mouseWheelDelta));
+				if(ev.wheel.preciseY > 0) {
+					events.Publish(InputKeyDownEvent(MouseButton::SCROLL_UP));
+					inputMap[MouseButton::SCROLL_UP] = true;
+				}
+				else if(ev.wheel.preciseY < 0) {
+					events.Publish(InputKeyDownEvent(MouseButton::SCROLL_DOWN));
+					inputMap[MouseButton::SCROLL_DOWN] = true;
+				}
 				break;
 			case SDL_MOUSEBUTTONDOWN:
 				inputMap[-ev.button.button] = true;
@@ -70,6 +78,8 @@ namespace StevEngine {
 	void InputManager::ResetMouseDelta() {
 		mouseDelta = Utilities::Vector2();
 		///Log::Debug(std::format("Mouse delta X: {} Mouse delta Y: {}", mouseDelta.X, mouseDelta.Y), true);
+		inputMap[MouseButton::SCROLL_DOWN] = false;
+		inputMap[MouseButton::SCROLL_UP] = false;
 	}
 	//Update
 	void InputManager::Update(double deltaTime) {

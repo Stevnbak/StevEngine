@@ -27,6 +27,8 @@ namespace StevEngine {
 		MIDDLE = -SDL_BUTTON_MIDDLE,
 		EXTRA1 = -SDL_BUTTON_X1,
 		EXTRA2 = -SDL_BUTTON_X2,
+		SCROLL_UP = EXTRA2 - 1,
+		SCROLL_DOWN = SCROLL_UP - 1,
 	};
 
 
