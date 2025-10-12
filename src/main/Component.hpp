@@ -72,7 +72,6 @@ namespace StevEngine {
 			 */
 			virtual void Start() {};
 
-		private:
 			/**
 			 * @brief Clean up when component is deactivated
 			 */
@@ -92,6 +91,7 @@ namespace StevEngine {
 			virtual void Draw(const Utilities::Matrix4& transform) {};
 			#endif
 
+		private:
 			/**
 			 * @brief Set parent GameObject and scene
 			 * @param object Parent GameObject
