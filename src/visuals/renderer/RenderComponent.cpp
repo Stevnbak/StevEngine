@@ -1,7 +1,7 @@
-#include "visuals/renderer/Object.hpp"
 #ifdef StevEngine_RENDERER_GL
 #include "RenderComponent.hpp"
 #include "RenderSystem.hpp"
+#include "visuals/renderer/Object.hpp"
 #include "visuals/shaders/Shader.hpp"
 #include "utilities/Vector3.hpp"
 
@@ -30,7 +30,7 @@ namespace StevEngine::Renderer {
 	//Main draw function
 	void RenderComponent::Draw(const Utilities::Matrix4& transform) {
 		//New transform
-		Utilities::Matrix4 trnsfm = Utilities::Matrix4::FromTranslationRotationScale(position, rotation, scale) * transform;
+		Utilities::Matrix4 trnsfm = transform * Utilities::Matrix4::FromTranslationRotationScale(position, rotation, scale);
 		//Draw
 		Renderer::render.DrawObject(object, trnsfm);
 	}
