@@ -97,9 +97,9 @@ namespace StevEngine::Renderer {
 		else Renderer::render.SetMSAA(true, gameSettings.MSAA);
 		SetAmbientLight(0.1, Utilities::Color(255));
 		//Events
-		engine->GetEvents()->Subscribe<WindowResizeEvent>([this] (WindowResizeEvent i) { return this->SetViewSize (i.width, i.height); });
-		engine->GetEvents()->Subscribe<WindowVSyncEvent>([this] (WindowVSyncEvent i) { return this->SetVSync(i.value); });
-		engine->GetEvents()->Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { return this->DrawFrame(); });
+		engine->GetEvents().Subscribe<WindowResizeEvent>([this] (WindowResizeEvent i) { return this->SetViewSize (i.width, i.height); });
+		engine->GetEvents().Subscribe<WindowVSyncEvent>([this] (WindowVSyncEvent i) { return this->SetVSync(i.value); });
+		engine->GetEvents().Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { return this->DrawFrame(); });
 
 		SetEnabled(true);
 		Log::Debug("Renderer has been initialized!", true);

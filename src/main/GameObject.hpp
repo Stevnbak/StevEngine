@@ -294,8 +294,8 @@ namespace StevEngine {
 			 * @return Pointer to component or nullptr if not found
 			 */
 			template <class T>
-			typename std::enable_if<std::is_base_of<Component,T>::value,T*>::type
-			GetComponent(bool log = true) {
+			requires std::is_base_of_v<Component, T>
+			T* GetComponent(bool log = true) {
 				//Find component
 				for (int i = 0; i < components.size(); i++) {
 					if (dynamic_cast<T*>(components[i].get())) {

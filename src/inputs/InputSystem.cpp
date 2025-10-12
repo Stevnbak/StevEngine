@@ -46,9 +46,10 @@ namespace StevEngine {
 		}
 	}
 	void InputManager::Init() {
-		engine->GetEvents()->Subscribe<SDLEvent>([this] (SDLEvent e) { this->HandleSDLEvent(e); });
-		engine->GetEvents()->Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); });
-		engine->GetEvents()->Subscribe<PreUpdateEvent>([this] (PreUpdateEvent) { this->ResetMouseDelta(); });
+		EventManager& events = engine->GetEvents();
+		events.Subscribe<SDLEvent>([this] (SDLEvent e) { this->HandleSDLEvent(e); });
+		events.Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); });
+		events.Subscribe<PreUpdateEvent>([this] (PreUpdateEvent) { this->ResetMouseDelta(); });
 	}
 	//Key Inputs:
 	bool InputManager::IsKeyPressed(SDL_Keycode key) const {

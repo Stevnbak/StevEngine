@@ -33,12 +33,13 @@ namespace StevEngine {
 	}
 
 	void SceneManager::Init() {
-		engine->GetEvents()->Subscribe<EngineStartEvent>([this] (EngineStartEvent) { this->ActivateDefault(); });
-		engine->GetEvents()->Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); });
+		EventManager& events = engine->GetEvents();
+		events.Subscribe<EngineStartEvent>([this] (EngineStartEvent) { this->ActivateDefault(); });
+		events.Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); });
 		#ifdef StevEngine_SHOW_WINDOW
-		engine->GetEvents()->Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { this->Draw(); });
+		events.Subscribe<EngineDrawEvent>([this] (EngineDrawEvent) { this->Draw(); });
 		#endif
-		engine->GetEvents()->Subscribe<EngineQuitEvent>([this](EngineQuitEvent e) {
+		events.Subscribe<EngineQuitEvent>([this](EngineQuitEvent e) {
 			scenes.clear();
 		});
 	}

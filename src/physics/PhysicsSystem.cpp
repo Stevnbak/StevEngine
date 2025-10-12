@@ -57,7 +57,7 @@ namespace StevEngine::Physics {
 		joltSystem.SetPhysicsSettings(settings);
 		joltSystem.SetGravity(Utilities::Vector3::up * (-9.815));
 		//Events
-		engine->GetEvents()->Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); });
+		engine->GetEvents().Subscribe<UpdateEvent>([this] (UpdateEvent e) { this->Update(e.deltaTime); });
 	}
 
 	JPH::Body* PhysicsSystem::CreateBody(JPH::BodyCreationSettings settings, RigidBody* attachedRigidBody) {

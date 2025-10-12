@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
 		#endif
 		.targetFPS = -1
 	});
-	engine->GetEvents()->Subscribe<UpdateEvent>([](UpdateEvent) { Log::Debug("FPS: " + std::to_string(engine->getFPS())); });
+	engine->GetEvents().Subscribe<UpdateEvent>([](UpdateEvent) { Log::Debug("FPS: " + std::to_string(engine->getFPS())); });
 
 	Scene& scene = sceneManager.CreateScene("Physics test");
 	SpawnPhysicsObjects(scene);

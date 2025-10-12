@@ -23,7 +23,7 @@ namespace StevEngine::Networking::Client {
 		};
 
 		//Setup listeners
-		engine->GetEvents()->Subscribe<PreUpdateEvent>([this](const PreUpdateEvent& e) {
+		engine->GetEvents().Subscribe<PreUpdateEvent>([this](const PreUpdateEvent& e) {
 			//Read all new messages from server
 			while(true) {
 				FD_ZERO(&readfds);
@@ -39,7 +39,7 @@ namespace StevEngine::Networking::Client {
 				recieve(message);
 			}
 		});
-		engine->GetEvents()->Subscribe<UpdateEvent>([this](const UpdateEvent& e) {
+		engine->GetEvents().Subscribe<UpdateEvent>([this](const UpdateEvent& e) {
 			sinceLastPing += e.deltaTime;
 
 			if(sinceLastPing > TIMEOUT_PING) {

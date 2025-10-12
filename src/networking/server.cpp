@@ -31,7 +31,7 @@ namespace StevEngine::Networking::Server {
 		if (::listen(server, 16) < 0) throw std::runtime_error("Failed to set server to listen.");
 		Log::Debug("Started socket server");
 		//Update method
-		engine->GetEvents()->Subscribe<PreUpdateEvent>([this](const PreUpdateEvent& e) {
+		engine->GetEvents().Subscribe<PreUpdateEvent>([this](const PreUpdateEvent& e) {
 			//Accept new connections
 			acceptConnections();
 			//Recieve new messages from server
@@ -50,7 +50,7 @@ namespace StevEngine::Networking::Server {
 			client.sinceLastPing = 0;
 			send(client, 3);
 		});
-		engine->GetEvents()->Subscribe<UpdateEvent>([this](const UpdateEvent& e) {
+		engine->GetEvents().Subscribe<UpdateEvent>([this](const UpdateEvent& e) {
 			for(auto& client : clients) {
 				client.sinceLastPing += e.deltaTime;
 

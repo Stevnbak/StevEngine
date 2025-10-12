@@ -222,7 +222,7 @@ int main(int argc, char** argv) {
 
 	Renderer::render.SetFaceCulling(false);
 	Renderer::render.SetMSAA(true, 8);
-	engine->GetEvents()->Subscribe<UpdateEvent>(mainUpdate);
+	engine->GetEvents().Subscribe<UpdateEvent>(mainUpdate);
 	Renderer::render.SetFaceCulling(false);
 	//Debug logging:
 	Log::Debug("Debug log");

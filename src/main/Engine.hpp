@@ -46,7 +46,7 @@ namespace StevEngine {
 			 * @brief Get engine event manager
 			 * @return Pointer to event manager
 			 */
-			EventManager* GetEvents() { return &events; };
+			EventManager& GetEvents() { return events; };
 
 			/**
 			 * @brief Get current FPS
