@@ -26,7 +26,6 @@ namespace StevEngine::Physics {
 	//Tick
 	void PhysicsSystem::Update(double deltaTime) {
 		joltSystem.Update(deltaTime, 1, &tempAllocator, &jobSystem);
-		jobSystem.WaitForJobs(jobSystem.CreateBarrier());
 	}
 
 	//Constructor
@@ -70,6 +69,7 @@ namespace StevEngine::Physics {
 
 	void PhysicsSystem::DestroyBody(JPH::Body* body, RigidBody* attachedRigidBody) {
 		rigidBodies.erase(body->GetID());
+		joltSystem.GetBodyInterface().RemoveBody(body->GetID());
 		joltSystem.GetBodyInterface().DestroyBody(body->GetID());
 	}
 
