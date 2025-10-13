@@ -16,6 +16,7 @@
 namespace StevEngine::Networking::Server {
 
 	Manager::Manager(std::string ip, int port) {
+		if(ip == "localhost") ip = "127.0.0.1";
 		initWinSock();
 		//Set ip and port
 		serverAddress.sin_port = htons(port);
@@ -26,6 +27,8 @@ namespace StevEngine::Networking::Server {
 		};
 		//Start socket
 		server = socket(serverAddress.sin_family, SOCK_STREAM, 0);
+		int opt = 1;
+		setsockopt(server, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
 		if(bind(server, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0) throw std::runtime_error("Failed to start server at " + ip + ":" + std::to_string(port));
 		//Allow connections
 		if (::listen(server, 16) < 0) throw std::runtime_error("Failed to set server to listen.");
@@ -41,8 +44,10 @@ namespace StevEngine::Networking::Server {
 		listen(2, [this](const Client& client, MessageData message) {
 			auto id = message.Read<Utilities::ID>();
 			Log::Debug(std::string("Client (") + id.GetString() + ") reconnected (replaced " + client.id.GetString() + ")");
-			clients.insert(Client(client.socket, id));
+			Client newClient(client.socket, id);
+			clients.insert(newClient);
 			disconnected.insert(client);
+			recieve(newClient, 0);
 		});
 		//Ping
 		listen(3, [this](const Client& client, auto _) {
@@ -119,11 +124,11 @@ namespace StevEngine::Networking::Server {
         }
 	}
 
-	void Manager::sendAll(const Message& message) const {
+	void Manager::send(const Message& message) const {
 		for(const auto& client : clients) send(client, message);
 	}
-	void Manager::sendAll(const MessageID& id, MessageData data) const {
-		sendAll({id, data});
+	void Manager::send(const MessageID& id, MessageData data) const {
+		send({id, data});
 	}
 
 	void Manager::send(const Client& client, const Message& message) const {

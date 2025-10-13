@@ -13,6 +13,7 @@ namespace StevEngine::Networking::Client {
 	timeval timeout = {0, 0};
 
 	Manager::Manager(std::string ip, int port) {
+		if(ip == "localhost") ip = "127.0.0.1";
 		initWinSock();
 		//Set ip and port
 		serverAddress.sin_port = htons(port);
@@ -73,6 +74,7 @@ namespace StevEngine::Networking::Client {
 			if(id == Utilities::ID::empty) {
 				//First connection, save given id
 				id = msg.data.Read<Utilities::ID>();
+				send(0);
 			} else {
 				//Reconnection
 				send(2, id);

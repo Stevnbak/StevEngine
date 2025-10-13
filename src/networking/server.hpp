@@ -152,14 +152,14 @@ namespace StevEngine::Networking::Server {
 			 * @brief Send a message to all connected clients
 			 * @param message Message (ID + binary payload) to send
 			 */
-			void sendAll(const Message& message) const;
+			void send(const Message& message) const;
 
 			/**
 			 * @brief Send a message with ID and optional payload to all clients
 			 * @param id Message identifier
 			 * @param data Optional binary payload (defaults to empty)
 			 */
-			void sendAll(const MessageID& id, MessageData data = MessageData()) const;
+			void send(const MessageID& id, MessageData data = MessageData()) const;
 
 			/**
 			 * @brief Send a message to a specific client
