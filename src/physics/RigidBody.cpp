@@ -108,11 +108,11 @@ namespace StevEngine::Physics {
 
 	Utilities::Stream RigidBody::Export(Utilities::StreamType type) const {
 		Utilities::Stream stream(type);
-		stream << mass << (uint32_t)motionType << layer;
+		stream << mass << (uint8_t)motionType << (uint16_t)layer;
 		return stream;
 	}
 	RigidBody::RigidBody(Utilities::Stream& stream)
-	  : mass(stream.Read<double>()), motionType((JPH::EMotionType)stream.Read<uint32_t>()), layer((JPH::ObjectLayer)stream.Read<int>()), body(nullptr) {}
+	  : mass(stream.Read<float>()), motionType((JPH::EMotionType)stream.Read<uint8_t>()), layer((JPH::ObjectLayer)stream.Read<uint16_t>()), body(nullptr) {}
 
 	/** Register RigidBody as a component type */
 	bool body = CreateComponents::RegisterComponentType<RigidBody>(RIGIDBODY_TYPE);

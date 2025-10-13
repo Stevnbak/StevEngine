@@ -38,19 +38,15 @@ namespace StevEngine::Visuals {
 namespace StevEngine::Utilities {
 	//Read from stream
 	template <> Visuals::Material Stream::Read<Visuals::Material>() {
-		return Visuals::Material(
-			Read<Color>(),
-			Read<Vector3>(),
-			Read<Vector3>(),
-			Read<Vector3>(),
-			Read<float>(),
-			Read<Visuals::Texture>(),
-			Read<Visuals::Texture>()
-		);
+		Visuals::Material material;
+		*this >> material.color >> material.ambient >> material.diffuse >> material.specular >> material.shininess;
+		material.SetAlbedo(Read<Visuals::Texture>());
+		material.SetNormal(Read<Visuals::Texture>());
+		return material;
 	}
 	//Write to stream
 	template <> void Stream::Write<Visuals::Material>(const Visuals::Material& data) {
-		*this << data.color << data.ambient << data.diffuse << data.specular << data.shininess << data.GetAlbedo() << data.GetNormal();
+		*this << data.color << data.ambient << data.diffuse << data.specular << data.shininess << data.GetAlbedo().GetPath() << data.GetNormal().GetPath();
 	}
 }
 #endif

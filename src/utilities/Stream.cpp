@@ -36,7 +36,7 @@ namespace StevEngine::Utilities {
 	//Write stream to stream
 	template <> void Stream::Write(const Stream& data) {
 		if(data.type != type) throw("Stream types are not matching!");
-		stream << data.stream.rdbuf();
+		if(data.GetStream().view().size() > 0) stream.write(data.GetStream().view().data(), data.GetStream().view().size());
 	}
 
 	//Read char from stream
@@ -91,27 +91,27 @@ namespace StevEngine::Utilities {
 	}
 	//Read string from stream
 	template <> std::string Stream::Read<std::string>() {
-		uint32_t size;
+		if(stream.eof()) return (std::string)NULL;
+		uint32_t size = 0;
 		*this >> size;
+		if(size == 0) return std::string();
+
 		char* text = new char[size];
-		if(type == Utilities::StreamType::Text) {
-			stream.read(text, size);
-		} else {
-			for(uint32_t i = 0; i < size; i++) {
-				*this >> text[i];
-			}
-		}
-		return std::string(text, size);
+		stream.read(text, size);
+		std::string str(text, size);
+		delete[] text;
+		return str;
 	}
 	//Write string to stream
 	template <> void Stream::Write<std::string>(const std::string& data) {
 		*this << (uint32_t)data.size();
+		if(data.size() == 0) return;
 		switch(type) {
 			case Text:
 				stream << data;
 				break;
 			case Binary:
-				for(uint32_t i = 0; i < data.size(); i++) *this << data[i];
+				stream.write(data.data(), data.size());
 				break;
 		}
 	}

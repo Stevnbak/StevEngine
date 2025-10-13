@@ -61,8 +61,8 @@ namespace StevEngine::Physics {
 	class RigidBody : public Component {
 		public:
 			JPH::Body* GetBody() const { return body; }	 ///< Get Jolt physics body
-			const JPH::EMotionType motionType;			  ///< Motion type (static/dynamic/kinematic)
 			const LayerID layer;							 ///< Physics collision layer
+			const JPH::EMotionType motionType;			  ///< Motion type (static/dynamic/kinematic)
 			const float mass;							   ///< Body mass in kg
 			static const bool unique = true;				///< Only one per GameObject
 

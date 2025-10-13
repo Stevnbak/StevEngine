@@ -10,7 +10,6 @@
 #include "utilities/Vector3.hpp"
 
 #include <cassert>
-#include <cstdio>
 
 namespace StevEngine {
 	//Main functions
@@ -25,6 +24,7 @@ namespace StevEngine {
 		events.Publish(DeactivateEvent());
 	}
 	void GameObject::Update(double deltaTime) {
+		if(!isActive) return;
 		events.Publish(UpdateEvent(deltaTime));
 	}
 	#ifdef StevEngine_SHOW_WINDOW
@@ -157,7 +157,8 @@ namespace StevEngine {
 		for(int i = 0; i < components; i++) {
 			std::string type;
 			stream >> type;
-			AddComponent(CreateComponents::Create(type, stream));
+			Component* component = CreateComponents::Create(type, stream);
+			if(component) AddComponent(component);
 		}
 		for(int i = 0; i < children; i++) {
 			GetScene().CreateObject(stream);

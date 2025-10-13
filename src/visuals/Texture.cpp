@@ -108,7 +108,9 @@ namespace StevEngine::Visuals {
 namespace StevEngine::Utilities {
 	//Read from stream
 	template <> Visuals::Texture Stream::Read<Visuals::Texture>() {
-		return Visuals::Texture(Resources::resourceManager.GetFile(Read<std::string>()));
+		std::string path = Read<std::string>();
+		if(path.size() == 0) return Visuals::Texture::empty;
+		else return Visuals::Texture(Resources::resourceManager.GetFile(path));
 	}
 	//Write to stream
 	template <> void Stream::Write<Visuals::Texture>(const Visuals::Texture& data) {
