@@ -107,19 +107,19 @@ namespace StevEngine {
 			 * @brief Get world position
 			 * @return World space position
 			 */
-			Utilities::Vector3 GetWorldPosition();
+			Utilities::Vector3 GetWorldPosition() const;
 
 			/**
 			 * @brief Get world rotation
 			 * @return World space rotation
 			 */
-			Utilities::Quaternion GetWorldRotation();
+			Utilities::Quaternion GetWorldRotation() const;
 
 			/**
 			 * @brief Get world scale
 			 * @return World space scale
 			 */
-			Utilities::Vector3 GetWorldScale();
+			Utilities::Vector3 GetWorldScale() const;
 
 		private:
 			Utilities::Vector3 position = Utilities::Vector3();		 ///< Local position

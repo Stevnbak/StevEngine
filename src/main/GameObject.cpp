@@ -58,7 +58,7 @@ namespace StevEngine {
 		this->scale = scale;
 		if(announce) events.Publish(TransformUpdateEvent(true, true, true));
 	}
-	Utilities::Vector3 GameObject::GetWorldPosition() {
+	Utilities::Vector3 GameObject::GetWorldPosition() const {
 		if(!parent.IsNull()) {
 			GameObject& object = GetParent();
 			return (Utilities::Matrix4::FromTranslationRotationScale(object.GetWorldPosition(), object.GetRotation(), object.GetScale()) * position);
@@ -66,14 +66,14 @@ namespace StevEngine {
 			return position;
 		}
 	}
-	Utilities::Quaternion GameObject::GetWorldRotation() {
+	Utilities::Quaternion GameObject::GetWorldRotation() const {
 		if(!parent.IsNull()) {
 			return GetParent().GetWorldRotation() * rotation;
 		} else {
 			return rotation;
 		}
 	}
-	Utilities::Vector3 GameObject::GetWorldScale() {
+	Utilities::Vector3 GameObject::GetWorldScale() const {
 		if(!parent.IsNull()) {
 			return Utilities::Vector3::CombineScale(GetParent().GetWorldScale(), scale);
 		} else {

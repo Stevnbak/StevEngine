@@ -1,5 +1,6 @@
 #include "Scene.hpp"
 #include "main/Component.hpp"
+#include "main/Log.hpp"
 #include "utilities/ID.hpp"
 #include "utilities/Stream.hpp"
 #include <cassert>
@@ -31,6 +32,10 @@ namespace StevEngine {
 	Utilities::ID Scene::CreateObject(Utilities::Stream& stream) {
 		Utilities::ID id;
 		stream >> id;
+		if(gameObjects.contains(id)) {
+			Log::Error(std::format("GameObject with id \"{}\" already exists.", id.GetString()));
+			return id;
+		}
 		gameObjects.emplace(std::piecewise_construct, std::forward_as_tuple(id), std::forward_as_tuple(id, "GameObject", name)) ;
 		GameObject& object = GetObject(id);
 		object.Import(stream);
