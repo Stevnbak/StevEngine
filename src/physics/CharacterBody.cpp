@@ -38,7 +38,7 @@ namespace StevEngine::Physics {
 		settings(convertSettings(input)),
 		layer(layer)
 	{
-		jphCharacter = new JPH::CharacterVirtual(&settings, Utilities::Vector3(0), JPH::Quat::sIdentity(), &physics.GetJoltSystem());
+		jphCharacter = new JPH::CharacterVirtual(&this->settings, Utilities::Vector3(0), Utilities::Quaternion(), &physics.GetJoltSystem());
 	}
 
 	bool CharacterBody::RefreshShape() {
@@ -162,6 +162,7 @@ namespace StevEngine::Physics {
 	}
 
 	CharacterBody::~CharacterBody() {
+		shape->Release();
 		delete jphCharacter;
 	}
 }
