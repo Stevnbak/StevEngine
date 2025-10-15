@@ -62,6 +62,7 @@ namespace StevEngine::Networking::Server {
 				if(client.sinceLastPing > TIMEOUT_PING) {
 					Log::Debug(std::string("Client (") + client.id.GetString() + ") timed out!");
 					disconnected.insert(client);
+					recieve(client, 1); // Tell listeners client disconnected
 				}
 			}
 		});

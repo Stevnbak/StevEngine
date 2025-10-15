@@ -18,7 +18,7 @@
  * @brief Defines the time (in seconds) to allow between pings before disconnecting.
  */
 #ifndef TIMEOUT_PING
-#define TIMEOUT_PING 1
+#define TIMEOUT_PING 2
 #endif
 
 namespace StevEngine::Networking {
