@@ -3,7 +3,6 @@
 #include "networking.hpp"
 #include "utilities/ID.hpp"
 
-#include <string>
 #include <functional>
 #include <unordered_set>
 
@@ -25,8 +24,11 @@ namespace StevEngine::Networking::Server {
 			/** @brief Unique client identifier (assigned by the server) */
 			const Utilities::ID id;
 
-			/** @brief Socket associated with the client connection */
-			const Socket socket;
+			/** @brief TCP Socket associated with the client connection */
+			const Socket tcp;
+
+			/** @brief Client address for use with TCP connection */
+			const sockaddr_in address;
 
 			/**
 			 * @brief Compare two clients by ID
@@ -36,17 +38,12 @@ namespace StevEngine::Networking::Server {
 			bool operator== (const Client& client) const;
 		private:
 			/**
-			 * @brief Construct client with a socket, generating a new ID
-			 * @param connection Accepted socket for the client
-			 */
-			Client(const Socket& connection);
-
-			/**
 			 * @brief Construct client with a socket and known ID
-			 * @param connection Accepted socket for the client
 			 * @param id Existing client identifier
+			 * @param tcp Accepted TCP socket for the client
+			 * @param address Client address
 			 */
-			Client(const Socket& connection, const Utilities::ID& id);
+			Client(const Utilities::ID& id, const Socket& tcp, const sockaddr_in& address);
 
 			/** @brief Seconds elapsed since last ping from this client */
 			mutable float sinceLastPing = 0;
@@ -141,7 +138,7 @@ namespace StevEngine::Networking::Server {
 			 * accept connections and receive messages.
 			 * @throws std::runtime_error if the server cannot bind or listen
 			 */
-			Manager(std::string ip, int port);
+			Manager(int port, bool ipv4 = true);
 
 			/**
 			 * @brief Clean up server manager and close the server socket
@@ -152,21 +149,21 @@ namespace StevEngine::Networking::Server {
 			 * @brief Send a message to all connected clients
 			 * @param message Message (ID + binary payload) to send
 			 */
-			void send(const Message& message) const;
+			void send(const Message& message, bool reliable = true) const;
 
 			/**
 			 * @brief Send a message with ID and optional payload to all clients
 			 * @param id Message identifier
 			 * @param data Optional binary payload (defaults to empty)
 			 */
-			void send(const MessageID& id, MessageData data = MessageData()) const;
+			void send(const MessageID& id, MessageData data = MessageData(), bool reliable = true) const;
 
 			/**
 			 * @brief Send a message to a specific client
 			 * @param to Destination client
 			 * @param message Message (ID + binary payload) to send
 			 */
-			void send(const Client& to, const Message& message) const;
+			void send(const Client& to, const Message& message, bool reliable = true) const;
 
 			/**
 			 * @brief Send a message with ID and optional payload to a specific client
@@ -174,7 +171,7 @@ namespace StevEngine::Networking::Server {
 			 * @param id Message identifier
 			 * @param data Optional binary payload (defaults to empty)
 			 */
-			void send(const Client& to, const MessageID& id, MessageData data = MessageData()) const;
+			void send(const Client& to, const MessageID& id, MessageData data = MessageData(), bool reliable = true) const;
 
 			/**
 			 * @brief Send a message to a client identified by ID
@@ -182,7 +179,7 @@ namespace StevEngine::Networking::Server {
 			 * @param message Message (ID + binary payload) to send
 			 * @throws std::runtime_error if the client is not currently connected
 			 */
-			void send(const Utilities::ID& clientId, const Message& message) const;
+			void send(const Utilities::ID& clientId, const Message& message, bool reliable = true) const;
 
 			/**
 			 * @brief Send a message with ID and optional payload to a client by ID
@@ -191,7 +188,7 @@ namespace StevEngine::Networking::Server {
 			 * @param data Optional binary payload (defaults to empty)
 			 * @throws std::runtime_error if the client is not currently connected
 			 */
-			void send(const Utilities::ID& clientId, const MessageID& id, MessageData data = MessageData()) const;
+			void send(const Utilities::ID& clientId, const MessageID& id, MessageData data = MessageData(), bool reliable = true) const;
 
 			/**
 			 * @brief Subscribe to a message ID from any client
@@ -215,13 +212,16 @@ namespace StevEngine::Networking::Server {
 			const std::unordered_set<Client>& getClients() const { return clients; };
 
 		private:
+			Socket tcp, udp;              ///< Listening server socket
 			sockaddr_in serverAddress;  ///< Local server address information
 
 			/** @brief Map of message ID to registered handlers */
 			std::unordered_map<MessageID, std::vector<MessageHandler>> subscribers;
 
-			/** @brief Set of currently connected clients */
+			/** @brief Set of fully connected clients */
 			std::unordered_set<Client> clients;
+			/** @brief Set of connected TCP clients still missing a related UDP connection */
+			std::unordered_map<Utilities::ID, Socket> TCPConnections;
 
 			/** @brief Clients marked as disconnected to be removed on next update */
 			std::unordered_set<Client> disconnected;
@@ -229,14 +229,22 @@ namespace StevEngine::Networking::Server {
 			fd_set readfds;             ///< File descriptor set used for select()
 
 			/**
-			 * @brief Accept and register any pending incoming connections
+			 * @brief Accept and register any pending incoming TCP connections
 			 */
-			void acceptConnections();
+			void acceptTCPConnections();
+			/**
+			 * @brief Connect missing TCP and UDP connections and create clients
+			 */
+			void connectConnections();
 
 			/**
-			 * @brief Read and dispatch messages from all connected clients
+			 * @brief Read and dispatch messages from all connected TCP clients
 			 */
-			void recieveMessages();
+			void recieveReliableMessages();
+			/**
+			 * @brief Read and dispatch messages from all connected UDP clients
+			 */
+			void recieveUnreliableMessages();
 
 			/**
 			 * @brief Dispatch a received message to subscribers
@@ -244,8 +252,6 @@ namespace StevEngine::Networking::Server {
 			 * @param message Message to dispatch
 			 */
 			void recieve(const Client& from, const Message& message);
-
-			Socket server;              ///< Listening server socket
 	};
 }
 

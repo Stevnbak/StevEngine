@@ -25,38 +25,72 @@ namespace StevEngine::Networking::Client {
 
 		//Setup listeners
 		engine->GetEvents().Subscribe<PreUpdateEvent>([this](const PreUpdateEvent& e) {
-			//Read all new messages from server
+			//Read all new messages from TCP server
 			while(true) {
 				FD_ZERO(&readfds);
-				FD_SET(connection, &readfds);
-				int activity = select(connection + 1, &readfds, NULL, NULL, &timeout);
+				FD_SET(tcp, &readfds);
+				int activity = select(tcp + 1, &readfds, NULL, NULL, &timeout);
 	        	if (activity < 0) break; //Failed to read info
-
-	         	if (!FD_ISSET(connection, &readfds)) break; //No new messages
+	         	if (!FD_ISSET(tcp, &readfds)) break; //No new messages
 				//Read id and data size
-				Message message = readMessage(connection);
-				if(message.id == 2) break; //Error occured, ignore message
+				Message message = readReliableMessage(tcp);
+				if(message.id == 0) break; //Error occured, ignore message
+				if(!isConnected) {
+					if(message.id == 1) {
+						if(id == Utilities::ID::empty) {
+							//First connection, save given id
+							id = message.data.Read<Utilities::ID>();
+							//Log::Debug("Recieved id from server: " + std::string(id.GetString()));
+							sendUnreliableMessage(udp, NULL, {1, id});
+						} else {
+							//Reconnection
+							sendReliableMessage(tcp, {2, id});
+							//Log::Debug("Sent reconnection message to server with id " + std::string(id.GetString()));
+						}
+					} else if(message.id == 2) {
+						Log::Debug("Succesfully connected to server");
+						isConnected = true;
+					}
+				}
 				//Publish to listeners
 				recieve(message);
 			}
+			//Read all new messages from UDP server
+			while(isConnected) {
+				FD_ZERO(&readfds);
+				FD_SET(udp, &readfds);
+				int activity = select(udp + 1, &readfds, NULL, NULL, &timeout);
+	        	if (activity < 0) break; //Failed to read info
+	         	if (!FD_ISSET(udp, &readfds)) break; //No new messages
+				//Read id and data size
+				Message message = readUnreliableMessage(udp, NULL);
+				if(message.id == 0) break; //Error occured, ignore message
+				//Publish to listeners
+				recieve(message);
+			}
+			//Send ping or connection id every update
+			if(isConnected) send(Message(4), false);
+			else if(id != Utilities::ID::empty) send(Message(1, id), false);
 		});
 		engine->GetEvents().Subscribe<UpdateEvent>([this](const UpdateEvent& e) {
+			if(!isConnected) return;
 			sinceLastPing += e.deltaTime;
+			//Log::Debug("Ping time: " + std::to_string(sinceLastPing * 1000 + 0.5));
 
 			if(sinceLastPing > TIMEOUT_PING) {
 				Log::Debug("Server timed out!");
 				sinceLastPing = 0;
-				closeSocket(connection);
+				isConnected = false;
+				closeSocket(tcp);
+				closeSocket(udp);
 				//TODO: Currently whole program stops and waits for a new connection, make it so it just tries every update
 				connect();
 			}
 		});
 		//Ping
-		listen(3, [this](auto _) {
-			pingTime = sinceLastPing * 1000 + 0.5;
-			//Log::Debug("Ping: " + std::to_string(pingTime));
+		listen(4, [this](auto _) {
+			//Log::Debug("Ping: " + std::to_string(sinceLastPing * 1000 + 0.5));
 			sinceLastPing = 0;
-			send(3);
 		});
 		//Start connection
 		if(!connect()) throw std::runtime_error("Failed to connect to server at " + ip + ":" + std::to_string(port));
@@ -64,45 +98,33 @@ namespace StevEngine::Networking::Client {
 
 	bool Manager::connect() {
 		//Connect to server
-		connection = socket(serverAddress.sin_family, SOCK_STREAM, 0);
-		if(::connect(connection, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0) return false;
-		//Wait for connection message
-		while(true) {
-			Message msg = readMessage(connection);
-			if(msg.id != 0) continue;
-			//Connection message recieved
-			if(id == Utilities::ID::empty) {
-				//First connection, save given id
-				id = msg.data.Read<Utilities::ID>();
-				send(0);
-			} else {
-				//Reconnection
-				send(2, id);
-			}
-			//No more waiting
-			break;
-		}
-		Log::Debug("Succesfully connected to server");
+		tcp = socket(serverAddress.sin_family, SOCK_STREAM, 0);
+		udp = socket(serverAddress.sin_family, SOCK_DGRAM, 0);
+		if(::connect(tcp, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0) return false;
+		if(::connect(udp, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0) return false;
 
-		send(3); //Send initial ping
 		return true;
 	}
 
 	void Manager::disconnect() {
-		send({1});
-		closeSocket(connection);
+		send((Message){3}, true);
+		closeSocket(tcp);
+		closeSocket(udp);
 		id = Utilities::ID::empty;
+		isConnected = false;
+		sinceLastPing = 0;
 	}
 
 	Manager::~Manager() {
 		disconnect();
 	}
 
-	void Manager::send(const Message& message) const {
-		sendMessage(connection, message);
+	void Manager::send(const Message& message, bool reliable) const {
+		if(reliable) sendReliableMessage(tcp, message);
+		else sendUnreliableMessage(udp, NULL, message);
 	}
-	void Manager::send(const MessageID& id, MessageData data) const {
-		send({id, data});
+	void Manager::send(const MessageID& id, MessageData data, bool reliable) const {
+		send({id, data}, reliable);
 	}
 
 	void Manager::recieve(const Message& message) {

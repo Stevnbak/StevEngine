@@ -24,13 +24,15 @@
 namespace StevEngine::Networking {
 	/**
 	 * ID of which message is sent or recieved (0 to 4 are reserved for engine purposes)
-	 * 0 = Connection
-	 * 1 = Disconnection
+	 * 0 = Error
+	 * 1 = Connection
 	 * 2 = Reconnection
-	 * 3 = Ping
-	 * 4 = Error
+	 * 3 = Disconnection
+	 * 4 = Ping
 	 */
 	typedef uint32_t MessageID;
+
+	#define AVAILABLE_MESSAGE_ID 5
 
 	/**
 	 * Message content is a binary stream, which all StevEngine utilities and objects support being converted to
@@ -74,15 +76,25 @@ namespace StevEngine::Networking {
 	#endif
 
 	/**
-	 * @brief Used internally to read and decode a message from a socket connection
+	 * @brief Used internally to read and decode a TCP message from a socket connection
 	 *
-	 * If there is no message already on the socket, this will pause the program until there is.
+	 * If there is no messages already on the socket, this will pause the program until there is.
 	 */
-	Message readMessage(Socket connection);
+	Message readReliableMessage(Socket connection);
 	/**
-	 * @brief Used internally to encode and send a message to a socket connection
+	 * @brief Used internally to encode and send a TCP message to a socket connection
 	 */
-	bool sendMessage(Socket connection, Message message);
+	bool sendReliableMessage(Socket connection, Message message);
+	/**
+	 * @brief Used internally to read and decode a UDP message from a socket connection
+	 *
+	 * If there is no messages already on the socket, this will pause the program until there is.
+	 */
+	Message readUnreliableMessage(Socket connection, sockaddr_in* address);
+	/**
+	 * @brief Used internally to encode and send a UDP message to a socket connection
+	 */
+	bool sendUnreliableMessage(Socket connection, const sockaddr_in* address, Message message);
 	/**
 	 * @brief Close the socket connection
 	*/

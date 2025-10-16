@@ -100,14 +100,14 @@ namespace StevEngine::Networking::Client {
 			 * @brief Send a fully constructed message to the server
 			 * @param message Message (ID + binary payload) to send
 			 */
-			void send(const Message& message) const;
+			void send(const Message& message, bool reliable = true) const;
 
 			/**
 			 * @brief Send a message with ID and optional payload to the server
 			 * @param id Message identifier
 			 * @param data Optional binary payload (defaults to empty)
 			 */
-			void send(const MessageID& id, MessageData data = MessageData()) const;
+			void send(const MessageID& id, MessageData data = MessageData(), bool reliable = true) const;
 
 			/**
 			 * @brief Subscribe to a message ID from the server
@@ -124,6 +124,11 @@ namespace StevEngine::Networking::Client {
 			 */
 			void unlisten(MessageID id, const Utilities::ID handler);
 
+			/**
+			 * @brief Is client currently connected to the server?
+			 */
+			bool getConnected() const { return isConnected; };
+
 		private:
 			sockaddr_in serverAddress;  ///< Remote server address information
 
@@ -136,6 +141,8 @@ namespace StevEngine::Networking::Client {
 			 * @return true on success, false if the connection could not be established
 			 */
 			bool connect();
+
+			bool isConnected = false;
 
 			/**
 			 * @brief Gracefully disconnect from the server
@@ -150,11 +157,10 @@ namespace StevEngine::Networking::Client {
 			 */
 			void recieve(const Message& message);
 
-			Socket connection;          				///< Underlying socket connection
+			Socket tcp, udp;          					///< Underlying socket connections
 			Utilities::ID id = Utilities::ID::empty;  	///< Client ID assigned by the server
 
 			// Ping/timeout handling
-			uint32_t pingTime = 0;      ///< Last measured ping (milliseconds)
 			float sinceLastPing = 0;    ///< Seconds since last ping was received
 	};
 }
