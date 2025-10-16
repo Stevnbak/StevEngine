@@ -1,5 +1,3 @@
-#include <netinet/in.h>
-#include <unordered_set>
 #ifdef StevEngine_NETWORKING
 #include "main/Engine.hpp"
 #include "main/EngineEvents.hpp"
@@ -148,7 +146,7 @@ namespace StevEngine::Networking::Server {
 				Message message = readReliableMessage(client.tcp);
 				i++;
 				if (message.id == 0) continue; // Ignore errors
-				if (message.id == 1) disconnected.insert(client);
+				if (message.id == 3) disconnected.insert(client);
 				//Publish to listeners
 				recieve(client, message);
 			}
