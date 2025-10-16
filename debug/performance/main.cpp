@@ -11,7 +11,6 @@
 #include "visuals/Primitive.hpp"
 #include "visuals/Lights.hpp"
 
-#include <cstdlib>
 #include <string>
 
 using namespace StevEngine;
@@ -30,14 +29,14 @@ void SpawnPhysicsObjects(Scene& scene) {
 	CubePrimitive* primitive = object.AddComponent(new CubePrimitive(Vector3(0), Quaternion(), Vector3(1), Material(Color(0, 0, 255))));
 	#endif
 	object.AddComponent(new Physics::CubeCollider());
-	object.AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layer::GetLayerByName("Static")));
+	object.AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::LayerManager::STATIC));
 	for(int i = 0; i < PHYSICS_OBJECTS; i++) {
 		GameObject& object = scene.GetObject(scene.CreateObject("Cube" + std::to_string(i), Vector3(GetRandomDouble(-AREA_SIZE / 2.0, AREA_SIZE / 2.0), 10, GetRandomDouble(-AREA_SIZE / 2.0, AREA_SIZE / 2.0)), Quaternion(), Vector3(1, 1, 1)));
 		#ifdef StevEngine_SHOW_WINDOW
 		CubePrimitive* primitive = object.AddComponent(new CubePrimitive(Vector3(0), Quaternion(), Vector3(1), Material(Color(255, 255, 255))));
 		#endif
 		object.AddComponent(new Physics::CubeCollider());
-		object.AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		object.AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::LayerManager::DEFAULT));
 	}
 	//Lights
 	for(int i = 0; i < AREA_SIZE; i++) {

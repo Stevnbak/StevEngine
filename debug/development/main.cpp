@@ -13,7 +13,6 @@
 #include "main/SceneManager.hpp"
 #include "utilities/ID.hpp"
 #include "utilities/Matrix4.hpp"
-#include "utilities/Random.hpp"
 #include "utilities/Stream.hpp"
 #include "utilities/Terrain.hpp"
 #include "utilities/Vector2.hpp"
@@ -30,8 +29,6 @@
 #include "visuals/renderer/RenderSystem.hpp"
 #include "visuals/shaders/Shader.hpp"
 
-#include <cmath>
-#include <fstream>
 #include <string>
 #include <SDL_keycode.h>
 #include <cmrc/cmrc.hpp>
@@ -343,7 +340,7 @@ int main(int argc, char** argv) {
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = sphere.AddComponent(new Physics::SphereCollider());
-		Physics::RigidBody* rb = sphere.AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		Physics::RigidBody* rb = sphere.AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::LayerManager::DEFAULT));
 		#endif
 	}
 	{
@@ -359,7 +356,7 @@ int main(int argc, char** argv) {
 		#endif
 		#ifdef StevEngine_PHYSICS
 		modelObj.AddComponent(new Physics::ModelCollider(model, true, Vector3(), Quaternion(), Vector3(modelScale)));
-		modelObj.AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		modelObj.AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::LayerManager::DEFAULT));
 		#endif
 	}
 	{
@@ -371,7 +368,7 @@ int main(int argc, char** argv) {
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = obj.AddComponent(new Physics::CylinderCollider());
-		Physics::RigidBody* rb = obj.AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		Physics::RigidBody* rb = obj.AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::LayerManager::DEFAULT));
 		#endif
 	}
 	{
@@ -383,7 +380,7 @@ int main(int argc, char** argv) {
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::Collider* collider = obj.AddComponent(new Physics::CapsuleCollider());
-		Physics::RigidBody* rb = obj.AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::Layer::GetLayerByName("Moving")));
+		Physics::RigidBody* rb = obj.AddComponent(new Physics::RigidBody(JPH::EMotionType::Dynamic, Physics::LayerManager::DEFAULT));
 		#endif
 	}
 	//Terrain
@@ -408,7 +405,7 @@ int main(int argc, char** argv) {
 		#endif
 		#ifdef StevEngine_PHYSICS
 		Physics::TerrainCollider* collider = object.AddComponent(new Physics::TerrainCollider(terrain));
-		Physics::RigidBody* rb = object.AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::Layer::GetLayerByName("Static")));
+		Physics::RigidBody* rb = object.AddComponent(new Physics::RigidBody(JPH::EMotionType::Static, Physics::LayerManager::STATIC));
 		#endif
 	}
 	//*/
