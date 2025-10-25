@@ -1,14 +1,15 @@
 #ifdef StevEngine_NETWORKING
+#include "server.hpp"
 #include "main/Engine.hpp"
 #include "main/EngineEvents.hpp"
 #include "main/Log.hpp"
 #include "networking.hpp"
-#include "server.hpp"
 #include "utilities/ID.hpp"
 #include "utilities/Stream.hpp"
 
 #include <stdexcept>
 #include <string>
+#include <sys/ioctl.h>
 #include <vector>
 #ifndef _WIN32
 #include <bits/types/struct_timeval.h>
@@ -30,6 +31,7 @@ namespace StevEngine::Networking::Server {
 		// Start UDP socket
 		udp = socket(serverAddress.sin_family, SOCK_DGRAM, 0);
 		setsockopt(udp, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
+		ioctl(udp, FIONBIO, (char*)&opt);
 		if (bind(udp, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0) throw std::runtime_error("Failed to start UDP server at port " + std::to_string(port));
 		// Allow connections
 		if (::listen(tcp, 16) < 0) throw std::runtime_error("Failed to set TCP server to listen.");
@@ -119,11 +121,11 @@ namespace StevEngine::Networking::Server {
 				Utilities::ID newId = message.data.Read<Utilities::ID>();
 				//Log::Debug("Recieved reconnection id " + std::string(newId.GetString()));
 				// If a client already exists with the requested id, ignore this request
-				if(TCPConnections.contains(newId)) continue;
-				if(clients.contains(Client(newId,0,{}))) continue;
+				if (TCPConnections.contains(newId)) continue;
+				if (clients.contains(Client(newId, 0, {}))) continue;
 
 				TCPConnections.emplace(newId, sock); // Insert new id
-				TCPConnections.erase(oldId); // Remove old id
+				TCPConnections.erase(oldId);		 // Remove old id
 				break;
 			}
 		}
@@ -157,10 +159,13 @@ namespace StevEngine::Networking::Server {
 		fd_set* fds = &readfds;
 		FD_ZERO(fds);
 		FD_SET(udp, fds);
+
 		int activity = select(udp + 1, fds, NULL, NULL, &timeout);
-		for (int i = 0; i < activity; i++) {
+		while (activity > 0) {
+			activity = select(udp + 1, fds, NULL, NULL, &timeout);
 			sockaddr_in clientAddress;
 			Message message = readUnreliableMessage(udp, &clientAddress);
+			if (message.id == 0) continue;
 			// Connection messages
 			if (message.id == 1) {
 				Utilities::ID id = message.data.Read<Utilities::ID>();
@@ -171,21 +176,18 @@ namespace StevEngine::Networking::Server {
 				clients.insert(client);
 				TCPConnections.erase(id);
 				Log::Debug(std::string("Client (") + client.id.GetString() + ") connected", true);
-				recieve(client, 1);
 				sendReliableMessage(client.tcp, 2);
-			} else {
+				recieve(client, 1);
+			}
+			else {
 				const Client* client = NULL;
 				for (const Client& c : clients) {
-					if (
-						c.address.sin_addr.s_addr == clientAddress.sin_addr.s_addr &&
-						c.address.sin_port == clientAddress.sin_port &&
-						c.address.sin_family == clientAddress.sin_family
-					) {
+					if (c.address.sin_addr.s_addr == clientAddress.sin_addr.s_addr && c.address.sin_port == clientAddress.sin_port && c.address.sin_family == clientAddress.sin_family) {
 						client = &c;
 						break;
 					}
 				}
-				if(!client) continue; // Message not from a recognized client
+				if (!client) continue; // Message not from a recognized client
 
 				recieve(*client, message);
 			}
@@ -201,9 +203,10 @@ namespace StevEngine::Networking::Server {
 	}
 
 	void Manager::send(const Client& client, const Message& message, bool reliable) const {
-		if(reliable) {
+		if (reliable) {
 			sendReliableMessage(client.tcp, message);
-		} else {
+		}
+		else {
 			sendUnreliableMessage(udp, &client.address, message);
 		}
 	}

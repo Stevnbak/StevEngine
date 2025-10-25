@@ -4,14 +4,14 @@
 #include <cstdint>
 
 #ifdef _WIN32
-	#include <winsock2.h>
-	#include <Ws2tcpip.h>
-	#pragma comment(lib, "ws2_32.lib") //Winsock Library
+#include <Ws2tcpip.h>
+#include <winsock2.h>
+#pragma comment(lib, "ws2_32.lib") //Winsock Library
 #else
-	#include <sys/socket.h>
-	#include <netinet/in.h>
-	#include <unistd.h>
-	#include <arpa/inet.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
 #endif
 
 /**
@@ -32,7 +32,7 @@ namespace StevEngine::Networking {
 	 */
 	typedef uint32_t MessageID;
 
-	#define AVAILABLE_MESSAGE_ID 5
+#define AVAILABLE_MESSAGE_ID 5
 
 	/**
 	 * Message content is a binary stream, which all StevEngine utilities and objects support being converted to
@@ -40,23 +40,23 @@ namespace StevEngine::Networking {
 	typedef Utilities::Stream MessageData;
 
 	/**
- 	 * @brief Message contains a message ID and a message data, and fully describes the content that to be sent or recieved.
+	 * @brief Message contains a message ID and a message data, and fully describes the content that to be sent or recieved.
 	 */
 	struct Message {
-		/**
-		 * @brief Create a new message with no data
-		 * @param id The id of the message to create
-		 */
-		Message(MessageID id);
-		/**
-		 * @brief Create a new message with data
-		 * @param id The id of the message to create
-		 * @param data The binary stream containing the message data
-		 */
-		Message(MessageID id, MessageData data);
+			/**
+			 * @brief Create a new message with no data
+			 * @param id The id of the message to create
+			 */
+			Message(MessageID id);
+			/**
+			 * @brief Create a new message with data
+			 * @param id The id of the message to create
+			 * @param data The binary stream containing the message data
+			 */
+			Message(MessageID id, MessageData data);
 
-		const MessageID id; //< id of the message
-		MessageData data; //< data contents of the message
+			const MessageID id; //< id of the message
+			MessageData data;	//< data contents of the message
 	};
 
 	/**
@@ -64,16 +64,16 @@ namespace StevEngine::Networking {
 	 */
 	void initWinSock();
 
-	/**
-	 * @brief Socket object type is different across platforms, this is the shared object
-	 */
-	#ifdef _WIN32
-		extern WSADATA wsa;
-		typedef SOCKET Socket;
-		#define MSG_NOSIGNAL 0
-	#else
-		typedef int Socket;
-	#endif
+/**
+ * @brief Socket object type is different across platforms, this is the shared object
+ */
+#ifdef _WIN32
+	extern WSADATA wsa;
+	typedef SOCKET Socket;
+#define MSG_NOSIGNAL 0
+#else
+	typedef int Socket;
+#endif
 
 	/**
 	 * @brief Used internally to read and decode a TCP message from a socket connection
@@ -97,7 +97,7 @@ namespace StevEngine::Networking {
 	bool sendUnreliableMessage(Socket connection, const sockaddr_in* address, Message message);
 	/**
 	 * @brief Close the socket connection
-	*/
+	 */
 	void closeSocket(Socket connection);
 }
 #endif
