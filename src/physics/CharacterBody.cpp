@@ -166,5 +166,8 @@ namespace StevEngine::Physics {
 		shape->Release();
 		delete jphCharacter;
 	}
+
+	/** Register CharacterBody as a component type */
+	bool charbody = CreateComponents::RegisterComponentType<CharacterBody>(CHARACTERBODY_TYPE);
 }
 #endif

@@ -52,14 +52,14 @@ namespace StevEngine::Physics {
 			 * @brief Get component type
 			 * @return Type identifier string
 			 */
-			std::string GetType() const { return CHARACTERBODY_TYPE; }
+			virtual std::string GetType() const { return CHARACTERBODY_TYPE; }
 
 			/**
 			 * @brief Serialize component to a stream
 			 * @param type Type of stream to export to
 			 * @return Serialized stream
 			 */
-			Utilities::Stream Export(Utilities::StreamType type) const;
+			virtual Utilities::Stream Export(Utilities::StreamType type) const;
 
 			/**
 			 * @brief Initialize component

@@ -578,7 +578,7 @@ namespace StevEngine {
 		CylinderPrimitive::CylinderPrimitive(Utilities::Stream& stream)
 		  : RenderComponent(Object({}, Material()), stream), textureType((TextureType)stream.Read<uint32_t>()), smooth(stream.Read<bool>())
 		{
-			object = Object(UVSphereVertices(textureType, smooth), object.material, object.GetRenderType());
+			object = Object(CylinderVertices(textureType, smooth), object.material, object.GetRenderType());
 		}
 
 		Utilities::Stream CylinderPrimitive::Export(Utilities::StreamType type) const {

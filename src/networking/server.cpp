@@ -40,7 +40,7 @@ namespace StevEngine::Networking::Server {
 		engine->GetEvents().Subscribe<PreUpdateEvent>([this](const PreUpdateEvent& e) {
 			//Disconnect the clients marked for disconnection
 			for (auto& client : disconnected) {
-				Log::Debug(std::string("Client (") + client.id.GetString() + ") disconnected!");
+				Log::Debug(std::string("Client (") + client.id.GetString() + ") disconnected!", true);
 				clients.erase(client);
 			}
 			disconnected.clear();
@@ -64,7 +64,7 @@ namespace StevEngine::Networking::Server {
 				//Log::Debug(std::string("Client (") + client.id.GetString() + ") ping time: " + std::to_string(sinceLastPing * 1000 + 0.5));
 
 				if (client.sinceLastPing > TIMEOUT_PING) {
-					Log::Debug(std::string("Client (") + client.id.GetString() + ") timed out!");
+					Log::Debug(std::string("Client (") + client.id.GetString() + ") timed out!", true);
 					disconnected.insert(client);
 					recieve(client, 1); // Tell listeners client disconnected
 				}
