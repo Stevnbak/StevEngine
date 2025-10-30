@@ -131,11 +131,12 @@ namespace StevEngine::Physics {
 		jphCharacter->SetRotation(parent.GetWorldRotation());
 		jphCharacter->SetPosition(parent.GetWorldPosition());
 
-		GetParent().Subscribe<TransformUpdateEvent>([this](const TransformUpdateEvent& e) {
+		handlers.emplace_back(parent.Subscribe<TransformUpdateEvent>([this](const TransformUpdateEvent& e) {
 			GameObject& parent = GetParent();
 			if(e.rotation) jphCharacter->SetRotation(parent.GetWorldRotation());
 			if(e.position) jphCharacter->SetPosition(parent.GetWorldPosition());
-		});
+		}), TransformUpdateEvent::GetStaticEventType());
+		handlers.emplace_back(parent.Subscribe<ColliderUpdateEvent>([this](const ColliderUpdateEvent& e) { RefreshShape(); }), ColliderUpdateEvent::GetStaticEventType());
 	}
 
 	void CharacterBody::Deactivate() {

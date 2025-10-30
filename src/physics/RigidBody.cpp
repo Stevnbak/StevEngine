@@ -42,7 +42,8 @@ namespace StevEngine::Physics {
 		//	Create body from settings
 		body = physics.CreateBody(bodySettings, this);
 		//Events
-		parent.Subscribe<ColliderUpdateEvent>([this](ColliderUpdateEvent) { RefreshShape(); });
+		handlers.emplace_back(parent.Subscribe<ColliderUpdateEvent>([this](ColliderUpdateEvent) { RefreshShape(); }), ColliderUpdateEvent::GetStaticEventType());
+		handlers.emplace_back(parent.Subscribe<TransformUpdateEvent>([this](TransformUpdateEvent e) { TransformUpdate(e.position, e.rotation, e.scale); }), TransformUpdateEvent::GetStaticEventType());
 	}
 	void RigidBody::Deactivate() {
 		if(body) physics.DestroyBody(body, this);
